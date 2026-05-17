@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduVesting — Kalkulator Fee</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { display: ['Syne', 'sans-serif'], body: ['DM Sans', 'sans-serif'] },
+          colors: {
+            base: { 950: '#07090f', 900: '#0f1423', 850: '#131928', 800: '#1a2235', 750: '#1e2840', 700: '#253049' },
+            accent: { blue: '#3b82f6', indigo: '#6366f1', violet: '#7c3aed', cyan: '#06b6d4', emerald: '#10b981', amber: '#f59e0b', rose: '#f43f5e' }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'DM Sans', sans-serif; background-color: #07090f; color: #e2e8f0; min-height: 100vh; }
+
+    /* Sidebar active glow */
+    .nav-active { background: linear-gradient(90deg, rgba(16,185,129,0.18) 0%, transparent 100%); border-left: 3px solid #10b981; }
+    .nav-item { border-left: 3px solid transparent; transition: all 0.2s ease; }
+    .nav-item:hover { background: linear-gradient(90deg, rgba(99,102,241,0.1) 0%, transparent 100%); border-left-color: rgba(99,102,241,0.5); color: #a5b4fc; }
+
+    /* Glass Elements */
+    .glass { background: rgba(19, 25, 40, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); }
+    
+    /* Mesh Background */
+    .mesh-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background: radial-gradient(ellipse 60% 40% at 15% 10%, rgba(16,185,129,0.08) 0%, transparent 70%),
+                  radial-gradient(ellipse 50% 50% at 85% 80%, rgba(6,182,212,0.07) 0%, transparent 60%);
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(16,185,129,0.3); border-radius: 9px; }
+
+    /* Form Input */
+    .form-input { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); transition: all 0.2s ease; color: #e2e8f0; }
+    .form-input:focus { outline: none; border-color: rgba(16,185,129,0.6); box-shadow: 0 0 0 3px rgba(16,185,129,0.15); background: rgba(16,185,129,0.04); }
+
+    /* Radio Tabs */
+    .radio-tab:checked + div { background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.5); color: #6ee7b7; }
+    
+    /* Fade-in */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-up { animation: fadeUp 0.5s ease both; }
+    .delay-1 { animation-delay: 0.07s; }
+    .delay-2 { animation-delay: 0.14s; }
+
+    /* Receipt Line */
+    .receipt-line { border-bottom: 1px dashed rgba(255,255,255,0.2); margin: 0.75rem 0; }
+
+    @media (max-width: 767px) { aside { display: none; } .main-pad { padding-left: 1rem; padding-right: 1rem; } }
+  </style>
+</head>
+
+<body class="relative">
+
+  <div class="mesh-bg" aria-hidden="true"></div>
+
+  <div class="relative z-10 flex min-h-screen">
+
+    <aside class="fixed top-0 left-0 h-screen w-64 flex flex-col" style="background: rgba(10,14,24,0.95); border-right: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
+      <div class="px-6 py-6 flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg,#6366f1,#3b82f6);">
+          <i class="fa-solid fa-chart-line text-white text-sm"></i>
+        </div>
+        <span class="font-display text-lg text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-blue-300">EduVesting</span>
+      </div>
+
+      <div class="mx-4 mb-5 p-3 rounded-xl border border-white/5 bg-slate-800/50 flex items-center gap-3">
+        <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white" style="background: linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
+        <div class="min-w-0">
+          <p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">User</p>
+          <p class="text-xs text-slate-500 truncate">Mahasiswa Teknik, 2021</p>
+        </div>
+      </div>
+
+      <nav class="flex-1 px-2 space-y-0.5 overflow-y-auto">
+        <p class="px-4 py-1.5 text-xs font-semibold text-slate-600 uppercase tracking-widest">Utama</p>
+
+        <a href="dashboard.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+          <i class="fa-solid fa-gauge-high w-4 text-center"></i> Dashboard
+        </a>
+        <a href="portfolio.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+          <i class="fa-solid fa-briefcase w-4 text-center"></i> Portofolio
+        </a>
+        <a href="transactions.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+          <i class="fa-solid fa-arrow-right-arrow-left w-4 text-center"></i> Transaksi
+        </a>
+        <a href="goals.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+          <i class="fa-solid fa-bullseye w-4 text-center"></i> Target Dana
+        </a>
+
+        <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Analisa</p>
+        
+        <a href="ai-insights.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+          <i class="fa-solid fa-robot w-4 text-center"></i> AI Insights
+        </a>
+        <a href="allocation.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+          <i class="fa-solid fa-chart-pie w-4 text-center"></i> Alokasi Aset
+        </a>
+        
+        <a href="calculator.html" class="nav-item nav-active flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-emerald-300 text-sm font-medium">
+          <i class="fa-solid fa-calculator w-4 text-center text-emerald-400"></i> Kalkulator Fee
+        </a>
+
+        <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Akun</p>
+        <a href="settings.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+          <i class="fa-solid fa-gear w-4 text-center"></i> Pengaturan
+        </a>
+        <button onclick="logoutUser()" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm">
+          <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout
+        </button>
+      </nav>
+    </aside>
+
+    <main class="ml-64 flex-1 px-8 py-8 main-pad" style="max-width: calc(100% - 16rem);">
+
+      <header class="flex items-center justify-between mb-8 fade-up">
+        <div>
+          <h1 class="font-display text-2xl text-slate-100 flex items-center gap-3">
+            Kalkulator Fee & Pajak Transaksi
+          </h1>
+          <p class="text-slate-500 text-sm mt-0.5">Simulasikan pembelian agar tidak kaget dengan potongan biaya *hidden cost*.</p>
+        </div>
+      </header>
+
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 mb-8 fade-up delay-1">
+        
+        <div class="lg:col-span-3 space-y-6">
+          
+          <div class="glass rounded-2xl p-6 border-t-4 border-t-emerald-500 shadow-[0_0_30px_-5px_rgba(16,185,129,0.1)]">
+            
+            <h2 class="font-display text-lg text-slate-200 mb-5">Parameter Simulasi</h2>
+
+            <form id="calc-form" class="space-y-5">
+              
+              <div>
+                <label class="block text-xs font-medium text-slate-400 mb-2">Pilih Instrumen</label>
+                <div class="grid grid-cols-3 gap-3">
+                  <label class="cursor-pointer">
+                    <input type="radio" name="instrument" value="saham" class="peer sr-only radio-tab" checked onchange="updateUI()">
+                    <div class="text-center px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-400 text-sm transition-all hover:bg-slate-700 font-semibold">
+                      <i class="fa-solid fa-chart-column block text-lg mb-1"></i> Saham IDX
+                    </div>
+                  </label>
+                  <label class="cursor-pointer">
+                    <input type="radio" name="instrument" value="kripto" class="peer sr-only radio-tab" onchange="updateUI()">
+                    <div class="text-center px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-400 text-sm transition-all hover:bg-slate-700 font-semibold">
+                      <i class="fa-brands fa-bitcoin block text-lg mb-1"></i> Kripto Spot
+                    </div>
+                  </label>
+                  <label class="cursor-pointer">
+                    <input type="radio" name="instrument" value="emas" class="peer sr-only radio-tab" onchange="updateUI()">
+                    <div class="text-center px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-400 text-sm transition-all hover:bg-slate-700 font-semibold">
+                      <i class="fa-solid fa-coins block text-lg mb-1"></i> Emas Fisik
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-medium text-slate-400 mb-1.5">Tipe Transaksi</label>
+                  <select id="calc-type" class="form-input w-full rounded-xl px-4 py-2.5 text-sm appearance-none" onchange="calculateFee()">
+                    <option value="beli">🟢 Beli (Buy)</option>
+                    <option value="jual">🔵 Jual (Sell)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-slate-400 mb-1.5">Pilih Broker / Exchange</label>
+                  <select id="calc-broker" class="form-input w-full rounded-xl px-4 py-2.5 text-sm appearance-none" onchange="calculateFee()">
+                    </select>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-medium text-slate-400 mb-1.5">Total Modal / Uang (Rp)</label>
+                  <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-semibold">Rp</span>
+                    <input id="calc-budget" type="number" value="1000000" class="form-input w-full rounded-xl pl-10 pr-4 py-2.5 text-sm font-medium" oninput="calculateFee()">
+                  </div>
+                </div>
+                <div>
+                  <label id="label-price" class="block text-xs font-medium text-slate-400 mb-1.5">Harga Saham / Lembar</label>
+                  <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-semibold">Rp</span>
+                    <input id="calc-price" type="number" value="5000" class="form-input w-full rounded-xl pl-10 pr-4 py-2.5 text-sm font-medium" oninput="calculateFee()">
+                  </div>
+                </div>
+              </div>
+
+            </form>
+          </div>
+
+          <div class="glass rounded-xl p-5 border-l-4 border-l-blue-500 flex items-start gap-4">
+            <div class="w-10 h-10 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center flex-shrink-0">
+              <i class="fa-solid fa-lightbulb"></i>
+            </div>
+            <div>
+              <h3 class="text-sm font-semibold text-slate-200 mb-1" id="tip-title">Tahukah Kamu? (Saham)</h3>
+              <p class="text-xs text-slate-400 leading-relaxed" id="tip-desc">
+                Saat kamu <strong>menjual saham</strong>, ada tambahan Pajak Penghasilan (PPh) Final sebesar 0.1% dari nilai transaksi bruto. Oleh karena itu, *fee* jual selalu lebih mahal daripada *fee* beli.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="lg:col-span-2">
+          
+          <div class="glass rounded-2xl p-6 font-mono text-sm relative overflow-hidden h-full flex flex-col">
+            <div class="absolute top-0 left-0 right-0 h-2" style="background-image: radial-gradient(circle at 5px 0, transparent 6px, rgba(19, 25, 40, 0.85) 7px); background-size: 15px 10px; background-repeat: repeat-x;"></div>
+
+            <div class="text-center border-b border-slate-700/50 pb-4 mb-4 mt-2">
+              <h3 class="font-display text-lg text-emerald-400 font-bold uppercase tracking-widest mb-1">Struk Estimasi</h3>
+              <p class="text-[10px] text-slate-500">EduVesting Simulation System</p>
+            </div>
+
+            <div class="flex-1 space-y-2 text-slate-300">
+              
+              <div class="flex justify-between">
+                <span>Total Dana:</span>
+                <span id="res-budget" class="font-semibold text-white">Rp 1.000.000</span>
+              </div>
+              
+              <div class="flex justify-between">
+                <span>Harga <span id="res-unit-label">Saham</span>:</span>
+                <span id="res-price">Rp 5.000</span>
+              </div>
+
+              <div class="receipt-line"></div>
+
+              <div class="bg-emerald-500/10 border border-emerald-500/20 rounded p-3 mb-3">
+                <p class="text-[10px] text-emerald-400 uppercase tracking-widest font-bold mb-1">Maksimal yang Didapat:</p>
+                <div class="flex justify-between items-end">
+                  <span id="res-max-unit" class="text-2xl font-display text-white">1 Lot</span>
+                  <span id="res-max-desc" class="text-[10px] text-slate-400">(100 Lembar)</span>
+                </div>
+              </div>
+
+              <div class="flex justify-between">
+                <span>Nilai Transaksi (Bruto):</span>
+                <span id="res-gross">Rp 500.000</span>
+              </div>
+
+              <div class="receipt-line"></div>
+              <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Rincian Biaya (Fee)</p>
+
+              <div class="flex justify-between text-rose-400 text-xs mt-2">
+                <span id="res-fee-label">Fee Broker (0.15%):</span>
+                <span id="res-fee-amount">- Rp 750</span>
+              </div>
+              <div class="flex justify-between text-rose-400 text-xs">
+                <span id="res-tax-label">PPN / PPh:</span>
+                <span id="res-tax-amount">- Rp 82</span>
+              </div>
+
+              <div class="receipt-line"></div>
+
+              <div class="flex justify-between items-center mt-4">
+                <span class="font-bold text-white text-base">Total Bayar:</span>
+                <span id="res-total-pay" class="font-bold text-white text-base">Rp 500.832</span>
+              </div>
+              
+              <div class="flex justify-between items-center mt-2 p-2 bg-slate-800/50 rounded border border-slate-700">
+                <span class="text-xs text-slate-400">Sisa Saldo Kas:</span>
+                <span id="res-remainder" class="font-semibold text-emerald-300">Rp 499.168</span>
+              </div>
+
+            </div>
+
+            <div class="text-center mt-6 pt-4 border-t border-slate-700/50">
+              <i class="fa-solid fa-barcode text-4xl text-slate-600"></i>
+              <p class="text-[9px] text-slate-500 mt-1">Gunakan kalkulator ini sebelum entry market.</p>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // --- Auth Check ---
+    const token = localStorage.getItem('userToken');
+    if (!token) window.location.href = 'login.html';
+
+    const user = JSON.parse(localStorage.getItem('userData'));
+    document.addEventListener('DOMContentLoaded', () => {
+       if (user && user.username) {
+        document.getElementById('sidebar-user-name').innerText = user.username;
+        document.getElementById('sidebar-user-initial').innerText = user.username.charAt(0).toUpperCase();
+       }
+       
+       // Initialize UI on first load
+       updateUI();
+    });
+
+    function logoutUser() {
+        localStorage.removeItem('userToken');
+        localStorage.removeItem('userData');
+        window.location.href = 'login.html';
+    }
+
+    // --- Calculator Engine ---
+    const brokers = {
+      saham: [
+        { name: "Ajaib Sekuritas", buyFee: 0.0015, sellFee: 0.0025, tax: "ppn_pph" },
+        { name: "Stockbit / Mahakarya", buyFee: 0.0015, sellFee: 0.0025, tax: "ppn_pph" },
+        { name: "Mandiri Sekuritas", buyFee: 0.0018, sellFee: 0.0028, tax: "ppn_pph" }
+      ],
+      kripto: [
+        { name: "Tokocrypto", buyFee: 0.001, sellFee: 0.001, tax: "ppn_pph_kripto" },
+        { name: "Indodax", buyFee: 0.0011, sellFee: 0.0011, tax: "ppn_pph_kripto" },
+        { name: "Ajaib Kripto", buyFee: 0.001, sellFee: 0.001, tax: "ppn_pph_kripto" }
+      ],
+      emas: [
+        { name: "Emas Digital (Umum)", buyFee: 0.005, sellFee: 0.015, tax: "none" }
+      ]
+    };
+
+    function updateUI() {
+      const inst = document.querySelector('input[name="instrument"]:checked').value;
+      const type = document.getElementById('calc-type').value;
+      const brokerSelect = document.getElementById('calc-broker');
+      
+      // Update broker options
+      brokerSelect.innerHTML = "";
+      brokers[inst].forEach((b, index) => {
+        brokerSelect.innerHTML += `<option value="${index}">${b.name}</option>`;
+      });
+
+      // Update Labels
+      const labelPrice = document.getElementById('label-price');
+      const tipTitle = document.getElementById('tip-title');
+      const tipDesc = document.getElementById('tip-desc');
+
+      if (inst === 'saham') {
+        labelPrice.innerText = "Harga Saham / Lembar";
+        tipTitle.innerText = "Tahukah Kamu? (Saham IDX)";
+        tipDesc.innerHTML = "Di Bursa Efek Indonesia, 1 Lot = 100 lembar. Kamu tidak bisa membeli pecahan saham (kurang dari 100 lembar) di pasar reguler. Fee sudah termasuk PPN 11% (dari komisi) dan *Levy* (biaya bursa).";
+      } else if (inst === 'kripto') {
+        labelPrice.innerText = "Harga Koin (IDR)";
+        tipTitle.innerText = "Tahukah Kamu? (Kripto Indonesia)";
+        tipDesc.innerHTML = "Transaksi kripto di bursa resmi Indonesia (Bappebti) dikenakan PPN 0.11% (saat beli) dan PPh 0.1% (saat jual) secara otomatis, dipotong dari *wallet* kamu.";
+      } else if (inst === 'emas') {
+        labelPrice.innerText = "Harga Emas / Gram";
+        tipTitle.innerText = "Tahukah Kamu? (Emas)";
+        tipDesc.innerHTML = "Emas adalah pelindung nilai jangka panjang. Hati-hati dengan *spread* (selisih harga beli dan harga jual (*buyback*)). Kadang selisihnya bisa mencapai Rp 50.000 per gram!";
+      }
+
+      calculateFee();
+    }
+
+    function calculateFee() {
+      const inst = document.querySelector('input[name="instrument"]:checked').value;
+      const trxType = document.getElementById('calc-type').value;
+      const brokerIndex = document.getElementById('calc-broker').value;
+      const budget = parseFloat(document.getElementById('calc-budget').value) || 0;
+      const price = parseFloat(document.getElementById('calc-price').value) || 0;
+
+      if (budget === 0 || price === 0 || !brokerIndex) return;
+
+      const broker = brokers[inst][brokerIndex];
+      let unitMultiplier = 1; // Default
+      let unitName = "";
+      let feeRate = trxType === 'beli' ? broker.buyFee : broker.sellFee;
+      
+      let baseTaxRate = 0;
+
+      // Konfigurasi Spesifik Instrumen
+      if (inst === 'saham') {
+        unitMultiplier = 100; // 1 Lot = 100 lembar
+        unitName = "Lot";
+        // Simulasi Pajak Saham (PPN 11% dari broker fee + Levy, PPh 0.1% dari transaksi gross jika jual)
+        // Untuk penyederhanaan kalkulator mahasiswa, kita gabung di UI display.
+      } else if (inst === 'kripto') {
+        unitMultiplier = 1;
+        unitName = "Koin";
+      } else if (inst === 'emas') {
+        unitMultiplier = 1;
+        unitName = "Gram";
+      }
+
+      // 1. Tentukan Maksimal Volume yang Bisa Dibeli (Mencegah saldo minus)
+      // Rumus: (Harga * Multiplier * Volume) + Fee = Budget
+      // Volume = Budget / ((Harga * Multiplier) * (1 + TotalFeeRate))
+      
+      const pricePerUnit = price * unitMultiplier;
+      let totalFeePercentage = feeRate; // Start with base fee
+
+      // Tambah estimasi pajak murni ke persentase pembagi
+      if (inst === 'saham' && trxType === 'jual') totalFeePercentage += 0.001; // PPh Final 0.1%
+      if (inst === 'kripto' && trxType === 'beli') totalFeePercentage += 0.0011; // PPN 0.11%
+      if (inst === 'kripto' && trxType === 'jual') totalFeePercentage += 0.001; // PPh 0.1%
+
+      // Calculate Max Unit (Floor for stocks to get exact lots, decimals for crypto/gold)
+      let maxUnit = budget / (pricePerUnit * (1 + totalFeePercentage));
+      
+      if (inst === 'saham') {
+        maxUnit = Math.floor(maxUnit); // Harus lot utuh
+      } else {
+        maxUnit = Number(maxUnit.toFixed(5)); // Kripto bisa pecahan
+      }
+
+      // 2. Hitung Nominal Riil dari Max Unit Tersebut
+      const grossTransaction = maxUnit * pricePerUnit;
+      const feeAmount = grossTransaction * feeRate;
+      
+      let taxAmount = 0;
+      let taxLabel = "PPN / PPh:";
+
+      if (inst === 'saham') {
+        // PPN 11% dari fee broker
+        let ppn = feeAmount * 0.11; 
+        let pph = trxType === 'jual' ? grossTransaction * 0.001 : 0;
+        taxAmount = ppn + pph;
+        taxLabel = trxType === 'beli' ? "PPN (11% dr Fee):" : "PPN + PPh Final:";
+      } else if (inst === 'kripto') {
+        taxAmount = trxType === 'beli' ? grossTransaction * 0.0011 : grossTransaction * 0.001;
+        taxLabel = trxType === 'beli' ? "PPN Final (0.11%):" : "PPh Final (0.1%):";
+      } else {
+        taxAmount = 0; // Emas digital biasanya fee sdh net
+        taxLabel = "Pajak:";
+      }
+
+      const totalFeeTax = feeAmount + taxAmount;
+      const totalPay = trxType === 'beli' ? grossTransaction + totalFeeTax : grossTransaction - totalFeeTax;
+      
+      // Saldo Sisa (Jika Beli) atau Saldo Bertambah (Jika Jual)
+      let remainder = 0;
+      if(trxType === 'beli') {
+        remainder = budget - totalPay;
+      } else {
+        // Jika jual, asumsikan budget adalah 'Kas Saat Ini', maka kas + hasil jual
+        remainder = budget + totalPay;
+      }
+
+      // Format uang Rupiah
+      const fmt = (num) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
+
+      // --- UPDATE DOM ---
+      document.getElementById('res-budget').innerText = fmt(budget);
+      document.getElementById('res-unit-label').innerText = inst.charAt(0).toUpperCase() + inst.slice(1);
+      document.getElementById('res-price').innerText = fmt(price);
+      
+      document.getElementById('res-max-unit').innerText = maxUnit > 0 ? `${maxUnit} ${unitName}` : `0 ${unitName}`;
+      document.getElementById('res-max-desc').innerText = inst === 'saham' ? `(${maxUnit * 100} Lembar)` : '';
+      
+      document.getElementById('res-gross').innerText = fmt(grossTransaction);
+      
+      document.getElementById('res-fee-label').innerText = `Fee Broker (${(feeRate * 100).toFixed(2)}%):`;
+      document.getElementById('res-fee-amount').innerText = trxType === 'beli' ? `+ ${fmt(feeAmount)}` : `- ${fmt(feeAmount)}`;
+      
+      document.getElementById('res-tax-label').innerText = taxLabel;
+      document.getElementById('res-tax-amount').innerText = trxType === 'beli' ? `+ ${fmt(taxAmount)}` : `- ${fmt(taxAmount)}`;
+      
+      document.getElementById('res-total-pay').innerText = fmt(totalPay);
+      
+      const remainderEl = document.getElementById('res-remainder');
+      remainderEl.innerText = fmt(remainder);
+      
+      // Warn if no unit can be bought
+      if (maxUnit <= 0) {
+        remainderEl.classList.replace('text-emerald-300', 'text-rose-400');
+        document.getElementById('res-max-unit').classList.replace('text-white', 'text-rose-400');
+      } else {
+        remainderEl.classList.replace('text-rose-400', 'text-emerald-300');
+        document.getElementById('res-max-unit').classList.replace('text-rose-400', 'text-white');
+      }
+    }
+
+    async function calculateToBackend() {
+
+    try {
+
+        const instrument =
+        document.querySelector(
+            'input[name="instrument"]:checked'
+        ).value;
+
+        const transactionType =
+        document.getElementById(
+            'calc-type'
+        ).value;
+
+        const budget =
+        parseFloat(
+            document.getElementById(
+                'calc-budget'
+            ).value
+        );
+
+        const price =
+        parseFloat(
+            document.getElementById(
+                'calc-price'
+            ).value
+        );
+
+        const response = await fetch(
+
+            'http://localhost:5000/api/calculator',
+
+            {
+
+                method: 'POST',
+
+                headers: {
+
+                    'Content-Type':
+                    'application/json'
+
+                },
+
+                body: JSON.stringify({
+
+                    instrument,
+                    transactionType,
+                    budget,
+                    price
+
+                })
+
+            }
+
+        );
+
+        const data =
+        await response.json();
+
+        console.log(data);
+
+    }
+
+    catch (error) {
+
+        console.log(error);
+
+    }
+
+    calculateToBackend();
+}
+  </script>
+</body>
+</html>
