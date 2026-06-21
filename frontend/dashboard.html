@@ -1,479 +1,807 @@
 <!DOCTYPE html>
 <html lang="id" class="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EduVesting — Pengaturan Akun</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EduVesting — Dashboard</title>
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: { display: ['Plus Jakarta Sans', 'sans-serif'], body: ['Inter', 'sans-serif'] },
-          colors: {
-            base: { 950: '#07090f', 900: '#0f1423', 850: '#131928', 800: '#1a2235', 750: '#1e2840', 700: '#253049' },
-            accent: { blue: '#3b82f6', indigo: '#6366f1', violet: '#7c3aed', cyan: '#06b6d4', emerald: '#10b981', amber: '#f59e0b', rose: '#f43f5e' }
-          }
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: { display: ['Plus Jakarta Sans', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        colors: {
+          base: { 950:'#07090f',900:'#0f1423',850:'#131928',800:'#1a2235',750:'#1e2840',700:'#253049' },
+          accent: { blue:'#3b82f6', indigo:'#6366f1', violet:'#7c3aed', cyan:'#06b6d4', emerald:'#10b981', amber:'#f59e0b', rose:'#f43f5e' }
         }
       }
     }
-  </script>
+  }
+</script>
 
-  <style>
-    * { box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; background-color: #07090f; color: #e2e8f0; min-height: 100vh; overflow-x: hidden; }
+<style>
+  * { box-sizing: border-box; }
+  body { font-family:'Inter', sans-serif; background-color:#07090f; color:#e2e8f0; min-height:100vh; overflow-x: hidden; }
+  .nav-active { background: linear-gradient(90deg, rgba(99,102,241,0.18) 0%, transparent 100%); border-left: 3px solid #6366f1; }
+  .nav-item { border-left: 3px solid transparent; transition: background .2s ease, border-color .2s ease, color .2s ease; }
+  .nav-item:hover { background: linear-gradient(90deg, rgba(99,102,241,0.1) 0%, transparent 100%); border-left-color: rgba(99,102,241,0.5); color:#a5b4fc; }
+  .glass { background: rgba(19,25,40,0.85); backdrop-filter: blur(12px); border:1px solid rgba(255,255,255,0.06); }
+  .glass-lighter { background: rgba(30,40,64,0.6); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.07); }
+  .mesh-bg { position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(ellipse 60% 40% at 15% 10%, rgba(99,102,241,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 50% at 85% 80%, rgba(59,130,246,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 60% 30%, rgba(124,58,237,0.05) 0%, transparent 60%);
+  }
+  ::-webkit-scrollbar { width:5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius:9px; }
+  .alloc-bar { height:8px; border-radius:99px; transition: width .8s cubic-bezier(.22,1,.36,1); }
+  .portfolio-row { transition: background .15s ease; border-bottom:1px solid rgba(255,255,255,0.04); }
+  .portfolio-row:hover { background: rgba(99,102,241,0.06); }
+  .badge { font-size:.68rem; font-weight:600; letter-spacing:.04em; padding:2px 10px; border-radius:99px; text-transform:uppercase; }
+  .progress-bar { height:6px; border-radius:99px; background: rgba(255,255,255,0.07); overflow:hidden; }
+  .progress-fill { height:100%; border-radius:99px; transition: width 1s cubic-bezier(.22,1,.36,1); }
+  .ai-card { position:relative; border-radius:1rem; background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(59,130,246,0.08)); border:1px solid rgba(99,102,241,0.25); overflow:hidden; }
+  .ai-card::before { content:''; position:absolute; top:0; left:-100%; width:60%; height:100%;
+    background: linear-gradient(90deg, transparent, rgba(99,102,241,0.08), transparent); animation: shimmer 4s ease-in-out infinite; }
+  @keyframes shimmer { 0%{left:-60%;} 100%{left:160%;} }
+  .metric-card { transition: transform .2s ease, box-shadow .2s ease; }
+  .metric-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px -8px rgba(99,102,241,0.3); }
+  .btn-primary { background: linear-gradient(135deg,#6366f1,#3b82f6); transition: opacity .2s ease, transform .15s ease, box-shadow .2s ease; }
+  .btn-primary:hover { opacity:.88; transform: translateY(-1px); box-shadow: 0 6px 20px -4px rgba(99,102,241,0.5); }
+  .btn-primary:active { transform: translateY(0); }
+  .form-input { background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); transition: border-color .2s ease, box-shadow .2s ease; }
+  .form-input:focus { outline:none; border-color: rgba(99,102,241,0.6); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
+  .logo-text { background: linear-gradient(90deg,#a5b4fc,#93c5fd); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  @keyframes fadeUp { from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
+  .fade-up { animation: fadeUp .5s ease both; }
+  .delay-1{animation-delay:.07s;} .delay-2{animation-delay:.14s;} .delay-3{animation-delay:.21s;} .delay-4{animation-delay:.28s;} .delay-5{animation-delay:.35s;}
+  .spin { animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.6); backdrop-filter: blur(4px); z-index:100; display:flex; align-items:center; justify-content:center; }
 
-    /* Sidebar active glow */
-    .nav-active { background: linear-gradient(90deg, rgba(148,163,184,0.15) 0%, transparent 100%); border-left: 3px solid #94a3b8; }
-    .nav-item { border-left: 3px solid transparent; transition: all 0.2s ease; }
-    .nav-item:hover { background: linear-gradient(90deg, rgba(99,102,241,0.1) 0%, transparent 100%); border-left-color: rgba(99,102,241,0.5); color: #a5b4fc; }
+  /* FAQ accordion */
+  .faq-item { border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .faq-toggle { width:100%; text-align:left; background:none; border:none; cursor:pointer; padding: 1rem 0; display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+  .faq-toggle:hover .faq-q { color:#a5b4fc; }
+  .faq-q { font-size:.875rem; font-weight:500; color:#cbd5e1; transition: color .2s; }
+  .faq-icon { flex-shrink:0; color:#6366f1; font-size:.75rem; transition: transform .25s ease; }
+  .faq-answer { max-height:0; overflow:hidden; transition: max-height .35s ease, padding .25s ease; }
+  .faq-answer.open { max-height: 300px; padding-bottom:.75rem; }
+  .faq-icon.open { transform: rotate(180deg); }
 
-    /* Glass Elements */
-    .glass { background: rgba(19, 25, 40, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); }
-    
-    /* Mesh Background */
-    .mesh-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0;
-      background: radial-gradient(ellipse 60% 40% at 15% 10%, rgba(148,163,184,0.05) 0%, transparent 70%),
-                  radial-gradient(ellipse 50% 50% at 85% 80%, rgba(99,102,241,0.05) 0%, transparent 60%);
-    }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(148,163,184,0.3); border-radius: 9px; }
-
-    /* Form Input */
-    .form-input { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); transition: all 0.2s ease; color: #e2e8f0; }
-    .form-input:focus { outline: none; border-color: rgba(99,102,241,0.6); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); background: rgba(99,102,241,0.04); }
-    .form-input:disabled { opacity: 0.6; cursor: not-allowed; }
-
-    /* Native select option fix */
-    select option { background-color: #0f1423; color: #e2e8f0; padding: 12px; }
-
-    /* Fade-in */
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
-    .fade-up { animation: fadeUp 0.5s ease both; }
-    .delay-1 { animation-delay: 0.07s; }
-    .delay-2 { animation-delay: 0.14s; }
-    .delay-3 { animation-delay: 0.21s; }
-  </style>
+  /* Logout mini modal */
+  .logout-mini-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(6px);
+  }
+  .logout-mini-box {
+    background: rgba(15,20,35,0.97);
+    border: 1px solid rgba(244,63,94,0.25);
+    border-radius: 1.25rem;
+    padding: 1.75rem 2rem;
+    width: 100%;
+    max-width: 360px;
+    margin: 1rem;
+    box-shadow: 0 20px 60px -10px rgba(0,0,0,0.7), 0 0 0 1px rgba(244,63,94,0.1);
+    animation: fadeUp .2s ease both;
+  }
+  .btn-logout-confirm {
+    background: linear-gradient(135deg, #f43f5e, #e11d48);
+    transition: opacity .2s ease, transform .15s ease;
+  }
+  .btn-logout-confirm:hover { opacity:.88; transform: translateY(-1px); }
+  .btn-cancel-logout {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: background .2s ease;
+  }
+  .btn-cancel-logout:hover { background: rgba(255,255,255,0.09); }
+</style>
 </head>
 
 <body class="relative">
+<div class="mesh-bg" aria-hidden="true"></div>
 
-  <div class="mesh-bg" aria-hidden="true"></div>
-
-  <div class="relative z-10 flex min-h-screen">
-
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
-
-    <aside id="sidebar" class="fixed top-0 left-0 h-screen w-64 flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out" 
-           style="background: rgba(10,14,24,0.95); border-right: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
-      
-      <button onclick="toggleSidebar()" class="md:hidden absolute top-6 right-4 text-slate-400 hover:text-white">
-        <i class="fa-solid fa-xmark text-xl"></i>
-      </button>
-
-      <div class="px-6 py-6 flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg,#6366f1,#3b82f6);">
-          <i class="fa-solid fa-chart-line text-white text-sm"></i>
-        </div>
-        <span class="font-display text-lg text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-blue-300">EduVesting</span>
+<!-- ===== LOGOUT CONFIRMATION MODAL ===== -->
+<div id="logout-modal" class="logout-mini-modal hidden">
+  <div class="logout-mini-box">
+    <div class="flex items-center gap-3 mb-4">
+      <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style="background:rgba(244,63,94,0.12); border:1px solid rgba(244,63,94,0.25);">
+        <i class="fa-solid fa-right-from-bracket text-rose-400"></i>
       </div>
-
-      <div class="mx-4 mb-5 p-3 rounded-xl border border-white/5 bg-slate-800/50 flex items-center gap-3">
-        <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white" style="background: linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
-        <div class="min-w-0">
-          <p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">Memuat...</p>
-        </div>
-      </div>
-
-      <nav class="flex-1 px-2 space-y-0.5 overflow-y-auto">
-        <p class="px-4 py-1.5 text-xs font-semibold text-slate-600 uppercase tracking-widest">Utama</p>
-
-        <a href="dashboard.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-gauge-high w-4 text-center"></i> Dashboard
-        </a>
-        <a href="portfolio.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-briefcase w-4 text-center"></i> Portofolio
-        </a>
-        <a href="transactions.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-arrow-right-arrow-left w-4 text-center"></i> Transaksi
-        </a>
-        <a href="faq.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-circle-question w-4 text-center"></i> Pusat Bantuan (FAQ)
-        </a>
-
-        <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Analitik</p>
-        
-        <a href="insights.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-robot w-4 text-center"></i> AI Insights
-        </a>
-        <a href="allocations.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-chart-pie w-4 text-center"></i> Alokasi Aset
-        </a>
-        <a href="calculator.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-calculator w-4 text-center"></i> Kalkulator Fee
-        </a>
-
-        <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Akun</p>
-        
-        <a href="settings.html" class="nav-item nav-active flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-200 text-sm font-medium">
-          <i class="fa-solid fa-gear w-4 text-center text-slate-300"></i> Pengaturan
-        </a>
-        
-        <button onclick="showLogoutModal()" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm">
-          <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout
-        </button>
-      </nav>
-    </aside>
-
-    <main class="flex-1 w-full md:ml-64 px-4 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden">
-
-      <header class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 fade-up">
-        <div class="flex items-center gap-3">
-          <button onclick="toggleSidebar()" class="md:hidden glass w-10 h-10 rounded-xl flex items-center justify-center text-slate-300 hover:text-white transition-colors flex-shrink-0">
-            <i class="fa-solid fa-bars"></i>
-          </button>
-          <div>
-            <h1 class="font-display text-xl sm:text-2xl text-slate-100">Pengaturan Akun</h1>
-            <p class="text-slate-500 text-xs sm:text-sm mt-0.5">Kelola informasi pribadi, keamanan, dan preferensi EduVesting Anda.</p>
-          </div>
-        </div>
-      </header>
-
-      <div class="max-w-4xl space-y-6">
-
-        <section class="glass rounded-2xl p-4 sm:p-6 md:p-8 fade-up delay-1">
-          <h2 class="text-base sm:text-lg font-display text-slate-200 mb-6 flex items-center gap-2 border-b border-white/5 pb-4">
-            <i class="fa-regular fa-id-badge text-indigo-400"></i> Profil Pengguna
-          </h2>
-
-          <form id="profile-form" onsubmit="saveProfile(event)">
-            
-            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mb-8">
-              <div class="relative group cursor-pointer flex-shrink-0">
-                <div id="settings-avatar" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center text-2xl sm:text-3xl font-bold text-white shadow-lg transition-transform group-hover:scale-105" style="background: linear-gradient(135deg,#7c3aed,#6366f1);">
-                  U
-                </div>
-                <div class="absolute bottom-0 right-0 w-7 h-7 sm:w-8 sm:h-8 bg-slate-800 rounded-full border-2 border-[#0f1423] flex items-center justify-center text-xs text-slate-300 hover:bg-slate-700 transition-colors">
-                  <i class="fa-solid fa-camera"></i>
-                </div>
-              </div>
-              <div class="text-center sm:text-left mt-2 sm:mt-0">
-                <h3 class="text-sm sm:text-base font-semibold text-slate-200">Foto Profil</h3>
-                <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto sm:mx-0">Format yang didukung: JPG, PNG, atau WebP. Maksimal ukuran 2MB.</p>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
-              <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1.5">Nama Lengkap</label>
-                <input id="setting-name" type="text" class="form-input w-full rounded-xl px-4 py-2.5 text-sm bg-[#0f1423]" required>
-              </div>
-              <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1.5">Email Akun</label>
-                <input id="setting-email" type="email" class="form-input w-full rounded-xl px-4 py-2.5 text-sm text-slate-500 bg-[#0f1423]" disabled>
-                <p class="text-[10px] text-slate-500 mt-1 italic">*Terkunci dari penyedia login (Email/Google).</p>
-              </div>
-              <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1.5">Universitas / Institusi</label>
-                <input type="text" class="form-input w-full rounded-xl px-4 py-2.5 text-sm bg-[#0f1423]" placeholder="Opsional">
-              </div>
-              <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1.5">Nomor Induk Mahasiswa (NIM)</label>
-                <input type="text" class="form-input w-full rounded-xl px-4 py-2.5 text-sm bg-[#0f1423]" placeholder="Opsional">
-              </div>
-            </div>
-
-            <div class="mt-6 flex justify-end">
-              <button id="save-btn" type="submit" class="w-full sm:w-auto bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl px-6 py-2.5 text-sm font-semibold transition-colors shadow-lg shadow-indigo-500/20">
-                Simpan Profil
-              </button>
-            </div>
-          </form>
-        </section>
-
-        <section class="glass rounded-2xl p-4 sm:p-6 md:p-8 fade-up delay-2">
-          <h2 class="text-base sm:text-lg font-display text-slate-200 mb-6 flex items-center gap-2 border-b border-white/5 pb-4">
-            <i class="fa-solid fa-sliders text-emerald-400"></i> Preferensi Investasi
-          </h2>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-            
-            <div>
-              <h3 class="text-sm font-semibold text-slate-300 mb-3">Profil Risiko EduVesting</h3>
-              <div class="space-y-3">
-                <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-700 bg-slate-800/50 cursor-pointer hover:border-slate-500 transition-colors">
-                  <input type="radio" name="risk" class="w-4 h-4 text-emerald-500 bg-slate-900 border-slate-600 focus:ring-emerald-500 focus:ring-2">
-                  <div>
-                    <p class="text-sm font-medium text-slate-200">Konservatif</p>
-                    <p class="text-xs text-slate-500">Fokus pada reksa dana pasar uang dan emas.</p>
-                  </div>
-                </label>
-                
-                <label class="flex items-center gap-3 p-3 rounded-xl border border-emerald-500/50 bg-emerald-500/10 cursor-pointer">
-                  <input type="radio" name="risk" checked class="w-4 h-4 text-emerald-500 bg-slate-900 border-slate-600 focus:ring-emerald-500 focus:ring-2 accent-emerald-500">
-                  <div>
-                    <p class="text-sm font-medium text-emerald-400">Moderat - Agresif</p>
-                    <p class="text-xs text-slate-400">Kombinasi saham bluechip dan sedikit kripto.</p>
-                  </div>
-                </label>
-
-                <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-700 bg-slate-800/50 cursor-pointer hover:border-slate-500 transition-colors">
-                  <input type="radio" name="risk" class="w-4 h-4 text-emerald-500 bg-slate-900 border-slate-600 focus:ring-emerald-500 focus:ring-2">
-                  <div>
-                    <p class="text-sm font-medium text-slate-200">Sangat Agresif</p>
-                    <p class="text-xs text-slate-500">Fokus tinggi pada kripto dan saham lapis 2.</p>
-                  </div>
-                </label>
-              </div>
-            </div>
-
-            <div>
-              <h3 class="text-sm font-semibold text-slate-300 mb-3">Preferensi Tampilan</h3>
-              <div class="space-y-4">
-                <div>
-                  <label class="block text-xs font-medium text-slate-400 mb-1.5">Mata Uang Dasar</label>
-                  <select class="form-input w-full rounded-xl px-4 py-2.5 text-sm appearance-none bg-[#0f1423]">
-                    <option>IDR - Rupiah Indonesia</option>
-                    <option>USD - US Dollar</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-xs font-medium text-slate-400 mb-1.5">Format Tampilan Nominal</label>
-                  <select class="form-input w-full rounded-xl px-4 py-2.5 text-sm appearance-none bg-[#0f1423]">
-                    <option>Penuh (Rp 1.500.000)</option>
-                    <option>Disingkat (Rp 1.5 Juta)</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        <section class="glass rounded-2xl p-4 sm:p-6 md:p-8 fade-up delay-3">
-          <h2 class="text-base sm:text-lg font-display text-slate-200 mb-6 flex items-center gap-2 border-b border-white/5 pb-4">
-            <i class="fa-solid fa-shield-halved text-amber-400"></i> Keamanan & Notifikasi
-          </h2>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-            
-            <div>
-              <h3 class="text-sm font-semibold text-slate-300 mb-4">Pengaturan Keamanan</h3>
-              
-              <div class="flex items-center justify-between p-4 rounded-xl bg-slate-800/40 border border-slate-700/50 mb-4">
-                <div>
-                  <p class="text-sm font-medium text-slate-200 mb-0.5">Autentikasi 2 Langkah (2FA)</p>
-                  <p class="text-xs text-slate-500">Tingkatkan keamanan akun</p>
-                </div>
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" value="" class="sr-only peer">
-                  <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
-                </label>
-              </div>
-
-              <button class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors text-left flex justify-between items-center">
-                <span>Ubah Password Anda</span>
-                <i class="fa-solid fa-chevron-right text-xs text-slate-500"></i>
-              </button>
-            </div>
-
-            <div>
-              <h3 class="text-sm font-semibold text-slate-300 mb-4">Peringatan Sistem</h3>
-              
-              <div class="space-y-4">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-sm font-medium text-slate-200">Alert Margin Call</p>
-                    <p class="text-[10px] text-slate-500">Kirim email jika batas margin >80%</p>
-                  </div>
-                  <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" value="" class="sr-only peer" checked>
-                    <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
-                  </label>
-                </div>
-
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-sm font-medium text-slate-200">AI Rebalancing Alert</p>
-                    <p class="text-[10px] text-slate-500">Rekomendasi jual/beli mingguan dari AI</p>
-                  </div>
-                  <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" value="" class="sr-only peer" checked>
-                    <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
-                  </label>
-                </div>
-
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-sm font-medium text-slate-200">Progress Pencapaian</p>
-                    <p class="text-[10px] text-slate-500">Pemberitahuan pencapaian milestone</p>
-                  </div>
-                  <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" value="" class="sr-only peer">
-                    <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-500"></div>
-                  </label>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-        </section>
-        
-        <footer class="text-center pb-8 mt-12 fade-up delay-3">
-          <p class="text-xs text-slate-500">
-            EduVesting · Sistem Simulasi Portofolio Finansial<br/>
-            <span class="text-slate-400 font-medium mt-3 inline-block">
-              <i class="fa-solid fa-code text-indigo-400 mr-1"></i> Dikembangkan oleh <span class="text-slate-300">Hilmawan Ega Tetama</span>
-            </span><br/>
-            <a href="https://instagram.com/yattchn7" target="_blank" class="text-indigo-400 hover:text-indigo-300 transition-colors text-xs mt-1.5 inline-block border border-indigo-500/30 rounded-full px-3 py-1 bg-indigo-500/10">
-              <i class="fa-brands fa-instagram mr-1"></i> @yattchn7
-            </a>
-          </p>
-        </footer>
-
-      </div>
-    </main>
-  </div>
-
-  <div id="logout-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4 transition-opacity duration-300 opacity-0">
-    <div class="glass rounded-2xl p-6 w-full max-w-sm mx-auto transform scale-95 transition-transform duration-300" id="logout-modal-content">
-      <div class="w-12 h-12 rounded-full bg-rose-500/20 flex items-center justify-center mb-4 mx-auto border border-rose-500/30">
-        <i class="fa-solid fa-right-from-bracket text-rose-400 text-xl"></i>
-      </div>
-      <h3 class="text-lg font-display text-slate-100 text-center mb-2">Konfirmasi Logout</h3>
-      <p class="text-sm text-slate-400 text-center mb-6">Apakah Anda yakin ingin keluar dari sesi saat ini?</p>
-      <div class="flex gap-3">
-        <button onclick="closeLogoutModal()" class="flex-1 py-2.5 rounded-xl text-sm font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-colors">Batal</button>
-        <button onclick="logoutUser()" class="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white bg-rose-500 hover:bg-rose-600 shadow-lg shadow-rose-500/20 transition-colors">Ya, Keluar</button>
+      <div>
+        <p class="text-sm font-semibold text-slate-100">Konfirmasi Logout</p>
+        <p class="text-xs text-slate-500 mt-0.5">Sesi Anda akan diakhiri</p>
       </div>
     </div>
+    <p class="text-xs text-slate-400 leading-relaxed mb-5">Apakah Anda yakin ingin keluar dari EduVesting? Anda perlu login kembali untuk mengakses dashboard.</p>
+    <div class="flex gap-3">
+      <button onclick="closeLogoutModal()" class="btn-cancel-logout flex-1 py-2.5 rounded-xl text-sm font-semibold text-slate-300">
+        <i class="fa-solid fa-xmark mr-1.5"></i> Batal
+      </button>
+      <button onclick="confirmLogout()" class="btn-logout-confirm flex-1 py-2.5 rounded-xl text-sm font-semibold text-white">
+        <i class="fa-solid fa-right-from-bracket mr-1.5"></i> Ya, Logout
+      </button>
+    </div>
   </div>
+</div>
 
-  <script>
-    // ==========================================
-    // UI TOGGLE SCRIPT
-    // ==========================================
-    function toggleSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      const overlay = document.getElementById('sidebar-overlay');
-      sidebar.classList.toggle('-translate-x-full');
-      overlay.classList.toggle('hidden');
-    }
+<div class="relative z-10 flex min-h-screen">
+  
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
 
-    // Modal Logout Controller
-    function showLogoutModal() {
-      const modal = document.getElementById('logout-modal');
-      const content = document.getElementById('logout-modal-content');
-      modal.classList.remove('hidden');
-      // Trigger reflow untuk animasi
-      void modal.offsetWidth;
-      modal.classList.remove('opacity-0');
-      content.classList.remove('scale-95');
-    }
+  <aside id="sidebar" class="fixed top-0 left-0 h-screen w-64 flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out"
+         style="background: rgba(10,14,24,0.95); border-right:1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
+    
+    <button onclick="toggleSidebar()" class="md:hidden absolute top-6 right-4 text-slate-400 hover:text-white">
+      <i class="fa-solid fa-xmark text-xl"></i>
+    </button>
 
-    function closeLogoutModal() {
-      const modal = document.getElementById('logout-modal');
-      const content = document.getElementById('logout-modal-content');
-      modal.classList.add('opacity-0');
-      content.classList.add('scale-95');
-      setTimeout(() => {
-        modal.classList.add('hidden');
-      }, 300);
-    }
+    <div class="px-6 py-6 flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#6366f1,#3b82f6);">
+        <i class="fa-solid fa-chart-line text-white text-sm"></i>
+      </div>
+      <span class="font-display text-lg logo-text">EduVesting</span>
+    </div>
 
-    // ==========================================
-    // INISIALISASI SUPABASE CLIENT 
-    // ==========================================
-    const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    <div class="mx-4 mb-5 p-3 rounded-xl glass-lighter flex items-center gap-3">
+      <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white"
+           style="background:linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
+      <div class="min-w-0">
+        <p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">Memuat...</p>
+      </div>
+    </div>
 
-    // ==========================================
-    // AUTHENTICATION GUARD & INIT (SUPABASE)
-    // ==========================================
-    document.addEventListener('DOMContentLoaded', async () => {
-      try {
-        // 1. Cek sesi aktif Supabase
-        const { data: { session }, error } = await supabaseClient.auth.getSession();
+    <nav class="flex-1 px-2 space-y-0.5 overflow-y-auto">
+      <p class="px-4 py-1.5 text-xs font-semibold text-slate-600 uppercase tracking-widest">Utama</p>
+      <a href="dashboard.html" class="nav-item nav-active flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-indigo-300 text-sm font-medium">
+        <i class="fa-solid fa-gauge-high w-4 text-center text-indigo-400"></i> Dashboard
+      </a>
+      <a href="portfolio.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <i class="fa-solid fa-briefcase w-4 text-center"></i> Portofolio
+      </a>
+      <a href="transactions.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <i class="fa-solid fa-arrow-right-arrow-left w-4 text-center"></i> Transaksi
+      </a>
+      <a href="help.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <i class="fa-solid fa-circle-question w-4 text-center"></i> Pusat Bantuan
+      </a>
+      <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Analisa</p>
+      <a href="insights.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <i class="fa-solid fa-robot w-4 text-center"></i> AI Insights
+      </a>
+      <a href="allocations.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <i class="fa-solid fa-chart-pie w-4 text-center"></i> Alokasi Aset
+      </a>
+      <a href="calculator.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <i class="fa-solid fa-calculator w-4 text-center"></i> Kalkulator Fee
+      </a>
+      <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Akun</p>
+      <a href="settings.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <i class="fa-solid fa-gear w-4 text-center"></i> Pengaturan
+      </a>
+      <button onclick="openLogoutModal()" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm">
+        <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout
+      </button>
+    </nav>
+
+    <div class="px-4 pb-5 pt-3">
+      <div class="rounded-xl p-3 text-xs" style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.15);">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-emerald-400 font-semibold">Harga Kripto: Live</span>
+        </div>
+        <p id="last-refresh" class="text-slate-500">Belum disinkronkan</p>
+      </div>
+    </div>
+  </aside>
+
+  <main class="flex-1 w-full md:ml-64 px-4 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden">
+    
+    <header class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 fade-up">
+      <div class="flex items-center gap-3">
+        <button onclick="toggleSidebar()" class="md:hidden glass w-10 h-10 rounded-xl flex items-center justify-center text-slate-300 hover:text-white transition-colors flex-shrink-0">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div>
+          <h1 id="welcome-user" class="font-display text-xl sm:text-2xl text-slate-100">Memuat...</h1>
+          <p id="header-date" class="text-slate-500 text-xs sm:text-sm mt-0.5"></p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 self-end sm:self-auto">
+        <a href="portfolio.html" class="glass px-4 py-2 rounded-xl text-sm text-slate-300 flex items-center gap-2 hover:border-indigo-500/40 transition-all">
+          <i class="fa-solid fa-plus text-indigo-400"></i> <span class="hidden sm:inline">Kelola Aset</span><span class="sm:hidden">Aset</span>
+        </a>
+        <button onclick="handleRefreshCrypto()" id="refresh-btn" class="relative glass w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-200 transition-colors">
+          <i class="fa-solid fa-rotate" id="refresh-icon"></i>
+        </button>
+      </div>
+    </header>
+
+    <section aria-labelledby="summary-heading" class="mb-8">
+      <h2 id="summary-heading" class="sr-only">Ringkasan Portofolio</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
-        if (error || !session) {
-          window.location.href = 'login.html';
-          return;
-        }
+        <div class="glass rounded-2xl p-5 metric-card fade-up delay-1" style="border-color: rgba(99,102,241,0.2);">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Total Ekuitas</p>
+              <p id="m-equity" class="font-display text-2xl text-slate-100">Rp 0</p>
+              <div class="flex items-center gap-1.5 mt-2">
+                <span id="m-equity-pct" class="text-sm font-semibold flex items-center gap-1"></span>
+                <span class="text-slate-600 text-xs">vs modal awal</span>
+              </div>
+            </div>
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: rgba(99,102,241,0.15);">
+              <i class="fa-solid fa-wallet text-indigo-400"></i>
+            </div>
+          </div>
+        </div>
 
-        // 2. Ambil data user dari sesi Supabase
-        const user = session.user;
-        const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
-        
-        // 3. Update UI Sidebar & Settings Form
-        document.getElementById('sidebar-user-name').innerText = displayName;
-        document.getElementById('sidebar-user-initial').innerText = displayName.charAt(0).toUpperCase();
-        
-        document.getElementById('setting-name').value = displayName;
-        document.getElementById('setting-email').value = user.email;
-        document.getElementById('settings-avatar').innerText = displayName.charAt(0).toUpperCase();
+        <div class="glass rounded-2xl p-5 metric-card fade-up delay-2">
+          <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Floating P/L</p>
+          <p id="m-pl" class="font-display text-2xl">Rp 0</p>
+          <p class="text-slate-500 text-xs mt-2">Belum direalisasikan</p>
+          <div class="progress-bar mt-3"><div id="m-pl-bar" class="progress-fill" style="width:0%; background: linear-gradient(90deg, #10b981, #34d399);"></div></div>
+        </div>
 
-      } catch (err) {
-        console.error("Gagal memuat halaman pengaturan:", err);
+        <div class="glass rounded-2xl p-5 metric-card fade-up delay-3">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Kas / BP</p>
+              <p id="m-cash" class="font-display text-2xl text-slate-100">Rp 0</p>
+              <p id="m-cash-warn" class="text-xs text-amber-400 mt-2 flex items-center gap-1 hidden">
+                <i class="fa-solid fa-triangle-exclamation text-xs"></i> Saldo kas rendah
+              </p>
+            </div>
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: rgba(245,158,11,0.12);">
+              <i class="fa-solid fa-bolt text-amber-400"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass rounded-2xl p-5 metric-card fade-up delay-4">
+          <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Rasio Kas</p>
+          <div class="flex items-end gap-2">
+            <p id="m-cashpct" class="font-display text-2xl text-slate-100">0%</p>
+            <p class="text-slate-500 text-xs mb-1">dari total</p>
+          </div>
+          <div class="progress-bar mt-3"><div id="m-cashpct-bar" class="progress-fill" style="width:0%; background: linear-gradient(90deg, #06b6d4, #22d3ee);"></div></div>
+          <p id="m-cashpct-note" class="text-xs mt-2 text-slate-600"></p>
+        </div>
+
+      </div>
+    </section>
+
+    <section aria-labelledby="allocation-heading" class="mb-8 fade-up delay-2">
+      <h2 id="allocation-heading" class="font-display text-base text-slate-300 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-chart-pie text-indigo-400 text-sm"></i> Alokasi Aset & Manajemen Keuangan
+      </h2>
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-5">
+
+        <div class="glass rounded-2xl p-4 sm:p-6 lg:col-span-3">
+          <div class="flex items-center justify-between mb-5">
+            <p class="text-sm font-semibold text-slate-300">Proporsi Portofolio</p>
+            <span class="text-xs text-slate-500" id="alloc-updated">—</span>
+          </div>
+          <div id="alloc-stack" class="flex rounded-full overflow-hidden h-4 mb-6 gap-0.5"></div>
+          <div id="alloc-legend" class="space-y-3"></div>
+        </div>
+
+        <div class="glass rounded-2xl p-4 sm:p-6 lg:col-span-2 flex flex-col">
+          <div class="flex items-center gap-2 mb-4">
+            <i class="fa-solid fa-sliders text-cyan-400 text-sm"></i>
+            <p class="text-sm font-semibold text-slate-300">Budget & Fee Optimizer</p>
+          </div>
+          <div class="space-y-3 flex-1">
+            <div>
+              <label class="text-xs text-slate-500 mb-1 block">Budget Investasi Bulan Ini (Rp)</label>
+              <input id="budget-input" type="number" min="0" placeholder="500000" class="form-input w-full rounded-xl px-4 py-2.5 text-sm text-slate-200 font-medium" />
+            </div>
+            <div>
+              <label class="text-xs text-slate-500 mb-1 block">Instrumen Target</label>
+              <select id="instrument-select" class="form-input w-full rounded-xl px-4 py-2.5 text-sm text-slate-200 appearance-none">
+                <option value="saham">Saham IDX (fee 0.19%)</option>
+                <option value="kripto">Kripto Spot (fee 0.10%)</option>
+                <option value="emas">Emas (fee 0.50%)</option>
+                <option value="reksadana">Reksa Dana (tanpa fee beli)</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-500 mb-1 block">Harga per Unit Saat Ini (Rp)</label>
+              <input id="price-input" type="number" min="0" placeholder="Isi harga terbaru" class="form-input w-full rounded-xl px-4 py-2.5 text-sm text-slate-200 font-medium" />
+              <p class="text-xs text-slate-600 mt-1">Otomatis terisi dari harga terakhir aset Anda.</p>
+            </div>
+          </div>
+          <button onclick="calcFee()" class="btn-primary mt-4 w-full py-2.5 rounded-xl text-sm font-semibold text-white">
+            <i class="fa-solid fa-calculator mr-2"></i>Hitung Optimal
+          </button>
+          <div id="fee-result" class="mt-3 rounded-xl p-3 text-sm hidden" style="background:rgba(6,182,212,0.07); border:1px solid rgba(6,182,212,0.2);">
+            <p id="fee-text" class="text-slate-300"></p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section aria-labelledby="ai-heading" class="mb-8 fade-up delay-3">
+      <h2 id="ai-heading" class="font-display text-base text-slate-300 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-robot text-violet-400 text-sm"></i> Analisis Portofolio
+      </h2>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+        <div class="ai-card p-4 sm:p-6 lg:col-span-2">
+          <div class="relative z-10">
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
+                   style="background: linear-gradient(135deg,rgba(124,58,237,0.4), rgba(99,102,241,0.3)); border:1px solid rgba(124,58,237,0.3);">
+                <i id="ai-main-icon" class="fa-solid fa-brain text-violet-300 text-lg sm:text-xl"></i>
+              </div>
+              <div>
+                <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+                  <p id="ai-main-title" class="text-sm font-semibold text-slate-200">Analisis Terkini</p>
+                  <span class="badge" style="background:rgba(124,58,237,0.2);color:#c4b5fd;border:1px solid rgba(124,58,237,0.3);">Otomatis</span>
+                </div>
+                <p id="ai-main-text" class="text-slate-400 text-xs sm:text-sm leading-relaxed"></p>
+              </div>
+            </div>
+            <div class="grid grid-cols-3 gap-2 sm:gap-3 mt-5">
+              <div class="rounded-xl p-2 sm:p-3 text-center" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06);">
+                <p class="text-[10px] sm:text-xs text-slate-500 mb-1">Risiko</p>
+                <p id="ai-risk" class="text-amber-400 font-display text-base sm:text-lg">—</p>
+              </div>
+              <div class="rounded-xl p-2 sm:p-3 text-center" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06);">
+                <p class="text-[10px] sm:text-xs text-slate-500 mb-1">Diversifikasi</p>
+                <p id="ai-diversification" class="text-emerald-400 font-display text-base sm:text-lg">—</p>
+              </div>
+              <div class="rounded-xl p-2 sm:p-3 text-center" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06);">
+                <p class="text-[10px] sm:text-xs text-slate-500 mb-1">Skor</p>
+                <p id="ai-score" class="text-indigo-400 font-display text-base sm:text-lg">—</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="ai-tips" class="space-y-3"></div>
+
+      </div>
+      <p class="text-xs text-slate-600 mt-3">* Analisis dihitung otomatis (rule-based), bukan rekomendasi finansial berlisensi.</p>
+    </section>
+
+    <section aria-labelledby="portfolio-heading" class="mb-8 fade-up delay-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+        <h2 id="portfolio-heading" class="font-display text-base text-slate-300 flex items-center gap-2">
+          <i class="fa-solid fa-table-list text-blue-400 text-sm"></i> Posisi Multi-Aset
+        </h2>
+        <a href="portfolio.html" class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1 font-medium">
+          Kelola <span class="hidden sm:inline">di halaman Portofolio</span> <i class="fa-solid fa-chevron-right text-xs"></i>
+        </a>
+      </div>
+      <div class="glass rounded-2xl overflow-hidden w-full">
+        <div class="overflow-x-auto w-full">
+          <table class="w-full text-sm min-w-[700px]">
+            <thead>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Aset / Ticker</th>
+                <th class="px-4 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Tipe</th>
+                <th class="px-4 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Harga Avg</th>
+                <th class="px-4 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Harga Terakhir</th>
+                <th class="px-4 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">QTY</th>
+                <th class="px-4 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Harga</th>
+                <th class="px-5 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Floating P/L</th>
+              </tr>
+            </thead>
+            <tbody id="dash-asset-tbody"></tbody>
+          </table>
+        </div>
+        <div id="dash-empty-state" class="px-5 py-10 text-center hidden">
+          <i class="fa-solid fa-inbox text-3xl text-slate-700 mb-3"></i>
+          <p class="text-slate-500 text-sm mb-3">Belum ada posisi. Tambahkan aset Anda di halaman Portofolio.</p>
+          <a href="portfolio.html" class="btn-primary inline-flex items-center gap-2 py-2 px-4 rounded-xl text-sm font-semibold text-white">
+            <i class="fa-solid fa-plus"></i> Tambah Aset
+          </a>
+        </div>
+        <div id="dash-table-footer" class="px-5 py-3 flex items-center justify-between hidden" style="border-top: 1px solid rgba(255,255,255,0.05);">
+          <p id="dash-count-text" class="text-xs text-slate-500"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FAQ SECTION (pengganti Target Dana) ===== -->
+    <section aria-labelledby="faq-heading" class="mb-10 fade-up delay-5">
+      <div class="flex items-center justify-between mb-4">
+        <h2 id="faq-heading" class="font-display text-base text-slate-300 flex items-center gap-2">
+          <i class="fa-solid fa-circle-question text-cyan-400 text-sm"></i> Pusat Bantuan & FAQ
+        </h2>
+        <a href="help.html" class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1 font-medium">
+          Lihat semua <i class="fa-solid fa-chevron-right text-xs"></i>
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+        <!-- FAQ Accordion -->
+        <div class="glass rounded-2xl p-5 lg:col-span-2">
+          <p class="text-xs text-slate-500 uppercase tracking-widest font-semibold mb-4">Pertanyaan Umum</p>
+
+          <div class="faq-item">
+            <button class="faq-toggle" onclick="toggleFaq(this)">
+              <span class="faq-q">Apa itu EduVesting dan untuk siapa aplikasi ini?</span>
+              <i class="fa-solid fa-chevron-down faq-icon"></i>
+            </button>
+            <div class="faq-answer">
+              <p class="text-xs text-slate-400 leading-relaxed">EduVesting adalah simulasi portofolio investasi yang dirancang khusus untuk mahasiswa dan pemula. Aplikasi ini membantu Anda belajar mengelola aset multi-instrumen — saham, kripto, emas, dan reksa dana — dalam lingkungan yang aman tanpa risiko uang nyata.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-toggle" onclick="toggleFaq(this)">
+              <span class="faq-q">Bagaimana cara menambahkan aset ke portofolio?</span>
+              <i class="fa-solid fa-chevron-down faq-icon"></i>
+            </button>
+            <div class="faq-answer">
+              <p class="text-xs text-slate-400 leading-relaxed">Klik menu <strong class="text-slate-300">Portofolio</strong> di sidebar, lalu klik tombol <strong class="text-slate-300">+ Tambah Aset</strong>. Isi ticker, nama aset, tipe instrumen, harga rata-rata beli, dan jumlah (qty). Data tersimpan otomatis di perangkat Anda.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-toggle" onclick="toggleFaq(this)">
+              <span class="faq-q">Apakah harga aset diperbarui secara real-time?</span>
+              <i class="fa-solid fa-chevron-down faq-icon"></i>
+            </button>
+            <div class="faq-answer">
+              <p class="text-xs text-slate-400 leading-relaxed">Harga kripto diperbarui secara live melalui API publik. Untuk saham IDX, harga dapat diperbarui manual atau melalui tombol <strong class="text-slate-300">Sinkron</strong> di header. Pastikan koneksi internet Anda aktif untuk mendapatkan harga terkini.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-toggle" onclick="toggleFaq(this)">
+              <span class="faq-q">Apakah data saya aman dan tersimpan di mana?</span>
+              <i class="fa-solid fa-chevron-down faq-icon"></i>
+            </button>
+            <div class="faq-answer">
+              <p class="text-xs text-slate-400 leading-relaxed">Data portofolio Anda tersimpan secara lokal di browser (localStorage) dan dienkripsi melalui autentikasi Supabase. Tidak ada data finansial Anda yang dibagikan ke pihak ketiga. Selalu lakukan ekspor backup secara berkala.</p>
+            </div>
+          </div>
+
+          <div class="faq-item" style="border-bottom:none;">
+            <button class="faq-toggle" onclick="toggleFaq(this)">
+              <span class="faq-q">Apa perbedaan Floating P/L dan Realized P/L?</span>
+              <i class="fa-solid fa-chevron-down faq-icon"></i>
+            </button>
+            <div class="faq-answer">
+              <p class="text-xs text-slate-400 leading-relaxed"><strong class="text-slate-300">Floating P/L</strong> adalah keuntungan/kerugian yang belum direalisasikan — posisi masih terbuka. <strong class="text-slate-300">Realized P/L</strong> adalah profit/loss yang sudah dikunci setelah aset dijual. Dashboard ini menampilkan Floating P/L dari posisi aktif Anda.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Info Cards -->
+        <div class="flex flex-col gap-4">
+
+          <div class="glass rounded-2xl p-5" style="border-color: rgba(6,182,212,0.2);">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(6,182,212,0.12);">
+                <i class="fa-solid fa-book-open text-cyan-400 text-sm"></i>
+              </div>
+              <p class="text-sm font-semibold text-slate-200">Panduan Cepat</p>
+            </div>
+            <ul class="space-y-2">
+              <li class="flex items-start gap-2 text-xs text-slate-400">
+                <i class="fa-solid fa-circle-check text-emerald-500 mt-0.5 flex-shrink-0"></i>
+                Tambah kas awal di menu <span class="text-slate-300 font-medium">Transaksi</span>
+              </li>
+              <li class="flex items-start gap-2 text-xs text-slate-400">
+                <i class="fa-solid fa-circle-check text-emerald-500 mt-0.5 flex-shrink-0"></i>
+                Input aset portofolio di <span class="text-slate-300 font-medium">Portofolio</span>
+              </li>
+              <li class="flex items-start gap-2 text-xs text-slate-400">
+                <i class="fa-solid fa-circle-check text-emerald-500 mt-0.5 flex-shrink-0"></i>
+                Pantau analisis di <span class="text-slate-300 font-medium">AI Insights</span>
+              </li>
+              <li class="flex items-start gap-2 text-xs text-slate-400">
+                <i class="fa-solid fa-circle-check text-emerald-500 mt-0.5 flex-shrink-0"></i>
+                Hitung biaya di <span class="text-slate-300 font-medium">Kalkulator Fee</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="glass rounded-2xl p-5" style="border-color: rgba(99,102,241,0.2);">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(99,102,241,0.12);">
+                <i class="fa-solid fa-envelope text-indigo-400 text-sm"></i>
+              </div>
+              <p class="text-sm font-semibold text-slate-200">Hubungi Developer</p>
+            </div>
+            <p class="text-xs text-slate-500 mb-3 leading-relaxed">Ada bug atau saran fitur? Hubungi langsung pengembang EduVesting.</p>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-xs">
+                <i class="fa-solid fa-user text-slate-600 w-3.5"></i>
+                <span class="text-slate-400">Hilmawan Ega Tetama</span>
+              </div>
+              <a href="https://instagram.com/yattchn7" target="_blank" rel="noopener noreferrer"
+                 class="flex items-center gap-2 text-xs text-indigo-400 hover:text-indigo-300 transition-colors group">
+                <i class="fa-brands fa-instagram w-3.5 group-hover:scale-110 transition-transform"></i>
+                <span>@yattchn7</span>
+                <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-50"></i>
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <footer class="text-center pb-8 pt-2 border-t border-white/5">
+      <p class="text-xs text-slate-600 mb-1">EduVesting · Simulasi Portofolio untuk Mahasiswa</p>
+      <p class="text-xs text-slate-700">
+        Dibuat oleh 
+        <a href="https://instagram.com/yattchn7" target="_blank" rel="noopener noreferrer"
+           class="text-slate-600 hover:text-indigo-400 transition-colors font-medium">
+          Hilmawan Ega Tetama
+        </a>
+        &nbsp;·&nbsp;
+        <a href="https://instagram.com/yattchn7" target="_blank" rel="noopener noreferrer"
+           class="text-slate-600 hover:text-indigo-400 transition-colors">
+          <i class="fa-brands fa-instagram mr-0.5"></i>@yattchn7
+        </a>
+      </p>
+    </footer>
+
+  </main>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+  // UI TOGGLE SCRIPT
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+  }
+
+  // LOGOUT MODAL
+  function openLogoutModal() {
+    document.getElementById('logout-modal').classList.remove('hidden');
+  }
+  function closeLogoutModal() {
+    document.getElementById('logout-modal').classList.add('hidden');
+  }
+  async function confirmLogout() {
+    await supabaseClient.auth.signOut();
+    localStorage.removeItem('userData');
+    window.location.href = 'login.html';
+  }
+  // Close on backdrop click
+  document.getElementById('logout-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeLogoutModal();
+  });
+
+  // FAQ ACCORDION
+  function toggleFaq(btn) {
+    const answer = btn.nextElementSibling;
+    const icon = btn.querySelector('.faq-icon');
+    const isOpen = answer.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('open'));
+    document.querySelectorAll('.faq-icon').forEach(i => i.classList.remove('open'));
+    // Toggle current
+    if (!isOpen) {
+      answer.classList.add('open');
+      icon.classList.add('open');
+    }
+  }
+
+  // SUPABASE CONFIG
+  const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // AUTH GUARD
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const { data: { session }, error } = await supabaseClient.auth.getSession();
+      if (error || !session) {
+        window.location.href = 'login.html';
+        return;
       }
-    });
-
-    // ==========================================
-    // LOGOUT (SUPABASE)
-    // ==========================================
-    async function logoutUser() {
-      await supabaseClient.auth.signOut();
-      localStorage.removeItem('userData'); // Membersihkan cache sisaan
-      window.location.href = 'login.html';
-    }
-
-    // ==========================================
-    // FUNGSI SIMPAN PROFIL KE SUPABASE
-    // ==========================================
-    async function saveProfile(e) {
-      e.preventDefault();
+      const user = session.user;
+      const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
       
-      const btn = document.getElementById('save-btn');
-      const originalText = btn.innerText;
-      btn.innerText = 'Menyimpan...';
-      btn.disabled = true;
+      document.getElementById('welcome-user').innerText = `Selamat Datang, ${displayName} 👋`;
+      document.getElementById('sidebar-user-name').innerText = displayName;
+      document.getElementById('sidebar-user-initial').innerText = displayName.charAt(0).toUpperCase();
 
-      try {
-        const newName = document.getElementById('setting-name').value.trim();
+      document.getElementById('header-date').innerText = new Date().toLocaleDateString('id-ID', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+      });
+      
+      document.getElementById('instrument-select').addEventListener('change', prefillPrice);
+      
+      renderDashboard();
+      prefillPrice();
+      handleRefreshCrypto(true);
+    } catch (err) { console.error("Gagal inisialisasi dashboard:", err); }
+  });
 
-        if (!newName) {
-          alert('Nama tidak boleh kosong!');
-          return;
-        }
+  async function handleRefreshCrypto(silent) {
+    const btn = document.getElementById('refresh-btn');
+    const icon = document.getElementById('refresh-icon');
+    btn.disabled = true; icon.classList.add('spin');
+    const resultCrypto = await EduVesting.refreshCryptoPrices();
+    const resultStock = await EduVesting.refreshStockPrices();
+    icon.classList.remove('spin'); btn.disabled = false;
+    const note = document.getElementById('last-refresh');
+    if ((resultCrypto && resultCrypto.error) || (resultStock && resultStock.error)) {
+      note.innerText = 'Gagal sinkron (cek koneksi)';
+      if (!silent) alert('Gagal mengambil sebagian harga realtime.');
+    } else { note.innerText = 'Sinkron ' + new Date().toLocaleTimeString('id-ID'); }
+    renderDashboard();
+  }
 
-        // Mengirim instruksi update metadata (nama) ke Supabase Auth
-        const { data, error } = await supabaseClient.auth.updateUser({
-          data: { full_name: newName }
-        });
+  function renderDashboard() {
+    const metrics = EduVesting.computeMetrics();
+    renderSummary(metrics); renderAllocation(metrics); renderInsights(metrics); renderTable(metrics); animateBars();
+  }
 
-        if (error) throw error;
+  function renderSummary(m) {
+    document.getElementById('m-equity').innerText = EduVesting.formatRupiah(m.totalEquity);
+    const equityPctEl = document.getElementById('m-equity-pct');
+    const equityPct = m.totalCost > 0 ? ((m.totalEquity - m.totalCost) / m.totalCost) * 100 : 0;
+    const eqSign = equityPct >= 0 ? '+' : '';
+    equityPctEl.innerHTML = `<i class="fa-solid fa-arrow-trend-${equityPct >= 0 ? 'up' : 'down'} text-xs"></i> ${eqSign}${equityPct.toFixed(1)}%`;
+    equityPctEl.className = 'text-sm font-semibold flex items-center gap-1 ' + (equityPct >= 0 ? 'text-emerald-400' : 'text-rose-400');
 
-        // Update UI secara real-time setelah berhasil disimpan
-        document.getElementById('sidebar-user-name').innerText = newName;
-        document.getElementById('sidebar-user-initial').innerText = newName.charAt(0).toUpperCase();
-        document.getElementById('settings-avatar').innerText = newName.charAt(0).toUpperCase();
+    const plEl = document.getElementById('m-pl');
+    const plSign = m.floatingPL >= 0 ? '+' : '';
+    plEl.innerText = plSign + EduVesting.formatRupiah(m.floatingPL);
+    plEl.className = 'font-display text-2xl ' + (m.floatingPL >= 0 ? 'text-emerald-400' : 'text-rose-400');
+    document.getElementById('m-pl-bar').style.width = Math.min(100, Math.abs(m.plPercent)) + '%';
+    document.getElementById('m-pl-bar').style.background = m.floatingPL >= 0 ? 'linear-gradient(90deg, #10b981, #34d399)' : 'linear-gradient(90deg, #f43f5e, #fb7185)';
 
-        alert('Profil berhasil diperbarui!');
-      } catch (error) {
-        console.error('Error updating profile:', error.message);
-        alert('Gagal menyimpan profil. Silakan coba lagi.');
-      } finally {
-        btn
+    document.getElementById('m-cash').innerText = EduVesting.formatRupiah(m.cash);
+    document.getElementById('m-cash-warn').classList.toggle('hidden', m.cashPercent >= 10);
+    document.getElementById('m-cashpct').innerText = m.cashPercent.toFixed(0) + '%';
+    document.getElementById('m-cashpct-bar').style.width = Math.min(100, m.cashPercent) + '%';
+    
+    const note = document.getElementById('m-cashpct-note');
+    if (m.cashPercent < 10) { note.innerText = 'Buffer kas tipis — pertimbangkan menambah kas.'; note.className = 'text-xs mt-2 text-amber-400'; }
+    else if (m.cashPercent > 50) { note.innerText = 'Kas cukup besar — bisa diinvestasikan.'; note.className = 'text-xs mt-2 text-cyan-400'; }
+    else { note.innerText = 'Rasio kas dalam rentang sehat.'; note.className = 'text-xs mt-2 text-emerald-400'; }
+  }
+
+  function renderAllocation(m) {
+    const stack = document.getElementById('alloc-stack'); const legend = document.getElementById('alloc-legend');
+    stack.innerHTML = ''; legend.innerHTML = '';
+    document.getElementById('alloc-updated').innerText = m.assets.length ? 'Pembaruan: ' + new Date().toLocaleTimeString('id-ID') : '—';
+    const items = [...m.allocation];
+    if (m.cash > 0) items.push({ type: 'cash', label: 'Kas Tunai', value: m.cash, percent: m.cashPercent, gradient: ['#475569', '#94a3b8'] });
+
+    if (!items.length) { legend.innerHTML = '<p class="text-sm text-slate-500 text-center py-4">Belum ada data alokasi.</p>'; return; }
+
+    items.forEach(it => {
+      const seg = document.createElement('div');
+      seg.style.width = it.percent.toFixed(2) + '%';
+      seg.style.background = `linear-gradient(90deg,${it.gradient[0]},${it.gradient[1]})`;
+      seg.title = `${it.label} ${it.percent.toFixed(1)}%`; stack.appendChild(seg);
+
+      const row = document.createElement('div'); row.className = 'flex items-center gap-3';
+      row.innerHTML = `
+        <span class="w-3 h-3 rounded-sm flex-shrink-0" style="background: linear-gradient(135deg,${it.gradient[0]},${it.gradient[1]});"></span>
+        <span class="text-sm text-slate-300 flex-1">${it.label}</span>
+        <div class="flex-1 px-2 hidden sm:block"><div class="alloc-bar" style="width:${it.percent.toFixed(2)}%; background:linear-gradient(90deg,${it.gradient[0]},${it.gradient[1]});"></div></div>
+        <span class="text-sm font-semibold text-slate-200 w-12 text-right">${it.percent.toFixed(0)}%</span>
+        <span class="text-xs text-slate-500 w-24 sm:w-32 text-right">${EduVesting.formatRupiah(it.value)}</span>
+      `;
+      legend.appendChild(row);
+    });
+  }
+
+  function renderInsights(m) {
+    const insights = EduVesting.generateInsights(m);
+    const toneColor = { rose: '#fb7185', amber: '#fbbf24', emerald: '#34d399', cyan: '#22d3ee', indigo: '#a5b4fc' };
+
+    const main = insights[0];
+    document.getElementById('ai-main-title').innerText = main.title;
+    document.getElementById('ai-main-text').innerText = main.text;
+    document.getElementById('ai-main-icon').className = `fa-solid ${main.icon} text-lg sm:text-xl`;
+    document.getElementById('ai-main-icon').style.color = toneColor[main.tone] || '#c4b5fd';
+
+    const volatilePct = m.totalEquity > 0 ? ((m.byType.kripto + m.byType.saham) / m.totalEquity) * 100 : 0;
+    let riskLabel = 'Rendah', riskColor = 'text-emerald-400';
+    if (volatilePct > 60) { riskLabel = 'Tinggi'; riskColor = 'text-rose-400'; } else if (volatilePct > 30) { riskLabel = 'Sedang'; riskColor = 'text-amber-400'; }
+    
+    const riskEl = document.getElementById('ai-risk');
+    riskEl.innerText = m.assets.length ? riskLabel : '—'; riskEl.className = 'font-display text-base sm:text-lg ' + riskColor;
+
+    const typeCount = Object.values(m.byType).filter(v => v > 0).length;
+    document.getElementById('ai-diversification').innerText = typeCount >= 3 ? 'Baik' : typeCount === 2 ? 'Cukup' : typeCount === 1 ? 'Kurang' : '—';
+
+    let score = 50;
+    if (m.assets.length) { score = 40 + typeCount * 10 + Math.min(20, m.cashPercent) - (volatilePct > 60 ? 15 : 0); score = Math.max(10, Math.min(95, Math.round(score))); }
+    document.getElementById('ai-score').innerText = m.assets.length ? score + '/100' : '—';
+
+    const tips = document.getElementById('ai-tips'); tips.innerHTML = '';
+    insights.slice(1, 4).forEach(tip => {
+      const div = document.createElement('div'); div.className = 'glass rounded-xl p-4 flex items-start gap-3 transition-all cursor-default';
+      div.innerHTML = `
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:${toneColor[tip.tone]}22;">
+          <i class="fa-solid ${tip.icon} text-xs" style="color:${toneColor[tip.tone]}"></i>
+        </div>
+        <div>
+          <p class="text-xs font-semibold text-slate-300 mb-0.5">${tip.title}</p>
+          <p class="text-xs text-slate-500 leading-relaxed">${tip.text}</p>
+        </div>`;
+      tips.appendChild(div);
+    });
+    if (!insights.slice(1).length) tips.innerHTML = '<p class="text-xs text-slate-600 text-center py-6">Tidak ada catatan tambahan.</p>';
+  }
+
+  function renderTable(m) {
+    const tbody = document.getElementById('dash-asset-tbody'); const emptyState = document.getElementById('dash-empty-state'); const footer = document.getElementById('dash-table-footer');
+    tbody.innerHTML = '';
+    if (!m.assets.length) { emptyState.classList.remove('hidden'); footer.classList.add('hidden'); return; }
+    emptyState.classList.add('hidden'); footer.classList.remove('hidden');
+    document.getElementById('dash-count-text').innerText = `Menampilkan ${m.assets.length} posisi aktif`;
+
+    m.assets.forEach(a => {
+      const def = EduVesting.ASSET_TYPES[a.type]; const pl = (a.lastPrice - a.avgPrice) * a.qty;
+      const plPct = a.avgPrice > 0 ? ((a.lastPrice - a.avgPrice) / a.avgPrice) * 100 : 0;
+      const plColor = pl >= 0 ? 'text-emerald-400' : 'text-rose-400'; const sign = pl >= 0 ? '+' : '';
+      const totalHarga = a.avgPrice * a.qty;
+
+      const tr = document.createElement('tr'); tr.className = 'portfolio-row';
+      tr.innerHTML = `
+        <td class="px-5 py-4">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0" style="background:${def.badgeBg}; color:${def.badgeColor};">${a.ticker.slice(0,2)}</div>
+            <div><p class="font-medium text-slate-200">${a.ticker}</p><p class="text-xs text-slate-500">${a.name}</p></div>
+          </div>
+        </td>
+        <td class="px-4 py-4"><span class="badge" style="background:${def.badgeBg};color:${def.badgeColor};border:1px solid ${def.badgeBorder};">${def.label}</span></td>
+        <td class="px-4 py-4 text-right text-slate-300 font-medium tabular-nums">${EduVesting.formatRupiah(a.avgPrice)}</td>
+        <td class="px-4 py-4 text-right text-slate-200 font-semibold tabular-nums">${EduVesting.formatRupiah(a.lastPrice)}</td>
+        <td class="px-4 py-4 text-right text-slate-400 tabular-nums">${EduVesting.formatNumber(a.qty)} ${def.unit}</td>
+        <td class="px-4 py-4 text-right text-slate-300 font-medium tabular-nums">${EduVesting.formatRupiah(totalHarga)}</td>
+        <td class="px-5 py-4 text-right">
+          <span class="${plColor} font-semibold tabular-nums">${sign}${EduVesting.formatRupiah(pl)}</span>
+          <p class="${plColor} text-xs tabular-nums">${sign}${plPct.toFixed(2)}%</p>
+        </td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function prefillPrice() {
+    const instrument = document.getElementById('instrument-select').value; const assets = EduVesting.getAssets().filter(a => a.type === instrument && a.lastPrice > 0); const priceInput = document.getElementById('price-input');
+    if (assets.length) { priceInput.value = Math.round(assets.reduce((s, a) => s + a.lastPrice, 0) / assets.length); } else { priceInput.value = ''; }
+  }
+
+  function calcFee() {
+    const budget = parseFloat(document.getElementById('budget-input').value) || 0; const instrument = document.getElementById('instrument-select').value; const price = parseFloat(document.getElementById('price-input').value) || 0;
+    const def = EduVesting.ASSET_TYPES[instrument]; const resultEl = document.getElementById('fee-result'); const textEl = document.getElementById('fee-text'); resultEl.classList.remove('hidden');
+    if (budget <= 0 || price <= 0) { textEl.innerHTML = `<span class="text-amber-400">Isi Budget dan Harga per Unit.</span>`; return; }
+    const fee = budget * def.feeRate; const netBudget = budget - fee; const lotDivisor = instrument === 'saham' ? 100 : 1; const maxUnit = Math.floor(netBudget / price / lotDivisor);
+    textEl.innerHTML = `<span class="text-cyan-400 font-semibold">Fee:</span><span class="text-slate-300"> ${EduVesting.formatRupiah(fee)}</span> &nbsp;·&nbsp; <span class="text-cyan-400 font-semibold">Net:</span><span class="text-slate-300"> ${EduVesting.formatRupiah(netBudget)}</span><br/><span class="text-emerald-400 font-semibold">Maks. Beli:</span><span class="text-slate-200 font-medium"> ~${maxUnit > 0 ? maxUnit : '<1'} ${def.unit}${instrument==='saham' ? ' (' + (maxUnit*100) + ' lbr)' : ''}</span>`;
+  }
+
+  function animateBars() { document.querySelectorAll('.alloc-bar, .progress-fill').forEach((bar, i) => { const target = bar.style.width; bar.style.width = '0'; setTimeout(() => { bar.style.width = target; }, 200 + i * 60); }); }
+</script>
+</body>
+</html>
