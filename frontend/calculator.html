@@ -84,8 +84,10 @@
 
   <div class="relative z-10 flex min-h-screen">
 
+    <!-- Sidebar Overlay -->
     <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
 
+    <!-- Sidebar -->
     <aside id="sidebar" class="fixed top-0 left-0 h-screen w-64 flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out"
            style="background: rgba(10,14,24,0.95); border-right: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
 
@@ -93,6 +95,7 @@
         <i class="fa-solid fa-xmark text-xl"></i>
       </button>
 
+      <!-- Sidebar Logo -->
       <div class="px-6 py-6 flex items-center gap-3">
         <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg,#6366f1,#3b82f6);">
           <i class="fa-solid fa-chart-line text-white text-sm"></i>
@@ -100,6 +103,7 @@
         <span class="font-display text-lg logo-text font-bold">EduVesting</span>
       </div>
 
+      <!-- User Profile Box -->
       <div class="mx-4 mb-5 p-3 rounded-xl glass-lighter flex items-center gap-3">
         <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white overflow-hidden" style="background: linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
         <div class="min-w-0">
@@ -107,6 +111,7 @@
         </div>
       </div>
 
+      <!-- Navigation -->
       <nav class="flex-1 px-2 space-y-0.5 overflow-y-auto">
         <p class="px-4 py-1.5 text-xs font-semibold text-slate-600 uppercase tracking-widest">Utama</p>
 
@@ -131,6 +136,7 @@
         <a href="allocations.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
           <i class="fa-solid fa-chart-pie w-4 text-center"></i> Alokasi Aset
         </a>
+        <!-- ACTIVE MENU DIUBAH KE INDIGO -->
         <a href="calculator.html" class="nav-item nav-active flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-indigo-300 text-sm font-semibold">
           <i class="fa-solid fa-calculator w-4 text-center text-indigo-400"></i> Kalkulator Investasi
         </a>
@@ -139,14 +145,16 @@
         <a href="settings.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
           <i class="fa-solid fa-gear w-4 text-center"></i> Pengaturan
         </a>
-        <a href="logout.html" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm">
+        <button onclick="logoutUser()" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm hover:bg-rose-500/10 transition">
           <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout
-        </a>
+        </button>
       </nav>
     </aside>
 
+    <!-- Main Content Area -->
     <main class="flex-1 w-full md:ml-64 px-4 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden flex flex-col">
 
+      <!-- Topbar Mobile -->
       <div class="md:hidden flex items-center justify-between mb-6 fade-up">
         <div class="flex items-center gap-3">
           <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#6366f1,#3b82f6);">
@@ -159,6 +167,7 @@
         </button>
       </div>
 
+      <!-- Header -->
       <header class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-4 fade-up">
         <div>
           <h1 class="font-display text-2xl sm:text-3xl text-slate-100 font-semibold mb-1 flex items-center gap-3">
@@ -168,6 +177,7 @@
         </div>
       </header>
 
+      <!-- Tabs Navigation (Dihapus Position Size & Asset Allocation) -->
       <div class="flex gap-2 overflow-x-auto hide-scroll pb-4 mb-2 fade-up delay-1 border-b border-slate-800">
         <button onclick="switchTab('stock-fee')" class="tab-btn active px-4 py-2 rounded-xl text-sm font-medium border border-slate-700 text-slate-400 hover:text-slate-200 bg-slate-800/50"><i class="fa-solid fa-money-bill-transfer mr-1"></i> Stock Fee</button>
         <button onclick="switchTab('dividend')" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium border border-slate-700 text-slate-400 hover:text-slate-200 bg-slate-800/50"><i class="fa-solid fa-hand-holding-dollar mr-1"></i> Dividen</button>
@@ -176,8 +186,10 @@
         <button onclick="switchTab('risk-reward')" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium border border-slate-700 text-slate-400 hover:text-slate-200 bg-slate-800/50"><i class="fa-solid fa-scale-balanced mr-1"></i> Risk/Reward</button>
       </div>
 
+      <!-- MAIN PANELS -->
       <div class="flex-1 w-full">
 
+        <!-- 1. Stock Fee Calculator -->
         <div id="tab-stock-fee" class="calc-panel active grid-cols-1 lg:grid-cols-12 gap-6">
           <div class="lg:col-span-5 glass rounded-2xl p-6 h-fit">
             <h3 class="font-display text-lg text-emerald-400 mb-4 border-b border-slate-700 pb-2">Parameter Simulasi Saham</h3>
@@ -222,9 +234,14 @@
                 <div class="flex justify-between pb-2"><span>Profit Minimal agar Tidak Rugi</span> <span id="sf-out-minprofit" class="text-emerald-400 font-bold">Rp 0</span></div>
               </div>
             </div>
+            <div class="glass rounded-xl p-4 border-l-4 border-emerald-500 bg-emerald-500/10 flex gap-3">
+              <i class="fa-solid fa-lightbulb text-emerald-400 mt-0.5"></i>
+              <p class="text-xs text-emerald-200 leading-relaxed"><strong class="text-white">Tahukah Kamu?</strong> Fee Jual selalu lebih besar daripada Fee Beli karena ada tambahan Pajak Penghasilan (PPh) final sebesar 0.1% yang dikenakan oleh Bursa.</p>
+            </div>
           </div>
         </div>
 
+        <!-- 2. Dividend Calculator -->
         <div id="tab-dividend" class="calc-panel grid-cols-1 lg:grid-cols-12 gap-6">
           <div class="lg:col-span-5 glass rounded-2xl p-6 h-fit">
             <h3 class="font-display text-lg text-blue-400 mb-4 border-b border-slate-700 pb-2">Simulasi Dividen</h3>
@@ -238,7 +255,7 @@
                 <input type="number" id="div-dps" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="250" oninput="calcDividend()">
               </div>
               <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1">Harga Beli Rata-Rata (Rp)</label>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Harga Beli Rata-Rata (Rp) <span class="text-slate-600 text-[10px]">*untuk Yield</span></label>
                 <input type="number" id="div-price" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="5000" oninput="calcDividend()">
               </div>
               <div>
@@ -259,10 +276,25 @@
                   Dividend Yield: <span id="div-out-yield">0%</span>
                 </div>
               </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50 text-center">
+                  <p class="text-[10px] text-slate-400 uppercase">Dividen Kotor</p>
+                  <p id="div-out-gross" class="text-lg font-display text-white mt-1">Rp 0</p>
+                </div>
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50 text-center">
+                  <p class="text-[10px] text-rose-400 uppercase">Potongan Pajak</p>
+                  <p id="div-out-taxrp" class="text-lg font-display text-rose-400 mt-1">- Rp 0</p>
+                </div>
+              </div>
+            </div>
+            <div class="glass rounded-xl p-4 border-l-4 border-blue-500 bg-blue-500/10 flex gap-3">
+              <i class="fa-solid fa-lightbulb text-blue-400 mt-0.5"></i>
+              <p class="text-xs text-blue-200 leading-relaxed"><strong class="text-white">Tahukah Kamu?</strong> Mahasiswa bisa membebaskan diri dari pajak dividen 10% apabila dividen tersebut diinvestasikan kembali ke instrumen pasar modal dalam waktu tertentu sesuai aturan DJP.</p>
             </div>
           </div>
         </div>
 
+        <!-- 3. Compound Growth Calculator -->
         <div id="tab-compound" class="calc-panel grid-cols-1 lg:grid-cols-12 gap-6">
           <div class="lg:col-span-5 glass rounded-2xl p-6 h-fit">
             <h3 class="font-display text-lg text-indigo-400 mb-4 border-b border-slate-700 pb-2">Kekuatan Bunga Berbunga</h3>
@@ -277,7 +309,7 @@
               </div>
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-xs font-medium text-slate-400 mb-1">Return (% per thn)</label>
+                  <label class="block text-xs font-medium text-slate-400 mb-1">Estimasi Return (% per thn)</label>
                   <input type="number" id="cg-rate" step="0.1" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="10" oninput="calcCompound()">
                 </div>
                 <div>
@@ -294,11 +326,32 @@
                   <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Nilai Investasi Akhir</p>
                   <p id="cg-out-final" class="text-3xl font-display font-bold text-indigo-400">Rp 0</p>
                 </div>
+                <div class="text-right">
+                  <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Pertumbuhan</p>
+                  <p id="cg-out-pct" class="text-xl font-bold text-emerald-400">+0%</p>
+                </div>
               </div>
+              <div class="space-y-3 text-sm text-slate-300 mt-auto">
+                <div class="flex justify-between border-b border-slate-700/50 pb-2"><span>Total Modal Disetor</span> <span id="cg-out-invested" class="font-bold text-white">Rp 0</span></div>
+                <div class="flex justify-between pb-2 text-emerald-400"><span>Total Bunga / Profit</span> <span id="cg-out-profit" class="font-bold">+ Rp 0</span></div>
+              </div>
+              <div class="mt-4 h-6 w-full rounded-full flex overflow-hidden bg-slate-800">
+                <div id="cg-bar-invested" class="h-full bg-slate-600 transition-all duration-500" style="width: 50%" title="Modal Disetor"></div>
+                <div id="cg-bar-profit" class="h-full bg-indigo-500 transition-all duration-500" style="width: 50%" title="Bunga/Profit"></div>
+              </div>
+              <div class="flex gap-4 mt-2 text-[10px] text-slate-400 justify-center">
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-slate-600"></span> Modal Disetor</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-indigo-500"></span> Profit/Bunga</span>
+              </div>
+            </div>
+            <div class="glass rounded-xl p-4 border-l-4 border-indigo-500 bg-indigo-500/10 flex gap-3">
+              <i class="fa-solid fa-lightbulb text-indigo-400 mt-0.5"></i>
+              <p class="text-xs text-indigo-200 leading-relaxed"><strong class="text-white">Tahukah Kamu?</strong> Albert Einstein menyebut *Compound Interest* sebagai keajaiban dunia ke-8. Semakin awal kamu berinvestasi, semakin besar gulungan bola salju keuntunganmu di masa depan.</p>
             </div>
           </div>
         </div>
 
+        <!-- 4. Financial Goal Calculator -->
         <div id="tab-goal" class="calc-panel grid-cols-1 lg:grid-cols-12 gap-6">
           <div class="lg:col-span-5 glass rounded-2xl p-6 h-fit">
             <h3 class="font-display text-lg text-amber-400 mb-4 border-b border-slate-700 pb-2">Target Masa Depan</h3>
@@ -312,25 +365,41 @@
                 <input type="number" id="fg-years" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="5" oninput="calcGoal()">
               </div>
               <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1">Return Investasi (% per thn)</label>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Estimasi Return Investasi (% per thn)</label>
                 <input type="number" id="fg-rate" step="0.1" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="8" oninput="calcGoal()">
               </div>
             </div>
           </div>
           <div class="lg:col-span-7 flex flex-col gap-4">
             <div class="glass rounded-2xl p-6 bg-gradient-to-br from-slate-900/90 to-slate-800/90 shadow-xl flex-1 flex flex-col justify-center text-center">
-              <p class="text-xs text-slate-400 uppercase tracking-widest mb-2">Kamu harus menabung sebesar</p>
-              <p id="fg-out-monthly" class="text-4xl font-display font-bold text-amber-400 mb-6">Rp 0</p>
+              <p class="text-xs text-slate-400 uppercase tracking-widest mb-2">Kamu harus menabung/investasi sebesar</p>
+              <p id="fg-out-monthly" class="text-4xl font-display font-bold text-amber-400 mb-6">Rp 0 <span class="text-sm text-slate-500 font-normal">/ bulan</span></p>
+
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                  <p class="text-[10px] text-slate-400 uppercase">Total Modal Disetor</p>
+                  <p id="fg-out-capital" class="text-base font-display text-white mt-1">Rp 0</p>
+                </div>
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                  <p class="text-[10px] text-emerald-400 uppercase">Bantuan Bunga/Return</p>
+                  <p id="fg-out-interest" class="text-base font-display text-emerald-400 mt-1">+ Rp 0</p>
+                </div>
+              </div>
+            </div>
+            <div class="glass rounded-xl p-4 border-l-4 border-amber-500 bg-amber-500/10 flex gap-3">
+              <i class="fa-solid fa-lightbulb text-amber-400 mt-0.5"></i>
+              <p class="text-xs text-amber-200 leading-relaxed"><strong class="text-white">Tahukah Kamu?</strong> Inflasi merampok daya beli uangmu setiap tahun. Dengan menginvestasikan tabungan targetmu di atas tingkat inflasi (misal di instrumen ber-return >5%), kamu tidak perlu menabung sebanyak nominal target aslinya.</p>
             </div>
           </div>
         </div>
 
+        <!-- 5. Risk Reward Calculator -->
         <div id="tab-risk-reward" class="calc-panel grid-cols-1 lg:grid-cols-12 gap-6">
           <div class="lg:col-span-5 glass rounded-2xl p-6 h-fit">
             <h3 class="font-display text-lg text-rose-400 mb-4 border-b border-slate-700 pb-2">Trading Plan Profiler</h3>
             <div class="space-y-4">
               <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1">Harga Entry (Rp)</label>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Harga Beli / Entry (Rp)</label>
                 <input type="number" id="rr-entry" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="1000" oninput="calcRR()">
               </div>
               <div>
@@ -338,19 +407,40 @@
                 <input type="number" id="rr-sl" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="900" oninput="calcRR()">
               </div>
               <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1">Harga Target (Rp)</label>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Harga Target / Take Profit (Rp)</label>
                 <input type="number" id="rr-tp" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="1300" oninput="calcRR()">
               </div>
             </div>
           </div>
           <div class="lg:col-span-7 flex flex-col gap-4">
-            <div class="glass rounded-2xl p-6 bg-gradient-to-br from-slate-900/90 to-slate-800/90 shadow-xl flex-1 flex flex-col justify-center text-center">
-              <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Risk : Reward Ratio</p>
-              <div class="flex items-center justify-center gap-3 mt-2">
-                <span class="text-2xl font-display font-bold text-rose-400">1</span>
-                <span class="text-xl text-slate-500">:</span>
-                <span id="rr-out-ratio" class="text-4xl font-display font-bold text-emerald-400">0</span>
+            <div class="glass rounded-2xl p-6 bg-gradient-to-br from-slate-900/90 to-slate-800/90 shadow-xl flex-1 flex flex-col justify-center">
+              <div class="text-center mb-6">
+                <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Risk : Reward Ratio</p>
+                <div class="flex items-center justify-center gap-3 mt-2">
+                  <span class="text-2xl font-display font-bold text-rose-400">1</span>
+                  <span class="text-xl text-slate-500">:</span>
+                  <span id="rr-out-ratio" class="text-4xl font-display font-bold text-emerald-400">0</span>
+                </div>
+                <div id="rr-indicator" class="inline-block mt-3 px-4 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-semibold border border-slate-700">
+                  Menunggu Input...
+                </div>
               </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-rose-500/10 p-4 rounded-xl border border-rose-500/20 text-center">
+                  <p class="text-[10px] text-rose-400 uppercase mb-1">Risiko per Lembar</p>
+                  <p id="rr-out-risk" class="text-lg font-bold text-rose-400">Rp 0</p>
+                  <p id="rr-out-risk-pct" class="text-[10px] text-rose-500 mt-0.5">0%</p>
+                </div>
+                <div class="bg-emerald-500/10 p-4 rounded-xl border border-emerald-500/20 text-center">
+                  <p class="text-[10px] text-emerald-400 uppercase mb-1">Potensi per Lembar</p>
+                  <p id="rr-out-reward" class="text-lg font-bold text-emerald-400">Rp 0</p>
+                  <p id="rr-out-reward-pct" class="text-[10px] text-emerald-500 mt-0.5">0%</p>
+                </div>
+              </div>
+            </div>
+            <div class="glass rounded-xl p-4 border-l-4 border-rose-500 bg-rose-500/10 flex gap-3">
+              <i class="fa-solid fa-lightbulb text-rose-400 mt-0.5"></i>
+              <p class="text-xs text-rose-200 leading-relaxed"><strong class="text-white">Tahukah Kamu?</strong> Trader profesional mencari rasio minimal 1:2. Artinya, dengan win-rate (peluang tebakan benar) hanya 40% saja, portofoliomu tetap akan menghasilkan keuntungan dalam jangka panjang.</p>
             </div>
           </div>
         </div>
@@ -365,6 +455,7 @@
   </div>
 
   <script>
+    // UI TOGGLE
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebar-overlay');
@@ -372,13 +463,22 @@
       overlay.classList.toggle('hidden');
     }
 
+    // TABS LOGIC
     function switchTab(tabId) {
       document.querySelectorAll('.calc-panel').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
       document.getElementById('tab-' + tabId).classList.add('active');
       event.currentTarget.classList.add('active');
+
+      if(tabId === 'stock-fee') calcStockFee();
+      if(tabId === 'dividend') calcDividend();
+      if(tabId === 'compound') calcCompound();
+      if(tabId === 'goal') calcGoal();
+      if(tabId === 'risk-reward') calcRR();
     }
 
+    // SUPABASE AUTH & AVATAR BINDING
     const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -386,84 +486,194 @@
     async function checkAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (!session) { window.location.href = 'login.html'; return; }
+
       const user = session.user;
       const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
       const avatarUrl = user.user_metadata?.avatar_url; 
+
       document.getElementById('sidebar-user-name').innerText = displayName;
+
       const sbAvatar = document.getElementById('sidebar-user-initial');
       if (avatarUrl) {
-        sbAvatar.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover rounded-full">`;
+        sbAvatar.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover">`;
       } else {
         sbAvatar.innerText = displayName.charAt(0).toUpperCase();
       }
     }
 
+    async function logoutUser() {
+      await supabaseClient.auth.signOut();
+      localStorage.removeItem('userData');
+      window.location.href = 'login.html';
+    }
+
+    // UTILS
     function fmtRp(num) {
+      if(isNaN(num) || !isFinite(num)) return "Rp 0";
       return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits:0, maximumFractionDigits:0 }).format(num);
     }
 
+    // ==========================================
+    // CALCULATOR LOGICS
+    // ==========================================
+
+    // 1. Stock Fee
     function calcStockFee() {
       const cap = parseFloat(document.getElementById('sf-capital').value) || 0;
       const price = parseFloat(document.getElementById('sf-price').value) || 0;
       const bFee = parseFloat(document.getElementById('sf-buy-fee').value) || 0;
       const sFee = parseFloat(document.getElementById('sf-sell-fee').value) || 0;
+
       if(price <= 0) return;
+
       const priceLot = price * 100;
       const lotCapacity = Math.floor(cap / (priceLot * (1 + bFee/100)));
       const gross = lotCapacity * priceLot;
       const buyFeeRp = gross * (bFee/100);
+      const totalOut = gross + buyFeeRp;
+
+      let bep = price * (1 + bFee/100) / (1 - sFee/100);
+      bep = Math.ceil(bep);
+      const minProfit = (bep - price) * lotCapacity * 100;
+
       document.getElementById('sf-out-lot').innerText = `${lotCapacity} Lot`;
-      document.getElementById('sf-out-total').innerText = fmtRp(gross + buyFeeRp);
+      document.getElementById('sf-out-total').innerText = fmtRp(totalOut);
       document.getElementById('sf-out-gross').innerText = fmtRp(gross);
       document.getElementById('sf-out-buyfee').innerText = `- ${fmtRp(buyFeeRp)}`;
-      let bep = Math.ceil(price * (1 + bFee/100) / (1 - sFee/100));
       document.getElementById('sf-out-bep').innerText = fmtRp(bep);
-      document.getElementById('sf-out-minprofit').innerText = fmtRp((bep - price) * lotCapacity * 100);
+      document.getElementById('sf-out-minprofit').innerText = fmtRp(minProfit);
     }
 
+    // 2. Dividend
     function calcDividend() {
       const lot = parseFloat(document.getElementById('div-lot').value) || 0;
       const dps = parseFloat(document.getElementById('div-dps').value) || 0;
       const price = parseFloat(document.getElementById('div-price').value) || 0;
       const tax = parseFloat(document.getElementById('div-tax').value) || 0;
-      const gross = lot * 100 * dps;
-      const net = gross - (gross * (tax/100));
-      const yieldP = price > 0 ? (dps / price) * 100 : 0;
+
+      const shares = lot * 100;
+      const gross = shares * dps;
+      const taxRp = gross * (tax/100);
+      const net = gross - taxRp;
+      const yield = price > 0 ? (dps / price) * 100 : 0;
+
       document.getElementById('div-out-net').innerText = fmtRp(net);
-      document.getElementById('div-out-yield').innerText = yieldP.toFixed(2) + '%';
+      document.getElementById('div-out-gross').innerText = fmtRp(gross);
+      document.getElementById('div-out-taxrp').innerText = `- ${fmtRp(taxRp)}`;
+      document.getElementById('div-out-yield').innerText = yield.toFixed(2) + '%';
     }
 
+    // 3. Compound Growth
     function calcCompound() {
       const initial = parseFloat(document.getElementById('cg-initial').value) || 0;
       const monthly = parseFloat(document.getElementById('cg-monthly').value) || 0;
-      const rate = parseFloat(document.getElementById('cg-rate').value) / 100 / 12;
-      const n = (parseFloat(document.getElementById('cg-years').value) || 0) * 12;
-      let fv = initial * Math.pow(1 + rate, n) + (rate === 0 ? monthly * n : monthly * ((Math.pow(1 + rate, n) - 1) / rate));
+      const rate = parseFloat(document.getElementById('cg-rate').value) || 0;
+      const years = parseFloat(document.getElementById('cg-years').value) || 0;
+
+      const r = rate / 100 / 12;
+      const n = years * 12;
+
+      let fv = 0;
+      if (r === 0) {
+        fv = initial + (monthly * n);
+      } else {
+        fv = initial * Math.pow(1 + r, n) + monthly * ((Math.pow(1 + r, n) - 1) / r);
+      }
+
+      const invested = initial + (monthly * n);
+      const profit = fv - invested;
+      const pct = invested > 0 ? (profit / invested) * 100 : 0;
+
       document.getElementById('cg-out-final').innerText = fmtRp(fv);
+      document.getElementById('cg-out-invested').innerText = fmtRp(invested);
+      document.getElementById('cg-out-profit').innerText = `+ ${fmtRp(profit)}`;
+      document.getElementById('cg-out-pct').innerText = `+${pct.toFixed(2)}%`;
+
+      const total = fv > 0 ? fv : 1;
+      const invW = (invested / total) * 100;
+      const proW = (profit / total) * 100;
+      document.getElementById('cg-bar-invested').style.width = `${invW}%`;
+      document.getElementById('cg-bar-profit').style.width = `${proW}%`;
     }
 
+    // 4. Financial Goal
     function calcGoal() {
       const target = parseFloat(document.getElementById('fg-target').value) || 0;
-      const n = (parseFloat(document.getElementById('fg-years').value) || 0) * 12;
-      const r = (parseFloat(document.getElementById('fg-rate').value) || 0) / 100 / 12;
-      let monthly = n > 0 ? (r === 0 ? target / n : target * r / (Math.pow(1 + r, n) - 1)) : 0;
+      const years = parseFloat(document.getElementById('fg-years').value) || 0;
+      const rate = parseFloat(document.getElementById('fg-rate').value) || 0;
+
+      const r = rate / 100 / 12;
+      const n = years * 12;
+
+      let monthly = 0;
+      if (n > 0) {
+        if(r === 0) {
+          monthly = target / n;
+        } else {
+          monthly = target * r / (Math.pow(1 + r, n) - 1);
+        }
+      }
+
+      const invested = monthly * n;
+      const interest = target - invested;
+
       document.getElementById('fg-out-monthly').innerHTML = `${fmtRp(monthly)} <span class="text-sm text-slate-500 font-normal">/ bulan</span>`;
+      document.getElementById('fg-out-capital').innerText = fmtRp(invested);
+      document.getElementById('fg-out-interest').innerText = `+ ${fmtRp(interest > 0 ? interest : 0)}`;
     }
 
+    // 5. Risk Reward
     function calcRR() {
       const entry = parseFloat(document.getElementById('rr-entry').value) || 0;
       const sl = parseFloat(document.getElementById('rr-sl').value) || 0;
       const tp = parseFloat(document.getElementById('rr-tp').value) || 0;
+
       if(entry <= 0 || sl >= entry || tp <= entry) {
-        document.getElementById('rr-out-ratio').innerText = "0"; return;
+        document.getElementById('rr-out-ratio').innerText = "0";
+        document.getElementById('rr-indicator').innerText = "Setup Tidak Valid";
+        document.getElementById('rr-indicator').className = "inline-block mt-3 px-4 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-semibold border border-slate-700";
+        return;
       }
-      document.getElementById('rr-out-ratio').innerText = ((tp - entry) / (entry - sl)).toFixed(1);
+
+      const risk = entry - sl;
+      const reward = tp - entry;
+      const ratio = reward / risk;
+
+      const riskPct = (risk / entry) * 100;
+      const rewardPct = (reward / entry) * 100;
+
+      document.getElementById('rr-out-risk').innerText = fmtRp(risk);
+      document.getElementById('rr-out-reward').innerText = fmtRp(reward);
+      document.getElementById('rr-out-risk-pct').innerText = `${riskPct.toFixed(2)}% dari modal`;
+      document.getElementById('rr-out-reward-pct').innerText = `${rewardPct.toFixed(2)}% dari modal`;
+      document.getElementById('rr-out-ratio').innerText = ratio.toFixed(1);
+
+      const ind = document.getElementById('rr-indicator');
+      if (ratio >= 3) {
+        ind.innerText = "Sangat Ideal (Excellent)";
+        ind.className = "inline-block mt-3 px-4 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-semibold border border-emerald-500/30";
+      } else if (ratio >= 2) {
+        ind.innerText = "Bagus (Good)";
+        ind.className = "inline-block mt-3 px-4 py-1 rounded-full bg-blue-500/20 text-blue-400 text-xs font-semibold border border-blue-500/30";
+      } else if (ratio >= 1.5) {
+        ind.innerText = "Cukup (Average)";
+        ind.className = "inline-block mt-3 px-4 py-1 rounded-full bg-amber-500/20 text-amber-400 text-xs font-semibold border border-amber-500/30";
+      } else {
+        ind.innerText = "Buruk (Poor)";
+        ind.className = "inline-block mt-3 px-4 py-1 rounded-full bg-rose-500/20 text-rose-400 text-xs font-semibold border border-rose-500/30";
+      }
     }
 
+    // Initialize
     document.addEventListener('DOMContentLoaded', () => {
       checkAuth();
-      calcStockFee(); calcDividend(); calcCompound(); calcGoal(); calcRR();
+      calcStockFee();
+      calcDividend();
+      calcCompound();
+      calcGoal();
+      calcRR();
     });
+
   </script>
 </body>
 </html>
