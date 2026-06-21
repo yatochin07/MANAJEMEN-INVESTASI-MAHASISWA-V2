@@ -45,14 +45,7 @@
     /* ===========================
        ANIMATED BACKGROUND CANVAS
     =========================== */
-    #bg-canvas {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-    }
-
-    /* Layered mesh gradients */
+    #bg-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
     .mesh-layer {
       position: fixed; inset: 0; z-index: 1; pointer-events: none;
       background:
@@ -61,16 +54,8 @@
         radial-gradient(ellipse 45% 40% at 55% 45%,  rgba(124,58,237,0.06) 0%, transparent 60%),
         radial-gradient(ellipse 35% 30% at 80% 15%,  rgba(6,182,212,0.05)  0%, transparent 55%);
     }
-
-    /* Moving orb blobs */
     .orb {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(90px);
-      opacity: 0.18;
-      pointer-events: none;
-      z-index: 1;
-      animation: drift linear infinite;
+      position: fixed; border-radius: 50%; filter: blur(90px); opacity: 0.18; pointer-events: none; z-index: 1; animation: drift linear infinite;
     }
     .orb-1 { width: 520px; height: 520px; background: #6366f1; top: -120px; left: -100px; animation-duration: 28s; }
     .orb-2 { width: 420px; height: 420px; background: #3b82f6; bottom: -80px; right: -80px; animation-duration: 22s; animation-direction: reverse; }
@@ -83,7 +68,6 @@
       100% { transform: translate(0,  0) scale(1);    }
     }
 
-    /* Fine dot-grid overlay */
     .dot-grid {
       position: fixed; inset: 0; z-index: 2; pointer-events: none;
       background-image: radial-gradient(rgba(148,163,184,0.055) 1px, transparent 1px);
@@ -93,319 +77,89 @@
     /* ===========================
        LAYOUT
     =========================== */
-    .page-shell {
-      position: relative; z-index: 10;
-      min-height: 100vh;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-    @media (max-width: 900px) {
-      .page-shell { grid-template-columns: 1fr; }
-      .left-panel  { display: none; }
-    }
+    .page-shell { position: relative; z-index: 10; min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; }
+    @media (max-width: 900px) { .page-shell { grid-template-columns: 1fr; } .left-panel  { display: none; } }
 
     /* ===========================
-       LEFT PANEL — BRAND SHOWCASE
+       LEFT PANEL
     =========================== */
-    .left-panel {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 3rem 3.5rem;
-      position: relative;
-      overflow: hidden;
-      border-right: 1px solid rgba(255,255,255,0.05);
-    }
-
-    /* Vertical decorative line */
-    .left-panel::after {
-      content: '';
-      position: absolute;
-      top: 0; right: 0;
-      width: 1px; height: 100%;
-      background: linear-gradient(to bottom, transparent, rgba(99,102,241,0.4), transparent);
-    }
-
-    /* Stats ticker */
-    .stat-ticker {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-    .stat-row {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 0.85rem 1.1rem;
-      border-radius: 14px;
-      background: rgba(19,25,40,0.7);
-      border: 1px solid rgba(255,255,255,0.06);
-      backdrop-filter: blur(8px);
-      animation: slideRight 0.5s ease both;
-    }
+    .left-panel { display: flex; flex-direction: column; justify-content: space-between; padding: 3rem 3.5rem; position: relative; overflow: hidden; border-right: 1px solid rgba(255,255,255,0.05); }
+    .left-panel::after { content: ''; position: absolute; top: 0; right: 0; width: 1px; height: 100%; background: linear-gradient(to bottom, transparent, rgba(99,102,241,0.4), transparent); }
+    
+    .stat-ticker { display: flex; flex-direction: column; gap: 0.75rem; }
+    .stat-row { display: flex; align-items: center; gap: 1rem; padding: 0.85rem 1.1rem; border-radius: 14px; background: rgba(19,25,40,0.7); border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(8px); animation: slideRight 0.5s ease both; }
     .stat-row:nth-child(1) { animation-delay: 0.2s; }
     .stat-row:nth-child(2) { animation-delay: 0.35s; }
     .stat-row:nth-child(3) { animation-delay: 0.5s; }
 
-    @keyframes slideRight {
-      from { opacity: 0; transform: translateX(-20px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
+    @keyframes slideRight { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
 
-    /* Feature list */
-    .feature-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.8rem;
-      animation: fadeUp 0.5s ease both;
-    }
+    .feature-item { display: flex; align-items: flex-start; gap: 0.8rem; animation: fadeUp 0.5s ease both; }
     .feature-item:nth-child(1) { animation-delay: 0.4s; }
     .feature-item:nth-child(2) { animation-delay: 0.52s; }
     .feature-item:nth-child(3) { animation-delay: 0.64s; }
     .feature-item:nth-child(4) { animation-delay: 0.76s; }
 
-    .feature-icon {
-      width: 36px; height: 36px;
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      font-size: 0.85rem;
-    }
+    .feature-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 0.85rem; }
 
     /* ===========================
        RIGHT PANEL — FORM
     =========================== */
-    .right-panel {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 3rem 2rem;
-      min-height: 100vh;
-    }
-
-    .form-card {
-      width: 100%;
-      max-width: 420px;
-    }
-
-    /* Glass card */
-    .glass-card {
-      background: rgba(15, 20, 35, 0.85);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 1.5rem;
-      padding: 2.5rem;
-      box-shadow:
-        0 32px 64px -16px rgba(0,0,0,0.5),
-        0 0 0 1px rgba(99,102,241,0.08) inset,
-        0 1px 0 rgba(255,255,255,0.06) inset;
-    }
-
-    /* Input field */
-    .field-wrap {
-      position: relative;
-    }
-    .field-icon {
-      position: absolute;
-      left: 14px; top: 50%;
-      transform: translateY(-50%);
-      color: #64748b;
-      font-size: 0.85rem;
-      pointer-events: none;
-      transition: color 0.2s;
-    }
-    .form-input {
-      width: 100%;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.09);
-      border-radius: 12px;
-      padding: 0.75rem 0.9rem 0.75rem 2.6rem;
-      font-size: 0.9rem;
-      font-family: 'Inter', sans-serif;
-      color: #e2e8f0;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-      outline: none;
-    }
-    .form-input:focus {
-      border-color: rgba(99,102,241,0.6);
-      box-shadow: 0 0 0 3px rgba(99,102,241,0.14);
-      background: rgba(99,102,241,0.04);
-    }
-    .form-input:focus + .field-icon,
-    .field-wrap:focus-within .field-icon {
-      color: #818cf8;
-    }
+    .right-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem 2rem; min-height: 100vh; }
+    .form-card { width: 100%; max-width: 420px; }
+    .glass-card { background: rgba(15, 20, 35, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); border-radius: 1.5rem; padding: 2.5rem; box-shadow: 0 32px 64px -16px rgba(0,0,0,0.5), 0 0 0 1px rgba(99,102,241,0.08) inset, 0 1px 0 rgba(255,255,255,0.06) inset; }
+    
+    .field-wrap { position: relative; }
+    .field-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 0.85rem; pointer-events: none; transition: color 0.2s; }
+    .form-input { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); border-radius: 12px; padding: 0.75rem 0.9rem 0.75rem 2.6rem; font-size: 0.9rem; font-family: 'Inter', sans-serif; color: #e2e8f0; transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; outline: none; }
+    .form-input:focus { border-color: rgba(99,102,241,0.6); box-shadow: 0 0 0 3px rgba(99,102,241,0.14); background: rgba(99,102,241,0.04); }
+    .form-input:focus + .field-icon, .field-wrap:focus-within .field-icon { color: #818cf8; }
     .form-input::placeholder { color: #475569; }
 
-    /* Toggle password */
-    .pwd-toggle {
-      position: absolute;
-      right: 12px; top: 50%;
-      transform: translateY(-50%);
-      background: none; border: none;
-      color: #475569;
-      cursor: pointer;
-      padding: 4px;
-      font-size: 0.85rem;
-      transition: color 0.2s;
-    }
+    .pwd-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #475569; cursor: pointer; padding: 4px; font-size: 0.85rem; transition: color 0.2s; }
     .pwd-toggle:hover { color: #a5b4fc; }
 
-    /* Submit button */
-    .btn-submit {
-      width: 100%;
-      padding: 0.85rem;
-      border-radius: 12px;
-      border: none;
-      cursor: pointer;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: white;
-      background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
-      position: relative;
-      overflow: hidden;
-      transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
-    }
-    .btn-submit::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
+    .btn-submit { width: 100%; padding: 0.85rem; border-radius: 12px; border: none; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600; color: white; background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%); position: relative; overflow: hidden; transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s; }
+    .btn-submit::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent); opacity: 0; transition: opacity 0.2s; }
     .btn-submit:hover:not(:disabled) { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 8px 24px -4px rgba(99,102,241,0.45); }
     .btn-submit:hover:not(:disabled)::before { opacity: 1; }
     .btn-submit:active:not(:disabled)  { transform: translateY(0); }
     .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; transform: none; background: #475569; }
 
-    /* Social login button */
-    .btn-social {
-      width: 100%;
-      padding: 0.7rem;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.09);
-      background: rgba(255,255,255,0.03);
-      color: #94a3b8;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 500;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.6rem;
-      transition: background 0.2s, border-color 0.2s, color 0.2s;
-    }
-    .btn-social:hover {
-      background: rgba(255,255,255,0.06);
-      border-color: rgba(255,255,255,0.16);
-      color: #e2e8f0;
-    }
+    .btn-social { width: 100%; padding: 0.7rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.09); background: rgba(255,255,255,0.03); color: #94a3b8; font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.6rem; transition: background 0.2s, border-color 0.2s, color 0.2s; }
+    .btn-social:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.16); color: #e2e8f0; }
 
-    /* Divider */
-    .divider {
-      display: flex; align-items: center; gap: 0.75rem;
-    }
+    .divider { display: flex; align-items: center; gap: 0.75rem; }
     .divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
+    .logo-text { background: linear-gradient(90deg, #a5b4fc, #93c5fd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-    /* Logo gradient text */
-    .logo-text {
-      background: linear-gradient(90deg, #a5b4fc, #93c5fd);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    /* Error / success states */
     .input-error  { border-color: rgba(244,63,94,0.6) !important; }
     .input-error:focus { box-shadow: 0 0 0 3px rgba(244,63,94,0.14) !important; }
     .msg-error    { color: #f87171; font-size: 0.78rem; margin-top: 0.35rem; display: none; }
     .msg-error.show { display: block; }
 
-    /* Tabs (Login / Register) */
-    .tab-bar {
-      display: flex;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 12px;
-      padding: 4px;
-      margin-bottom: 1.75rem;
-    }
-    .tab-btn {
-      flex: 1;
-      padding: 0.55rem 0;
-      border-radius: 9px;
-      border: none;
-      background: transparent;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.88rem;
-      font-weight: 600;
-      cursor: pointer;
-      color: #64748b;
-      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-    }
-    .tab-btn.active {
-      background: rgba(99,102,241,0.22);
-      color: #a5b4fc;
-      box-shadow: 0 2px 8px -2px rgba(99,102,241,0.3);
-    }
+    .tab-bar { display: flex; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 4px; margin-bottom: 1.75rem; }
+    .tab-btn { flex: 1; padding: 0.55rem 0; border-radius: 9px; border: none; background: transparent; font-family: 'Inter', sans-serif; font-size: 0.88rem; font-weight: 600; cursor: pointer; color: #64748b; transition: background 0.2s, color 0.2s, box-shadow 0.2s; }
+    .tab-btn.active { background: rgba(99,102,241,0.22); color: #a5b4fc; box-shadow: 0 2px 8px -2px rgba(99,102,241,0.3); }
 
-    /* Register panel hidden by default */
     #register-form { display: none; }
 
-    /* Checkbox */
     .checkbox-wrap { display: flex; align-items: flex-start; gap: 0.6rem; }
-    .custom-check {
-      width: 17px; height: 17px; flex-shrink: 0;
-      border-radius: 5px; border: 1px solid rgba(255,255,255,0.15);
-      background: rgba(255,255,255,0.04);
-      accent-color: #6366f1;
-      cursor: pointer;
-      margin-top: 2px;
-    }
+    .custom-check { width: 17px; height: 17px; flex-shrink: 0; border-radius: 5px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.04); accent-color: #6366f1; cursor: pointer; margin-top: 2px; }
 
-    /* Fade/slide animations for form switch */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to   { opacity: 1; transform: translateY(0); } }
     .anim-in { animation: fadeUp 0.35s ease both; }
 
-    /* Loading spinner inside button */
     @keyframes spin { to { transform: rotate(360deg); } }
-    .spinner {
-      display: inline-block;
-      width: 16px; height: 16px;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      vertical-align: middle;
-      margin-right: 6px;
-    }
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
 
-    /* Scrollbar */
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.25); border-radius: 9px; }
 
-    /* Market ticker strip */
-    .ticker-wrap {
-      overflow: hidden;
-      white-space: nowrap;
-      border-top: 1px solid rgba(255,255,255,0.05);
-      padding: 0.6rem 0;
-      margin-top: 1.5rem;
-    }
-    .ticker-inner {
-      display: inline-block;
-      animation: tickerScroll 30s linear infinite;
-    }
-    @keyframes tickerScroll {
-      from { transform: translateX(0); }
-      to   { transform: translateX(-50%); }
-    }
+    .ticker-wrap { overflow: hidden; white-space: nowrap; border-top: 1px solid rgba(255,255,255,0.05); padding: 0.6rem 0; margin-top: 1.5rem; }
+    .ticker-inner { display: inline-block; animation: tickerScroll 30s linear infinite; }
+    @keyframes tickerScroll { from { transform: translateX(0); } to   { transform: translateX(-50%); } }
     .ticker-item { display: inline-block; margin-right: 2.5rem; font-size: 0.75rem; color: #64748b; font-weight: 500;}
     .ticker-item .up   { color: #34d399; }
     .ticker-item .down { color: #f87171; }
@@ -423,7 +177,6 @@
   <div class="page-shell">
 
     <aside class="left-panel" aria-hidden="true">
-
       <div>
         <div class="flex items-center gap-3 mb-12" style="animation: fadeUp 0.4s ease both;">
           <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -545,7 +298,6 @@
 
         <p class="text-xs text-slate-700 mt-4">© 2025 EduVesting · Simulasi, bukan layanan investasi berlisensi.</p>
       </div>
-
     </aside>
 
     <section class="right-panel" role="main">
@@ -560,7 +312,6 @@
         </div>
 
         <div class="glass-card anim-in">
-
           <div class="tab-bar" role="tablist">
             <button id="tab-login" class="tab-btn active" onclick="switchTab('login')" role="tab" aria-selected="true">
               <i class="fa-solid fa-right-to-bracket mr-1.5 text-xs"></i>Masuk
@@ -629,7 +380,7 @@
               </svg>
               Google
             </button>
-            </div>
+          </div>
 
           <div id="register-form">
             <div class="mb-6">
@@ -732,10 +483,13 @@
     // ==========================================
     const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    // BENTROK NAMA VARIABEL DIPERBAIKI DI SINI:
+    // Mengganti nama `supabase` menjadi `supabaseClient` agar tidak bentrok dengan CDN global.
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // Cek apakah user sudah login, jika ya, lempar langsung ke dashboard
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabaseClient.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         window.location.href = 'dashboard.html';
       }
@@ -751,7 +505,6 @@
       };
 
       try {
-        // 1. Tarik Harga Kripto via CoinGecko
         const resCrypto = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=idr&include_24hr_change=true');
         const dataCrypto = await resCrypto.json();
 
@@ -769,32 +522,27 @@
           document.getElementById('live-eth-change').className = ethChange >= 0 ? 'text-xs text-emerald-400' : 'text-xs text-rose-400';
         }
 
-        // 2. Tarik Harga Saham via Backend API (Path Relative untuk Vercel)
         const resSaham = await fetch('/api/price/saham/BBCA');
-        const dataSaham = await resSaham.json();
-        
-        if (dataSaham && dataSaham.price) {
-           document.getElementById('live-saham-price').innerText = "Rp " + formatRp(dataSaham.price);
+        if (resSaham.ok) {
+           const dataSaham = await resSaham.json();
+           if (dataSaham && dataSaham.price) {
+              document.getElementById('live-saham-price').innerText = "Rp " + formatRp(dataSaham.price);
+           }
         }
 
-        // 3. Update Ticker Berjalan
         let tickerHTML = '';
         if(dataCrypto.bitcoin) tickerHTML += `<span class="ticker-item">BTC/IDR <span class="${dataCrypto.bitcoin.idr_24h_change>=0?'up':'down'}">${formatRp(dataCrypto.bitcoin.idr)} ${dataCrypto.bitcoin.idr_24h_change>=0?'▲':'▼'}</span></span>`;
         if(dataCrypto.ethereum) tickerHTML += `<span class="ticker-item">ETH/IDR <span class="${dataCrypto.ethereum.idr_24h_change>=0?'up':'down'}">${formatRp(dataCrypto.ethereum.idr)} ${dataCrypto.ethereum.idr_24h_change>=0?'▲':'▼'}</span></span>`;
-        if(dataSaham.price) tickerHTML += `<span class="ticker-item">BBCA <span class="up">${formatRp(dataSaham.price)}</span></span>`;
         
-        // Gandakan string HTML supaya animasinya berjalan mulus (seamless loop)
         const container = document.getElementById('ticker-container');
         if(tickerHTML !== '') container.innerHTML = tickerHTML + tickerHTML + tickerHTML;
 
       } catch (err) {
-        console.warn("Sedang offline, gagal load harga realtime di login:", err);
+        console.warn("Sedang offline atau API error:", err);
       }
     }
 
-    // Jalankan penarikan data segera setelah halaman siap
     document.addEventListener('DOMContentLoaded', loadRealtimeMarketData);
-
 
     // ---- Tab Switcher ----
     function switchTab(tab) {
@@ -818,7 +566,6 @@
       }
     }
 
-    // ---- Password Visibility Toggle ----
     function togglePwd(inputId, btn) {
       const input = document.getElementById(inputId);
       const icon  = btn.querySelector('i');
@@ -831,7 +578,6 @@
       }
     }
 
-    // ---- Password Strength ----
     function checkStrength(val) {
       const bars   = [1,2,3,4].map(i => document.getElementById('str-' + i));
       const label  = document.getElementById('str-label');
@@ -855,7 +601,7 @@
     // LOGIN GOOGLE OAUTH (SUPABASE)
     // ==========================================
     async function handleGoogleLogin() {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabaseClient.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: window.location.origin + '/dashboard.html'
@@ -897,8 +643,8 @@
       btn.disabled = true;
       btn.innerHTML = '<span class="spinner"></span> Memverifikasi…';
 
-      // Panggil Supabase Authentication
-      const { data, error } = await supabase.auth.signInWithPassword({
+      // Panggil Supabase Menggunakan supabaseClient
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
         email: emailInput.value.trim(),
         password: pwdInput.value.trim()
       });
@@ -912,30 +658,19 @@
       }
     }
 
-    // ==========================================
-    // VALIDASI EMAIL & DOMAIN (ANTI TEMP MAIL)
-    // ==========================================
     function isValidEmailData(email) {
       const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!regexEmail.test(email)) {
         return { valid: false, msg: "Format email tidak valid. Pastikan memakai @ dan domain yang benar." };
       }
       const domain = email.split('@')[1].toLowerCase();
-      const disposableDomains = [
-        'mailinator.com', '10minutemail.com', 'tempmail.com', 'temp-mail.org',
-        'guerrillamail.com', 'yopmail.com', 'throwawaymail.com', 'tempmail.net',
-        'fakemail.net', 'trashmail.com', 'getnada.com', 'tempmail.ninja',
-        'disposablemail.com'
-      ];
+      const disposableDomains = ['mailinator.com', '10minutemail.com', 'tempmail.com', 'temp-mail.org', 'guerrillamail.com', 'yopmail.com', 'throwawaymail.com', 'tempmail.net', 'fakemail.net', 'trashmail.com', 'getnada.com', 'tempmail.ninja', 'disposablemail.com'];
       if (disposableDomains.includes(domain)) {
         return { valid: false, msg: "Penggunaan email sementara (temp mail) tidak diizinkan." };
       }
       return { valid: true, msg: "" };
     }
 
-    // ==========================================
-    // TOGGLE TOMBOL DAFTAR (SYARAT & KETENTUAN)
-    // ==========================================
     function toggleRegisterButton() {
       const termsChecked = document.getElementById('terms').checked;
       document.getElementById('btn-register').disabled = !termsChecked;
@@ -968,15 +703,12 @@
       btn.disabled = true;
       btn.innerHTML = '<span class="spinner"></span> Mendaftarkan…';
 
-      // Panggil Supabase signUp
-      const { data, error } = await supabase.auth.signUp({
+      // Panggil Supabase menggunakan supabaseClient
+      const { data, error } = await supabaseClient.auth.signUp({
         email: emailInput,
         password: passwordInput,
         options: {
-          data: {
-            full_name: nameInput,
-            university: uniInput
-          }
+          data: { full_name: nameInput, university: uniInput }
         }
       });
 
@@ -990,27 +722,18 @@
       }
     }
 
-    // ---- Success overlay ----
     function showSuccess() {
       const overlay = document.getElementById('success-overlay');
       overlay.style.display = 'flex';
-      
-      setTimeout(() => {
-        overlay.style.display = 'none';
-        window.location.href = 'dashboard.html'; 
-      }, 2400);
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 2400);
     }
 
-    // ---- Clear error on input & Enter Key ----
     document.addEventListener('DOMContentLoaded', () => {
       ['login-email','login-password'].forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.addEventListener('input', () => {
-          el.classList.remove('input-error');
-        });
+        if (el) el.addEventListener('input', () => { el.classList.remove('input-error'); });
       });
 
-      // Enter key support
       document.addEventListener('keydown', e => {
         if (e.key === 'Enter') {
           const loginVisible = document.getElementById('login-form').style.display !== 'none';
