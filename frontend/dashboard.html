@@ -11,7 +11,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
-<!-- TAMBAHAN: Import Library Supabase v2 -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -396,52 +395,58 @@
 <script src="js/api.js"></script>
 <script>
   // ==========================================
-  // INISIALISASI SUPABASE CLIENT
+  // INISIALISASI SUPABASE CLIENT (DIUBAH NAMA VARIABELNYA AGAR TIDAK BENTROK)
   // ==========================================
   const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   // ==========================================
   // AUTHENTICATION GUARD (SUPABASE)
   // ==========================================
   document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Cek sesi aktif Supabase
-    const { data: { session }, error } = await supabase.auth.getSession();
-    
-    if (error || !session) {
-      // Jika tidak ada sesi/belum login, tendang ke login.html
-      window.location.href = 'login.html';
-      return;
+    try {
+      // 1. Cek sesi aktif Supabase
+      const { data: { session }, error } = await supabaseClient.auth.getSession();
+      
+      if (error || !session) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // 2. Ambil data user dari sesi Supabase
+      const user = session.user;
+      
+      // Supabase menyimpan nama di user_metadata jika diset saat daftar (OAuth/Email)
+      const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
+      
+      document.getElementById('welcome-user').innerText = `Selamat Datang, ${displayName} 👋`;
+      document.getElementById('sidebar-user-name').innerText = displayName;
+      document.getElementById('sidebar-user-initial').innerText = displayName.charAt(0).toUpperCase();
+
+      // 3. Setup Dashboard Elements
+      document.getElementById('header-date').innerText = new Date().toLocaleDateString('id-ID', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+      });
+      
+      document.getElementById('instrument-select').addEventListener('change', prefillPrice);
+      
+      // Jalankan fungsi dari js/api.js
+      renderDashboard();
+      prefillPrice();
+      handleRefreshCrypto(true);
+
+    } catch (err) {
+      console.error("Gagal inisialisasi dashboard:", err);
     }
-
-    // 2. Ambil data user dari sesi Supabase
-    const user = session.user;
-    
-    // Supabase menyimpan nama di user_metadata jika diset saat daftar (OAuth/Email)
-    const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
-    
-    document.getElementById('welcome-user').innerText = `Selamat Datang, ${displayName} 👋`;
-    document.getElementById('sidebar-user-name').innerText = displayName;
-    document.getElementById('sidebar-user-initial').innerText = displayName.charAt(0).toUpperCase();
-
-    // 3. Setup Dashboard Elements
-    document.getElementById('header-date').innerText = new Date().toLocaleDateString('id-ID', {
-      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-    });
-    
-    document.getElementById('instrument-select').addEventListener('change', prefillPrice);
-    renderDashboard();
-    prefillPrice();
-    handleRefreshCrypto(true);
   });
 
   // ==========================================
   // LOGOUT (SUPABASE)
   // ==========================================
   async function logoutUser() {
-    await supabase.auth.signOut();
-    localStorage.removeItem('userData'); // Menghapus data lokal sisaan (kalau ada)
+    await supabaseClient.auth.signOut();
+    localStorage.removeItem('userData'); // Menghapus data lokal sisaan
     window.location.href = 'login.html';
   }
 
@@ -452,8 +457,6 @@
     btn.disabled = true;
     icon.classList.add('spin');
 
-    // Tarik data Kripto DAN Saham secara paralel atau berurutan
-    // Pastikan API memanggil menggunakan RELATIVE PATH (/api/...) di dalam file js/api.js milikmu
     const resultCrypto = await EduVesting.refreshCryptoPrices();
     const resultStock = await EduVesting.refreshStockPrices();
 
@@ -461,16 +464,12 @@
     btn.disabled = false;
 
     const note = document.getElementById('last-refresh');
-    
-    // Cek jika ada error dari salah satu request API
     if ((resultCrypto && resultCrypto.error) || (resultStock && resultStock.error)) {
       note.innerText = 'Gagal sinkron (cek koneksi)';
       if (!silent) alert('Gagal mengambil sebagian harga realtime dari API/Yahoo Finance.');
     } else {
       note.innerText = 'Sinkron ' + new Date().toLocaleTimeString('id-ID');
     }
-    
-    // Render ulang UI setelah data lokal terupdate
     renderDashboard();
   }
 
@@ -560,7 +559,6 @@
     document.getElementById('ai-main-icon').className = `fa-solid ${main.icon} text-xl`;
     document.getElementById('ai-main-icon').style.color = toneColor[main.tone] || '#c4b5fd';
 
-    // risk label dari porsi aset volatil
     const volatilePct = m.totalEquity > 0 ? ((m.byType.kripto + m.byType.saham) / m.totalEquity) * 100 : 0;
     let riskLabel = 'Rendah', riskColor = 'text-emerald-400';
     if (volatilePct > 60) { riskLabel = 'Tinggi'; riskColor = 'text-rose-400'; }
@@ -649,7 +647,6 @@
     });
   }
 
-  // ================= GOALS =================
   function renderGoals() {
     const grid = document.getElementById('goals-grid');
     const goals = EduVesting.getGoals();
@@ -756,7 +753,6 @@
     renderGoals();
   }
 
-  // ================= FEE OPTIMIZER =================
   function prefillPrice() {
     const instrument = document.getElementById('instrument-select').value;
     const assets = EduVesting.getAssets().filter(a => a.type === instrument && a.lastPrice > 0);
@@ -801,7 +797,6 @@
     `;
   }
 
-  // ================= ANIMATIONS =================
   function animateBars() {
     document.querySelectorAll('.alloc-bar, .progress-fill').forEach((bar, i) => {
       const target = bar.style.width;
