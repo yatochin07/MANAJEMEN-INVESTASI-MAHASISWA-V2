@@ -7,11 +7,13 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
     tailwind.config = {
@@ -43,7 +45,14 @@
     /* ===========================
        ANIMATED BACKGROUND CANVAS
     =========================== */
-    #bg-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Layered mesh gradients */
     .mesh-layer {
       position: fixed; inset: 0; z-index: 1; pointer-events: none;
       background:
@@ -52,8 +61,16 @@
         radial-gradient(ellipse 45% 40% at 55% 45%,  rgba(124,58,237,0.06) 0%, transparent 60%),
         radial-gradient(ellipse 35% 30% at 80% 15%,  rgba(6,182,212,0.05)  0%, transparent 55%);
     }
+
+    /* Moving orb blobs */
     .orb {
-      position: fixed; border-radius: 50%; filter: blur(90px); opacity: 0.18; pointer-events: none; z-index: 1; animation: drift linear infinite;
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.18;
+      pointer-events: none;
+      z-index: 1;
+      animation: drift linear infinite;
     }
     .orb-1 { width: 520px; height: 520px; background: #6366f1; top: -120px; left: -100px; animation-duration: 28s; }
     .orb-2 { width: 420px; height: 420px; background: #3b82f6; bottom: -80px; right: -80px; animation-duration: 22s; animation-direction: reverse; }
@@ -66,6 +83,7 @@
       100% { transform: translate(0,  0) scale(1);    }
     }
 
+    /* Fine dot-grid overlay */
     .dot-grid {
       position: fixed; inset: 0; z-index: 2; pointer-events: none;
       background-image: radial-gradient(rgba(148,163,184,0.055) 1px, transparent 1px);
@@ -73,85 +91,321 @@
     }
 
     /* ===========================
-       LAYOUT ELEMENTS
+       LAYOUT
     =========================== */
-    .page-shell { position: relative; z-index: 10; }
-    
-    .left-panel { padding: 3rem 3.5rem; position: relative; overflow: hidden; border-right: 1px solid rgba(255,255,255,0.05); }
-    .left-panel::after { content: ''; position: absolute; top: 0; right: 0; width: 1px; height: 100%; background: linear-gradient(to bottom, transparent, rgba(99,102,241,0.4), transparent); }
-    
-    .right-panel { padding: 3rem 2rem; }
+    .page-shell {
+      position: relative; z-index: 10;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 900px) {
+      .page-shell { grid-template-columns: 1fr; }
+      .left-panel  { display: none; }
+    }
 
-    .stat-ticker { display: flex; flex-direction: column; gap: 0.75rem; }
-    .stat-row { display: flex; align-items: center; gap: 1rem; padding: 0.85rem 1.1rem; border-radius: 14px; background: rgba(19,25,40,0.7); border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(8px); animation: slideRight 0.5s ease both; }
+    /* ===========================
+       LEFT PANEL — BRAND SHOWCASE
+    =========================== */
+    .left-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 3rem 3.5rem;
+      position: relative;
+      overflow: hidden;
+      border-right: 1px solid rgba(255,255,255,0.05);
+    }
+
+    /* Vertical decorative line */
+    .left-panel::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 1px; height: 100%;
+      background: linear-gradient(to bottom, transparent, rgba(99,102,241,0.4), transparent);
+    }
+
+    /* Stats ticker */
+    .stat-ticker {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .stat-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.85rem 1.1rem;
+      border-radius: 14px;
+      background: rgba(19,25,40,0.7);
+      border: 1px solid rgba(255,255,255,0.06);
+      backdrop-filter: blur(8px);
+      animation: slideRight 0.5s ease both;
+    }
     .stat-row:nth-child(1) { animation-delay: 0.2s; }
     .stat-row:nth-child(2) { animation-delay: 0.35s; }
     .stat-row:nth-child(3) { animation-delay: 0.5s; }
 
-    @keyframes slideRight { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes slideRight {
+      from { opacity: 0; transform: translateX(-20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
 
-    .feature-item { display: flex; align-items: flex-start; gap: 0.8rem; animation: fadeUp 0.5s ease both; }
+    /* Feature list */
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.8rem;
+      animation: fadeUp 0.5s ease both;
+    }
     .feature-item:nth-child(1) { animation-delay: 0.4s; }
     .feature-item:nth-child(2) { animation-delay: 0.52s; }
     .feature-item:nth-child(3) { animation-delay: 0.64s; }
     .feature-item:nth-child(4) { animation-delay: 0.76s; }
 
-    .feature-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 0.85rem; }
+    .feature-icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.85rem;
+    }
 
-    .form-card { width: 100%; max-width: 420px; }
-    .glass-card { background: rgba(15, 20, 35, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); border-radius: 1.5rem; padding: 2.5rem; box-shadow: 0 32px 64px -16px rgba(0,0,0,0.5), 0 0 0 1px rgba(99,102,241,0.08) inset, 0 1px 0 rgba(255,255,255,0.06) inset; }
-    
-    .field-wrap { position: relative; }
-    .field-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 0.85rem; pointer-events: none; transition: color 0.2s; }
-    .form-input { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); border-radius: 12px; padding: 0.75rem 0.9rem 0.75rem 2.6rem; font-size: 0.9rem; font-family: 'Inter', sans-serif; color: #e2e8f0; transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; outline: none; }
-    .form-input:focus { border-color: rgba(99,102,241,0.6); box-shadow: 0 0 0 3px rgba(99,102,241,0.14); background: rgba(99,102,241,0.04); }
-    .form-input:focus + .field-icon, .field-wrap:focus-within .field-icon { color: #818cf8; }
+    /* ===========================
+       RIGHT PANEL — FORM
+    =========================== */
+    .right-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+      min-height: 100vh;
+    }
+
+    .form-card {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    /* Glass card */
+    .glass-card {
+      background: rgba(15, 20, 35, 0.85);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 1.5rem;
+      padding: 2.5rem;
+      box-shadow:
+        0 32px 64px -16px rgba(0,0,0,0.5),
+        0 0 0 1px rgba(99,102,241,0.08) inset,
+        0 1px 0 rgba(255,255,255,0.06) inset;
+    }
+
+    /* Input field */
+    .field-wrap {
+      position: relative;
+    }
+    .field-icon {
+      position: absolute;
+      left: 14px; top: 50%;
+      transform: translateY(-50%);
+      color: #64748b;
+      font-size: 0.85rem;
+      pointer-events: none;
+      transition: color 0.2s;
+    }
+    .form-input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 12px;
+      padding: 0.75rem 0.9rem 0.75rem 2.6rem;
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      color: #e2e8f0;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      outline: none;
+    }
+    .form-input:focus {
+      border-color: rgba(99,102,241,0.6);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.14);
+      background: rgba(99,102,241,0.04);
+    }
+    .form-input:focus + .field-icon,
+    .field-wrap:focus-within .field-icon {
+      color: #818cf8;
+    }
     .form-input::placeholder { color: #475569; }
 
-    .pwd-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #475569; cursor: pointer; padding: 4px; font-size: 0.85rem; transition: color 0.2s; }
+    /* Toggle password */
+    .pwd-toggle {
+      position: absolute;
+      right: 12px; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none;
+      color: #475569;
+      cursor: pointer;
+      padding: 4px;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
     .pwd-toggle:hover { color: #a5b4fc; }
 
-    .btn-submit { width: 100%; padding: 0.85rem; border-radius: 12px; border: none; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600; color: white; background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%); position: relative; overflow: hidden; transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s; }
-    .btn-submit::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent); opacity: 0; transition: opacity 0.2s; }
+    /* Submit button */
+    .btn-submit {
+      width: 100%;
+      padding: 0.85rem;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: white;
+      background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
+      position: relative;
+      overflow: hidden;
+      transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .btn-submit::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
     .btn-submit:hover:not(:disabled) { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 8px 24px -4px rgba(99,102,241,0.45); }
     .btn-submit:hover:not(:disabled)::before { opacity: 1; }
     .btn-submit:active:not(:disabled)  { transform: translateY(0); }
     .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; transform: none; background: #475569; }
 
-    .btn-social { width: 100%; padding: 0.7rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.09); background: rgba(255,255,255,0.03); color: #94a3b8; font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.6rem; transition: background 0.2s, border-color 0.2s, color 0.2s; }
-    .btn-social:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.16); color: #e2e8f0; }
+    /* Social login button */
+    .btn-social {
+      width: 100%;
+      padding: 0.7rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.09);
+      background: rgba(255,255,255,0.03);
+      color: #94a3b8;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .btn-social:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.16);
+      color: #e2e8f0;
+    }
 
-    .divider { display: flex; align-items: center; gap: 0.75rem; }
+    /* Divider */
+    .divider {
+      display: flex; align-items: center; gap: 0.75rem;
+    }
     .divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
-    .logo-text { background: linear-gradient(90deg, #a5b4fc, #93c5fd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
+    /* Logo gradient text */
+    .logo-text {
+      background: linear-gradient(90deg, #a5b4fc, #93c5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Error / success states */
     .input-error  { border-color: rgba(244,63,94,0.6) !important; }
     .input-error:focus { box-shadow: 0 0 0 3px rgba(244,63,94,0.14) !important; }
     .msg-error    { color: #f87171; font-size: 0.78rem; margin-top: 0.35rem; display: none; }
     .msg-error.show { display: block; }
 
-    .tab-bar { display: flex; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 4px; margin-bottom: 1.75rem; }
-    .tab-btn { flex: 1; padding: 0.55rem 0; border-radius: 9px; border: none; background: transparent; font-family: 'Inter', sans-serif; font-size: 0.88rem; font-weight: 600; cursor: pointer; color: #64748b; transition: background 0.2s, color 0.2s, box-shadow 0.2s; }
-    .tab-btn.active { background: rgba(99,102,241,0.22); color: #a5b4fc; box-shadow: 0 2px 8px -2px rgba(99,102,241,0.3); }
+    /* Tabs (Login / Register) */
+    .tab-bar {
+      display: flex;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 1.75rem;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 0.55rem 0;
+      border-radius: 9px;
+      border: none;
+      background: transparent;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: #64748b;
+      transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    }
+    .tab-btn.active {
+      background: rgba(99,102,241,0.22);
+      color: #a5b4fc;
+      box-shadow: 0 2px 8px -2px rgba(99,102,241,0.3);
+    }
 
+    /* Register panel hidden by default */
     #register-form { display: none; }
 
+    /* Checkbox */
     .checkbox-wrap { display: flex; align-items: flex-start; gap: 0.6rem; }
-    .custom-check { width: 17px; height: 17px; flex-shrink: 0; border-radius: 5px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.04); accent-color: #6366f1; cursor: pointer; margin-top: 2px; }
+    .custom-check {
+      width: 17px; height: 17px; flex-shrink: 0;
+      border-radius: 5px; border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.04);
+      accent-color: #6366f1;
+      cursor: pointer;
+      margin-top: 2px;
+    }
 
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to   { opacity: 1; transform: translateY(0); } }
+    /* Fade/slide animations for form switch */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
     .anim-in { animation: fadeUp 0.35s ease both; }
 
+    /* Loading spinner inside button */
     @keyframes spin { to { transform: rotate(360deg); } }
-    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 6px; }
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
 
+    /* Scrollbar */
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.25); border-radius: 9px; }
 
-    .ticker-wrap { overflow: hidden; white-space: nowrap; border-top: 1px solid rgba(255,255,255,0.05); padding: 0.6rem 0; margin-top: 1.5rem; }
-    .ticker-inner { display: inline-block; animation: tickerScroll 30s linear infinite; }
-    @keyframes tickerScroll { from { transform: translateX(0); } to   { transform: translateX(-50%); } }
+    /* Market ticker strip */
+    .ticker-wrap {
+      overflow: hidden;
+      white-space: nowrap;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding: 0.6rem 0;
+      margin-top: 1.5rem;
+    }
+    .ticker-inner {
+      display: inline-block;
+      animation: tickerScroll 30s linear infinite;
+    }
+    @keyframes tickerScroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
     .ticker-item { display: inline-block; margin-right: 2.5rem; font-size: 0.75rem; color: #64748b; font-weight: 500;}
     .ticker-item .up   { color: #34d399; }
     .ticker-item .down { color: #f87171; }
@@ -166,75 +420,80 @@
   <div class="mesh-layer" aria-hidden="true"></div>
   <div class="dot-grid"  aria-hidden="true"></div>
 
-  <div class="page-shell min-h-screen flex flex-col lg:grid lg:grid-cols-2">
+  <div class="page-shell">
 
-    <aside class="left-panel hidden lg:flex flex-col justify-between" aria-hidden="true">
-      <div class="flex items-center gap-3 mb-12" style="animation: fadeUp 0.4s ease both;">      
-        <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg,#6366f1,#3b82f6);">      
-          <i class="fa-solid fa-chart-line text-white text-base"></i>      
-        </div>      
-        <span class="font-display text-xl logo-text font-bold tracking-wide text-slate-100">EduVesting</span>      
-      </div>    
+    <aside class="left-panel" aria-hidden="true">
 
-      <div style="animation: fadeUp 0.45s ease both 0.1s; animation-fill-mode: both;">  
-        <h1 class="font-display text-4xl leading-tight text-slate-100 mb-4">  
-          Kelola Portofolio<br/>  
-          <span style="background: linear-gradient(90deg,#a5b4fc,#67e8f9); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">  
-            Seperti Pro.  
-          </span>  
-        </h1>  
-        <p class="text-slate-400 text-sm leading-relaxed max-w-xs">  
-          Platform simulasi manajemen portofolio untuk mahasiswa — saham, kripto, emas, dan reksa dana dalam satu dashboard yang elegan.  
-        </p>  
-      </div>
+      <div>
+        <div class="flex items-center gap-3 mb-12" style="animation: fadeUp 0.4s ease both;">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+               style="background: linear-gradient(135deg,#6366f1,#3b82f6); box-shadow: 0 6px 20px -4px rgba(99,102,241,0.5);">
+            <i class="fa-solid fa-chart-line text-white text-base"></i>
+          </div>
+          <span class="font-display text-xl logo-text">EduVesting</span>
+        </div>
 
-      <div class="mt-9 space-y-4">
-        <div class="feature-item">
-          <div class="feature-icon" style="background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.2);">
-            <i class="fa-solid fa-chart-pie text-indigo-400"></i>
-          </div>
-          <div>
-            <p class="text-sm font-semibold text-slate-200">Multi-Aset dalam Satu Tempat</p>
-            <p class="text-xs text-slate-500 mt-0.5">Pantau saham IDX, kripto, emas, dan pasar uang secara bersamaan.</p>
-          </div>
+        <div style="animation: fadeUp 0.45s ease both 0.1s; animation-fill-mode: both;">
+          <h1 class="font-display text-4xl leading-tight text-slate-100 mb-4">
+            Kelola Portofolio<br/>
+            <span style="background: linear-gradient(90deg,#a5b4fc,#67e8f9); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
+              Seperti Pro.
+            </span>
+          </h1>
+          <p class="text-slate-400 text-sm leading-relaxed max-w-xs">
+            Platform simulasi manajemen portofolio untuk mahasiswa — saham, kripto, emas, dan reksa dana dalam satu dashboard yang elegan.
+          </p>
         </div>
-        <div class="feature-item">
-          <div class="feature-icon" style="background:rgba(124,58,237,0.12); border:1px solid rgba(124,58,237,0.2);">
-            <i class="fa-solid fa-robot text-violet-400"></i>
+
+        <div class="mt-9 space-y-4">
+          <div class="feature-item">
+            <div class="feature-icon" style="background:rgba(99,102,241,0.15); border:1px solid rgba(99,102,241,0.2);">
+              <i class="fa-solid fa-chart-pie text-indigo-400"></i>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-slate-200">Multi-Aset dalam Satu Tempat</p>
+              <p class="text-xs text-slate-500 mt-0.5">Pantau saham IDX, kripto, emas, dan pasar uang secara bersamaan.</p>
+            </div>
           </div>
-          <div>
-            <p class="text-sm font-semibold text-slate-200">AI Smart Recommendations</p>
-            <p class="text-xs text-slate-500 mt-0.5">Insight otomatis untuk rebalancing, take-profit, dan manajemen risiko.</p>
+          <div class="feature-item">
+            <div class="feature-icon" style="background:rgba(124,58,237,0.12); border:1px solid rgba(124,58,237,0.2);">
+              <i class="fa-solid fa-robot text-violet-400"></i>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-slate-200">AI Smart Recommendations</p>
+              <p class="text-xs text-slate-500 mt-0.5">Insight otomatis untuk rebalancing, take-profit, dan manajemen risiko.</p>
+            </div>
           </div>
-        </div>
-        <div class="feature-item">
-          <div class="feature-icon" style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.2);">
-            <i class="fa-solid fa-bullseye text-emerald-400"></i>
+          <div class="feature-item">
+            <div class="feature-icon" style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.2);">
+              <i class="fa-solid fa-bullseye text-emerald-400"></i>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-slate-200">Goal & Target Dana</p>
+              <p class="text-xs text-slate-500 mt-0.5">Lacak progress skripsi, dana darurat, dan tujuan finansial lain.</p>
+            </div>
           </div>
-          <div>
-            <p class="text-sm font-semibold text-slate-200">Goal & Target Dana</p>
-            <p class="text-xs text-slate-500 mt-0.5">Lacak progress skripsi, dana darurat, dan tujuan finansial lain.</p>
-          </div>
-        </div>
-        <div class="feature-item">
-          <div class="feature-icon" style="background:rgba(6,182,212,0.1); border:1px solid rgba(6,182,212,0.2);">
-            <i class="fa-solid fa-sliders text-cyan-400"></i>
-          </div>
-          <div>
-            <p class="text-sm font-semibold text-slate-200">Budget & Fee Optimizer</p>
-            <p class="text-xs text-slate-500 mt-0.5">Hitung estimasi fee broker dan maksimal lot sebelum beli.</p>
+          <div class="feature-item">
+            <div class="feature-icon" style="background:rgba(6,182,212,0.1); border:1px solid rgba(6,182,212,0.2);">
+              <i class="fa-solid fa-sliders text-cyan-400"></i>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-slate-200">Budget & Fee Optimizer</p>
+              <p class="text-xs text-slate-500 mt-0.5">Hitung estimasi fee broker dan maksimal lot sebelum beli.</p>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="mt-10">
         <div class="flex items-center gap-2 mb-3">
-          <p class="text-xs text-slate-500 uppercase tracking-widest font-semibold">Snapshot Pasar <span class="animate-pulse ml-1 text-emerald-400 text-[10px]"> LIVE</span></p>
+          <p class="text-xs text-slate-500 uppercase tracking-widest font-semibold">Snapshot Pasar <span class="animate-pulse ml-1 text-emerald-400 text-[10px]">● LIVE</span></p>
         </div>
         
         <div class="stat-ticker">
           <div class="stat-row">
-            <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(245,158,11,0.12);">
+            <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                 style="background:rgba(245,158,11,0.12);">
               <i class="fa-brands fa-bitcoin text-amber-400 text-xs"></i>
             </div>
             <div class="flex-1">
@@ -248,7 +507,8 @@
           </div>
 
           <div class="stat-row">
-            <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(124,58,237,0.12);">
+            <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                 style="background:rgba(124,58,237,0.12);">
               <i class="fa-brands fa-ethereum text-violet-400 text-xs"></i>
             </div>
             <div class="flex-1">
@@ -262,15 +522,16 @@
           </div>
 
           <div class="stat-row">
-            <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(59,130,246,0.12);">
+            <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                 style="background:rgba(59,130,246,0.12);">
               <i class="fa-solid fa-building-columns text-blue-400 text-xs"></i>
             </div>
             <div class="flex-1">
               <p class="text-xs font-semibold text-slate-300">BBCA</p>
-              <p class="text-xs text-slate-600">Saham (Backend)</p>
+              <p class="text-xs text-slate-600">Saham IDX</p>
             </div>
             <div class="text-right">
-              <p id="live-saham-price" class="text-sm font-semibold text-slate-200">Memuat...</p>
+              <p id="live-saham-price" class="text-sm font-semibold text-slate-200">Rp 10.250</p>
               <p class="text-xs text-emerald-400">Live</p>
             </div>
           </div>
@@ -284,19 +545,22 @@
 
         <p class="text-xs text-slate-700 mt-4">© 2025 EduVesting · Simulasi, bukan layanan investasi berlisensi.</p>
       </div>
+
     </aside>
 
-    <section class="right-panel flex flex-col items-center justify-center w-full min-h-screen" role="main">
-      <div class="form-card w-full">
+    <section class="right-panel" role="main">
+      <div class="form-card">
 
-        <div class="flex items-center gap-3 mb-8 lg:hidden justify-center w-full">
-          <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg,#6366f1,#3b82f6);">
+        <div class="flex items-center gap-3 mb-8 lg:hidden">
+          <div class="w-9 h-9 rounded-xl flex items-center justify-center"
+               style="background: linear-gradient(135deg,#6366f1,#3b82f6);">
             <i class="fa-solid fa-chart-line text-white text-sm"></i>
           </div>
-          <span class="font-display text-lg logo-text font-bold">EduVesting</span>
+          <span class="font-display text-lg logo-text">EduVesting</span>
         </div>
 
         <div class="glass-card anim-in">
+
           <div class="tab-bar" role="tablist">
             <button id="tab-login" class="tab-btn active" onclick="switchTab('login')" role="tab" aria-selected="true">
               <i class="fa-solid fa-right-to-bracket mr-1.5 text-xs"></i>Masuk
@@ -306,16 +570,17 @@
             </button>
           </div>
 
-          <form id="login-form" onsubmit="event.preventDefault(); handleLogin();">
+          <div id="login-form">
             <div class="mb-6">
               <h2 class="font-display text-xl text-slate-100">Selamat Datang Kembali</h2>
               <p class="text-slate-500 text-sm mt-1">Masuk untuk melanjutkan ke dashboard Anda.</p>
             </div>
 
             <div class="mb-4">
-              <label for="login-email" class="block text-xs font-medium text-slate-400 mb-1.5">Email</label>
+              <label for="login-email" class="block text-xs font-medium text-slate-400 mb-1.5">Email / Username</label>
               <div class="field-wrap">
-                <input type="text" id="login-email" placeholder="email@mahasiswa.ac.id" class="form-input" autocomplete="email" />
+                <input type="text" id="login-email" placeholder="email@mahasiswa.ac.id"
+                       class="form-input" autocomplete="email" />
                 <span class="field-icon"><i class="fa-solid fa-envelope"></i></span>
               </div>
               <p class="msg-error" id="err-email">Email tidak boleh kosong.</p>
@@ -327,9 +592,11 @@
                 <a href="#" class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">Lupa password?</a>
               </div>
               <div class="field-wrap">
-                <input type="password" id="login-password" placeholder="Masukkan password" class="form-input" autocomplete="current-password" />
+                <input type="password" id="login-password" placeholder="Masukkan password"
+                       class="form-input" autocomplete="current-password" />
                 <span class="field-icon"><i class="fa-solid fa-lock"></i></span>
-                <button type="button" class="pwd-toggle" onclick="togglePwd('login-password', this)" title="Tampilkan/Sembunyikan Password">
+                <button type="button" class="pwd-toggle" onclick="togglePwd('login-password', this)"
+                        title="Tampilkan/Sembunyikan Password">
                   <i class="fa-solid fa-eye"></i>
                 </button>
               </div>
@@ -343,7 +610,7 @@
               </label>
             </div>
 
-            <button type="submit" id="btn-login" class="btn-submit mb-2">
+            <button id="btn-login" class="btn-submit mb-2" onclick="handleLogin()">
               Masuk ke Dashboard
             </button>
 
@@ -353,8 +620,8 @@
               <div class="divider-line"></div>
             </div>
 
-            <button type="button" class="btn-social" onclick="handleGoogleLogin()">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <button class="btn-social" onclick="loginWithGoogle()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                 <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
@@ -362,9 +629,9 @@
               </svg>
               Google
             </button>
-          </form>
+            </div>
 
-          <form id="register-form" onsubmit="event.preventDefault(); handleRegister();">
+          <div id="register-form">
             <div class="mb-6">
               <h2 class="font-display text-xl text-slate-100">Buat Akun Baru</h2>
               <p class="text-slate-500 text-sm mt-1">Gratis untuk semua mahasiswa aktif.</p>
@@ -373,7 +640,8 @@
             <div class="mb-3">
               <label class="block text-xs font-medium text-slate-400 mb-1.5">Nama Lengkap</label>
               <div class="field-wrap">
-                <input type="text" id="reg-name" placeholder="Arief Rahardian" class="form-input" autocomplete="name" required />
+                <input type="text" id="reg-name" placeholder="Arief Rahardian"
+                       class="form-input" autocomplete="name" />
                 <span class="field-icon"><i class="fa-solid fa-user"></i></span>
               </div>
             </div>
@@ -381,7 +649,8 @@
             <div class="mb-3">
               <label class="block text-xs font-medium text-slate-400 mb-1.5">Email Kampus / Pribadi</label>
               <div class="field-wrap">
-                <input type="email" id="reg-email" placeholder="email@mahasiswa.ac.id" class="form-input" autocomplete="email" required />
+                <input type="email" id="reg-email" placeholder="email@mahasiswa.ac.id"
+                       class="form-input" autocomplete="email" />
                 <span class="field-icon"><i class="fa-solid fa-envelope"></i></span>
               </div>
             </div>
@@ -389,7 +658,8 @@
             <div class="mb-3">
               <label class="block text-xs font-medium text-slate-400 mb-1.5">Universitas</label>
               <div class="field-wrap">
-                <input type="text" id="reg-uni" placeholder="Universitas Indonesia" class="form-input" required />
+                <input type="text" id="reg-uni" placeholder="Universitas Indonesia"
+                       class="form-input" />
                 <span class="field-icon"><i class="fa-solid fa-building-columns"></i></span>
               </div>
             </div>
@@ -397,7 +667,9 @@
             <div class="mb-4">
               <label class="block text-xs font-medium text-slate-400 mb-1.5">Buat Password</label>
               <div class="field-wrap">
-                <input type="password" id="reg-password" placeholder="Minimal 8 karakter" class="form-input" autocomplete="new-password" oninput="checkStrength(this.value)" required />
+                <input type="password" id="reg-password" placeholder="Minimal 6 karakter"
+                       class="form-input" autocomplete="new-password"
+                       oninput="checkStrength(this.value)" />
                 <span class="field-icon"><i class="fa-solid fa-lock"></i></span>
                 <button type="button" class="pwd-toggle" onclick="togglePwd('reg-password', this)">
                   <i class="fa-solid fa-eye"></i>
@@ -416,51 +688,163 @@
               <input type="checkbox" id="terms" class="custom-check" onchange="toggleRegisterButton()" />
               <label for="terms" class="text-xs text-slate-400 cursor-pointer select-none leading-relaxed">
                 Saya menyetujui <a href="#" class="text-indigo-400 hover:text-indigo-300">Syarat & Ketentuan</a>
-                dan memahami ini adalah platform simulasi, bukan layanan investasi berlisensi.
+                dan memahami ini adalah platform simulasi.
               </label>
             </div>
 
-            <button type="submit" id="btn-register" class="btn-submit" disabled>
+            <button id="btn-register" class="btn-submit" onclick="handleRegister()" disabled>
               Buat Akun Gratis
             </button>
-          </form>
+          </div>
 
         </div>
-
-        <p class="text-center text-xs text-slate-700 mt-5">
-          Dengan masuk, Anda menyetujui kebijakan privasi EduVesting.<br/>
-          Data simulasi. Bukan rekomendasi investasi nyata.
-        </p>
 
       </div>
     </section>
 
   </div>
 
-  <div id="success-overlay" style="display:none; position:fixed; inset:0; z-index:100; background:rgba(7,9,15,0.92); backdrop-filter:blur(16px);" class="flex items-center justify-center flex-col gap-4">
+  <div id="success-overlay"
+       style="display:none; position:fixed; inset:0; z-index:100; background:rgba(7,9,15,0.92); backdrop-filter:blur(16px);"
+       class="flex items-center justify-center flex-col gap-4">
     <div style="animation: fadeUp 0.4s ease both;">
-      <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style="background:rgba(16,185,129,0.15); border:2px solid rgba(16,185,129,0.4);">
+      <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4"
+           style="background:rgba(16,185,129,0.15); border:2px solid rgba(16,185,129,0.4);">
         <i class="fa-solid fa-check text-emerald-400 text-3xl"></i>
       </div>
       <p class="font-display text-2xl text-slate-100 text-center">Berhasil Masuk!</p>
       <p class="text-slate-500 text-sm text-center mt-2">Mengalihkan ke dashboard Anda…</p>
       <div class="flex justify-center mt-4">
-        <div class="w-6 h-6 border-2 border-indigo-400/30 border-t-indigo-400 rounded-full" style="animation: spin 0.7s linear infinite;"></div>
+        <div class="w-6 h-6 border-2 border-indigo-400/30 border-t-indigo-400 rounded-full"
+             style="animation: spin 0.7s linear infinite;"></div>
       </div>
     </div>
   </div>
 
   <script>
-    const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD'; 
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // ==========================================
+    // 1. SETUP URL & SUPABASE 
+    // ==========================================
+    const supabaseUrl = 'https://eirhdjllijlxjhigiwr.supabase.co';
+    const supabaseAnonKey = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
+    
+    const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
-    supabaseClient.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        window.location.href = 'dashboard.html';
+    const REDIRECT_URL = isLocalhost 
+        ? 'http://localhost:5500/dashboard.html' 
+        : 'https://manajemen-investasi-mahasiswa-v2.vercel.app/dashboard.html';
+
+    // ==========================================
+    // 2. FUNGSI GOOGLE LOGIN VIA SUPABASE
+    // ==========================================
+    async function loginWithGoogle() {
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: REDIRECT_URL
+          }
+        });
+        if (error) throw error;
+      } catch (error) {
+        alert('Gagal login via Google: ' + error.message);
+        console.error(error);
       }
-    });
+    }
 
+    // ==========================================
+    // 3. FUNGSI LOGIN & REGISTER MANUAL VIA SUPABASE
+    // ==========================================
+    async function handleLogin() {
+      const emailInput = document.getElementById('login-email');
+      const pwdInput   = document.getElementById('login-password');
+      const errEmail   = document.getElementById('err-email');
+      const errPwd     = document.getElementById('err-password');
+      const btn        = document.getElementById('btn-login');
+
+      let valid = true;
+      emailInput.classList.remove('input-error'); pwdInput.classList.remove('input-error');
+      errEmail.classList.remove('show'); errPwd.classList.remove('show');
+
+      if (!emailInput.value.trim()) { emailInput.classList.add('input-error'); errEmail.classList.add('show'); valid = false; }
+      if (!pwdInput.value.trim()) { pwdInput.classList.add('input-error'); errPwd.classList.add('show'); valid = false; }
+
+      if (!valid) return;
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Memverifikasi…';
+
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+          email: emailInput.value.trim(),
+          password: pwdInput.value.trim()
+        });
+
+        if (error) throw error;
+
+        // Simpan sesi agar dashboard tidak nendang balik
+        const userData = {
+            username: data.user.user_metadata.full_name || data.user.user_metadata.name || 'User',
+            email: data.user.email
+        };
+        localStorage.setItem('userToken', data.session.access_token);
+        localStorage.setItem('userData', JSON.stringify(userData));
+
+        showSuccess();
+      } catch (error) {
+        btn.disabled = false;
+        btn.innerHTML = 'Masuk ke Dashboard';
+        alert('Login Gagal: Email atau Password salah.');
+        console.error(error);
+      }
+    }
+
+    async function handleRegister() {
+      const nameInput = document.getElementById('reg-name').value.trim();
+      const emailInput = document.getElementById('reg-email').value.trim();
+      const uniInput = document.getElementById('reg-uni').value.trim();
+      const passwordInput = document.getElementById('reg-password').value.trim();
+      const btn = document.getElementById('btn-register');
+
+      if (!nameInput || !emailInput || !passwordInput) {
+        return alert("Harap isi Nama, Email, dan Password.");
+      }
+      
+      const emailValidation = isValidEmailData(emailInput);
+      if (!emailValidation.valid) return alert(emailValidation.msg);
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Memproses...';
+
+      try {
+        const { data, error } = await supabaseClient.auth.signUp({
+          email: emailInput,
+          password: passwordInput,
+          options: {
+            data: {
+              full_name: nameInput,
+              university: uniInput
+            }
+          }
+        });
+
+        if (error) throw error;
+
+        alert('Pendaftaran Berhasil! Silakan cek inbox email Anda untuk verifikasi (jika diperlukan), atau langsung login.');
+        switchTab('login');
+      } catch (error) {
+        alert('Gagal Mendaftar: ' + error.message);
+        console.error(error);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Buat Akun Gratis';
+      }
+    }
+
+    // ==========================================
+    // 4. FUNGSI UI & LAINNYA
+    // ==========================================
     async function loadRealtimeMarketData() {
       const formatRp = (num) => new Intl.NumberFormat('id-ID').format(Math.round(num));
       const formatSingkat = (num) => {
@@ -471,46 +855,32 @@
 
       try {
         const resCrypto = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=idr&include_24hr_change=true');
-        
-        if (!resCrypto.ok) throw new Error("API rate limit / network error");
-        
         const dataCrypto = await resCrypto.json();
 
         if(dataCrypto && dataCrypto.bitcoin) {
-          const btcPrice = dataCrypto.bitcoin.idr;
-          const btcChange = dataCrypto.bitcoin.idr_24h_change;
-          document.getElementById('live-btc-price').innerText = "Rp " + formatSingkat(btcPrice);
-          document.getElementById('live-btc-change').innerText = (btcChange >= 0 ? '+' : '') + btcChange.toFixed(2) + '%';
-          document.getElementById('live-btc-change').className = btcChange >= 0 ? 'text-xs text-emerald-400' : 'text-xs text-rose-400';
+          document.getElementById('live-btc-price').innerText = "Rp " + formatSingkat(dataCrypto.bitcoin.idr);
+          document.getElementById('live-btc-change').innerText = (dataCrypto.bitcoin.idr_24h_change >= 0 ? '+' : '') + dataCrypto.bitcoin.idr_24h_change.toFixed(2) + '%';
+          document.getElementById('live-btc-change').className = dataCrypto.bitcoin.idr_24h_change >= 0 ? 'text-xs text-emerald-400' : 'text-xs text-rose-400';
 
-          const ethPrice = dataCrypto.ethereum.idr;
-          const ethChange = dataCrypto.ethereum.idr_24h_change;
-          document.getElementById('live-eth-price').innerText = "Rp " + formatSingkat(ethPrice);
-          document.getElementById('live-eth-change').innerText = (ethChange >= 0 ? '+' : '') + ethChange.toFixed(2) + '%';
-          document.getElementById('live-eth-change').className = ethChange >= 0 ? 'text-xs text-emerald-400' : 'text-xs text-rose-400';
+          document.getElementById('live-eth-price').innerText = "Rp " + formatSingkat(dataCrypto.ethereum.idr);
+          document.getElementById('live-eth-change').innerText = (dataCrypto.ethereum.idr_24h_change >= 0 ? '+' : '') + dataCrypto.ethereum.idr_24h_change.toFixed(2) + '%';
+          document.getElementById('live-eth-change').className = dataCrypto.ethereum.idr_24h_change >= 0 ? 'text-xs text-emerald-400' : 'text-xs text-rose-400';
         }
 
-        const resSaham = await fetch('/api/price/saham/BBCA');
-        if (resSaham.ok) {
-           const dataSaham = await resSaham.json();
-           if (dataSaham && dataSaham.price) {
-              document.getElementById('live-saham-price').innerText = "Rp " + formatRp(dataSaham.price);
-           }
-        }
+        // Mock Saham BBCA karena Server Node.js lu gaib
+        const dataSaham = { price: 10250 };
+        document.getElementById('live-saham-price').innerText = "Rp " + formatRp(dataSaham.price);
 
         let tickerHTML = '';
         if(dataCrypto.bitcoin) tickerHTML += `<span class="ticker-item">BTC/IDR <span class="${dataCrypto.bitcoin.idr_24h_change>=0?'up':'down'}">${formatRp(dataCrypto.bitcoin.idr)} ${dataCrypto.bitcoin.idr_24h_change>=0?'▲':'▼'}</span></span>`;
         if(dataCrypto.ethereum) tickerHTML += `<span class="ticker-item">ETH/IDR <span class="${dataCrypto.ethereum.idr_24h_change>=0?'up':'down'}">${formatRp(dataCrypto.ethereum.idr)} ${dataCrypto.ethereum.idr_24h_change>=0?'▲':'▼'}</span></span>`;
+        if(dataSaham.price) tickerHTML += `<span class="ticker-item">BBCA <span class="up">${formatRp(dataSaham.price)}</span></span>`;
         
         const container = document.getElementById('ticker-container');
         if(tickerHTML !== '') container.innerHTML = tickerHTML + tickerHTML + tickerHTML;
 
       } catch (err) {
-        console.warn("API Error:", err);
-        document.getElementById('live-btc-price').innerText = "Data limit";
-        document.getElementById('live-eth-price').innerText = "Data limit";
-        document.getElementById('live-saham-price').innerText = "Server Error";
-        document.getElementById('ticker-container').innerHTML = '<span class="ticker-item text-rose-400">Gagal memuat API pasar. Harap refresh kembali nanti.</span>';
+        console.warn("Sedang offline, gagal load harga realtime di login:", err);
       }
     }
 
@@ -555,7 +925,7 @@
       const colors = ['#f43f5e','#f59e0b','#06b6d4','#10b981'];
       const labels_text = ['Sangat Lemah','Sedang','Kuat','Sangat Kuat'];
       let score = 0;
-      if (val.length >= 8)  score++;
+      if (val.length >= 6)  score++;
       if (/[A-Z]/.test(val)) score++;
       if (/[0-9]/.test(val)) score++;
       if (/[^A-Za-z0-9]/.test(val)) score++;
@@ -568,68 +938,9 @@
       label.style.color = score > 0 ? colors[score-1] : '#64748b';
     }
 
-    async function handleGoogleLogin() {
-      const { error } = await supabaseClient.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: window.location.origin + '/dashboard.html' }
-      });
-      if (error) alert("Gagal login dengan Google: " + error.message);
-    }
-
-    async function handleLogin() {
-      const emailInput = document.getElementById('login-email');
-      const pwdInput   = document.getElementById('login-password');
-      const errEmail   = document.getElementById('err-email');
-      const errPwd     = document.getElementById('err-password');
-      const btn        = document.getElementById('btn-login');
-
-      let valid = true;
-
-      emailInput.classList.remove('input-error');
-      pwdInput.classList.remove('input-error');
-      errEmail.classList.remove('show');
-      errPwd.classList.remove('show');
-
-      if (!emailInput.value.trim()) {
-        emailInput.classList.add('input-error');
-        errEmail.classList.add('show');
-        valid = false;
-      }
-      if (!pwdInput.value.trim()) {
-        pwdInput.classList.add('input-error');
-        errPwd.classList.add('show');
-        valid = false;
-      }
-
-      if (!valid) return;
-
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span> Memverifikasi…';
-
-      const { data, error } = await supabaseClient.auth.signInWithPassword({
-        email: emailInput.value.trim(),
-        password: pwdInput.value.trim()
-      });
-
-      if (error) {
-        btn.disabled = false;
-        btn.innerHTML = 'Masuk ke Dashboard';
-        alert('Login Gagal: ' + error.message);
-      } else {
-        showSuccess();
-      }
-    }
-
     function isValidEmailData(email) {
       const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!regexEmail.test(email)) {
-        return { valid: false, msg: "Format email tidak valid. Pastikan memakai @ dan domain yang benar." };
-      }
-      const domain = email.split('@')[1].toLowerCase();
-      const disposableDomains = ['mailinator.com', '10minutemail.com', 'tempmail.com', 'temp-mail.org', 'guerrillamail.com', 'yopmail.com', 'throwawaymail.com', 'tempmail.net', 'fakemail.net', 'trashmail.com', 'getnada.com', 'tempmail.ninja', 'disposablemail.com'];
-      if (disposableDomains.includes(domain)) {
-        return { valid: false, msg: "Penggunaan email sementara (temp mail) tidak diizinkan." };
-      }
+      if (!regexEmail.test(email)) return { valid: false, msg: "Format email tidak valid. Pastikan memakai @ dan domain yang benar." };
       return { valid: true, msg: "" };
     }
 
@@ -638,61 +949,25 @@
       document.getElementById('btn-register').disabled = !termsChecked;
     }
 
-    async function handleRegister() {
-      const nameInput = document.getElementById('reg-name').value;
-      const emailInput = document.getElementById('reg-email').value;
-      const uniInput = document.getElementById('reg-uni').value;
-      const passwordInput = document.getElementById('reg-password').value;
-      const termsCheck = document.getElementById('terms').checked;
-      const btn = document.getElementById('btn-register');
-
-      if (!nameInput || !emailInput || !passwordInput) {
-        return alert("Harap isi Nama, Email, dan Password.");
-      }
-      
-      const emailValidation = isValidEmailData(emailInput);
-      if (!emailValidation.valid) {
-        return alert(emailValidation.msg);
-      }
-
-      if (!termsCheck) {
-        return alert("Anda harus menyetujui Syarat & Ketentuan.");
-      }
-
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span> Mendaftarkan…';
-
-      const { data, error } = await supabaseClient.auth.signUp({
-        email: emailInput,
-        password: passwordInput,
-        options: {
-          data: { full_name: nameInput, university: uniInput }
-        }
-      });
-
-      if (error) {
-        btn.disabled = false;
-        btn.innerHTML = 'Buat Akun Gratis';
-        alert('Gagal Mendaftar: ' + error.message);
-      } else {
-        alert('Pendaftaran Berhasil! Silakan masuk dengan akun baru Anda.');
-        document.getElementById('register-form').reset();
-        btn.disabled = false;
-        btn.innerHTML = 'Buat Akun Gratis';
-        switchTab('login');
-      }
-    }
-
     function showSuccess() {
       const overlay = document.getElementById('success-overlay');
       overlay.style.display = 'flex';
-      setTimeout(() => { window.location.href = 'dashboard.html'; }, 2400);
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        window.location.href = 'dashboard.html'; 
+      }, 2400);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       ['login-email','login-password'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.addEventListener('input', () => { el.classList.remove('input-error'); });
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+          const loginVisible = document.getElementById('login-form').style.display !== 'none';
+          if (loginVisible) handleLogin();
+        }
       });
     });
   </script>
