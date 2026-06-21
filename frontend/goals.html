@@ -113,7 +113,8 @@
     </div>
 
     <div class="mx-4 mb-5 p-3 rounded-xl glass-lighter flex items-center gap-3">
-      <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white" style="background: linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
+      <!-- DITAMBAHKAN OVERFLOW-HIDDEN AGAR AVATAR MEMBULAT SEMPURNA -->
+      <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white overflow-hidden" style="background: linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
       <div class="min-w-0">
         <p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">Memuat...</p>
       </div>
@@ -155,6 +156,16 @@
         <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout
       </button>
     </nav>
+
+    <div class="px-4 pb-5 pt-3">
+      <div class="rounded-xl p-3 text-xs" style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.15);">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-emerald-400 font-semibold">Pasar Terbuka</span>
+        </div>
+        <p class="text-slate-500">IDX · BEI · IHSG 7.412 <span class="text-emerald-400">+0.8%</span></p>
+      </div>
+    </div>
   </aside>
 
   <main class="flex-1 w-full md:ml-64 px-4 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden">
@@ -452,12 +463,20 @@
         return;
       }
 
-      // Update sidebar menggunakan nama dari Supabase seperti halaman lainnya
+      // Update sidebar menggunakan nama & avatar dari Supabase
       const user = session.user;
       const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
+      const avatarUrl = user.user_metadata?.avatar_url;
       
       document.getElementById('sidebar-user-name').innerText = displayName;
-      document.getElementById('sidebar-user-initial').innerText = displayName.charAt(0).toUpperCase();
+      
+      // LOGIKA RENDER AVATAR
+      const sbAvatar = document.getElementById('sidebar-user-initial');
+      if (avatarUrl) {
+        sbAvatar.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover">`;
+      } else {
+        sbAvatar.innerText = displayName.charAt(0).toUpperCase();
+      }
 
     } catch (err) {
       console.error("Gagal mendapatkan sesi Auth:", err);
