@@ -1,389 +1,473 @@
 <!DOCTYPE html>
 <html lang="id" class="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EduVesting — Catatan Transaksi</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EduVesting — Keuangan & Transaksi</title>
 
-  <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: { display: ['Plus Jakarta Sans', 'sans-serif'], body: ['Inter', 'sans-serif'] },
-          colors: {
-            base: { 950: '#07090f', 900: '#0f1423', 850: '#131928', 800: '#1a2235', 750: '#1e2840', 700: '#253049' },
-            accent: { blue: '#3b82f6', indigo: '#6366f1', violet: '#7c3aed', cyan: '#06b6d4', emerald: '#10b981', amber: '#f59e0b', rose: '#f43f5e' }
-          }
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: { display: ['Plus Jakarta Sans', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        colors: {
+          base: { 950:'#07090f',900:'#0f1423',850:'#131928',800:'#1a2235',750:'#1e2840',700:'#253049' },
+          accent: { blue:'#3b82f6', indigo:'#6366f1', violet:'#7c3aed', cyan:'#06b6d4', emerald:'#10b981', amber:'#f59e0b', rose:'#f43f5e' }
         }
       }
     }
-  </script>
+  }
+</script>
 
-  <style>
-    * { box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; background-color: #07090f; color: #e2e8f0; min-height: 100vh; }
+<style>
+  * { box-sizing: border-box; }
+  body { font-family:'Inter', sans-serif; background-color:#07090f; color:#e2e8f0; min-height:100vh; overflow-x: hidden; }
+  .nav-active { background: linear-gradient(90deg, rgba(99,102,241,0.18) 0%, transparent 100%); border-left: 3px solid #6366f1; }
+  .nav-item { border-left: 3px solid transparent; transition: background .2s ease, border-color .2s ease, color .2s ease; }
+  .nav-item:hover { background: linear-gradient(90deg, rgba(99,102,241,0.1) 0%, transparent 100%); border-left-color: rgba(99,102,241,0.5); color:#a5b4fc; }
+  .glass { background: rgba(19,25,40,0.85); backdrop-filter: blur(12px); border:1px solid rgba(255,255,255,0.06); }
+  .glass-lighter { background: rgba(30,40,64,0.6); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.07); }
+  .mesh-bg { position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(ellipse 60% 40% at 15% 10%, rgba(99,102,241,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 50% at 85% 80%, rgba(59,130,246,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 60% 30%, rgba(124,58,237,0.05) 0%, transparent 60%);
+  }
+  ::-webkit-scrollbar { width:5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius:9px; }
+  .portfolio-row { transition: background .15s ease; border-bottom:1px solid rgba(255,255,255,0.04); }
+  .portfolio-row:hover { background: rgba(99,102,241,0.06); }
+  .metric-card { transition: transform .2s ease, box-shadow .2s ease; }
+  .metric-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px -8px rgba(99,102,241,0.3); }
+  .btn-primary { background: linear-gradient(135deg,#6366f1,#3b82f6); transition: opacity .2s ease, transform .15s ease, box-shadow .2s ease; }
+  .btn-primary:hover { opacity:.88; transform: translateY(-1px); box-shadow: 0 6px 20px -4px rgba(99,102,241,0.5); }
+  .btn-primary:active { transform: translateY(0); }
+  .form-input { background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); transition: border-color .2s ease, box-shadow .2s ease; }
+  .form-input:focus { outline:none; border-color: rgba(99,102,241,0.6); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
+  .logo-text { background: linear-gradient(90deg,#a5b4fc,#93c5fd); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  
+  @keyframes fadeUp { from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
+  .fade-up { animation: fadeUp .5s ease both; }
+  .delay-1{animation-delay:.07s;} .delay-2{animation-delay:.14s;} .delay-3{animation-delay:.21s;}
+  
+  /* Type Badges */
+  .badge-beli { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+  .badge-jual { background: rgba(59,130,246,0.15); color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
+  .badge-dividen { background: rgba(124,58,237,0.15); color: #c4b5fd; border: 1px solid rgba(124,58,237,0.3); }
+  .badge-kas-in { background: rgba(6,182,212,0.15); color: #67e8f9; border: 1px solid rgba(6,182,212,0.3); }
+  .badge-kas-out { background: rgba(244,63,94,0.15); color: #fda4af; border: 1px solid rgba(244,63,94,0.3); }
 
-    /* Sidebar active glow */
-    .nav-active { background: linear-gradient(90deg, rgba(99,102,241,0.18) 0%, transparent 100%); border-left: 3px solid #6366f1; }
-    .nav-item { border-left: 3px solid transparent; transition: all 0.2s ease; }
-    .nav-item:hover { background: linear-gradient(90deg, rgba(99,102,241,0.1) 0%, transparent 100%); border-left-color: rgba(99,102,241,0.5); color: #a5b4fc; }
-
-    /* Glass */
-    .glass { background: rgba(19, 25, 40, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); }
-    
-    /* Mesh Background */
-    .mesh-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0;
-      background: radial-gradient(ellipse 60% 40% at 15% 10%, rgba(99,102,241,0.08) 0%, transparent 70%),
-                  radial-gradient(ellipse 50% 50% at 85% 80%, rgba(59,130,246,0.07) 0%, transparent 60%);
-    }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius: 9px; }
-
-    /* Table & Form Styling */
-    .portfolio-row { transition: background 0.15s ease; border-bottom: 1px solid rgba(255,255,255,0.04); }
-    .portfolio-row:hover { background: rgba(99,102,241,0.06); }
-    
-    .form-input {
-      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
-      transition: all 0.2s ease; color: #e2e8f0;
-    }
-    .form-input:focus { outline: none; border-color: rgba(99,102,241,0.6); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); background: rgba(99,102,241,0.04); }
-
-    /* Fix untuk native select option biar gelap */
-    select option {
-      background-color: #0f1423;
-      color: #e2e8f0;
-      padding: 12px;
-    }
-
-    /* Fade-in */
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
-    .fade-up { animation: fadeUp 0.5s ease both; }
-    .delay-1 { animation-delay: 0.07s; }
-    .delay-2 { animation-delay: 0.14s; }
-
-    /* Type Badges */
-    .badge-beli { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
-    .badge-jual { background: rgba(59,130,246,0.15); color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
-    .badge-dividen { background: rgba(124,58,237,0.15); color: #c4b5fd; border: 1px solid rgba(124,58,237,0.3); }
-
-    @media (max-width: 767px) { aside { display: none; } .main-pad { padding-left: 1rem; padding-right: 1rem; } }
-  </style>
+  /* Fix untuk native select option biar gelap */
+  select.form-input { background-color: rgba(255, 255, 255, 0.04); }
+  select.form-input option { background-color: #0f1423; color: #e2e8f0; padding: 12px; }
+</style>
 </head>
 
 <body class="relative">
+<div class="mesh-bg" aria-hidden="true"></div>
 
-  <div class="mesh-bg" aria-hidden="true"></div>
+<div class="relative z-10 flex min-h-screen">
+  
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
 
-  <div class="relative z-10 flex min-h-screen">
+  <aside id="sidebar" class="fixed top-0 left-0 h-screen w-64 flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out"
+         style="background: rgba(10,14,24,0.95); border-right:1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
+    
+    <button onclick="toggleSidebar()" class="md:hidden absolute top-6 right-4 text-slate-400 hover:text-white">
+      <i class="fa-solid fa-xmark text-xl"></i>
+    </button>
 
-    <aside class="fixed top-0 left-0 h-screen w-64 flex flex-col" style="background: rgba(10,14,24,0.95); border-right: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
-      <div class="px-6 py-6 flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg,#6366f1,#3b82f6);">
+    <div class="px-6 py-6 flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#6366f1,#3b82f6);">
+        <i class="fa-solid fa-chart-line text-white text-sm"></i>
+      </div>
+      <span class="font-display text-lg logo-text">EduVesting</span>
+    </div>
+
+    <div class="mx-4 mb-5 p-3 rounded-xl glass-lighter flex items-center gap-3">
+      <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white"
+           style="background:linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
+      <div class="min-w-0">
+        <p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">Memuat...</p>
+      </div>
+    </div>
+
+    <nav class="flex-1 px-2 space-y-0.5 overflow-y-auto">
+      <p class="px-4 py-1.5 text-xs font-semibold text-slate-600 uppercase tracking-widest">Utama</p>
+      <a href="dashboard.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <i class="fa-solid fa-gauge-high w-4 text-center"></i> Dashboard
+      </a>
+      <a href="portfolio.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <i class="fa-solid fa-briefcase w-4 text-center"></i> Portofolio
+      </a>
+      <a href="transactions.html" class="nav-item nav-active flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-indigo-300 text-sm font-medium">
+        <i class="fa-solid fa-wallet w-4 text-center text-indigo-400"></i> Keuangan
+      </a>
+      <a href="goals.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <i class="fa-solid fa-bullseye w-4 text-center"></i> Target Dana
+      </a>
+
+      <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Analisa</p>
+      <a href="insights.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <i class="fa-solid fa-robot w-4 text-center"></i> AI Insights
+      </a>
+      <a href="allocations.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <i class="fa-solid fa-chart-pie w-4 text-center"></i> Alokasi Aset
+      </a>
+      <a href="calculator.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <i class="fa-solid fa-calculator w-4 text-center"></i> Kalkulator Fee
+      </a>
+      <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Akun</p>
+      <a href="settings.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <i class="fa-solid fa-gear w-4 text-center"></i> Pengaturan
+      </a>
+      <button onclick="logoutUser()" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm">
+        <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout
+      </button>
+    </nav>
+  </aside>
+
+  <main class="flex-1 w-full md:ml-64 px-4 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden">
+    
+    <div class="md:hidden flex items-center justify-between mb-6 fade-up">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#6366f1,#3b82f6);">
           <i class="fa-solid fa-chart-line text-white text-sm"></i>
         </div>
-        <span class="font-display text-lg text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-blue-300">EduVesting</span>
+        <span class="font-display text-lg logo-text font-bold tracking-wide">EduVesting</span>
       </div>
+      <button onclick="toggleSidebar()" type="button" class="text-slate-300 hover:text-white transition-colors focus:outline-none z-20">
+        <i class="fa-solid fa-bars text-xl"></i>
+      </button>
+    </div>
 
-      <div class="mx-4 mb-5 p-3 rounded-xl border border-white/5 bg-slate-800/50 flex items-center gap-3">
-        <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white" style="background: linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
-        <div class="min-w-0">
-          <p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">User</p>
-        </div>
+    <header class="flex items-center justify-between mb-8 fade-up delay-1">
+      <div>
+        <h1 class="font-display text-2xl sm:text-3xl text-slate-100 font-semibold mb-1">Keuangan & Transaksi</h1>
+        <p class="text-slate-500 text-sm">Catat arus kas, topup, penarikan, serta riwayat beli/jual aset.</p>
       </div>
+    </header>
 
-      <nav class="flex-1 px-2 space-y-0.5 overflow-y-auto">
-        <p class="px-4 py-1.5 text-xs font-semibold text-slate-600 uppercase tracking-widest">Utama</p>
-
-        <a href="dashboard.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-gauge-high w-4 text-center"></i> Dashboard
-        </a>
-        <a href="portfolio.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-briefcase w-4 text-center"></i> Portofolio
-        </a>
-        
-        <a href="transactions.html" class="nav-item nav-active flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-indigo-300 text-sm font-medium">
-          <i class="fa-solid fa-arrow-right-arrow-left w-4 text-center text-indigo-400"></i> Transaksi
-        </a>
-        
-        <a href="goals.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-bullseye w-4 text-center"></i> Target Dana
-        </a>
-        
-
-        <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Analisa</p>
-
-        
-        
-        <a href="insights.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-robot w-4 text-center"></i> AI Insights
-        </a>
-        <a href="allocations.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-chart-pie w-4 text-center"></i> Alokasi Aset
-        </a>
-        <a href="calculator.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-calculator w-4 text-center"></i> Kalkulator Fee
-        </a>
-
-        <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Akun</p>
-        
-        <a href="settings.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-gear w-4 text-center"></i> Pengaturan
-        </a>
-
-        <button onclick="logoutUser()" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm">
-          <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout
-        </button>
-      </nav>
-
-      <div class="px-4 pb-5 pt-3">
-        <div class="rounded-xl p-3 text-xs" style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.15);">
-          <div class="flex items-center gap-2 mb-1">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span class="text-emerald-400 font-semibold">Pasar Terbuka</span>
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8 fade-up delay-2">
+      
+      <div class="glass rounded-2xl p-5 sm:p-6 xl:col-span-2 shadow-[0_0_30px_-5px_rgba(99,102,241,0.1)]">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3);">
+            <i class="fa-solid fa-pen-to-square text-indigo-400 text-sm"></i>
           </div>
-          <p class="text-slate-500">IDX · BEI · IHSG 7.412 <span class="text-emerald-400">+0.8%</span></p>
+          <h2 class="font-display text-lg text-slate-200">Log Transaksi Baru</h2>
         </div>
-      </div>
-    </aside>
-
-    <main class="ml-64 flex-1 px-8 py-8 main-pad" style="max-width: calc(100% - 16rem);">
-
-      <header class="flex items-center justify-between mb-8 fade-up">
-        <div>
-          <h1 class="font-display text-2xl text-slate-100">Catatan Transaksi</h1>
-          <p class="text-slate-500 text-sm mt-0.5">Kelola dan pantau riwayat mutasi instrumen portofolio Anda.</p>
-        </div>
-      </header>
-
-      <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8 fade-up delay-1">
         
-        <div class="glass rounded-2xl p-6 xl:col-span-2 border-indigo-500/20 shadow-[0_0_30px_-5px_rgba(99,102,241,0.1)]">
-          <div class="flex items-center gap-2 mb-5">
-            <div class="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30">
-              <i class="fa-solid fa-pen-to-square text-indigo-400 text-sm"></i>
-            </div>
-            <h2 class="font-display text-lg text-slate-200">Log Transaksi Baru</h2>
+        <form id="transaction-form" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          
+          <div class="sm:col-span-2 md:col-span-1">
+            <label class="text-xs text-slate-400 block mb-1">Jenis Aksi</label>
+            <select id="type-input" required class="form-input w-full rounded-xl px-3 py-2.5 text-sm appearance-none">
+              <option value="kas_in">⬇️ Topup Kas (Deposit)</option>
+              <option value="kas_out">⬆️ Tarik Kas (Withdraw)</option>
+              <option value="beli">🟢 Beli Aset (Buy)</option>
+              <option value="jual">🔵 Jual Aset (Sell)</option>
+              <option value="dividen">🟣 Dividen / Bunga</option>
+            </select>
           </div>
           
-          <p class="text-xs text-slate-500 mb-4">Catat transaksi yang baru Anda lakukan di broker luar agar portofolio tetap sinkron.</p>
-
-          <form id="transaction-form" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            
-            <div class="col-span-2 md:col-span-1">
-              <label class="text-xs text-slate-400 block mb-1">Jenis Aksi</label>
-              <select id="type-input" class="form-input w-full rounded-xl px-3 py-2 text-sm appearance-none bg-[#0f1423]">
-                <option value="beli">🟢 Beli (Buy)</option>
-                <option value="jual">🔵 Jual (Sell)</option>
-                <option value="dividen">🟣 Dividen/Kupon</option>
-              </select>
-            </div>
-            
-            <div class="col-span-2 md:col-span-1">
-              <label class="text-xs text-slate-400 block mb-1">Ticker / Aset</label>
-              <input id="asset-input" type="text" placeholder="Cth: BBCA / BTC" class="form-input w-full rounded-xl px-3 py-2 text-sm uppercase">
-            </div>
-
-            <div class="col-span-2 md:col-span-1">
-              <label class="text-xs text-slate-400 block mb-1">Harga Satuan (Rp)</label>
-              <input id="price-input" type="number" placeholder="Cth: 10100" class="form-input w-full rounded-xl px-3 py-2 text-sm">
-            </div>
-
-            <div class="col-span-2 md:col-span-1">
-              <label class="text-xs text-slate-400 block mb-1">Volume (Lot/Koin)</label>
-              <input id="volume-input" type="number" placeholder="Cth: 5" class="form-input w-full rounded-xl px-3 py-2 text-sm">
-            </div>
-
-            <div class="col-span-2 md:col-span-2">
-              <label class="text-xs text-slate-400 block mb-1">Tanggal Transaksi</label>
-              <input type="date" class="form-input w-full rounded-xl px-3 py-2 text-sm text-slate-300">
-            </div>
-
-            <div class="col-span-2 md:col-span-1">
-              <label class="text-xs text-slate-400 block mb-1">Fee Broker (Rp)</label>
-              <input type="number" placeholder="Otomatis / Isi manual" class="form-input w-full rounded-xl px-3 py-2 text-sm">
-            </div>
-
-            <div class="col-span-2 md:col-span-1 flex items-end">
-              <button type="submit" class="w-full bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 text-white rounded-xl px-4 py-2 text-sm font-semibold transition-all shadow-lg shadow-indigo-500/20">
-                Simpan Log
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <div class="flex flex-col gap-4">
-          <div class="glass rounded-2xl p-5 flex-1 flex flex-col justify-center">
-            <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Investasi Bulan Ini</p>
-            <p class="font-display text-2xl text-slate-100">Rp 1.500.000</p>
-            <div class="flex items-center gap-2 mt-2">
-              <span class="text-xs text-indigo-300 bg-indigo-500/20 px-2 py-0.5 rounded font-semibold">4 Transaksi</span>
-            </div>
+          <div class="sm:col-span-2 md:col-span-1">
+            <label class="text-xs text-slate-400 block mb-1">Keterangan / Ticker</label>
+            <input id="asset-input" type="text" required placeholder="Cth: Topup RDN / BBCA" class="form-input w-full rounded-xl px-3 py-2.5 text-sm uppercase">
           </div>
-          
-          <div class="glass rounded-2xl p-5 flex-1 flex flex-col justify-center border-amber-500/20 relative overflow-hidden">
-            <i class="fa-solid fa-coins absolute -bottom-4 -right-2 text-6xl text-amber-500/10 rotate-12"></i>
-            <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Total Fee Broker Terbayar</p>
-            <p class="font-display text-2xl text-rose-400">Rp 18.500</p>
-            <p class="text-xs text-slate-400 mt-1">Sangat optimal (< 1% dari modal)</p>
-          </div>
-        </div>
 
+          <div class="sm:col-span-1 md:col-span-1">
+            <label class="text-xs text-slate-400 block mb-1">Nominal / Harga (Rp)</label>
+            <input id="price-input" type="number" required placeholder="Cth: 500000" class="form-input w-full rounded-xl px-3 py-2.5 text-sm">
+          </div>
+
+          <div class="sm:col-span-1 md:col-span-1" id="volume-wrapper">
+            <label class="text-xs text-slate-400 block mb-1">Volume (Qty)</label>
+            <input id="volume-input" type="number" step="any" placeholder="Cth: 5 (Kosongi jika kas)" class="form-input w-full rounded-xl px-3 py-2.5 text-sm">
+          </div>
+
+          <div class="sm:col-span-1 md:col-span-2">
+            <label class="text-xs text-slate-400 block mb-1">Tanggal Transaksi</label>
+            <input id="date-input" type="date" required class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-300">
+          </div>
+
+          <div class="sm:col-span-1 md:col-span-1">
+            <label class="text-xs text-slate-400 block mb-1">Fee Transaksi (Rp)</label>
+            <input id="fee-input" type="number" placeholder="Opsional" class="form-input w-full rounded-xl px-3 py-2.5 text-sm">
+          </div>
+
+          <div class="sm:col-span-2 md:col-span-1 flex items-end">
+            <button type="submit" class="btn-primary w-full rounded-xl px-4 py-2.5 text-sm font-semibold text-white">
+              <i class="fa-solid fa-check mr-1"></i> Simpan
+            </button>
+          </div>
+        </form>
       </div>
 
-      <section class="glass rounded-2xl overflow-hidden fade-up delay-2">
-        
-        <div class="px-6 py-5 border-b border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <h2 class="font-display text-lg text-slate-200">Riwayat Terakhir</h2>
-          
-          <div class="flex items-center gap-2">
-            <button class="bg-slate-800 text-slate-300 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-slate-700 transition">Semua</button>
-            <button class="bg-slate-900/50 text-slate-500 border border-slate-800 px-3 py-1.5 rounded-lg text-xs font-medium hover:text-slate-300 transition">Beli</button>
-            <button class="bg-slate-900/50 text-slate-500 border border-slate-800 px-3 py-1.5 rounded-lg text-xs font-medium hover:text-slate-300 transition">Jual</button>
-            <button class="bg-slate-900/50 text-slate-500 border border-slate-800 px-3 py-1.5 rounded-lg text-xs font-medium hover:text-slate-300 transition">Dividen</button>
+      <div class="flex flex-col gap-4">
+        <div class="glass rounded-2xl p-5 flex-1 flex flex-col justify-center metric-card">
+          <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Total Arus Kas Masuk</p>
+          <p id="total-deposit" class="font-display text-2xl text-emerald-400">Rp 0</p>
+          <div class="flex items-center gap-2 mt-2">
+            <span class="text-xs text-slate-500">Akumulasi deposit / topup modal</span>
           </div>
         </div>
+        
+        <div class="glass rounded-2xl p-5 flex-1 flex flex-col justify-center metric-card border-rose-500/20 relative overflow-hidden">
+          <i class="fa-solid fa-money-bill-transfer absolute -bottom-4 -right-2 text-6xl text-rose-500/5 rotate-12"></i>
+          <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Total Fee Terbayar</p>
+          <p id="total-fee" class="font-display text-2xl text-rose-400">Rp 0</p>
+          <p class="text-xs text-slate-400 mt-1">Biaya broker & administrasi</p>
+        </div>
+      </div>
 
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm" style="min-width: 800px;">
-            <thead>
-              <tr class="bg-slate-800/30">
-                <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Tanggal</th>
-                <th class="px-4 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Aksi</th>
-                <th class="px-4 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Aset / Ticker</th>
-                <th class="px-4 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Harga</th>
-                <th class="px-4 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Volume</th>
-                <th class="px-4 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Nilai</th>
-                <th class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Fee</th>
-              </tr>
-            </thead>
-            <tbody>
-              
-              <tr class="portfolio-row">
-                <td class="px-6 py-4 text-slate-400">18 Mei 2025<br><span class="text-xs text-slate-600">09:14 WIB</span></td>
-                <td class="px-4 py-4"><span class="badge badge-beli text-[10px] px-2 py-1 rounded">Beli</span></td>
-                <td class="px-4 py-4">
-                  <span class="font-bold text-slate-200">BBCA</span> <span class="text-xs text-slate-500 ml-1">Saham</span>
-                </td>
-                <td class="px-4 py-4 text-right text-slate-300 tabular-nums">Rp 10.100</td>
-                <td class="px-4 py-4 text-right text-slate-300 tabular-nums">2 lot</td>
-                <td class="px-4 py-4 text-right font-medium text-slate-200 tabular-nums">Rp 2.020.000</td>
-                <td class="px-6 py-4 text-right text-rose-400 text-xs tabular-nums font-medium">- Rp 3.838</td>
-              </tr>
+    </div>
 
-              <tr class="portfolio-row">
-                <td class="px-6 py-4 text-slate-400">14 Mei 2025<br><span class="text-xs text-slate-600">14:30 WIB</span></td>
-                <td class="px-4 py-4"><span class="badge badge-jual text-[10px] px-2 py-1 rounded">Jual</span></td>
-                <td class="px-4 py-4">
-                  <span class="font-bold text-slate-200">GOTO</span> <span class="text-xs text-slate-500 ml-1">Saham</span>
-                </td>
-                <td class="px-4 py-4 text-right text-slate-300 tabular-nums">Rp 68</td>
-                <td class="px-4 py-4 text-right text-slate-300 tabular-nums">50 lot</td>
-                <td class="px-4 py-4 text-right font-medium text-slate-200 tabular-nums">Rp 340.000</td>
-                <td class="px-6 py-4 text-right text-rose-400 text-xs tabular-nums font-medium">- Rp 952</td>
-              </tr>
+    <section class="glass rounded-2xl overflow-hidden fade-up delay-3">
+      
+      <div class="px-6 py-5 border-b border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <h2 class="font-display text-lg text-slate-200">Riwayat Terakhir</h2>
+        
+        <div class="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 hide-scroll">
+          <button onclick="filterLogs('all')" class="bg-slate-800 text-slate-300 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-slate-700 transition whitespace-nowrap">Semua</button>
+          <button onclick="filterLogs('kas')" class="bg-slate-900/50 text-slate-500 border border-slate-800 px-3 py-1.5 rounded-lg text-xs font-medium hover:text-slate-300 transition whitespace-nowrap">Kas</button>
+          <button onclick="filterLogs('beli')" class="bg-slate-900/50 text-slate-500 border border-slate-800 px-3 py-1.5 rounded-lg text-xs font-medium hover:text-slate-300 transition whitespace-nowrap">Beli</button>
+          <button onclick="filterLogs('jual')" class="bg-slate-900/50 text-slate-500 border border-slate-800 px-3 py-1.5 rounded-lg text-xs font-medium hover:text-slate-300 transition whitespace-nowrap">Jual</button>
+        </div>
+      </div>
 
-              <tr class="portfolio-row">
-                <td class="px-6 py-4 text-slate-400">10 Mei 2025<br><span class="text-xs text-slate-600">08:00 WIB</span></td>
-                <td class="px-4 py-4"><span class="badge badge-dividen text-[10px] px-2 py-1 rounded">Dividen</span></td>
-                <td class="px-4 py-4">
-                  <span class="font-bold text-slate-200">BMRI</span> <span class="text-xs text-slate-500 ml-1">Saham</span>
-                </td>
-                <td class="px-4 py-4 text-right text-slate-300 tabular-nums">-</td>
-                <td class="px-4 py-4 text-right text-slate-300 tabular-nums">8 lot</td>
-                <td class="px-4 py-4 text-right font-medium text-emerald-400 tabular-nums">+ Rp 282.400</td>
-                <td class="px-6 py-4 text-right text-slate-500 text-xs tabular-nums font-medium">Rp 0</td>
-              </tr>
-
-              <tr class="portfolio-row">
-                <td class="px-6 py-4 text-slate-400">02 Mei 2025<br><span class="text-xs text-slate-600">21:45 WIB</span></td>
-                <td class="px-4 py-4"><span class="badge badge-beli text-[10px] px-2 py-1 rounded">Beli</span></td>
-                <td class="px-4 py-4">
-                  <span class="font-bold text-slate-200">BTC</span> <span class="text-xs text-slate-500 ml-1">Kripto</span>
-                </td>
-                <td class="px-4 py-4 text-right text-slate-300 tabular-nums">Rp 980.000 K</td>
-                <td class="px-4 py-4 text-right text-slate-300 tabular-nums">0.001 BTC</td>
-                <td class="px-4 py-4 text-right font-medium text-slate-200 tabular-nums">Rp 980.000</td>
-                <td class="px-6 py-4 text-right text-rose-400 text-xs tabular-nums font-medium">- Rp 980</td>
-              </tr>
-
+      <div class="overflow-x-auto w-full">
+        <table class="w-full text-sm min-w-[800px]">
+          <thead>
+            <tr class="bg-slate-800/30">
+              <th class="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Tanggal</th>
+              <th class="px-4 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Aksi</th>
+              <th class="px-4 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Keterangan / Ticker</th>
+              <th class="px-4 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Harga/Nominal</th>
+              <th class="px-4 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Volume</th>
+              <th class="px-4 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Nilai</th>
+              <th class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="transaction-tbody">
             </tbody>
-          </table>
-        </div>
+        </table>
+      </div>
+      
+      <div id="empty-state" class="px-5 py-10 text-center hidden">
+        <i class="fa-solid fa-receipt text-3xl text-slate-700 mb-3"></i>
+        <p class="text-slate-500 text-sm">Belum ada riwayat transaksi yang dicatat.</p>
+      </div>
 
-        <div class="px-6 py-4 border-t border-white/5 flex items-center justify-between">
-          <p class="text-xs text-slate-500">Menampilkan 4 dari 42 transaksi</p>
-          <div class="flex gap-1">
-            <button class="w-8 h-8 rounded bg-slate-800 text-slate-400 hover:bg-slate-700 flex items-center justify-center transition"><i class="fa-solid fa-chevron-left text-xs"></i></button>
-            <button class="w-8 h-8 rounded bg-indigo-500 text-white font-medium flex items-center justify-center transition">1</button>
-            <button class="w-8 h-8 rounded bg-slate-800 text-slate-400 hover:bg-slate-700 font-medium flex items-center justify-center transition">2</button>
-            <button class="w-8 h-8 rounded bg-slate-800 text-slate-400 hover:bg-slate-700 flex items-center justify-center transition"><i class="fa-solid fa-chevron-right text-xs"></i></button>
-          </div>
-        </div>
+    </section>
 
-      </section>
+  </main>
+</div>
 
-    </main>
-  </div>
+<script src="js/api.js"></script>
+<script>
+  // UI TOGGLE SCRIPT
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+  }
 
-  <script>
-    // --- Auth Check ---
-    const token = localStorage.getItem('userToken');
-    if (!token) window.location.href = 'login.html';
+  // ==========================================
+  // SUPABASE CONFIG & AUTH GUARD
+  // ==========================================
+  const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const user = JSON.parse(localStorage.getItem('userData'));
-    document.addEventListener('DOMContentLoaded', () => {
-       if (user && user.username) {
-        document.getElementById('sidebar-user-name').innerText = user.username;
-        document.getElementById('sidebar-user-initial').innerText = user.username.charAt(0).toUpperCase();
-       }
-    });
+  let currentLogs = [];
 
-    function logoutUser() {
-        localStorage.removeItem('userToken');
-        localStorage.removeItem('userData');
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const { data: { session }, error } = await supabaseClient.auth.getSession();
+      
+      if (error || !session) {
         window.location.href = 'login.html';
+        return;
+      }
+
+      const user = session.user;
+      const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
+      
+      document.getElementById('sidebar-user-name').innerText = displayName;
+      document.getElementById('sidebar-user-initial').innerText = displayName.charAt(0).toUpperCase();
+
+      // Set tanggal default ke hari ini
+      document.getElementById('date-input').valueAsDate = new Date();
+
+      // Load transactions (Mocking/LocalStorage logic for frontend demo readiness)
+      loadTransactions();
+
+      document.getElementById('transaction-form').addEventListener('submit', handleTransactionSubmit);
+    } catch (err) { console.error("Gagal memuat halaman keuangan:", err); }
+  });
+
+  async function logoutUser() {
+    await supabaseClient.auth.signOut();
+    localStorage.removeItem('userData');
+    window.location.href = 'login.html';
+  }
+
+  // Hide volume input if action is "Kas"
+  document.getElementById('type-input').addEventListener('change', function(e) {
+    const isKas = e.target.value === 'kas_in' || e.target.value === 'kas_out';
+    document.getElementById('volume-wrapper').style.opacity = isKas ? '0.3' : '1';
+    document.getElementById('volume-input').disabled = isKas;
+    if(isKas) document.getElementById('volume-input').value = '';
+  });
+
+  // ==========================================
+  // TRANSACTION LOGIC (Local Storage Manager)
+  // ==========================================
+  function loadTransactions() {
+    const stored = localStorage.getItem('eduvesting_transactions');
+    currentLogs = stored ? JSON.parse(stored) : [];
+    
+    // Auto-tambah dummy data jika kosong supaya UI tidak blank pertama kali
+    if(currentLogs.length === 0) {
+      currentLogs = [
+        { id: 't1', type: 'kas_in', asset: 'DEPOSIT AWAL', price: 1500000, volume: 0, date: '2026-06-21', fee: 0 },
+        { id: 't2', type: 'beli', asset: 'BBCA', price: 10100, volume: 100, date: '2026-06-20', fee: 1500 },
+      ];
+      saveTransactions();
     }
+    
+    renderTransactions(currentLogs);
+  }
 
-    const transactionForm = document.getElementById('transaction-form');
+  function saveTransactions() {
+    localStorage.setItem('eduvesting_transactions', JSON.stringify(currentLogs));
+  }
 
-    transactionForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+  function handleTransactionSubmit(e) {
+    e.preventDefault();
 
-        const transactionData = {
-            type: document.getElementById('type-input').value,
-            asset: document.getElementById('asset-input').value,
-            price: document.getElementById('price-input').value,
-            volume: document.getElementById('volume-input').value
-        };
+    const type = document.getElementById('type-input').value;
+    const asset = document.getElementById('asset-input').value.trim().toUpperCase();
+    const price = parseFloat(document.getElementById('price-input').value) || 0;
+    const volume = parseFloat(document.getElementById('volume-input').value) || 0;
+    const date = document.getElementById('date-input').value;
+    const fee = parseFloat(document.getElementById('fee-input').value) || 0;
 
-        try {
-            const response = await fetch('http://localhost:5000/api/transactions', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(transactionData)
-            });
+    const newLog = {
+      id: 'tx_' + Date.now(),
+      type, asset, price, volume, date, fee
+    };
 
-            const data = await response.json();
-            alert(data.message);
-            console.log(data);
-        } catch (error) {
-            console.log(error);
-        }
+    currentLogs.unshift(newLog); // Tambah ke paling atas
+    saveTransactions();
+    renderTransactions(currentLogs);
+    
+    document.getElementById('transaction-form').reset();
+    document.getElementById('date-input').valueAsDate = new Date();
+    alert('Berhasil! Transaksi telah dicatat ke dalam log.');
+  }
+
+  function deleteLog(id) {
+    if(!confirm('Hapus riwayat transaksi ini?')) return;
+    currentLogs = currentLogs.filter(t => t.id !== id);
+    saveTransactions();
+    renderTransactions(currentLogs);
+  }
+
+  function filterLogs(filterType) {
+    let filtered = currentLogs;
+    if (filterType === 'kas') filtered = currentLogs.filter(t => t.type.includes('kas'));
+    else if (filterType === 'beli') filtered = currentLogs.filter(t => t.type === 'beli');
+    else if (filterType === 'jual') filtered = currentLogs.filter(t => t.type === 'jual');
+    
+    renderTransactions(filtered);
+  }
+
+  function renderTransactions(dataList) {
+    const tbody = document.getElementById('transaction-tbody');
+    const emptyState = document.getElementById('empty-state');
+    
+    // Sort by date newest first
+    const sorted = [...dataList].sort((a,b) => new Date(b.date) - new Date(a.date));
+    
+    tbody.innerHTML = '';
+    
+    let totalDeposit = 0;
+    let totalFee = 0;
+
+    currentLogs.forEach(t => {
+      if(t.type === 'kas_in') totalDeposit += t.price;
+      totalFee += t.fee;
     });
-  </script>
 
+    document.getElementById('total-deposit').innerText = formatRupiah(totalDeposit);
+    document.getElementById('total-fee').innerText = formatRupiah(totalFee);
+
+    if (sorted.length === 0) {
+      emptyState.classList.remove('hidden');
+      return;
+    }
+    emptyState.classList.add('hidden');
+
+    sorted.forEach(t => {
+      let badgeHtml = '';
+      let aksiLable = '';
+      let totalNilai = t.type.includes('kas') ? t.price : (t.price * t.volume);
+      let volStr = t.type.includes('kas') ? '-' : t.volume.toString();
+
+      switch(t.type) {
+        case 'beli': badgeHtml = '<span class="text-[10px] px-2 py-1 rounded badge-beli font-semibold tracking-wide">Beli</span>'; break;
+        case 'jual': badgeHtml = '<span class="text-[10px] px-2 py-1 rounded badge-jual font-semibold tracking-wide">Jual</span>'; break;
+        case 'dividen': badgeHtml = '<span class="text-[10px] px-2 py-1 rounded badge-dividen font-semibold tracking-wide">Dividen</span>'; break;
+        case 'kas_in': badgeHtml = '<span class="text-[10px] px-2 py-1 rounded badge-kas-in font-semibold tracking-wide">Topup</span>'; break;
+        case 'kas_out': badgeHtml = '<span class="text-[10px] px-2 py-1 rounded badge-kas-out font-semibold tracking-wide">Tarik</span>'; break;
+      }
+
+      const tr = document.createElement('tr');
+      tr.className = 'portfolio-row';
+      tr.innerHTML = `
+        <td class="px-6 py-4 text-slate-400 whitespace-nowrap">
+          ${formatDate(t.date)}
+        </td>
+        <td class="px-4 py-4">${badgeHtml}</td>
+        <td class="px-4 py-4">
+          <span class="font-bold text-slate-200">${t.asset}</span>
+        </td>
+        <td class="px-4 py-4 text-right text-slate-300 tabular-nums">${formatRupiah(t.price)}</td>
+        <td class="px-4 py-4 text-right text-slate-300 tabular-nums">${volStr}</td>
+        <td class="px-4 py-4 text-right font-medium text-slate-200 tabular-nums">
+          ${t.type === 'jual' || t.type === 'kas_out' ? '-' : ''}${formatRupiah(totalNilai)}
+          ${t.fee > 0 ? `<br><span class="text-[10px] text-rose-400 font-normal">Fee: ${formatRupiah(t.fee)}</span>` : ''}
+        </td>
+        <td class="px-6 py-4 text-right">
+          <button onclick="deleteLog('${t.id}')" class="text-rose-400 hover:text-rose-300 text-xs transition"><i class="fa-solid fa-trash"></i></button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // --- Utility Functions ---
+  function formatRupiah(num) {
+    if(!num) return 'Rp 0';
+    return 'Rp ' + num.toLocaleString('id-ID');
+  }
+
+  function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+</script>
 </body>
 </html>
