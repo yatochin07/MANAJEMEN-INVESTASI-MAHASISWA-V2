@@ -32,29 +32,30 @@
     * { box-sizing: border-box; }
     body { font-family: 'Inter', sans-serif; background-color: #07090f; color: #e2e8f0; min-height: 100vh; overflow-x: hidden; }
 
-    /* Sidebar active glow dikembalikan ke Indigo */
-    .nav-active { background: linear-gradient(90deg, rgba(99,102,241,0.18) 0%, transparent 100%); border-left: 3px solid #6366f1; }
+    /* Sidebar active glow (Tema Indigo / Dashboard) */
+    .nav-active { background: linear-gradient(90deg, rgba(99,102,241,0.18) 0%, transparent 100%); border-left: 3px solid #6366f1; color: #a5b4fc; }
     .nav-item { border-left: 3px solid transparent; transition: all 0.2s ease; }
-    .nav-item:hover { background: linear-gradient(90deg, rgba(99,102,241,0.1) 0%, transparent 100%); border-left-color: rgba(99,102,241,0.5); color: #a5b4fc; }
+    .nav-item:hover { background: linear-gradient(90deg, rgba(99,102,241,0.1) 0%, transparent 100%); border-left-color: rgba(99,102,241,0.5); color: #c7d2fe; }
 
     /* Glass Elements */
     .glass { background: rgba(19, 25, 40, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); }
     .glass-lighter { background: rgba(30,40,64,0.6); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.07); }
     
-    /* Mesh Background dikembalikan ke Indigo */
+    /* Mesh Background (Tema Indigo) */
     .mesh-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0;
       background: radial-gradient(ellipse 60% 40% at 15% 10%, rgba(99,102,241,0.08) 0%, transparent 70%),
                   radial-gradient(ellipse 50% 50% at 85% 80%, rgba(59,130,246,0.07) 0%, transparent 60%);
     }
 
-    /* Scrollbar dikembalikan ke Indigo */
+    /* Scrollbar (Tema Indigo) */
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius: 9px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(99,102,241,0.5); }
     .hide-scroll::-webkit-scrollbar { display: none; }
     .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* Form Input dikembalikan ke Indigo */
+    /* Form Input (Tema Indigo) */
     .form-input { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); transition: all 0.2s ease; color: #e2e8f0; }
     .form-input:focus { outline: none; border-color: rgba(99,102,241,0.6); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); background: rgba(99,102,241,0.04); }
     select.form-input option { background-color: #0f1423; color: #e2e8f0; }
@@ -63,11 +64,11 @@
     @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
     .fade-up { animation: fadeUp 0.5s ease both; }
     .delay-1 { animation-delay: 0.07s; }
-    .delay-2 { animation-delay: 0.14s; }
 
+    /* Logo Text (Tema Indigo) */
     .logo-text { background: linear-gradient(90deg,#a5b4fc,#93c5fd); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
 
-    /* Tab Switcher */
+    /* Tab Switcher (Tetap Emerald untuk aksen tools Kalkulator) */
     .tab-btn { transition: all 0.2s ease; white-space: nowrap; }
     .tab-btn.active { background: rgba(16,185,129,0.15); color: #34d399; border-color: rgba(16,185,129,0.4); }
     .calc-panel { display: none; }
@@ -139,7 +140,7 @@
         <a href="allocations.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
           <i class="fa-solid fa-chart-pie w-4 text-center"></i> Alokasi Aset
         </a>
-        <a href="calculator.html" class="nav-item nav-active flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-indigo-300 text-sm font-semibold">
+        <a href="calculator.html" class="nav-item nav-active flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-indigo-300 text-sm font-medium">
           <i class="fa-solid fa-calculator w-4 text-center text-indigo-400"></i> Kalkulator Investasi
         </a>
 
@@ -583,7 +584,6 @@
       document.getElementById('tab-' + tabId).classList.add('active');
       event.currentTarget.classList.add('active');
       
-      // Trigger calculation logic specifically for active tab to handle layouts if necessary
       if(tabId === 'stock-fee') calcStockFee();
       if(tabId === 'dividend') calcDividend();
       if(tabId === 'compound') calcCompound();
@@ -648,7 +648,7 @@
       const totalOut = gross + buyFeeRp;
 
       let bep = price * (1 + bFee/100) / (1 - sFee/100);
-      bep = Math.ceil(bep); // Ticker price usually rounds up to not lose money
+      bep = Math.ceil(bep);
       const minProfit = (bep - price) * lotCapacity * 100;
 
       document.getElementById('sf-out-lot').innerText = `${lotCapacity} Lot`;
@@ -704,7 +704,6 @@
       document.getElementById('cg-out-profit').innerText = `+ ${fmtRp(profit)}`;
       document.getElementById('cg-out-pct').innerText = `+${pct.toFixed(2)}%`;
 
-      // Update bars
       const total = fv > 0 ? fv : 1;
       const invW = (invested / total) * 100;
       const proW = (profit / total) * 100;
@@ -823,7 +822,6 @@
 
       let pSaham, pObligasi, pKas, pCrypto;
       
-      // Basic rule: 100 - age = risk asset portion
       let riskCap = 100 - age;
       if (riskCap < 20) riskCap = 20;
       if (riskCap > 80) riskCap = 80;
@@ -845,7 +843,6 @@
         pObligasi = 100 - pSaham - pCrypto - pKas;
       }
 
-      // Safeguard strictly to 100%
       if(pObligasi < 0) pObligasi = 0;
       
       document.getElementById('aa-out-saham').innerText = `${pSaham}%`;
@@ -853,7 +850,6 @@
       document.getElementById('aa-out-kas').innerText = `${pKas}%`;
       document.getElementById('aa-out-crypto').innerText = `${pCrypto}%`;
 
-      // Update Chart CSS Variables
       const chart = document.getElementById('aa-chart');
       chart.style.setProperty('--p-saham', `${pSaham}%`);
       chart.style.setProperty('--p-obligasi', `${pObligasi}%`);
