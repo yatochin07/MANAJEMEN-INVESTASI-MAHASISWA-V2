@@ -11,6 +11,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
+<!-- TAMBAHAN: Import Library Supabase v2 -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
   tailwind.config = {
     darkMode: 'class',
@@ -89,7 +92,7 @@
       <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white"
            style="background:linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
       <div class="min-w-0">
-        <p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">User</p>
+        <p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">Memuat...</p>
       </div>
     </div>
 
@@ -141,7 +144,7 @@
 
     <header class="flex items-center justify-between mb-8 fade-up">
       <div>
-        <h1 id="welcome-user" class="font-display text-2xl text-slate-100"></h1>
+        <h1 id="welcome-user" class="font-display text-2xl text-slate-100">Memuat...</h1>
         <p id="header-date" class="text-slate-500 text-sm mt-0.5"></p>
       </div>
       <div class="flex items-center gap-3">
@@ -392,49 +395,53 @@
 
 <script src="js/api.js"></script>
 <script>
-  // ---- auth guard ----
-  const token = localStorage.getItem('userToken');
-  if (!token) window.location.href = 'login.html';
-  const params = new URLSearchParams(window.location.search);
+  // ==========================================
+  // INISIALISASI SUPABASE CLIENT
+  // ==========================================
+  const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const googleName = params.get('name');
-const googleEmail = params.get('email');
-
-if (googleName && googleEmail) {
-
-    const userData = {
-        username: googleName,
-        email: googleEmail
-    };
-
-    localStorage.setItem('userData', JSON.stringify(userData));
-
-    window.history.replaceState(
-        {},
-        document.title,
-        window.location.pathname
-    );
-}
-  const user = JSON.parse(localStorage.getItem('userData') || 'null');
-
-  document.addEventListener('DOMContentLoaded', () => {
-    if (user) {
-      document.getElementById('welcome-user').innerText = `Selamat Datang, ${user.username} 👋`;
-      document.getElementById('sidebar-user-name').innerText = user.username;
-      document.getElementById('sidebar-user-initial').innerText = user.username.charAt(0).toUpperCase();
+  // ==========================================
+  // AUTHENTICATION GUARD (SUPABASE)
+  // ==========================================
+  document.addEventListener('DOMContentLoaded', async () => {
+    // 1. Cek sesi aktif Supabase
+    const { data: { session }, error } = await supabase.auth.getSession();
+    
+    if (error || !session) {
+      // Jika tidak ada sesi/belum login, tendang ke login.html
+      window.location.href = 'login.html';
+      return;
     }
+
+    // 2. Ambil data user dari sesi Supabase
+    const user = session.user;
+    
+    // Supabase menyimpan nama di user_metadata jika diset saat daftar (OAuth/Email)
+    const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
+    
+    document.getElementById('welcome-user').innerText = `Selamat Datang, ${displayName} 👋`;
+    document.getElementById('sidebar-user-name').innerText = displayName;
+    document.getElementById('sidebar-user-initial').innerText = displayName.charAt(0).toUpperCase();
+
+    // 3. Setup Dashboard Elements
     document.getElementById('header-date').innerText = new Date().toLocaleDateString('id-ID', {
       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
     });
+    
     document.getElementById('instrument-select').addEventListener('change', prefillPrice);
     renderDashboard();
     prefillPrice();
-    handleRefreshCrypto(true); // sinkronisasi otomatis saat halaman dibuka
+    handleRefreshCrypto(true);
   });
 
-  function logoutUser() {
-    localStorage.removeItem('userToken');
-    localStorage.removeItem('userData');
+  // ==========================================
+  // LOGOUT (SUPABASE)
+  // ==========================================
+  async function logoutUser() {
+    await supabase.auth.signOut();
+    localStorage.removeItem('userData'); // Menghapus data lokal sisaan (kalau ada)
     window.location.href = 'login.html';
   }
 
@@ -446,6 +453,7 @@ if (googleName && googleEmail) {
     icon.classList.add('spin');
 
     // Tarik data Kripto DAN Saham secara paralel atau berurutan
+    // Pastikan API memanggil menggunakan RELATIVE PATH (/api/...) di dalam file js/api.js milikmu
     const resultCrypto = await EduVesting.refreshCryptoPrices();
     const resultStock = await EduVesting.refreshStockPrices();
 
