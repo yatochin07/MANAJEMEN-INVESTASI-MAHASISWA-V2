@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EduVesting — Konfirmasi Logout</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: { display: ['Plus Jakarta Sans', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        colors: {
+          base: { 950:'#07090f',900:'#0f1423',850:'#131928',800:'#1a2235',750:'#1e2840',700:'#253049' },
+          accent: { blue:'#3b82f6', indigo:'#6366f1', violet:'#7c3aed', cyan:'#06b6d4', emerald:'#10b981', amber:'#f59e0b', rose:'#f43f5e' }
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  * { box-sizing: border-box; }
+  body { font-family:'Inter', sans-serif; background-color:#07090f; color:#e2e8f0; min-height:100vh; overflow-x: hidden; }
+  .mesh-bg { position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(ellipse 60% 40% at 15% 10%, rgba(99,102,241,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 50% at 85% 80%, rgba(59,130,246,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 60% 30%, rgba(124,58,237,0.05) 0%, transparent 60%);
+  }
+  @keyframes fadeUp { from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
+  
+  .logout-box {
+    background: rgba(15,20,35,0.97);
+    border: 1px solid rgba(244,63,94,0.25);
+    border-radius: 1.25rem;
+    padding: 1.75rem 2rem;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: 0 20px 60px -10px rgba(0,0,0,0.7), 0 0 0 1px rgba(244,63,94,0.1);
+    animation: fadeUp .3s ease both;
+    position: relative;
+    z-index: 10;
+  }
+  .btn-logout-confirm {
+    background: linear-gradient(135deg, #f43f5e, #e11d48);
+    transition: opacity .2s ease, transform .15s ease;
+  }
+  .btn-logout-confirm:hover { opacity:.88; transform: translateY(-1px); }
+  .btn-cancel-logout {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: background .2s ease;
+  }
+  .btn-cancel-logout:hover { background: rgba(255,255,255,0.09); }
+</style>
+</head>
+
+<body class="relative flex items-center justify-center min-h-screen px-4">
+<div class="mesh-bg" aria-hidden="true"></div>
+
+<div class="logout-box">
+  <div class="flex items-center gap-3 mb-4">
+    <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style="background:rgba(244,63,94,0.12); border:1px solid rgba(244,63,94,0.25);">
+      <i class="fa-solid fa-right-from-bracket text-rose-400"></i>
+    </div>
+    <div>
+      <p class="text-sm font-semibold text-slate-100">Konfirmasi Logout</p>
+      <p class="text-xs text-slate-500 mt-0.5">Sesi Anda akan diakhiri</p>
+    </div>
+  </div>
+  <p class="text-xs text-slate-400 leading-relaxed mb-5">Apakah Anda yakin ingin keluar dari EduVesting? Anda perlu login kembali untuk mengakses dashboard.</p>
+  <div class="flex gap-3">
+    <button onclick="cancelLogout()" class="btn-cancel-logout flex-1 py-2.5 rounded-xl text-sm font-semibold text-slate-300">
+      <i class="fa-solid fa-xmark mr-1.5"></i> Batal
+    </button>
+    <button onclick="confirmLogout()" id="btn-logout" class="btn-logout-confirm flex-1 py-2.5 rounded-xl text-sm font-semibold text-white">
+      <i class="fa-solid fa-right-from-bracket mr-1.5"></i> Ya, Logout
+    </button>
+  </div>
+</div>
+
+<script>
+  // SUPABASE CONFIG
+  const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // AUTH GUARD CHECK (Optional, but good to prevent non-logged users from seeing this)
+  document.addEventListener('DOMContentLoaded', async () => {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) {
+      window.location.href = 'login.html';
+    }
+  });
+
+  async function confirmLogout() {
+    const btn = document.getElementById('btn-logout');
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Proses...';
+    btn.disabled = true;
+
+    try {
+      await supabaseClient.auth.signOut();
+      localStorage.removeItem('userData'); // Jika ada local storage tambahan
+      window.location.href = 'login.html';
+    } catch (err) {
+      console.error("Gagal Logout:", err);
+      alert("Terjadi kesalahan saat logout. Silakan coba lagi.");
+      btn.innerHTML = '<i class="fa-solid fa-right-from-bracket mr-1.5"></i> Ya, Logout';
+      btn.disabled = false;
+    }
+  }
+
+  function cancelLogout() {
+    window.location.href = 'dashboard.html';
+  }
+</script>
+</body>
+</html>
