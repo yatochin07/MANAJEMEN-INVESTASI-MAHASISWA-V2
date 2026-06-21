@@ -95,11 +95,11 @@
     </button>
 
     <div class="px-6 py-6 flex items-center gap-3">
-  <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg,#6366f1,#3b82f6);">
-    <i class="fa-solid fa-chart-line text-white text-sm"></i>
-  </div>
-  <span class="font-display text-lg logo-text font-bold">EduVesting</span>
-</div>
+      <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg,#6366f1,#3b82f6);">
+        <i class="fa-solid fa-chart-line text-white text-sm"></i>
+      </div>
+      <span class="font-display text-lg logo-text font-bold">EduVesting</span>
+    </div>
 
     <div class="mx-4 mb-5 p-3 rounded-xl glass-lighter flex items-center gap-3">
       <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white overflow-hidden"
@@ -530,6 +530,9 @@
   const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  
+  // MENGKONEKSIKAN SUPABASE CLIENT KE GLOBAL WINDOW AGAR TERBACA OLEH API.JS
+  window.supabaseClient = supabaseClient;
 
   // AUTH GUARD
   document.addEventListener('DOMContentLoaded', async () => {
@@ -561,9 +564,10 @@
 
       document.getElementById('instrument-select').addEventListener('change', prefillPrice);
 
-      renderDashboard();
-      prefillPrice();
-      handleRefreshCrypto(true);
+      // ASYNC AWAIT UNTUK MENGAMBIL DATA DARI SUPABASE CLOUD
+      await renderDashboard();
+      await prefillPrice();
+      await handleRefreshCrypto(true);
     } catch (err) { console.error("Gagal inisialisasi dashboard:", err); }
   });
 
@@ -571,20 +575,31 @@
     const btn = document.getElementById('refresh-btn');
     const icon = document.getElementById('refresh-icon');
     btn.disabled = true; icon.classList.add('spin');
+    
     const resultCrypto = await EduVesting.refreshCryptoPrices();
     const resultStock = await EduVesting.refreshStockPrices();
+    
     icon.classList.remove('spin'); btn.disabled = false;
     const note = document.getElementById('last-refresh');
+    
     if ((resultCrypto && resultCrypto.error) || (resultStock && resultStock.error)) {
       note.innerText = 'Gagal sinkron (cek koneksi)';
       if (!silent) alert('Gagal mengambil sebagian harga realtime.');
     } else { note.innerText = 'Sinkron ' + new Date().toLocaleTimeString('id-ID'); }
-    renderDashboard();
+    
+    await renderDashboard();
   }
 
-  function renderDashboard() {
-    const metrics = EduVesting.computeMetrics();
-    renderSummary(metrics); renderAllocation(metrics); renderInsights(metrics); renderTable(metrics); animateBars();
+  // DIUBAH MENJADI ASYNC
+  async function renderDashboard() {
+    if (typeof EduVesting === 'undefined') return;
+    const metrics = await EduVesting.computeMetrics();
+    
+    renderSummary(metrics); 
+    renderAllocation(metrics); 
+    renderInsights(metrics); 
+    renderTable(metrics); 
+    animateBars();
   }
 
   function renderSummary(m) {
@@ -714,9 +729,22 @@
     });
   }
 
-  function prefillPrice() {
-    const instrument = document.getElementById('instrument-select').value; const assets = EduVesting.getAssets().filter(a => a.type === instrument && a.lastPrice > 0); const priceInput = document.getElementById('price-input');
-    if (assets.length) { priceInput.value = Math.round(assets.reduce((s, a) => s + a.lastPrice, 0) / assets.length); } else { priceInput.value = ''; }
+  // DIUBAH MENJADI ASYNC KARENA MEMANGGIL EduVesting.getAssets()
+  async function prefillPrice() {
+    if (typeof EduVesting === 'undefined') return;
+    const instrument = document.getElementById('instrument-select').value; 
+    
+    // Tunggu pengambilan data dari database
+    const assets = await EduVesting.getAssets(); 
+    
+    const filteredAssets = assets.filter(a => a.type === instrument && a.lastPrice > 0); 
+    const priceInput = document.getElementById('price-input');
+    
+    if (filteredAssets.length) { 
+        priceInput.value = Math.round(filteredAssets.reduce((s, a) => s + a.lastPrice, 0) / filteredAssets.length); 
+    } else { 
+        priceInput.value = ''; 
+    }
   }
 
   function calcFee() {
