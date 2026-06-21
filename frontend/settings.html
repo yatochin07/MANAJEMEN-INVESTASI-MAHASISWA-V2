@@ -6,12 +6,12 @@
   <title>EduVesting — Pengaturan Akun</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
-
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
     tailwind.config = {
@@ -30,9 +30,9 @@
 
   <style>
     * { box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; background-color: #07090f; color: #e2e8f0; min-height: 100vh; }
+    body { font-family: 'Inter', sans-serif; background-color: #07090f; color: #e2e8f0; min-height: 100vh; overflow-x: hidden; }
 
-    /* Sidebar active glow (Neutral/Slate for Settings) */
+    /* Sidebar active glow */
     .nav-active { background: linear-gradient(90deg, rgba(148,163,184,0.15) 0%, transparent 100%); border-left: 3px solid #94a3b8; }
     .nav-item { border-left: 3px solid transparent; transition: all 0.2s ease; }
     .nav-item:hover { background: linear-gradient(90deg, rgba(99,102,241,0.1) 0%, transparent 100%); border-left-color: rgba(99,102,241,0.5); color: #a5b4fc; }
@@ -56,12 +56,8 @@
     .form-input:focus { outline: none; border-color: rgba(99,102,241,0.6); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); background: rgba(99,102,241,0.04); }
     .form-input:disabled { opacity: 0.6; cursor: not-allowed; }
 
-    /* Fix untuk native select option biar gelap */
-    select option {
-      background-color: #0f1423;
-      color: #e2e8f0;
-      padding: 12px;
-    }
+    /* Native select option fix */
+    select option { background-color: #0f1423; color: #e2e8f0; padding: 12px; }
 
     /* Fade-in */
     @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
@@ -69,8 +65,6 @@
     .delay-1 { animation-delay: 0.07s; }
     .delay-2 { animation-delay: 0.14s; }
     .delay-3 { animation-delay: 0.21s; }
-
-    @media (max-width: 767px) { aside { display: none; } .main-pad { padding-left: 1rem; padding-right: 1rem; } }
   </style>
 </head>
 
@@ -80,7 +74,15 @@
 
   <div class="relative z-10 flex min-h-screen">
 
-    <aside class="fixed top-0 left-0 h-screen w-64 flex flex-col" style="background: rgba(10,14,24,0.95); border-right: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
+
+    <aside id="sidebar" class="fixed top-0 left-0 h-screen w-64 flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out" 
+           style="background: rgba(10,14,24,0.95); border-right: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
+      
+      <button onclick="toggleSidebar()" class="md:hidden absolute top-6 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-xl"></i>
+      </button>
+
       <div class="px-6 py-6 flex items-center gap-3">
         <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg,#6366f1,#3b82f6);">
           <i class="fa-solid fa-chart-line text-white text-sm"></i>
@@ -91,7 +93,7 @@
       <div class="mx-4 mb-5 p-3 rounded-xl border border-white/5 bg-slate-800/50 flex items-center gap-3">
         <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white" style="background: linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
         <div class="min-w-0">
-          <p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">User</p>
+          <p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">Memuat...</p>
         </div>
       </div>
 
@@ -135,73 +137,78 @@
       </nav>
     </aside>
 
-    <main class="ml-64 flex-1 px-8 py-8 main-pad" style="max-width: calc(100% - 16rem);">
+    <main class="flex-1 w-full md:ml-64 px-4 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden">
 
-      <header class="flex items-center justify-between mb-8 fade-up">
-        <div>
-          <h1 class="font-display text-2xl text-slate-100">Pengaturan Akun</h1>
-          <p class="text-slate-500 text-sm mt-0.5">Kelola informasi pribadi, keamanan, dan preferensi EduVesting Anda.</p>
+      <header class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 fade-up">
+        <div class="flex items-center gap-3">
+          <button onclick="toggleSidebar()" class="md:hidden glass w-10 h-10 rounded-xl flex items-center justify-center text-slate-300 hover:text-white transition-colors flex-shrink-0">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div>
+            <h1 class="font-display text-xl sm:text-2xl text-slate-100">Pengaturan Akun</h1>
+            <p class="text-slate-500 text-xs sm:text-sm mt-0.5">Kelola informasi pribadi, keamanan, dan preferensi EduVesting Anda.</p>
+          </div>
         </div>
       </header>
 
       <div class="max-w-4xl space-y-6">
 
-        <section class="glass rounded-2xl p-6 md:p-8 fade-up delay-1">
-          <h2 class="text-lg font-display text-slate-200 mb-6 flex items-center gap-2 border-b border-white/5 pb-4">
+        <section class="glass rounded-2xl p-4 sm:p-6 md:p-8 fade-up delay-1">
+          <h2 class="text-base sm:text-lg font-display text-slate-200 mb-6 flex items-center gap-2 border-b border-white/5 pb-4">
             <i class="fa-regular fa-id-badge text-indigo-400"></i> Profil Pengguna
           </h2>
 
           <form id="profile-form" onsubmit="saveProfile(event)">
             
-            <div class="flex flex-col sm:flex-row items-center gap-6 mb-8">
-              <div class="relative group cursor-pointer">
-                <div id="settings-avatar" class="w-24 h-24 rounded-full flex items-center justify-center text-3xl font-bold text-white shadow-lg transition-transform group-hover:scale-105" style="background: linear-gradient(135deg,#7c3aed,#6366f1);">
+            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mb-8">
+              <div class="relative group cursor-pointer flex-shrink-0">
+                <div id="settings-avatar" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center text-2xl sm:text-3xl font-bold text-white shadow-lg transition-transform group-hover:scale-105" style="background: linear-gradient(135deg,#7c3aed,#6366f1);">
                   U
                 </div>
-                <div class="absolute bottom-0 right-0 w-8 h-8 bg-slate-800 rounded-full border-2 border-[#0f1423] flex items-center justify-center text-xs text-slate-300 hover:bg-slate-700 transition-colors">
+                <div class="absolute bottom-0 right-0 w-7 h-7 sm:w-8 sm:h-8 bg-slate-800 rounded-full border-2 border-[#0f1423] flex items-center justify-center text-xs text-slate-300 hover:bg-slate-700 transition-colors">
                   <i class="fa-solid fa-camera"></i>
                 </div>
               </div>
-              <div class="text-center sm:text-left">
-                <h3 class="text-base font-semibold text-slate-200">Foto Profil</h3>
-                <p class="text-xs text-slate-500 mt-1 max-w-xs">Format yang didukung: JPG, PNG, atau WebP. Maksimal ukuran 2MB.</p>
+              <div class="text-center sm:text-left mt-2 sm:mt-0">
+                <h3 class="text-sm sm:text-base font-semibold text-slate-200">Foto Profil</h3>
+                <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto sm:mx-0">Format yang didukung: JPG, PNG, atau WebP. Maksimal ukuran 2MB.</p>
               </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
               <div>
                 <label class="block text-xs font-medium text-slate-400 mb-1.5">Nama Lengkap</label>
                 <input id="setting-name" type="text" class="form-input w-full rounded-xl px-4 py-2.5 text-sm bg-[#0f1423]" required>
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-400 mb-1.5">Email Akun</label>
-                <input id="setting-email" type="email" class="form-input w-full rounded-xl px-4 py-2.5 text-sm text-slate-500 bg-[#0f1423]" disabled value="mahasiswa@univ.ac.id">
-                <p class="text-[10px] text-slate-500 mt-1 italic">*Hubungi admin untuk mengubah email.</p>
+                <input id="setting-email" type="email" class="form-input w-full rounded-xl px-4 py-2.5 text-sm text-slate-500 bg-[#0f1423]" disabled>
+                <p class="text-[10px] text-slate-500 mt-1 italic">*Terkunci dari penyedia login (Email/Google).</p>
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-400 mb-1.5">Universitas / Institusi</label>
-                <input type="text" class="form-input w-full rounded-xl px-4 py-2.5 text-sm bg-[#0f1423]" value="Universitas Indonesia">
+                <input type="text" class="form-input w-full rounded-xl px-4 py-2.5 text-sm bg-[#0f1423]" placeholder="Opsional">
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-400 mb-1.5">Nomor Induk Mahasiswa (NIM)</label>
-                <input type="text" class="form-input w-full rounded-xl px-4 py-2.5 text-sm bg-[#0f1423]" value="2109876543">
+                <input type="text" class="form-input w-full rounded-xl px-4 py-2.5 text-sm bg-[#0f1423]" placeholder="Opsional">
               </div>
             </div>
 
             <div class="mt-6 flex justify-end">
-              <button type="submit" class="bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl px-6 py-2.5 text-sm font-semibold transition-colors shadow-lg shadow-indigo-500/20">
+              <button id="save-btn" type="submit" class="w-full sm:w-auto bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl px-6 py-2.5 text-sm font-semibold transition-colors shadow-lg shadow-indigo-500/20">
                 Simpan Profil
               </button>
             </div>
           </form>
         </section>
 
-        <section class="glass rounded-2xl p-6 md:p-8 fade-up delay-2">
-          <h2 class="text-lg font-display text-slate-200 mb-6 flex items-center gap-2 border-b border-white/5 pb-4">
+        <section class="glass rounded-2xl p-4 sm:p-6 md:p-8 fade-up delay-2">
+          <h2 class="text-base sm:text-lg font-display text-slate-200 mb-6 flex items-center gap-2 border-b border-white/5 pb-4">
             <i class="fa-solid fa-sliders text-emerald-400"></i> Preferensi Investasi
           </h2>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             
             <div>
               <h3 class="text-sm font-semibold text-slate-300 mb-3">Profil Risiko EduVesting</h3>
@@ -218,7 +225,7 @@
                   <input type="radio" name="risk" checked class="w-4 h-4 text-emerald-500 bg-slate-900 border-slate-600 focus:ring-emerald-500 focus:ring-2 accent-emerald-500">
                   <div>
                     <p class="text-sm font-medium text-emerald-400">Moderat - Agresif</p>
-                    <p class="text-xs text-slate-400">Kombinasi saham *bluechip* dan sedikit kripto.</p>
+                    <p class="text-xs text-slate-400">Kombinasi saham bluechip dan sedikit kripto.</p>
                   </div>
                 </label>
 
@@ -255,12 +262,12 @@
           </div>
         </section>
 
-        <section class="glass rounded-2xl p-6 md:p-8 fade-up delay-3">
-          <h2 class="text-lg font-display text-slate-200 mb-6 flex items-center gap-2 border-b border-white/5 pb-4">
+        <section class="glass rounded-2xl p-4 sm:p-6 md:p-8 fade-up delay-3">
+          <h2 class="text-base sm:text-lg font-display text-slate-200 mb-6 flex items-center gap-2 border-b border-white/5 pb-4">
             <i class="fa-solid fa-shield-halved text-amber-400"></i> Keamanan & Notifikasi
           </h2>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             
             <div>
               <h3 class="text-sm font-semibold text-slate-300 mb-4">Pengaturan Keamanan</h3>
@@ -268,7 +275,7 @@
               <div class="flex items-center justify-between p-4 rounded-xl bg-slate-800/40 border border-slate-700/50 mb-4">
                 <div>
                   <p class="text-sm font-medium text-slate-200 mb-0.5">Autentikasi 2 Langkah (2FA)</p>
-                  <p class="text-xs text-slate-500">Gunakan Google Authenticator</p>
+                  <p class="text-xs text-slate-500">Tingkatkan keamanan akun</p>
                 </div>
                 <label class="relative inline-flex items-center cursor-pointer">
                   <input type="checkbox" value="" class="sr-only peer">
@@ -311,7 +318,7 @@
                 <div class="flex items-center justify-between">
                   <div>
                     <p class="text-sm font-medium text-slate-200">Progress Target Dana</p>
-                    <p class="text-[10px] text-slate-500">Pemberitahuan pencapaian *milestone*</p>
+                    <p class="text-[10px] text-slate-500">Pemberitahuan pencapaian milestone</p>
                   </div>
                   <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" value="" class="sr-only peer">
@@ -330,71 +337,100 @@
   </div>
 
   <script>
-    // --- Auth Check ---
-    const token = localStorage.getItem('userToken');
-    if (!token) window.location.href = 'login.html';
-
-    // Mengambil data user saat halaman dimuat
-    document.addEventListener('DOMContentLoaded', () => {
-       const user = JSON.parse(localStorage.getItem('userData')) || { username: 'User' };
-       
-       // Update UI Sidebar
-       document.getElementById('sidebar-user-name').innerText = user.username;
-       document.getElementById('sidebar-user-initial').innerText = user.username.charAt(0).toUpperCase();
-       
-       // Update UI Form Pengaturan
-       document.getElementById('setting-name').value = user.username;
-       document.getElementById('settings-avatar').innerText = user.username.charAt(0).toUpperCase();
-    });
-
-    function logoutUser() {
-        localStorage.removeItem('userToken');
-        localStorage.removeItem('userData');
-        window.location.href = 'login.html';
+    // ==========================================
+    // UI TOGGLE SCRIPT
+    // ==========================================
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      sidebar.classList.toggle('-translate-x-full');
+      overlay.classList.toggle('hidden');
     }
 
-    // --- Fungsi Simpan Profil ---
+    // ==========================================
+    // INISIALISASI SUPABASE CLIENT 
+    // ==========================================
+    const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // ==========================================
+    // AUTHENTICATION GUARD & INIT (SUPABASE)
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        // 1. Cek sesi aktif Supabase
+        const { data: { session }, error } = await supabaseClient.auth.getSession();
+        
+        if (error || !session) {
+          window.location.href = 'login.html';
+          return;
+        }
+
+        // 2. Ambil data user dari sesi Supabase
+        const user = session.user;
+        const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
+        
+        // 3. Update UI Sidebar & Settings Form
+        document.getElementById('sidebar-user-name').innerText = displayName;
+        document.getElementById('sidebar-user-initial').innerText = displayName.charAt(0).toUpperCase();
+        
+        document.getElementById('setting-name').value = displayName;
+        document.getElementById('setting-email').value = user.email;
+        document.getElementById('settings-avatar').innerText = displayName.charAt(0).toUpperCase();
+
+      } catch (err) {
+        console.error("Gagal memuat halaman pengaturan:", err);
+      }
+    });
+
+    // ==========================================
+    // LOGOUT (SUPABASE)
+    // ==========================================
+    async function logoutUser() {
+      await supabaseClient.auth.signOut();
+      localStorage.removeItem('userData'); // Membersihkan cache sisaan
+      window.location.href = 'login.html';
+    }
+
+    // ==========================================
+    // FUNGSI SIMPAN PROFIL KE SUPABASE
+    // ==========================================
     async function saveProfile(e) {
       e.preventDefault();
+      
+      const btn = document.getElementById('save-btn');
+      const originalText = btn.innerText;
+      btn.innerText = 'Menyimpan...';
+      btn.disabled = true;
 
       try {
-        const newName = document.getElementById('setting-name').value;
-        const user = JSON.parse(localStorage.getItem('userData'));
+        const newName = document.getElementById('setting-name').value.trim();
 
-        // ======================
-        // REQUEST KE BACKEND
-        // ======================
-        const response = await fetch('http://localhost:5000/api/settings/profile', {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            email: user.email,
-            username: newName
-          })
+        if (!newName) {
+          alert('Nama tidak boleh kosong!');
+          return;
+        }
+
+        // Mengirim instruksi update metadata (nama) ke Supabase Auth
+        const { data, error } = await supabaseClient.auth.updateUser({
+          data: { full_name: newName }
         });
 
-        const data = await response.json();
+        if (error) throw error;
 
-        // ======================
-        // SUCCESS
-        // ======================
-        if (data.success) {
-          localStorage.setItem('userData', JSON.stringify(data.user));
+        // Update UI secara real-time setelah berhasil disimpan
+        document.getElementById('sidebar-user-name').innerText = newName;
+        document.getElementById('sidebar-user-initial').innerText = newName.charAt(0).toUpperCase();
+        document.getElementById('settings-avatar').innerText = newName.charAt(0).toUpperCase();
 
-          // UPDATE UI
-          document.getElementById('sidebar-user-name').innerText = data.user.username;
-          document.getElementById('sidebar-user-initial').innerText = data.user.username.charAt(0).toUpperCase();
-          document.getElementById('settings-avatar').innerText = data.user.username.charAt(0).toUpperCase();
-
-          alert('Profile berhasil diupdate');
-        } else {
-          alert(data.message);
-        }
+        alert('Profil berhasil diperbarui!');
       } catch (error) {
-        console.log(error);
-        alert('Server Error');
+        console.error('Error updating profile:', error.message);
+        alert('Gagal menyimpan profil. Silakan coba lagi.');
+      } finally {
+        btn.innerText = originalText;
+        btn.disabled = false;
       }
     }
   </script>
