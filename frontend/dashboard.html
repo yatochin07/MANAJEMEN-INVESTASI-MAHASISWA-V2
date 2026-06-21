@@ -67,7 +67,6 @@
   .delay-1{animation-delay:.07s;} .delay-2{animation-delay:.14s;} .delay-3{animation-delay:.21s;} .delay-4{animation-delay:.28s;} .delay-5{animation-delay:.35s;}
   .spin { animation: spin 1s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.6); backdrop-filter: blur(4px); z-index:100; display:flex; align-items:center; justify-content:center; }
 
   /* FAQ accordion */
   .faq-item { border-bottom: 1px solid rgba(255,255,255,0.05); }
@@ -78,76 +77,19 @@
   .faq-answer { max-height:0; overflow:hidden; transition: max-height .35s ease, padding .25s ease; }
   .faq-answer.open { max-height: 300px; padding-bottom:.75rem; }
   .faq-icon.open { transform: rotate(180deg); }
-
-  /* Logout mini modal */
-  .logout-mini-modal {
-    position: fixed;
-    inset: 0;
-    z-index: 200;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0,0,0,0.5);
-    backdrop-filter: blur(6px);
-  }
-  .logout-mini-box {
-    background: rgba(15,20,35,0.97);
-    border: 1px solid rgba(244,63,94,0.25);
-    border-radius: 1.25rem;
-    padding: 1.75rem 2rem;
-    width: 100%;
-    max-width: 360px;
-    margin: 1rem;
-    box-shadow: 0 20px 60px -10px rgba(0,0,0,0.7), 0 0 0 1px rgba(244,63,94,0.1);
-    animation: fadeUp .2s ease both;
-  }
-  .btn-logout-confirm {
-    background: linear-gradient(135deg, #f43f5e, #e11d48);
-    transition: opacity .2s ease, transform .15s ease;
-  }
-  .btn-logout-confirm:hover { opacity:.88; transform: translateY(-1px); }
-  .btn-cancel-logout {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    transition: background .2s ease;
-  }
-  .btn-cancel-logout:hover { background: rgba(255,255,255,0.09); }
 </style>
 </head>
 
 <body class="relative">
 <div class="mesh-bg" aria-hidden="true"></div>
 
-<div id="logout-modal" class="logout-mini-modal hidden">
-  <div class="logout-mini-box">
-    <div class="flex items-center gap-3 mb-4">
-      <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style="background:rgba(244,63,94,0.12); border:1px solid rgba(244,63,94,0.25);">
-        <i class="fa-solid fa-right-from-bracket text-rose-400"></i>
-      </div>
-      <div>
-        <p class="text-sm font-semibold text-slate-100">Konfirmasi Logout</p>
-        <p class="text-xs text-slate-500 mt-0.5">Sesi Anda akan diakhiri</p>
-      </div>
-    </div>
-    <p class="text-xs text-slate-400 leading-relaxed mb-5">Apakah Anda yakin ingin keluar dari EduVesting? Anda perlu login kembali untuk mengakses dashboard.</p>
-    <div class="flex gap-3">
-      <button onclick="closeLogoutModal()" class="btn-cancel-logout flex-1 py-2.5 rounded-xl text-sm font-semibold text-slate-300">
-        <i class="fa-solid fa-xmark mr-1.5"></i> Batal
-      </button>
-      <button onclick="confirmLogout()" class="btn-logout-confirm flex-1 py-2.5 rounded-xl text-sm font-semibold text-white">
-        <i class="fa-solid fa-right-from-bracket mr-1.5"></i> Ya, Logout
-      </button>
-    </div>
-  </div>
-</div>
-
 <div class="relative z-10 flex min-h-screen">
-  
+
   <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
 
   <aside id="sidebar" class="fixed top-0 left-0 h-screen w-64 flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out"
          style="background: rgba(10,14,24,0.95); border-right:1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
-    
+
     <button onclick="toggleSidebar()" class="md:hidden absolute top-6 right-4 text-slate-400 hover:text-white">
       <i class="fa-solid fa-xmark text-xl"></i>
     </button>
@@ -196,9 +138,9 @@
       <a href="settings.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
         <i class="fa-solid fa-gear w-4 text-center"></i> Pengaturan
       </a>
-      <button onclick="openLogoutModal()" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm">
+      <a href="logout.html" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm">
         <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout
-      </button>
+      </a>
     </nav>
 
     <div class="px-4 pb-5 pt-3">
@@ -211,11 +153,10 @@
       </div>
     </div>
 
-   
   </aside>
 
   <main class="flex-1 w-full md:ml-64 px-4 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden">
-    
+
     <div class="md:hidden flex items-center justify-between mb-6 fade-up">
       <div class="flex items-center gap-3">
         <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#6366f1,#3b82f6);">
@@ -233,7 +174,7 @@
         <h1 id="welcome-user" class="font-display text-2xl sm:text-3xl text-slate-100 font-semibold mb-1">Memuat...</h1>
         <p id="header-date" class="text-slate-500 text-sm"></p>
       </div>
-      
+
       <div class="flex items-center gap-3">
         <a href="portfolio.html" class="glass px-5 py-2.5 rounded-xl text-sm text-slate-200 flex items-center gap-2 hover:border-indigo-500/40 transition-all font-medium">
           <i class="fa-solid fa-plus text-indigo-400"></i> Kelola Aset
@@ -247,7 +188,7 @@
     <section aria-labelledby="summary-heading" class="mb-8">
       <h2 id="summary-heading" class="sr-only">Ringkasan Portofolio</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        
+
         <div class="glass rounded-2xl p-5 metric-card fade-up delay-1" style="border-color: rgba(99,102,241,0.2);">
           <div class="flex items-start justify-between">
             <div>
@@ -570,23 +511,6 @@
     overlay.classList.toggle('hidden');
   }
 
-  // LOGOUT MODAL
-  function openLogoutModal() {
-    document.getElementById('logout-modal').classList.remove('hidden');
-  }
-  function closeLogoutModal() {
-    document.getElementById('logout-modal').classList.add('hidden');
-  }
-  async function confirmLogout() {
-    await supabaseClient.auth.signOut();
-    localStorage.removeItem('userData');
-    window.location.href = 'login.html';
-  }
-  // Close on backdrop click
-  document.getElementById('logout-modal').addEventListener('click', function(e) {
-    if (e.target === this) closeLogoutModal();
-  });
-
   // FAQ ACCORDION
   function toggleFaq(btn) {
     const answer = btn.nextElementSibling;
@@ -615,14 +539,14 @@
         window.location.href = 'login.html';
         return;
       }
-      
+
       const user = session.user;
       const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
       const avatarUrl = user.user_metadata?.avatar_url; // GET AVATAR
-      
+
       document.getElementById('welcome-user').innerText = `Selamat Datang, ${displayName} 👋`;
       document.getElementById('sidebar-user-name').innerText = displayName;
-      
+
       // LOGIKA RENDER AVATAR
       const sbAvatar = document.getElementById('sidebar-user-initial');
       if (avatarUrl) {
@@ -634,9 +558,9 @@
       document.getElementById('header-date').innerText = new Date().toLocaleDateString('id-ID', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
       });
-      
+
       document.getElementById('instrument-select').addEventListener('change', prefillPrice);
-      
+
       renderDashboard();
       prefillPrice();
       handleRefreshCrypto(true);
@@ -682,7 +606,7 @@
     document.getElementById('m-cash-warn').classList.toggle('hidden', m.cashPercent >= 10);
     document.getElementById('m-cashpct').innerText = m.cashPercent.toFixed(0) + '%';
     document.getElementById('m-cashpct-bar').style.width = Math.min(100, m.cashPercent) + '%';
-    
+
     const note = document.getElementById('m-cashpct-note');
     if (m.cashPercent < 10) { note.innerText = 'Buffer kas tipis — pertimbangkan menambah kas.'; note.className = 'text-xs mt-2 text-amber-400'; }
     else if (m.cashPercent > 50) { note.innerText = 'Kas cukup besar — bisa diinvestasikan.'; note.className = 'text-xs mt-2 text-cyan-400'; }
@@ -729,7 +653,7 @@
     const volatilePct = m.totalEquity > 0 ? ((m.byType.kripto + m.byType.saham) / m.totalEquity) * 100 : 0;
     let riskLabel = 'Rendah', riskColor = 'text-emerald-400';
     if (volatilePct > 60) { riskLabel = 'Tinggi'; riskColor = 'text-rose-400'; } else if (volatilePct > 30) { riskLabel = 'Sedang'; riskColor = 'text-amber-400'; }
-    
+
     const riskEl = document.getElementById('ai-risk');
     riskEl.innerText = m.assets.length ? riskLabel : '—'; riskEl.className = 'font-display text-base sm:text-lg ' + riskColor;
 
