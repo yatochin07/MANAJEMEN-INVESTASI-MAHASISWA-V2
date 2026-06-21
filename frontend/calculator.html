@@ -9,7 +9,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
@@ -18,7 +18,7 @@
       darkMode: 'class',
       theme: {
         extend: {
-          fontFamily: { display: ['Syne', 'sans-serif'], body: ['DM Sans', 'sans-serif'] },
+          fontFamily: { display: ['Plus Jakarta Sans', 'sans-serif'], body: ['Inter', 'sans-serif'] },
           colors: {
             base: { 950: '#07090f', 900: '#0f1423', 850: '#131928', 800: '#1a2235', 750: '#1e2840', 700: '#253049' },
             accent: { blue: '#3b82f6', indigo: '#6366f1', violet: '#7c3aed', cyan: '#06b6d4', emerald: '#10b981', amber: '#f59e0b', rose: '#f43f5e' }
@@ -30,7 +30,7 @@
 
   <style>
     * { box-sizing: border-box; }
-    body { font-family: 'DM Sans', sans-serif; background-color: #07090f; color: #e2e8f0; min-height: 100vh; }
+    body { font-family: 'Inter', sans-serif; background-color: #07090f; color: #e2e8f0; min-height: 100vh; }
 
     /* Sidebar active glow */
     .nav-active { background: linear-gradient(90deg, rgba(16,185,129,0.18) 0%, transparent 100%); border-left: 3px solid #10b981; }
@@ -54,6 +54,13 @@
     /* Form Input */
     .form-input { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); transition: all 0.2s ease; color: #e2e8f0; }
     .form-input:focus { outline: none; border-color: rgba(16,185,129,0.6); box-shadow: 0 0 0 3px rgba(16,185,129,0.15); background: rgba(16,185,129,0.04); }
+
+    /* Fix untuk native select option biar gelap */
+    select option {
+      background-color: #0f1423;
+      color: #e2e8f0;
+      padding: 12px;
+    }
 
     /* Radio Tabs */
     .radio-tab:checked + div { background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.5); color: #6ee7b7; }
@@ -89,7 +96,6 @@
         <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white" style="background: linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
         <div class="min-w-0">
           <p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">User</p>
-          <p class="text-xs text-slate-500 truncate">Mahasiswa Teknik, 2021</p>
         </div>
       </div>
 
@@ -111,10 +117,10 @@
 
         <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Analisa</p>
         
-        <a href="ai-insights.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <a href="insights.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
           <i class="fa-solid fa-robot w-4 text-center"></i> AI Insights
         </a>
-        <a href="allocation.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <a href="allocations.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
           <i class="fa-solid fa-chart-pie w-4 text-center"></i> Alokasi Aset
         </a>
         
@@ -180,14 +186,14 @@
               <div class="grid grid-cols-2 gap-4">
                 <div>
                   <label class="block text-xs font-medium text-slate-400 mb-1.5">Tipe Transaksi</label>
-                  <select id="calc-type" class="form-input w-full rounded-xl px-4 py-2.5 text-sm appearance-none" onchange="calculateFee()">
+                  <select id="calc-type" class="form-input w-full rounded-xl px-4 py-2.5 text-sm appearance-none bg-[#0f1423]" onchange="calculateFee()">
                     <option value="beli">🟢 Beli (Buy)</option>
                     <option value="jual">🔵 Jual (Sell)</option>
                   </select>
                 </div>
                 <div>
                   <label class="block text-xs font-medium text-slate-400 mb-1.5">Pilih Broker / Exchange</label>
-                  <select id="calc-broker" class="form-input w-full rounded-xl px-4 py-2.5 text-sm appearance-none" onchange="calculateFee()">
+                  <select id="calc-broker" class="form-input w-full rounded-xl px-4 py-2.5 text-sm appearance-none bg-[#0f1423]" onchange="calculateFee()">
                     </select>
                 </div>
               </div>
@@ -394,8 +400,6 @@
       if (inst === 'saham') {
         unitMultiplier = 100; // 1 Lot = 100 lembar
         unitName = "Lot";
-        // Simulasi Pajak Saham (PPN 11% dari broker fee + Levy, PPh 0.1% dari transaksi gross jika jual)
-        // Untuk penyederhanaan kalkulator mahasiswa, kita gabung di UI display.
       } else if (inst === 'kripto') {
         unitMultiplier = 1;
         unitName = "Koin";
@@ -405,9 +409,6 @@
       }
 
       // 1. Tentukan Maksimal Volume yang Bisa Dibeli (Mencegah saldo minus)
-      // Rumus: (Harga * Multiplier * Volume) + Fee = Budget
-      // Volume = Budget / ((Harga * Multiplier) * (1 + TotalFeeRate))
-      
       const pricePerUnit = price * unitMultiplier;
       let totalFeePercentage = feeRate; // Start with base fee
 
@@ -416,7 +417,7 @@
       if (inst === 'kripto' && trxType === 'beli') totalFeePercentage += 0.0011; // PPN 0.11%
       if (inst === 'kripto' && trxType === 'jual') totalFeePercentage += 0.001; // PPh 0.1%
 
-      // Calculate Max Unit (Floor for stocks to get exact lots, decimals for crypto/gold)
+      // Calculate Max Unit
       let maxUnit = budget / (pricePerUnit * (1 + totalFeePercentage));
       
       if (inst === 'saham') {
@@ -433,7 +434,6 @@
       let taxLabel = "PPN / PPh:";
 
       if (inst === 'saham') {
-        // PPN 11% dari fee broker
         let ppn = feeAmount * 0.11; 
         let pph = trxType === 'jual' ? grossTransaction * 0.001 : 0;
         taxAmount = ppn + pph;
@@ -442,19 +442,17 @@
         taxAmount = trxType === 'beli' ? grossTransaction * 0.0011 : grossTransaction * 0.001;
         taxLabel = trxType === 'beli' ? "PPN Final (0.11%):" : "PPh Final (0.1%):";
       } else {
-        taxAmount = 0; // Emas digital biasanya fee sdh net
+        taxAmount = 0; 
         taxLabel = "Pajak:";
       }
 
       const totalFeeTax = feeAmount + taxAmount;
       const totalPay = trxType === 'beli' ? grossTransaction + totalFeeTax : grossTransaction - totalFeeTax;
       
-      // Saldo Sisa (Jika Beli) atau Saldo Bertambah (Jika Jual)
       let remainder = 0;
       if(trxType === 'beli') {
         remainder = budget - totalPay;
       } else {
-        // Jika jual, asumsikan budget adalah 'Kas Saat Ini', maka kas + hasil jual
         remainder = budget + totalPay;
       }
 
@@ -493,76 +491,24 @@
     }
 
     async function calculateToBackend() {
+      try {
+        const instrument = document.querySelector('input[name="instrument"]:checked').value;
+        const transactionType = document.getElementById('calc-type').value;
+        const budget = parseFloat(document.getElementById('calc-budget').value);
+        const price = parseFloat(document.getElementById('calc-price').value);
 
-    try {
+        const response = await fetch('http://localhost:5000/api/calculator', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ instrument, transactionType, budget, price })
+        });
 
-        const instrument =
-        document.querySelector(
-            'input[name="instrument"]:checked'
-        ).value;
-
-        const transactionType =
-        document.getElementById(
-            'calc-type'
-        ).value;
-
-        const budget =
-        parseFloat(
-            document.getElementById(
-                'calc-budget'
-            ).value
-        );
-
-        const price =
-        parseFloat(
-            document.getElementById(
-                'calc-price'
-            ).value
-        );
-
-        const response = await fetch(
-
-            'http://localhost:5000/api/calculator',
-
-            {
-
-                method: 'POST',
-
-                headers: {
-
-                    'Content-Type':
-                    'application/json'
-
-                },
-
-                body: JSON.stringify({
-
-                    instrument,
-                    transactionType,
-                    budget,
-                    price
-
-                })
-
-            }
-
-        );
-
-        const data =
-        await response.json();
-
+        const data = await response.json();
         console.log(data);
-
-    }
-
-    catch (error) {
-
+      } catch (error) {
         console.log(error);
-
+      }
     }
-
-    calculateToBackend();
-}
   </script>
 </body>
 </html>

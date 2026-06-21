@@ -9,7 +9,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
@@ -18,7 +18,7 @@
       darkMode: 'class',
       theme: {
         extend: {
-          fontFamily: { display: ['Syne', 'sans-serif'], body: ['DM Sans', 'sans-serif'] },
+          fontFamily: { display: ['Plus Jakarta Sans', 'sans-serif'], body: ['Inter', 'sans-serif'] },
           colors: {
             base: { 950: '#07090f', 900: '#0f1423', 850: '#131928', 800: '#1a2235', 750: '#1e2840', 700: '#253049' },
             accent: { blue: '#3b82f6', indigo: '#6366f1', violet: '#7c3aed', cyan: '#06b6d4', emerald: '#10b981', amber: '#f59e0b', rose: '#f43f5e' }
@@ -30,7 +30,7 @@
 
   <style>
     * { box-sizing: border-box; }
-    body { font-family: 'DM Sans', sans-serif; background-color: #07090f; color: #e2e8f0; min-height: 100vh; }
+    body { font-family: 'Inter', sans-serif; background-color: #07090f; color: #e2e8f0; min-height: 100vh; }
 
     /* Sidebar active glow (Neutral/Slate for Settings) */
     .nav-active { background: linear-gradient(90deg, rgba(148,163,184,0.15) 0%, transparent 100%); border-left: 3px solid #94a3b8; }
@@ -55,6 +55,13 @@
     .form-input { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); transition: all 0.2s ease; color: #e2e8f0; }
     .form-input:focus { outline: none; border-color: rgba(99,102,241,0.6); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); background: rgba(99,102,241,0.04); }
     .form-input:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* Fix untuk native select option biar gelap */
+    select option {
+      background-color: #0f1423;
+      color: #e2e8f0;
+      padding: 12px;
+    }
 
     /* Fade-in */
     @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
@@ -85,7 +92,6 @@
         <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white" style="background: linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
         <div class="min-w-0">
           <p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">User</p>
-          <p class="text-xs text-slate-500 truncate">Mahasiswa Teknik, 2021</p>
         </div>
       </div>
 
@@ -107,13 +113,13 @@
 
         <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Analitik</p>
         
-        <a href="ai-insights.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <a href="insights.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
           <i class="fa-solid fa-robot w-4 text-center"></i> AI Insights
         </a>
-        <a href="allocation.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <a href="allocations.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
           <i class="fa-solid fa-chart-pie w-4 text-center"></i> Alokasi Aset
         </a>
-        <a href="fee-calculator.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <a href="calculator.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
           <i class="fa-solid fa-calculator w-4 text-center"></i> Kalkulator Fee
         </a>
 
@@ -165,20 +171,20 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
                 <label class="block text-xs font-medium text-slate-400 mb-1.5">Nama Lengkap</label>
-                <input id="setting-name" type="text" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" required>
+                <input id="setting-name" type="text" class="form-input w-full rounded-xl px-4 py-2.5 text-sm bg-[#0f1423]" required>
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-400 mb-1.5">Email Akun</label>
-                <input id="setting-email" type="email" class="form-input w-full rounded-xl px-4 py-2.5 text-sm text-slate-500" disabled value="mahasiswa@univ.ac.id">
+                <input id="setting-email" type="email" class="form-input w-full rounded-xl px-4 py-2.5 text-sm text-slate-500 bg-[#0f1423]" disabled value="mahasiswa@univ.ac.id">
                 <p class="text-[10px] text-slate-500 mt-1 italic">*Hubungi admin untuk mengubah email.</p>
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-400 mb-1.5">Universitas / Institusi</label>
-                <input type="text" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="Universitas Indonesia">
+                <input type="text" class="form-input w-full rounded-xl px-4 py-2.5 text-sm bg-[#0f1423]" value="Universitas Indonesia">
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-400 mb-1.5">Nomor Induk Mahasiswa (NIM)</label>
-                <input type="text" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="2109876543">
+                <input type="text" class="form-input w-full rounded-xl px-4 py-2.5 text-sm bg-[#0f1423]" value="2109876543">
               </div>
             </div>
 
@@ -231,14 +237,14 @@
               <div class="space-y-4">
                 <div>
                   <label class="block text-xs font-medium text-slate-400 mb-1.5">Mata Uang Dasar</label>
-                  <select class="form-input w-full rounded-xl px-4 py-2.5 text-sm appearance-none">
+                  <select class="form-input w-full rounded-xl px-4 py-2.5 text-sm appearance-none bg-[#0f1423]">
                     <option>IDR - Rupiah Indonesia</option>
                     <option>USD - US Dollar</option>
                   </select>
                 </div>
                 <div>
                   <label class="block text-xs font-medium text-slate-400 mb-1.5">Format Tampilan Nominal</label>
-                  <select class="form-input w-full rounded-xl px-4 py-2.5 text-sm appearance-none">
+                  <select class="form-input w-full rounded-xl px-4 py-2.5 text-sm appearance-none bg-[#0f1423]">
                     <option>Penuh (Rp 1.500.000)</option>
                     <option>Disingkat (Rp 1.5 Juta)</option>
                   </select>
@@ -347,118 +353,50 @@
         window.location.href = 'login.html';
     }
 
-    // --- Fungsi Simpan Profil Dummy ---
+    // --- Fungsi Simpan Profil ---
     async function saveProfile(e) {
+      e.preventDefault();
 
-    e.preventDefault();
-
-    try {
-
-        const newName =
-        document.getElementById(
-            'setting-name'
-        ).value;
-
-        const user =
-        JSON.parse(
-            localStorage.getItem(
-                'userData'
-            )
-        );
+      try {
+        const newName = document.getElementById('setting-name').value;
+        const user = JSON.parse(localStorage.getItem('userData'));
 
         // ======================
         // REQUEST KE BACKEND
         // ======================
+        const response = await fetch('http://localhost:5000/api/settings/profile', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: user.email,
+            username: newName
+          })
+        });
 
-        const response = await fetch(
-
-            'http://localhost:5000/api/settings/profile',
-
-            {
-
-                method: 'PUT',
-
-                headers: {
-
-                    'Content-Type':
-                    'application/json'
-
-                },
-
-                body: JSON.stringify({
-
-                    email: user.email,
-
-                    username: newName
-
-                })
-
-            }
-
-        );
-
-        const data =
-        await response.json();
+        const data = await response.json();
 
         // ======================
         // SUCCESS
         // ======================
-
         if (data.success) {
+          localStorage.setItem('userData', JSON.stringify(data.user));
 
-            localStorage.setItem(
+          // UPDATE UI
+          document.getElementById('sidebar-user-name').innerText = data.user.username;
+          document.getElementById('sidebar-user-initial').innerText = data.user.username.charAt(0).toUpperCase();
+          document.getElementById('settings-avatar').innerText = data.user.username.charAt(0).toUpperCase();
 
-                'userData',
-
-                JSON.stringify(
-                    data.user
-                )
-
-            );
-
-            // UPDATE UI
-            document.getElementById(
-                'sidebar-user-name'
-            ).innerText =
-            data.user.username;
-
-            document.getElementById(
-                'sidebar-user-initial'
-            ).innerText =
-            data.user.username
-            .charAt(0)
-            .toUpperCase();
-
-            document.getElementById(
-                'settings-avatar'
-            ).innerText =
-            data.user.username
-            .charAt(0)
-            .toUpperCase();
-
-            alert(
-                'Profile berhasil diupdate'
-            );
-
+          alert('Profile berhasil diupdate');
+        } else {
+          alert(data.message);
         }
-
-        else {
-
-            alert(data.message);
-
-        }
-
-    }
-
-    catch (error) {
-
+      } catch (error) {
         console.log(error);
-
         alert('Server Error');
-
+      }
     }
-
-}
   </script>
 
 </body>

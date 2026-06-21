@@ -9,7 +9,8 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <!-- FONT DIUBAH: Plus Jakarta Sans & Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
@@ -18,7 +19,7 @@
       darkMode: 'class',
       theme: {
         extend: {
-          fontFamily: { display: ['Syne', 'sans-serif'], body: ['DM Sans', 'sans-serif'] },
+          fontFamily: { display: ['Plus Jakarta Sans', 'sans-serif'], body: ['Inter', 'sans-serif'] },
           colors: {
             base: { 950: '#07090f', 900: '#0f1423', 850: '#131928', 800: '#1a2235', 750: '#1e2840', 700: '#253049' },
             accent: { blue: '#3b82f6', indigo: '#6366f1', violet: '#7c3aed', cyan: '#06b6d4', emerald: '#10b981', amber: '#f59e0b', rose: '#f43f5e' }
@@ -30,7 +31,7 @@
 
   <style>
     * { box-sizing: border-box; }
-    body { font-family: 'DM Sans', sans-serif; background-color: #07090f; color: #e2e8f0; min-height: 100vh; }
+    body { font-family: 'Inter', sans-serif; background-color: #07090f; color: #e2e8f0; min-height: 100vh; }
 
     /* Sidebar active glow */
     .nav-active { background: linear-gradient(90deg, rgba(99,102,241,0.18) 0%, transparent 100%); border-left: 3px solid #6366f1; }
@@ -68,6 +69,13 @@
     .form-input { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); transition: all 0.2s ease; color: #e2e8f0; }
     .form-input:focus { outline: none; border-color: rgba(99,102,241,0.6); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); background: rgba(99,102,241,0.04); }
 
+    /* Fix untuk native select option biar gelap */
+    select option {
+      background-color: #0f1423;
+      color: #e2e8f0;
+      padding: 12px;
+    }
+
     /* Fade-in */
     @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
     .fade-up { animation: fadeUp 0.5s ease both; }
@@ -104,7 +112,6 @@
         <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white" style="background: linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
         <div class="min-w-0">
           <p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">User</p>
-          <p class="text-xs text-slate-500 truncate">Mahasiswa Teknik, 2021</p>
         </div>
       </div>
 
@@ -350,7 +357,7 @@
 
           <div>
             <label class="block text-xs font-medium text-slate-400 mb-1.5">Ikon (Pilih Emoji)</label>
-            <select id="goal-icon" class="form-input w-full rounded-xl px-4 py-2.5 text-sm appearance-none">
+            <select id="goal-icon" class="form-input w-full rounded-xl px-4 py-2.5 text-sm appearance-none bg-[#0f1423]">
               <option value="🏖️">🏖️ Liburan / Travel</option>
               <option value="🏍️">🏍️ Kendaraan</option>
               <option value="🎓">🎓 Pendidikan</option>
