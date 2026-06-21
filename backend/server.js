@@ -3,13 +3,6 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
-
-// ======================
-// TAMBAHAN: IMPORT SESSION & PASSPORT
-// ======================
-const session = require('express-session');
-const passport = require('./config/passport'); // Mengambil konfigurasi passport yang sudah dibuat
-
 // Tambahan: Import Library Yahoo Finance versi terbaru (v3)
 const YahooFinance = require('yahoo-finance2').default;
 const yf = new YahooFinance();
@@ -17,7 +10,7 @@ const yf = new YahooFinance();
 // ======================
 // IMPORT ROUTES
 // ======================
-const authRoutes = require('./routes/authRoutes');
+// Catatan: authRoutes dihapus karena autentikasi sudah sepenuhnya ditangani oleh Supabase di Frontend
 const portfolioRoutes = require('./routes/portfolioRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
 const goalsRoutes = require('./routes/goalsRoutes');
@@ -31,28 +24,12 @@ const settingsRoutes = require('./routes/settingsRoutes');
 // ======================
 const app = express();
 
-
-
 // ======================
 // MIDDLEWARE
 // ======================
 app.use(cors());
 app.use(express.json());
-
-// ======================
-// TAMBAHAN: MIDDLEWARE SESSION & PASSPORT
-// ======================
-// Session diperlukan oleh Google OAuth untuk menyimpan status login sementara
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'rahasia_sementara_eduvesting', 
-    resave: false,
-    saveUninitialized: false
-}));
-
-// Inisialisasi Passport agar aktif di aplikasi
-app.use(passport.initialize());
-app.use(passport.session());
-
+// Catatan: express-session dan passport dihapus karena Vercel Serverless bersifat stateless
 
 // ======================
 // DATABASE
@@ -64,7 +41,7 @@ mongoose.connect(
     console.log('MongoDB Connected');
 })
 .catch((err) => {
-    console.log(err);
+    console.error('MongoDB Connection Error:', err);
 });
 
 // ======================
@@ -94,7 +71,6 @@ app.get('/api/price/saham/:ticker', async (req, res) => {
 // ======================
 // ROUTES (INTERNAL / MODULAR)
 // ======================
-app.use('/api/auth', authRoutes);
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/goals', goalsRoutes);
@@ -104,11 +80,17 @@ app.use('/api/calculator', calculatorRoutes);
 app.use('/api/settings', settingsRoutes);
 
 // ======================
-// SERVER
+// SERVER EXPORT (VERCEL & LOKAL)
 // ======================
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log('✅ SERVER BERHASIL JALAN');
-});
+// Jika dijalankan di localhost (node server.js), maka app.listen akan berjalan
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+        console.log('✅ SERVER BERHASIL JALAN DI LOKAL');
+    });
+}
+
+// WAJIB UNTUK VERCEL: Export app agar Vercel bisa menjadikannya Serverless Function
+module.exports = app;
