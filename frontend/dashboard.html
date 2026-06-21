@@ -47,7 +47,7 @@
   .alloc-bar { height:8px; border-radius:99px; transition: width .8s cubic-bezier(.22,1,.36,1); }
   .portfolio-row { transition: background .15s ease; border-bottom:1px solid rgba(255,255,255,0.04); }
   .portfolio-row:hover { background: rgba(99,102,241,0.06); }
-  .badge { font-size:.68rem; font-weight:600; letter-spacing:.04em; padding:2px 10px; border-radius:99px; text-transform:uppercase; }
+  .badge { font-size:.68rem; font-weight:600; letter-spacing:.04em; padding:2px 10px; border-radius:99px; text-transform:uppercase; white-space: nowrap; }
   .progress-bar { height:6px; border-radius:99px; background: rgba(255,255,255,0.07); overflow:hidden; }
   .progress-fill { height:100%; border-radius:99px; transition: width 1s cubic-bezier(.22,1,.36,1); }
   .ai-card { position:relative; border-radius:1rem; background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(59,130,246,0.08)); border:1px solid rgba(99,102,241,0.25); overflow:hidden; }
@@ -118,16 +118,15 @@
   =========================== */
   #sidebar {
     transition: transform 0.3s ease-in-out;
-    z-index: 40;
+    z-index: 50; /* Pastikan selalu paling atas */
   }
   #sidebar-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 30;
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 40;
     transition: opacity 0.3s ease; opacity: 0; pointer-events: none;
   }
   
   @media (max-width: 1024px) {
-    #sidebar { transform: translateX(-100%); }
-    #sidebar.show { transform: translateX(0); }
+    /* Set manual via Javascript nanti untuk show/hide */
     #sidebar-overlay.show { opacity: 1; pointer-events: auto; }
     #main-content { margin-left: 0 !important; max-width: 100% !important; padding: 1.5rem !important; }
     
@@ -140,6 +139,7 @@
 <body class="relative">
 <div class="mesh-bg" aria-hidden="true"></div>
 
+<!-- ===== LOGOUT CONFIRMATION MODAL ===== -->
 <div id="logout-modal" class="logout-mini-modal hidden">
   <div class="logout-mini-box">
     <div class="flex items-center gap-3 mb-4">
@@ -154,10 +154,10 @@
     <p class="text-xs text-slate-400 leading-relaxed mb-5">Apakah Anda yakin ingin keluar dari EduVesting? Anda perlu login kembali untuk mengakses dashboard.</p>
     <div class="flex gap-3">
       <button onclick="closeLogoutModal()" class="btn-cancel-logout flex-1 py-2.5 rounded-xl text-sm font-semibold text-slate-300">
-        <i class="fa-solid fa-xmark mr-1.5"></i> Batal
+        <i class="fa-solid fa-xmark mr-1.5 pointer-events-none"></i> Batal
       </button>
       <button onclick="confirmLogout()" class="btn-logout-confirm flex-1 py-2.5 rounded-xl text-sm font-semibold text-white">
-        <i class="fa-solid fa-right-from-bracket mr-1.5"></i> Ya, Logout
+        <i class="fa-solid fa-right-from-bracket mr-1.5 pointer-events-none"></i> Ya, Logout
       </button>
     </div>
   </div>
@@ -165,20 +165,21 @@
 
 <div class="relative z-10 flex min-h-screen">
   
-  <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden" onclick="window.toggleSidebar()"></div>
 
+  <!-- Sidebar: Perhatikan -translate-x-full -->
   <aside id="sidebar" class="fixed top-0 left-0 h-screen w-64 flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out"
          style="background: rgba(10,14,24,0.95); border-right:1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
     
-    <button onclick="toggleSidebar()" class="md:hidden absolute top-6 right-4 text-slate-400 hover:text-white">
-      <i class="fa-solid fa-xmark text-xl"></i>
+    <button type="button" onclick="window.toggleSidebar()" class="md:hidden absolute top-6 right-4 p-3 text-slate-400 hover:text-white cursor-pointer z-50">
+      <i class="fa-solid fa-xmark text-xl pointer-events-none"></i>
     </button>
 
     <div class="px-6 py-6 flex items-center gap-3">
       <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#6366f1,#3b82f6);">
         <i class="fa-solid fa-chart-line text-white text-sm"></i>
       </div>
-      <span class="font-display text-lg logo-text font-bold">EduVesting</span>
+      <span class="font-display text-lg logo-text">EduVesting</span>
     </div>
 
     <div class="mx-4 mb-5 p-3 rounded-xl glass-lighter flex items-center gap-3">
@@ -218,8 +219,8 @@
       <a href="settings.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
         <i class="fa-solid fa-gear w-4 text-center"></i> Pengaturan
       </a>
-      <button onclick="openLogoutModal()" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm">
-        <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout
+      <button type="button" onclick="openLogoutModal()" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm text-left">
+        <i class="fa-solid fa-right-from-bracket w-4 text-center pointer-events-none"></i> Logout
       </button>
     </nav>
 
@@ -234,21 +235,24 @@
     </div>
   </aside>
 
-  <main class="flex-1 w-full md:ml-64 px-5 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden">
+  <main id="main-content" class="flex-1 w-full md:ml-64 px-4 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden">
     
-    <div class="flex items-center justify-between mb-8 md:hidden fade-up">
+    <!-- MOBILE NAVBAR (Persis Gambar: Logo Kiri, Hamburger Kanan) -->
+    <div class="flex items-center justify-between mb-8 md:hidden fade-up relative z-10">
       <div class="flex items-center gap-3">
         <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#6366f1,#3b82f6);">
           <i class="fa-solid fa-chart-line text-white text-xs"></i>
         </div>
         <span class="font-display text-lg logo-text font-bold">EduVesting</span>
       </div>
-      <button onclick="toggleSidebar()" class="text-slate-300 text-2xl hover:text-white transition-colors">
-        <i class="fa-solid fa-bars"></i>
+      <!-- Tombol Hamburger dengan padding besar dan pointer-events-none di icon -->
+      <button type="button" onclick="window.toggleSidebar()" class="relative z-50 p-3 -mr-3 text-slate-300 text-2xl hover:text-white transition-colors cursor-pointer">
+        <i class="fa-solid fa-bars pointer-events-none"></i>
       </button>
     </div>
 
-    <header class="mb-8 fade-up flex flex-col md:flex-row md:items-end justify-between gap-5">
+    <!-- HEADER WELCOME & TOMBOL (Persis Gambar) -->
+    <header class="mb-8 fade-up flex flex-col md:flex-row md:items-end justify-between gap-5 relative z-10">
       <div>
         <h1 id="welcome-user" class="font-display text-2xl sm:text-3xl text-slate-100 font-semibold mb-1">Memuat...</h1>
         <p id="header-date" class="text-slate-400 text-sm"></p>
@@ -257,8 +261,8 @@
           <a href="portfolio.html" class="glass px-5 py-2.5 rounded-xl text-sm text-slate-200 flex items-center gap-2 hover:border-indigo-500/40 transition-all font-medium">
             <i class="fa-solid fa-plus text-indigo-400"></i> Kelola Aset
           </a>
-          <button onclick="handleRefreshCrypto()" id="refresh-btn" class="relative glass w-11 h-11 rounded-xl flex items-center justify-center text-slate-300 hover:text-white transition-colors flex-shrink-0">
-            <i class="fa-solid fa-rotate" id="refresh-icon"></i>
+          <button type="button" onclick="handleRefreshCrypto()" id="refresh-btn" class="relative glass w-11 h-11 rounded-xl flex items-center justify-center text-slate-300 hover:text-white transition-colors flex-shrink-0 cursor-pointer">
+            <i class="fa-solid fa-rotate pointer-events-none" id="refresh-icon"></i>
           </button>
         </div>
       </div>
@@ -359,8 +363,8 @@
               <p class="text-xs text-slate-600 mt-1">Otomatis terisi dari harga terakhir aset Anda.</p>
             </div>
           </div>
-          <button onclick="calcFee()" class="btn-primary mt-4 w-full py-2.5 rounded-xl text-sm font-semibold text-white">
-            <i class="fa-solid fa-calculator mr-2"></i>Hitung Optimal
+          <button type="button" onclick="calcFee()" class="btn-primary mt-4 w-full py-2.5 rounded-xl text-sm font-semibold text-white">
+            <i class="fa-solid fa-calculator mr-2 pointer-events-none"></i>Hitung Optimal
           </button>
           <div id="fee-result" class="mt-3 rounded-xl p-3 text-sm hidden" style="background:rgba(6,182,212,0.07); border:1px solid rgba(6,182,212,0.2);">
             <p id="fee-text" class="text-slate-300"></p>
@@ -444,7 +448,7 @@
           <i class="fa-solid fa-inbox text-3xl text-slate-700 mb-3"></i>
           <p class="text-slate-500 text-sm mb-3">Belum ada posisi. Tambahkan aset Anda di halaman Portofolio.</p>
           <a href="portfolio.html" class="btn-primary inline-flex items-center gap-2 py-2 px-4 rounded-xl text-sm font-semibold text-white">
-            <i class="fa-solid fa-plus"></i> Tambah Aset
+            <i class="fa-solid fa-plus pointer-events-none"></i> Tambah Aset
           </a>
         </div>
         <div id="dash-table-footer" class="px-5 py-3 flex items-center justify-between hidden" style="border-top: 1px solid rgba(255,255,255,0.05);">
@@ -453,6 +457,7 @@
       </div>
     </section>
 
+    <!-- ===== FAQ SECTION ===== -->
     <section aria-labelledby="faq-heading" class="mb-10 fade-up delay-5">
       <div class="flex items-center justify-between mb-4">
         <h2 id="faq-heading" class="font-display text-base text-slate-300 flex items-center gap-2">
@@ -465,13 +470,14 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
+        <!-- FAQ Accordion -->
         <div class="glass rounded-2xl p-5 lg:col-span-2">
           <p class="text-xs text-slate-500 uppercase tracking-widest font-semibold mb-4">Pertanyaan Umum</p>
 
           <div class="faq-item">
-            <button class="faq-toggle" onclick="toggleFaq(this)">
-              <span class="faq-q">Apa itu EduVesting dan untuk siapa aplikasi ini?</span>
-              <i class="fa-solid fa-chevron-down faq-icon"></i>
+            <button type="button" class="faq-toggle" onclick="toggleFaq(this)">
+              <span class="faq-q pointer-events-none">Apa itu EduVesting dan untuk siapa aplikasi ini?</span>
+              <i class="fa-solid fa-chevron-down faq-icon pointer-events-none"></i>
             </button>
             <div class="faq-answer">
               <p class="text-xs text-slate-400 leading-relaxed">EduVesting adalah simulasi portofolio investasi yang dirancang khusus untuk mahasiswa dan pemula. Aplikasi ini membantu Anda belajar mengelola aset multi-instrumen — saham, kripto, emas, dan reksa dana — dalam lingkungan yang aman tanpa risiko uang nyata.</p>
@@ -479,9 +485,9 @@
           </div>
 
           <div class="faq-item">
-            <button class="faq-toggle" onclick="toggleFaq(this)">
-              <span class="faq-q">Bagaimana cara menambahkan aset ke portofolio?</span>
-              <i class="fa-solid fa-chevron-down faq-icon"></i>
+            <button type="button" class="faq-toggle" onclick="toggleFaq(this)">
+              <span class="faq-q pointer-events-none">Bagaimana cara menambahkan aset ke portofolio?</span>
+              <i class="fa-solid fa-chevron-down faq-icon pointer-events-none"></i>
             </button>
             <div class="faq-answer">
               <p class="text-xs text-slate-400 leading-relaxed">Klik menu <strong class="text-slate-300">Portofolio</strong> di sidebar, lalu klik tombol <strong class="text-slate-300">+ Tambah Aset</strong>. Isi ticker, nama aset, tipe instrumen, harga rata-rata beli, dan jumlah (qty). Data tersimpan otomatis di perangkat Anda.</p>
@@ -489,9 +495,9 @@
           </div>
 
           <div class="faq-item">
-            <button class="faq-toggle" onclick="toggleFaq(this)">
-              <span class="faq-q">Apakah harga aset diperbarui secara real-time?</span>
-              <i class="fa-solid fa-chevron-down faq-icon"></i>
+            <button type="button" class="faq-toggle" onclick="toggleFaq(this)">
+              <span class="faq-q pointer-events-none">Apakah harga aset diperbarui secara real-time?</span>
+              <i class="fa-solid fa-chevron-down faq-icon pointer-events-none"></i>
             </button>
             <div class="faq-answer">
               <p class="text-xs text-slate-400 leading-relaxed">Harga kripto diperbarui secara live melalui API publik. Untuk saham IDX, harga dapat diperbarui manual atau melalui tombol <strong class="text-slate-300">Sinkron</strong> di header. Pastikan koneksi internet Anda aktif untuk mendapatkan harga terkini.</p>
@@ -499,9 +505,9 @@
           </div>
 
           <div class="faq-item">
-            <button class="faq-toggle" onclick="toggleFaq(this)">
-              <span class="faq-q">Apakah data saya aman dan tersimpan di mana?</span>
-              <i class="fa-solid fa-chevron-down faq-icon"></i>
+            <button type="button" class="faq-toggle" onclick="toggleFaq(this)">
+              <span class="faq-q pointer-events-none">Apakah data saya aman dan tersimpan di mana?</span>
+              <i class="fa-solid fa-chevron-down faq-icon pointer-events-none"></i>
             </button>
             <div class="faq-answer">
               <p class="text-xs text-slate-400 leading-relaxed">Data portofolio Anda tersimpan secara lokal di browser (localStorage) dan dienkripsi melalui autentikasi Supabase. Tidak ada data finansial Anda yang dibagikan ke pihak ketiga. Selalu lakukan ekspor backup secara berkala.</p>
@@ -509,9 +515,9 @@
           </div>
 
           <div class="faq-item" style="border-bottom:none;">
-            <button class="faq-toggle" onclick="toggleFaq(this)">
-              <span class="faq-q">Apa perbedaan Floating P/L dan Realized P/L?</span>
-              <i class="fa-solid fa-chevron-down faq-icon"></i>
+            <button type="button" class="faq-toggle" onclick="toggleFaq(this)">
+              <span class="faq-q pointer-events-none">Apa perbedaan Floating P/L dan Realized P/L?</span>
+              <i class="fa-solid fa-chevron-down faq-icon pointer-events-none"></i>
             </button>
             <div class="faq-answer">
               <p class="text-xs text-slate-400 leading-relaxed"><strong class="text-slate-300">Floating P/L</strong> adalah keuntungan/kerugian yang belum direalisasikan — posisi masih terbuka. <strong class="text-slate-300">Realized P/L</strong> adalah profit/loss yang sudah dikunci setelah aset dijual. Dashboard ini menampilkan Floating P/L dari posisi aktif Anda.</p>
@@ -519,6 +525,7 @@
           </div>
         </div>
 
+        <!-- Info Cards -->
         <div class="flex flex-col gap-4">
 
           <div class="glass rounded-2xl p-5" style="border-color: rgba(6,182,212,0.2);">
@@ -597,47 +604,58 @@
 <script src="js/api.js"></script>
 <script>
   // UI TOGGLE SCRIPT
-  function toggleSidebar() {
+  // Dibikin eksplisit window function biar gampang dipanggil inline
+  window.toggleSidebar = function() {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('sidebar-overlay');
-    sidebar.classList.toggle('-translate-x-full');
-    overlay.classList.toggle('hidden');
-  }
+    
+    // Logika buka-tutup dengan hapus-tambah class translasi eksplisit
+    if (sidebar.classList.contains('-translate-x-full')) {
+      sidebar.classList.remove('-translate-x-full');
+      sidebar.classList.add('translate-x-0');
+      overlay.classList.remove('hidden');
+    } else {
+      sidebar.classList.remove('translate-x-0');
+      sidebar.classList.add('-translate-x-full');
+      overlay.classList.add('hidden');
+    }
+  };
 
   // LOGOUT MODAL
-  function openLogoutModal() {
+  window.openLogoutModal = function() {
     document.getElementById('logout-modal').classList.remove('hidden');
-  }
-  function closeLogoutModal() {
+  };
+  window.closeLogoutModal = function() {
     document.getElementById('logout-modal').classList.add('hidden');
-  }
-  async function confirmLogout() {
+  };
+  window.confirmLogout = async function() {
     await supabaseClient.auth.signOut();
     localStorage.removeItem('userData');
     window.location.href = 'login.html';
-  }
-  // Close on backdrop click
+  };
+  
+  // Close modal on backdrop click
   document.getElementById('logout-modal').addEventListener('click', function(e) {
-    if (e.target === this) closeLogoutModal();
+    if (e.target === this) window.closeLogoutModal();
   });
 
   // FAQ ACCORDION
-  function toggleFaq(btn) {
+  window.toggleFaq = function(btn) {
     const answer = btn.nextElementSibling;
     const icon = btn.querySelector('.faq-icon');
     const isOpen = answer.classList.contains('open');
-    // Close all
+    
     document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('open'));
     document.querySelectorAll('.faq-icon').forEach(i => i.classList.remove('open'));
-    // Toggle current
+    
     if (!isOpen) {
       answer.classList.add('open');
       icon.classList.add('open');
     }
-  }
+  };
 
   // SUPABASE CONFIG
-  const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co'; // Pastikan URL ini tidak typo
+  const SUPABASE_URL = 'https://eirhdjllijlxjhigiwr.supabase.co'; // HARUS SAMA PERSIS!
   const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -668,7 +686,7 @@
     } catch (err) { console.error("Gagal inisialisasi dashboard:", err); }
   });
 
-  async function handleRefreshCrypto(silent) {
+  window.handleRefreshCrypto = async function(silent) {
     const btn = document.getElementById('refresh-btn');
     const icon = document.getElementById('refresh-icon');
     btn.disabled = true; icon.classList.add('spin');
@@ -681,7 +699,7 @@
       if (!silent) alert('Gagal mengambil sebagian harga realtime.');
     } else { note.innerText = 'Sinkron ' + new Date().toLocaleTimeString('id-ID'); }
     renderDashboard();
-  }
+  };
 
   function renderDashboard() {
     const metrics = EduVesting.computeMetrics();
@@ -799,34 +817,34 @@
         <td class="px-5 py-4">
           <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0" style="background:${def.badgeBg}; color:${def.badgeColor};">${a.ticker.slice(0,2)}</div>
-            <div><p class="font-medium text-slate-200">${a.ticker}</p><p class="text-xs text-slate-500">${a.name}</p></div>
+            <div><p class="font-medium text-slate-200">${a.ticker}</p><p class="text-[10px] sm:text-xs text-slate-500 truncate w-24 sm:w-auto">${a.name}</p></div>
           </div>
         </td>
         <td class="px-4 py-4"><span class="badge" style="background:${def.badgeBg};color:${def.badgeColor};border:1px solid ${def.badgeBorder};">${def.label}</span></td>
         <td class="px-4 py-4 text-right text-slate-300 font-medium tabular-nums">${EduVesting.formatRupiah(a.avgPrice)}</td>
         <td class="px-4 py-4 text-right text-slate-200 font-semibold tabular-nums">${EduVesting.formatRupiah(a.lastPrice)}</td>
-        <td class="px-4 py-4 text-right text-slate-400 tabular-nums">${EduVesting.formatNumber(a.qty)} ${def.unit}</td>
+        <td class="px-4 py-4 text-right text-slate-400 tabular-nums whitespace-nowrap">${EduVesting.formatNumber(a.qty)} <span class="text-[10px]">${def.unit}</span></td>
         <td class="px-4 py-4 text-right text-slate-300 font-medium tabular-nums">${EduVesting.formatRupiah(totalHarga)}</td>
         <td class="px-5 py-4 text-right">
-          <span class="${plColor} font-semibold tabular-nums">${sign}${EduVesting.formatRupiah(pl)}</span>
-          <p class="${plColor} text-xs tabular-nums">${sign}${plPct.toFixed(2)}%</p>
+          <span class="${plColor} font-semibold tabular-nums block">${sign}${EduVesting.formatRupiah(pl)}</span>
+          <span class="${plColor} text-[10px] sm:text-xs tabular-nums bg-${pl>=0?'emerald':'rose'}-500/10 px-1.5 py-0.5 rounded">${sign}${plPct.toFixed(2)}%</span>
         </td>`;
       tbody.appendChild(tr);
     });
   }
 
-  function prefillPrice() {
+  window.prefillPrice = function() {
     const instrument = document.getElementById('instrument-select').value; const assets = EduVesting.getAssets().filter(a => a.type === instrument && a.lastPrice > 0); const priceInput = document.getElementById('price-input');
     if (assets.length) { priceInput.value = Math.round(assets.reduce((s, a) => s + a.lastPrice, 0) / assets.length); } else { priceInput.value = ''; }
-  }
+  };
 
-  function calcFee() {
+  window.calcFee = function() {
     const budget = parseFloat(document.getElementById('budget-input').value) || 0; const instrument = document.getElementById('instrument-select').value; const price = parseFloat(document.getElementById('price-input').value) || 0;
     const def = EduVesting.ASSET_TYPES[instrument]; const resultEl = document.getElementById('fee-result'); const textEl = document.getElementById('fee-text'); resultEl.classList.remove('hidden');
     if (budget <= 0 || price <= 0) { textEl.innerHTML = `<span class="text-amber-400">Isi Budget dan Harga per Unit.</span>`; return; }
     const fee = budget * def.feeRate; const netBudget = budget - fee; const lotDivisor = instrument === 'saham' ? 100 : 1; const maxUnit = Math.floor(netBudget / price / lotDivisor);
     textEl.innerHTML = `<span class="text-cyan-400 font-semibold">Fee:</span><span class="text-slate-300"> ${EduVesting.formatRupiah(fee)}</span> &nbsp;·&nbsp; <span class="text-cyan-400 font-semibold">Net:</span><span class="text-slate-300"> ${EduVesting.formatRupiah(netBudget)}</span><br/><span class="text-emerald-400 font-semibold">Maks. Beli:</span><span class="text-slate-200 font-medium"> ~${maxUnit > 0 ? maxUnit : '<1'} ${def.unit}${instrument==='saham' ? ' (' + (maxUnit*100) + ' lbr)' : ''}</span>`;
-  }
+  };
 
   function animateBars() { document.querySelectorAll('.alloc-bar, .progress-fill').forEach((bar, i) => { const target = bar.style.width; bar.style.width = '0'; setTimeout(() => { bar.style.width = target; }, 200 + i * 60); }); }
 </script>
