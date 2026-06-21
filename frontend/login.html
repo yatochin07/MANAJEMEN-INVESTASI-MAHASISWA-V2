@@ -13,6 +13,8 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -575,7 +577,7 @@
             </div>
 
             <div class="mb-4">
-              <label for="login-email" class="block text-xs font-medium text-slate-400 mb-1.5">Email / Username</label>
+              <label for="login-email" class="block text-xs font-medium text-slate-400 mb-1.5">Email</label>
               <div class="field-wrap">
                 <input type="text" id="login-email" placeholder="email@mahasiswa.ac.id"
                        class="form-input" autocomplete="email" />
@@ -618,7 +620,7 @@
               <div class="divider-line"></div>
             </div>
 
-            <button class="btn-social" onclick="window.location.href='http://localhost:5000/api/auth/google'">
+            <button class="btn-social" onclick="handleGoogleLogin()">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -638,7 +640,7 @@
             <div class="mb-3">
               <label class="block text-xs font-medium text-slate-400 mb-1.5">Nama Lengkap</label>
               <div class="field-wrap">
-                <input type="text" placeholder="Arief Rahardian"
+                <input type="text" id="reg-name" placeholder="Arief Rahardian"
                        class="form-input" autocomplete="name" />
                 <span class="field-icon"><i class="fa-solid fa-user"></i></span>
               </div>
@@ -647,7 +649,7 @@
             <div class="mb-3">
               <label class="block text-xs font-medium text-slate-400 mb-1.5">Email Kampus / Pribadi</label>
               <div class="field-wrap">
-                <input type="email" placeholder="email@mahasiswa.ac.id"
+                <input type="email" id="reg-email" placeholder="email@mahasiswa.ac.id"
                        class="form-input" autocomplete="email" />
                 <span class="field-icon"><i class="fa-solid fa-envelope"></i></span>
               </div>
@@ -656,7 +658,7 @@
             <div class="mb-3">
               <label class="block text-xs font-medium text-slate-400 mb-1.5">Universitas</label>
               <div class="field-wrap">
-                <input type="text" placeholder="Universitas Indonesia"
+                <input type="text" id="reg-uni" placeholder="Universitas Indonesia"
                        class="form-input" />
                 <span class="field-icon"><i class="fa-solid fa-building-columns"></i></span>
               </div>
@@ -725,29 +727,20 @@
   </div>
 
   <script>
+    // ==========================================
+    // INISIALISASI SUPABASE CLIENT
+    // ==========================================
+    const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const params = new URLSearchParams(window.location.search);
+    // Cek apakah user sudah login, jika ya, lempar langsung ke dashboard
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        window.location.href = 'dashboard.html';
+      }
+    });
 
-const googleData = params.get('google');
-
-if (googleData) {
-
-    const user = JSON.parse(
-        decodeURIComponent(googleData)
-    );
-
-    localStorage.setItem(
-        'userData',
-        JSON.stringify(user)
-    );
-
-    localStorage.setItem(
-        'userToken',
-        'google-login'
-    );
-
-    window.location.href = 'dashboard.html';
-}
     // ---- REALTIME MARKET DATA UNTUK LOGIN PAGE ----
     async function loadRealtimeMarketData() {
       const formatRp = (num) => new Intl.NumberFormat('id-ID').format(Math.round(num));
@@ -776,8 +769,8 @@ if (googleData) {
           document.getElementById('live-eth-change').className = ethChange >= 0 ? 'text-xs text-emerald-400' : 'text-xs text-rose-400';
         }
 
-        // 2. Tarik Harga Saham via Backend Node.js
-        const resSaham = await fetch('http://localhost:5000/api/price/saham/BBCA');
+        // 2. Tarik Harga Saham via Backend API (Path Relative untuk Vercel)
+        const resSaham = await fetch('/api/price/saham/BBCA');
         const dataSaham = await resSaham.json();
         
         if (dataSaham && dataSaham.price) {
@@ -859,7 +852,20 @@ if (googleData) {
     }
 
     // ==========================================
-    // 1. FUNGSI LOGIN NYATA (KONEK KE BACKEND)
+    // LOGIN GOOGLE OAUTH (SUPABASE)
+    // ==========================================
+    async function handleGoogleLogin() {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin + '/dashboard.html'
+        }
+      });
+      if (error) alert("Gagal login dengan Google: " + error.message);
+    }
+
+    // ==========================================
+    // LOGIN EMAIL MANUAL (SUPABASE)
     // ==========================================
     async function handleLogin() {
       const emailInput = document.getElementById('login-email');
@@ -891,32 +897,18 @@ if (googleData) {
       btn.disabled = true;
       btn.innerHTML = '<span class="spinner"></span> Memverifikasi…';
 
-      try {
-        const response = await fetch('http://localhost:5000/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            login: emailInput.value.trim(),
-            password: pwdInput.value.trim()
-          })
-        });
+      // Panggil Supabase Authentication
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: emailInput.value.trim(),
+        password: pwdInput.value.trim()
+      });
 
-        const data = await response.json();
-
-        if (response.ok) {
-          localStorage.setItem('userToken', data.token);
-          localStorage.setItem('userData', JSON.stringify(data.user));
-          showSuccess();
-        } else {
-          btn.disabled = false;
-          btn.innerHTML = 'Masuk ke Dashboard';
-          alert('Login Gagal: ' + (data.message || 'Periksa kembali email dan password.'));
-        }
-      } catch (error) {
+      if (error) {
         btn.disabled = false;
         btn.innerHTML = 'Masuk ke Dashboard';
-        alert('Eror Server: Tidak dapat terhubung ke Backend.');
-        console.error(error);
+        alert('Login Gagal: ' + error.message);
+      } else {
+        showSuccess();
       }
     }
 
@@ -924,13 +916,10 @@ if (googleData) {
     // VALIDASI EMAIL & DOMAIN (ANTI TEMP MAIL)
     // ==========================================
     function isValidEmailData(email) {
-      // Validasi format struktur standar
       const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!regexEmail.test(email)) {
         return { valid: false, msg: "Format email tidak valid. Pastikan memakai @ dan domain yang benar." };
       }
-
-      // Validasi Anti Temp Mail
       const domain = email.split('@')[1].toLowerCase();
       const disposableDomains = [
         'mailinator.com', '10minutemail.com', 'tempmail.com', 'temp-mail.org',
@@ -938,11 +927,9 @@ if (googleData) {
         'fakemail.net', 'trashmail.com', 'getnada.com', 'tempmail.ninja',
         'disposablemail.com'
       ];
-
       if (disposableDomains.includes(domain)) {
         return { valid: false, msg: "Penggunaan email sementara (temp mail) tidak diizinkan." };
       }
-
       return { valid: true, msg: "" };
     }
 
@@ -955,20 +942,20 @@ if (googleData) {
     }
 
     // ==========================================
-    // 2. FUNGSI REGISTER NYATA (KONEK KE BACKEND)
+    // REGISTER NYATA (SUPABASE)
     // ==========================================
     async function handleRegister() {
-      const nameInput = document.querySelector('#register-form input[autocomplete="name"]').value;
-      const emailInput = document.querySelector('#register-form input[type="email"]').value;
-      const uniInput = document.querySelector('#register-form input[placeholder="Universitas Indonesia"]').value;
+      const nameInput = document.getElementById('reg-name').value;
+      const emailInput = document.getElementById('reg-email').value;
+      const uniInput = document.getElementById('reg-uni').value;
       const passwordInput = document.getElementById('reg-password').value;
       const termsCheck = document.getElementById('terms').checked;
+      const btn = document.getElementById('btn-register');
 
       if (!nameInput || !emailInput || !passwordInput) {
         return alert("Harap isi Nama, Email, dan Password.");
       }
       
-      // Proses Validasi Email
       const emailValidation = isValidEmailData(emailInput);
       if (!emailValidation.valid) {
         return alert(emailValidation.msg);
@@ -978,29 +965,28 @@ if (googleData) {
         return alert("Anda harus menyetujui Syarat & Ketentuan.");
       }
 
-      try {
-        const response = await fetch('http://localhost:5000/api/auth/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            username: nameInput,
-            email: emailInput,
-            university: uniInput,
-            password: passwordInput
-          })
-        });
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Mendaftarkan…';
 
-        const data = await response.json();
-
-        if (response.ok) {
-          alert('Pendaftaran Berhasil! Silakan masuk dengan akun baru Anda.');
-          switchTab('login');
-        } else {
-          alert('Gagal Mendaftar: ' + (data.message || 'Email mungkin sudah digunakan.'));
+      // Panggil Supabase signUp
+      const { data, error } = await supabase.auth.signUp({
+        email: emailInput,
+        password: passwordInput,
+        options: {
+          data: {
+            full_name: nameInput,
+            university: uniInput
+          }
         }
-      } catch (error) {
-        alert('Eror Server: Tidak dapat terhubung ke Backend.');
-        console.error(error);
+      });
+
+      if (error) {
+        btn.disabled = false;
+        btn.innerHTML = 'Buat Akun Gratis';
+        alert('Gagal Mendaftar: ' + error.message);
+      } else {
+        alert('Pendaftaran Berhasil! Silakan masuk dengan akun baru Anda.');
+        switchTab('login');
       }
     }
 
@@ -1015,7 +1001,7 @@ if (googleData) {
       }, 2400);
     }
 
-    // ---- Clear error on input ----
+    // ---- Clear error on input & Enter Key ----
     document.addEventListener('DOMContentLoaded', () => {
       ['login-email','login-password'].forEach(id => {
         const el = document.getElementById(id);
