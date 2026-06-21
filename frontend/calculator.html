@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EduVesting — Kalkulator Fee</title>
+  <title>EduVesting — Market Insights</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
     tailwind.config = {
@@ -30,49 +30,53 @@
 
   <style>
     * { box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; background-color: #07090f; color: #e2e8f0; min-height: 100vh; }
+    body { font-family: 'Inter', sans-serif; background-color: #07090f; color: #e2e8f0; min-height: 100vh; overflow-x: hidden; }
 
     /* Sidebar active glow */
-    .nav-active { background: linear-gradient(90deg, rgba(16,185,129,0.18) 0%, transparent 100%); border-left: 3px solid #10b981; }
+    .nav-active { background: linear-gradient(90deg, rgba(6,182,212,0.18) 0%, transparent 100%); border-left: 3px solid #06b6d4; }
     .nav-item { border-left: 3px solid transparent; transition: all 0.2s ease; }
-    .nav-item:hover { background: linear-gradient(90deg, rgba(99,102,241,0.1) 0%, transparent 100%); border-left-color: rgba(99,102,241,0.5); color: #a5b4fc; }
+    .nav-item:hover { background: linear-gradient(90deg, rgba(6,182,212,0.1) 0%, transparent 100%); border-left-color: rgba(6,182,212,0.5); color: #67e8f9; }
 
     /* Glass Elements */
     .glass { background: rgba(19, 25, 40, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); }
+    .glass-lighter { background: rgba(30,40,64,0.6); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.07); }
     
     /* Mesh Background */
     .mesh-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0;
-      background: radial-gradient(ellipse 60% 40% at 15% 10%, rgba(16,185,129,0.08) 0%, transparent 70%),
-                  radial-gradient(ellipse 50% 50% at 85% 80%, rgba(6,182,212,0.07) 0%, transparent 60%);
+      background: radial-gradient(ellipse 60% 40% at 15% 10%, rgba(6,182,212,0.08) 0%, transparent 70%),
+                  radial-gradient(ellipse 50% 50% at 85% 80%, rgba(59,130,246,0.07) 0%, transparent 60%);
     }
 
     /* Scrollbar */
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(16,185,129,0.3); border-radius: 9px; }
+    ::-webkit-scrollbar-thumb { background: rgba(6,182,212,0.3); border-radius: 9px; }
 
     /* Form Input */
     .form-input { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); transition: all 0.2s ease; color: #e2e8f0; }
-    .form-input:focus { outline: none; border-color: rgba(16,185,129,0.6); box-shadow: 0 0 0 3px rgba(16,185,129,0.15); background: rgba(16,185,129,0.04); }
+    .form-input:focus { outline: none; border-color: rgba(6,182,212,0.6); box-shadow: 0 0 0 3px rgba(6,182,212,0.15); background: rgba(6,182,212,0.04); }
 
-    /* Fix untuk native select option biar gelap */
-    select option {
-      background-color: #0f1423;
-      color: #e2e8f0;
-      padding: 12px;
-    }
-
-    /* Radio Tabs */
-    .radio-tab:checked + div { background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.5); color: #6ee7b7; }
-    
-    /* Fade-in */
+    /* Fade-in & Skeleton */
     @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
     .fade-up { animation: fadeUp 0.5s ease both; }
     .delay-1 { animation-delay: 0.07s; }
     .delay-2 { animation-delay: 0.14s; }
+    .delay-3 { animation-delay: 0.21s; }
 
-    /* Receipt Line */
-    .receipt-line { border-bottom: 1px dashed rgba(255,255,255,0.2); margin: 0.75rem 0; }
+    .skeleton { animation: pulse-skel 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; background: rgba(255,255,255,0.05); border-radius: 4px; }
+    @keyframes pulse-skel { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+
+    /* Table Hover */
+    .market-row { transition: background 0.15s ease; border-bottom: 1px solid rgba(255,255,255,0.03); }
+    .market-row:hover { background: rgba(255,255,255,0.03); }
+    .market-row:last-child { border-bottom: none; }
+
+    .badge { font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 6px; }
+    .logo-text { background: linear-gradient(90deg,#67e8f9,#a5b4fc); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+
+    /* Hide scrollbar for overview */
+    .hide-scroll::-webkit-scrollbar { display: none; }
+    .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 
     @media (max-width: 767px) { aside { display: none; } .main-pad { padding-left: 1rem; padding-right: 1rem; } }
   </style>
@@ -84,18 +88,26 @@
 
   <div class="relative z-10 flex min-h-screen">
 
-    <aside class="fixed top-0 left-0 h-screen w-64 flex flex-col" style="background: rgba(10,14,24,0.95); border-right: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
+
+    <aside id="sidebar" class="fixed top-0 left-0 h-screen w-64 flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out"
+           style="background: rgba(10,14,24,0.95); border-right: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
+      
+      <button onclick="toggleSidebar()" class="md:hidden absolute top-6 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-xl"></i>
+      </button>
+
       <div class="px-6 py-6 flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg,#6366f1,#3b82f6);">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg,#06b6d4,#3b82f6);">
           <i class="fa-solid fa-chart-line text-white text-sm"></i>
         </div>
-        <span class="font-display text-lg text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-blue-300">EduVesting</span>
+        <span class="font-display text-lg logo-text font-bold">EduVesting</span>
       </div>
 
-      <div class="mx-4 mb-5 p-3 rounded-xl border border-white/5 bg-slate-800/50 flex items-center gap-3">
-        <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white" style="background: linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
+      <div class="mx-4 mb-5 p-3 rounded-xl glass-lighter flex items-center gap-3">
+        <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white" style="background: linear-gradient(135deg,#06b6d4,#3b82f6);">U</div>
         <div class="min-w-0">
-          <p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">User</p>
+          <p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">Memuat...</p>
         </div>
       </div>
 
@@ -109,7 +121,7 @@
           <i class="fa-solid fa-briefcase w-4 text-center"></i> Portofolio
         </a>
         <a href="transactions.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-arrow-right-arrow-left w-4 text-center"></i> Transaksi
+          <i class="fa-solid fa-wallet w-4 text-center"></i> Keuangan
         </a>
         <a href="goals.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
           <i class="fa-solid fa-bullseye w-4 text-center"></i> Target Dana
@@ -117,15 +129,15 @@
 
         <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Analisa</p>
         
-        <a href="insights.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-robot w-4 text-center"></i> AI Insights
+        <a href="insights.html" class="nav-item nav-active flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-cyan-300 text-sm font-medium">
+          <i class="fa-solid fa-globe w-4 text-center text-cyan-400"></i> Market Insights
         </a>
+        
         <a href="allocations.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
           <i class="fa-solid fa-chart-pie w-4 text-center"></i> Alokasi Aset
         </a>
-        
-        <a href="calculator.html" class="nav-item nav-active flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-emerald-300 text-sm font-medium">
-          <i class="fa-solid fa-calculator w-4 text-center text-emerald-400"></i> Kalkulator Fee
+        <a href="calculator.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+          <i class="fa-solid fa-calculator w-4 text-center"></i> Kalkulator Fee
         </a>
 
         <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Akun</p>
@@ -138,377 +150,452 @@
       </nav>
     </aside>
 
-    <main class="ml-64 flex-1 px-8 py-8 main-pad" style="max-width: calc(100% - 16rem);">
+    <main class="flex-1 w-full md:ml-64 px-4 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden flex flex-col">
 
-      <header class="flex items-center justify-between mb-8 fade-up">
+      <div class="md:hidden flex items-center justify-between mb-6 fade-up">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#06b6d4,#3b82f6);">
+            <i class="fa-solid fa-chart-line text-white text-sm"></i>
+          </div>
+          <span class="font-display text-lg logo-text font-bold tracking-wide">EduVesting</span>
+        </div>
+        <button onclick="toggleSidebar()" type="button" class="text-slate-300 hover:text-white transition-colors focus:outline-none z-20">
+          <i class="fa-solid fa-bars text-xl"></i>
+        </button>
+      </div>
+
+      <header class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-4 fade-up">
         <div>
-          <h1 class="font-display text-2xl text-slate-100 flex items-center gap-3">
-            Kalkulator Fee & Pajak Transaksi
+          <h1 class="font-display text-2xl sm:text-3xl text-slate-100 font-semibold mb-1 flex items-center gap-3">
+            Market Insights <i class="fa-solid fa-bolt text-amber-400 text-xl"></i>
           </h1>
-          <p class="text-slate-500 text-sm mt-0.5">Simulasikan pembelian agar tidak kaget dengan potongan biaya *hidden cost*.</p>
+          <p class="text-slate-500 text-sm mt-0.5">Pantau pergerakan pasar secara realtime untuk menemukan peluang investasi.</p>
+        </div>
+        <div class="flex items-center gap-3 glass px-4 py-2 rounded-xl text-xs text-slate-400 bg-slate-900/50">
+          <span class="relative flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+          </span>
+          Live Market
+          <span class="border-l border-slate-700 pl-3 ml-1 flex items-center gap-2">
+            Refresh in <span id="refresh-timer" class="font-mono text-cyan-400 font-bold w-4 text-center">60</span>s
+          </span>
         </div>
       </header>
 
-      <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 mb-8 fade-up delay-1">
+      <section class="mb-8 fade-up delay-1">
+        <div class="flex gap-4 overflow-x-auto pb-4 hide-scroll" id="overview-container">
+          <div class="glass min-w-[200px] rounded-2xl p-4 flex-shrink-0"><div class="skeleton h-4 w-1/2 mb-3"></div><div class="skeleton h-6 w-3/4 mb-1"></div><div class="skeleton h-3 w-1/3"></div></div>
+          <div class="glass min-w-[200px] rounded-2xl p-4 flex-shrink-0"><div class="skeleton h-4 w-1/2 mb-3"></div><div class="skeleton h-6 w-3/4 mb-1"></div><div class="skeleton h-3 w-1/3"></div></div>
+          <div class="glass min-w-[200px] rounded-2xl p-4 flex-shrink-0"><div class="skeleton h-4 w-1/2 mb-3"></div><div class="skeleton h-6 w-3/4 mb-1"></div><div class="skeleton h-3 w-1/3"></div></div>
+          <div class="glass min-w-[200px] rounded-2xl p-4 flex-shrink-0"><div class="skeleton h-4 w-1/2 mb-3"></div><div class="skeleton h-6 w-3/4 mb-1"></div><div class="skeleton h-3 w-1/3"></div></div>
+        </div>
+      </section>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 fade-up delay-2">
         
-        <div class="lg:col-span-3 space-y-6">
+        <div class="lg:col-span-4 flex flex-col gap-6">
           
-          <div class="glass rounded-2xl p-6 border-t-4 border-t-emerald-500 shadow-[0_0_30px_-5px_rgba(16,185,129,0.1)]">
+          <div class="glass rounded-2xl p-5 flex-1 flex flex-col min-h-[400px]">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="font-display text-base font-semibold text-slate-200 flex items-center gap-2">
+                <i class="fa-solid fa-star text-amber-400"></i> My Watchlist
+              </h2>
+            </div>
             
-            <h2 class="font-display text-lg text-slate-200 mb-5">Parameter Simulasi</h2>
-
-            <form id="calc-form" class="space-y-5">
-              
-              <div>
-                <label class="block text-xs font-medium text-slate-400 mb-2">Pilih Instrumen</label>
-                <div class="grid grid-cols-3 gap-3">
-                  <label class="cursor-pointer">
-                    <input type="radio" name="instrument" value="saham" class="peer sr-only radio-tab" checked onchange="updateUI()">
-                    <div class="text-center px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-400 text-sm transition-all hover:bg-slate-700 font-semibold">
-                      <i class="fa-solid fa-chart-column block text-lg mb-1"></i> Saham IDX
-                    </div>
-                  </label>
-                  <label class="cursor-pointer">
-                    <input type="radio" name="instrument" value="kripto" class="peer sr-only radio-tab" onchange="updateUI()">
-                    <div class="text-center px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-400 text-sm transition-all hover:bg-slate-700 font-semibold">
-                      <i class="fa-brands fa-bitcoin block text-lg mb-1"></i> Kripto Spot
-                    </div>
-                  </label>
-                  <label class="cursor-pointer">
-                    <input type="radio" name="instrument" value="emas" class="peer sr-only radio-tab" onchange="updateUI()">
-                    <div class="text-center px-4 py-2.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-400 text-sm transition-all hover:bg-slate-700 font-semibold">
-                      <i class="fa-solid fa-coins block text-lg mb-1"></i> Emas Fisik
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-xs font-medium text-slate-400 mb-1.5">Tipe Transaksi</label>
-                  <select id="calc-type" class="form-input w-full rounded-xl px-4 py-2.5 text-sm appearance-none bg-[#0f1423]" onchange="calculateFee()">
-                    <option value="beli">🟢 Beli (Buy)</option>
-                    <option value="jual">🔵 Jual (Sell)</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-xs font-medium text-slate-400 mb-1.5">Pilih Broker / Exchange</label>
-                  <select id="calc-broker" class="form-input w-full rounded-xl px-4 py-2.5 text-sm appearance-none bg-[#0f1423]" onchange="calculateFee()">
-                    </select>
-                </div>
-              </div>
-
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-xs font-medium text-slate-400 mb-1.5">Total Modal / Uang (Rp)</label>
-                  <div class="relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-semibold">Rp</span>
-                    <input id="calc-budget" type="number" value="1000000" class="form-input w-full rounded-xl pl-10 pr-4 py-2.5 text-sm font-medium" oninput="calculateFee()">
-                  </div>
-                </div>
-                <div>
-                  <label id="label-price" class="block text-xs font-medium text-slate-400 mb-1.5">Harga Saham / Lembar</label>
-                  <div class="relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm font-semibold">Rp</span>
-                    <input id="calc-price" type="number" value="5000" class="form-input w-full rounded-xl pl-10 pr-4 py-2.5 text-sm font-medium" oninput="calculateFee()">
-                  </div>
-                </div>
-              </div>
-
+            <form id="watchlist-form" class="relative mb-4">
+              <input type="text" id="wl-input" placeholder="Tambah ticker (Cth: BBCA.JK, AAPL)" class="w-full bg-slate-800/50 border border-slate-700/50 rounded-xl pl-4 pr-10 py-2 text-sm text-white focus:outline-none focus:border-cyan-500 uppercase transition-colors" autocomplete="off" required>
+              <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 text-cyan-400 hover:text-cyan-300">
+                <i class="fa-solid fa-plus"></i>
+              </button>
             </form>
+
+            <div class="flex-1 overflow-y-auto pr-1" id="watchlist-list">
+              <div class="flex items-center justify-between mb-4"><div class="skeleton h-10 w-full"></div></div>
+              <div class="flex items-center justify-between mb-4"><div class="skeleton h-10 w-full"></div></div>
+            </div>
           </div>
 
-          <div class="glass rounded-xl p-5 border-l-4 border-l-blue-500 flex items-start gap-4">
-            <div class="w-10 h-10 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center flex-shrink-0">
-              <i class="fa-solid fa-lightbulb"></i>
+          <div class="glass rounded-2xl p-5 flex-1 flex flex-col min-h-[300px]">
+            <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+              <h2 class="font-display text-base font-semibold text-slate-200 flex items-center gap-2">
+                <i class="fa-brands fa-bitcoin text-amber-400"></i> Crypto Movers
+              </h2>
             </div>
-            <div>
-              <h3 class="text-sm font-semibold text-slate-200 mb-1" id="tip-title">Tahukah Kamu? (Saham)</h3>
-              <p class="text-xs text-slate-400 leading-relaxed" id="tip-desc">
-                Saat kamu <strong>menjual saham</strong>, ada tambahan Pajak Penghasilan (PPh) Final sebesar 0.1% dari nilai transaksi bruto. Oleh karena itu, *fee* jual selalu lebih mahal daripada *fee* beli.
-              </p>
+            <div class="flex-1 overflow-y-auto" id="crypto-list">
+              <div class="flex items-center justify-between mb-4"><div class="skeleton h-10 w-full"></div></div>
+              <div class="flex items-center justify-between mb-4"><div class="skeleton h-10 w-full"></div></div>
             </div>
           </div>
 
         </div>
 
-        <div class="lg:col-span-2">
+        <div class="lg:col-span-8 flex flex-col gap-6">
           
-          <div class="glass rounded-2xl p-6 font-mono text-sm relative overflow-hidden h-full flex flex-col">
-            <div class="absolute top-0 left-0 right-0 h-2" style="background-image: radial-gradient(circle at 5px 0, transparent 6px, rgba(19, 25, 40, 0.85) 7px); background-size: 15px 10px; background-repeat: repeat-x;"></div>
-
-            <div class="text-center border-b border-slate-700/50 pb-4 mb-4 mt-2">
-              <h3 class="font-display text-lg text-emerald-400 font-bold uppercase tracking-widest mb-1">Struk Estimasi</h3>
-              <p class="text-[10px] text-slate-500">EduVesting Simulation System</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
+            
+            <div class="glass rounded-2xl flex flex-col overflow-hidden min-h-[350px]">
+              <div class="bg-emerald-500/10 px-5 py-4 border-b border-emerald-500/20 flex items-center gap-2">
+                <i class="fa-solid fa-arrow-trend-up text-emerald-400"></i>
+                <h2 class="font-display text-sm font-semibold text-emerald-400 uppercase tracking-widest">Top Gainers (IDX)</h2>
+              </div>
+              <div class="flex-1 overflow-y-auto p-2" id="gainers-list">
+                <div class="p-3"><div class="skeleton h-10 w-full"></div></div>
+                <div class="p-3"><div class="skeleton h-10 w-full"></div></div>
+                <div class="p-3"><div class="skeleton h-10 w-full"></div></div>
+              </div>
             </div>
 
-            <div class="flex-1 space-y-2 text-slate-300">
-              
-              <div class="flex justify-between">
-                <span>Total Dana:</span>
-                <span id="res-budget" class="font-semibold text-white">Rp 1.000.000</span>
+            <div class="glass rounded-2xl flex flex-col overflow-hidden min-h-[350px]">
+              <div class="bg-rose-500/10 px-5 py-4 border-b border-rose-500/20 flex items-center gap-2">
+                <i class="fa-solid fa-arrow-trend-down text-rose-400"></i>
+                <h2 class="font-display text-sm font-semibold text-rose-400 uppercase tracking-widest">Top Losers (IDX)</h2>
               </div>
-              
-              <div class="flex justify-between">
-                <span>Harga <span id="res-unit-label">Saham</span>:</span>
-                <span id="res-price">Rp 5.000</span>
+              <div class="flex-1 overflow-y-auto p-2" id="losers-list">
+                <div class="p-3"><div class="skeleton h-10 w-full"></div></div>
+                <div class="p-3"><div class="skeleton h-10 w-full"></div></div>
+                <div class="p-3"><div class="skeleton h-10 w-full"></div></div>
               </div>
-
-              <div class="receipt-line"></div>
-
-              <div class="bg-emerald-500/10 border border-emerald-500/20 rounded p-3 mb-3">
-                <p class="text-[10px] text-emerald-400 uppercase tracking-widest font-bold mb-1">Maksimal yang Didapat:</p>
-                <div class="flex justify-between items-end">
-                  <span id="res-max-unit" class="text-2xl font-display text-white">1 Lot</span>
-                  <span id="res-max-desc" class="text-[10px] text-slate-400">(100 Lembar)</span>
-                </div>
-              </div>
-
-              <div class="flex justify-between">
-                <span>Nilai Transaksi (Bruto):</span>
-                <span id="res-gross">Rp 500.000</span>
-              </div>
-
-              <div class="receipt-line"></div>
-              <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Rincian Biaya (Fee)</p>
-
-              <div class="flex justify-between text-rose-400 text-xs mt-2">
-                <span id="res-fee-label">Fee Broker (0.15%):</span>
-                <span id="res-fee-amount">- Rp 750</span>
-              </div>
-              <div class="flex justify-between text-rose-400 text-xs">
-                <span id="res-tax-label">PPN / PPh:</span>
-                <span id="res-tax-amount">- Rp 82</span>
-              </div>
-
-              <div class="receipt-line"></div>
-
-              <div class="flex justify-between items-center mt-4">
-                <span class="font-bold text-white text-base">Total Bayar:</span>
-                <span id="res-total-pay" class="font-bold text-white text-base">Rp 500.832</span>
-              </div>
-              
-              <div class="flex justify-between items-center mt-2 p-2 bg-slate-800/50 rounded border border-slate-700">
-                <span class="text-xs text-slate-400">Sisa Saldo Kas:</span>
-                <span id="res-remainder" class="font-semibold text-emerald-300">Rp 499.168</span>
-              </div>
-
-            </div>
-
-            <div class="text-center mt-6 pt-4 border-t border-slate-700/50">
-              <i class="fa-solid fa-barcode text-4xl text-slate-600"></i>
-              <p class="text-[9px] text-slate-500 mt-1">Gunakan kalkulator ini sebelum entry market.</p>
             </div>
 
           </div>
-        </div>
 
+          <div class="glass rounded-2xl flex flex-col overflow-hidden h-fit">
+            <div class="bg-blue-500/10 px-5 py-4 border-b border-blue-500/20 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-fire text-blue-400"></i>
+                <h2 class="font-display text-sm font-semibold text-blue-400 uppercase tracking-widest">Most Active by Volume</h2>
+              </div>
+            </div>
+            <div class="overflow-x-auto w-full">
+              <table class="w-full text-sm text-left">
+                <thead class="bg-slate-900/50 text-xs text-slate-500 uppercase border-b border-slate-800">
+                  <tr>
+                    <th class="px-5 py-3 font-medium">Ticker</th>
+                    <th class="px-4 py-3 font-medium text-right">Harga (Rp)</th>
+                    <th class="px-4 py-3 font-medium text-right">Perubahan</th>
+                    <th class="px-5 py-3 font-medium text-right">Volume</th>
+                  </tr>
+                </thead>
+                <tbody id="active-list">
+                  <tr><td colspan="4" class="p-4"><div class="skeleton h-8 w-full"></div></td></tr>
+                  <tr><td colspan="4" class="p-4"><div class="skeleton h-8 w-full"></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
       </div>
 
     </main>
   </div>
 
   <script>
-    // --- Auth Check ---
-    const token = localStorage.getItem('userToken');
-    if (!token) window.location.href = 'login.html';
+    // UI TOGGLE
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      sidebar.classList.toggle('-translate-x-full');
+      overlay.classList.toggle('hidden');
+    }
 
-    const user = JSON.parse(localStorage.getItem('userData'));
-    document.addEventListener('DOMContentLoaded', () => {
-       if (user && user.username) {
-        document.getElementById('sidebar-user-name').innerText = user.username;
-        document.getElementById('sidebar-user-initial').innerText = user.username.charAt(0).toUpperCase();
-       }
-       
-       // Initialize UI on first load
-       updateUI();
+    // ==========================================
+    // SUPABASE AUTH GUARD
+    // ==========================================
+    const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function checkAuth() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) { window.location.href = 'login.html'; return; }
+      
+      const user = session.user;
+      const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
+      document.getElementById('sidebar-user-name').innerText = displayName;
+      document.getElementById('sidebar-user-initial').innerText = displayName.charAt(0).toUpperCase();
+    }
+    
+    async function logoutUser() {
+      await supabaseClient.auth.signOut();
+      localStorage.removeItem('userData');
+      window.location.href = 'login.html';
+    }
+
+    // ==========================================
+    // MARKET INSIGHTS ENGINE (YAHOO FINANCE API)
+    // ==========================================
+    
+    // Tickers to monitor (Sample of IDX Bluechips & Tech, Crypto, Indices)
+    const INDICES = ['^JKSE', '^GSPC', '^IXIC', 'BTC-USD', 'ETH-USD', 'GC=F'];
+    const CRYPTO_POOL = ['BNB-USD', 'SOL-USD', 'XRP-USD', 'ADA-USD', 'DOGE-USD', 'AVAX-USD'];
+    const IDX_POOL = [
+      'BBCA.JK', 'BBRI.JK', 'BMRI.JK', 'TLKM.JK', 'ASII.JK', 'GOTO.JK', 
+      'BREN.JK', 'AMMN.JK', 'TPIA.JK', 'UNVR.JK', 'ICBP.JK', 'ADRO.JK', 
+      'PGAS.JK', 'PTBA.JK', 'ITMG.JK', 'UNTR.JK', 'MDKA.JK', 'ANTM.JK', 
+      'SMGR.JK', 'BRIS.JK'
+    ];
+
+    let userWatchlist = JSON.parse(localStorage.getItem('eduvesting_watchlist')) || ['AAPL', 'TSLA', 'ARTO.JK'];
+
+    let refreshInterval;
+    let countdown = 60;
+
+    // We use allorigins.win as a reliable free CORS proxy to hit Yahoo Finance directly from Client-Side
+    async function fetchYahooFinance(symbolsArray) {
+      if (!symbolsArray || symbolsArray.length === 0) return [];
+      
+      const symbolsStr = symbolsArray.join(',');
+      const yfUrl = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbolsStr}`;
+      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(yfUrl)}`;
+
+      try {
+        const response = await fetch(proxyUrl);
+        if (!response.ok) throw new Error('Network error');
+        const data = await response.json();
+        return data.quoteResponse?.result || [];
+      } catch (error) {
+        console.error("Gagal mengambil data pasar:", error);
+        return [];
+      }
+    }
+
+    async function loadMarketData() {
+      const allSymbols = [...new Set([...INDICES, ...CRYPTO_POOL, ...IDX_POOL, ...userWatchlist])];
+      
+      const results = await fetchYahooFinance(allSymbols);
+      
+      if (results.length === 0) {
+        // Error handling fallback
+        document.querySelectorAll('.skeleton').forEach(el => {
+          el.className = 'text-xs text-rose-400 text-center w-full py-4';
+          el.innerText = 'Gagal memuat data live. Cek koneksi Anda.';
+        });
+        return;
+      }
+
+      // Map Data by Symbol for easy access
+      const dataMap = {};
+      results.forEach(q => dataMap[q.symbol] = q);
+
+      renderOverview(INDICES.map(sym => dataMap[sym]).filter(Boolean));
+      renderCrypto(CRYPTO_POOL.map(sym => dataMap[sym]).filter(Boolean));
+      renderIDX(IDX_POOL.map(sym => dataMap[sym]).filter(Boolean));
+      renderWatchlist(userWatchlist.map(sym => dataMap[sym]).filter(Boolean));
+    }
+
+    // --- RENDER FUNCTIONS ---
+
+    function formatNumber(num, isIDR = false, isCrypto = false) {
+      if(num === undefined || num === null) return '-';
+      if(isIDR) return 'Rp ' + num.toLocaleString('id-ID', { maximumFractionDigits: 0 });
+      if(isCrypto) return '$' + num.toLocaleString('en-US', { maximumFractionDigits: 4 });
+      return num.toLocaleString('en-US', { maximumFractionDigits: 2 });
+    }
+
+    function formatVolume(vol) {
+      if(!vol) return '-';
+      if(vol >= 1e9) return (vol/1e9).toFixed(2) + 'B';
+      if(vol >= 1e6) return (vol/1e6).toFixed(2) + 'M';
+      if(vol >= 1e3) return (vol/1e3).toFixed(2) + 'K';
+      return vol.toString();
+    }
+
+    function renderOverview(data) {
+      const container = document.getElementById('overview-container');
+      container.innerHTML = '';
+
+      const names = { '^JKSE': 'IHSG', '^GSPC': 'S&P 500', '^IXIC': 'Nasdaq', 'BTC-USD': 'Bitcoin', 'ETH-USD': 'Ethereum', 'GC=F': 'Gold' };
+
+      data.forEach(q => {
+        const isUp = q.regularMarketChange >= 0;
+        const color = isUp ? 'text-emerald-400' : 'text-rose-400';
+        const bg = isUp ? 'bg-emerald-500/10' : 'bg-rose-500/10';
+        const icon = isUp ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down';
+        const prefix = isUp ? '+' : '';
+
+        container.innerHTML += `
+          <div class="glass min-w-[200px] rounded-2xl p-4 flex-shrink-0 border-t-2 ${isUp ? 'border-t-emerald-500' : 'border-t-rose-500'}">
+            <p class="text-xs text-slate-400 font-medium mb-1">${names[q.symbol] || q.symbol}</p>
+            <p class="font-display text-lg text-white font-semibold mb-2">${formatNumber(q.regularMarketPrice, q.currency === 'IDR')}</p>
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold ${color} flex items-center gap-1">
+                <i class="fa-solid ${icon}"></i> ${prefix}${q.regularMarketChangePercent?.toFixed(2)}%
+              </span>
+              <span class="text-[10px] ${color} ${bg} px-1.5 py-0.5 rounded">${prefix}${formatNumber(q.regularMarketChange)}</span>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderIDX(data) {
+      // Sort for Gainers & Losers
+      const validData = data.filter(q => q.regularMarketChangePercent !== undefined);
+      
+      const sortedByChange = [...validData].sort((a, b) => b.regularMarketChangePercent - a.regularMarketChangePercent);
+      const topGainers = sortedByChange.slice(0, 10);
+      const topLosers = [...sortedByChange].reverse().slice(0, 10);
+      
+      const sortedByVol = [...validData].sort((a, b) => (b.regularMarketVolume || 0) - (a.regularMarketVolume || 0));
+      const mostActive = sortedByVol.slice(0, 10);
+
+      // Render Gainers
+      const gainersList = document.getElementById('gainers-list');
+      gainersList.innerHTML = topGainers.map(q => `
+        <div class="market-row p-3 flex items-center justify-between group">
+          <div>
+            <h4 class="font-bold text-slate-200 text-sm">${q.symbol.replace('.JK', '')}</h4>
+            <p class="text-[10px] text-slate-500 truncate w-32">${q.shortName || q.longName || ''}</p>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-semibold text-emerald-400 tabular-nums">${formatNumber(q.regularMarketPrice, true)}</p>
+            <p class="text-xs text-emerald-500/80 font-medium">+${q.regularMarketChangePercent.toFixed(2)}%</p>
+          </div>
+        </div>
+      `).join('');
+
+      // Render Losers
+      const losersList = document.getElementById('losers-list');
+      losersList.innerHTML = topLosers.map(q => `
+        <div class="market-row p-3 flex items-center justify-between group">
+          <div>
+            <h4 class="font-bold text-slate-200 text-sm">${q.symbol.replace('.JK', '')}</h4>
+            <p class="text-[10px] text-slate-500 truncate w-32">${q.shortName || q.longName || ''}</p>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-semibold text-rose-400 tabular-nums">${formatNumber(q.regularMarketPrice, true)}</p>
+            <p class="text-xs text-rose-500/80 font-medium">${q.regularMarketChangePercent.toFixed(2)}%</p>
+          </div>
+        </div>
+      `).join('');
+
+      // Render Active
+      const activeList = document.getElementById('active-list');
+      activeList.innerHTML = mostActive.map(q => {
+        const isUp = q.regularMarketChange >= 0;
+        const color = isUp ? 'text-emerald-400' : 'text-rose-400';
+        return `
+        <tr class="market-row">
+          <td class="px-5 py-3">
+            <span class="font-bold text-white text-xs">${q.symbol.replace('.JK', '')}</span>
+          </td>
+          <td class="px-4 py-3 text-right font-medium text-slate-300 text-xs tabular-nums">${formatNumber(q.regularMarketPrice, true)}</td>
+          <td class="px-4 py-3 text-right ${color} text-xs font-semibold tabular-nums">${isUp ? '+' : ''}${q.regularMarketChangePercent.toFixed(2)}%</td>
+          <td class="px-5 py-3 text-right text-slate-400 text-xs tabular-nums">${formatVolume(q.regularMarketVolume)}</td>
+        </tr>
+      `}).join('');
+    }
+
+    function renderCrypto(data) {
+      const sorted = [...data].sort((a,b) => b.regularMarketChangePercent - a.regularMarketChangePercent);
+      const container = document.getElementById('crypto-list');
+      
+      container.innerHTML = sorted.map(q => {
+        const isUp = q.regularMarketChange >= 0;
+        const color = isUp ? 'text-emerald-400' : 'text-rose-400';
+        const bg = isUp ? 'bg-emerald-500/10' : 'bg-rose-500/10';
+        return `
+        <div class="market-row py-3 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700">
+              <span class="text-[10px] font-bold text-slate-300">${q.symbol.split('-')[0]}</span>
+            </div>
+            <div>
+              <p class="font-bold text-slate-200 text-sm">${q.symbol}</p>
+              <p class="text-[10px] text-slate-500">Vol: ${formatVolume(q.regularMarketVolume)}</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-semibold text-white tabular-nums">${formatNumber(q.regularMarketPrice, false, true)}</p>
+            <span class="badge ${color} ${bg} mt-1 inline-block">${isUp ? '+' : ''}${q.regularMarketChangePercent?.toFixed(2)}%</span>
+          </div>
+        </div>
+      `}).join('');
+    }
+
+    function renderWatchlist(data) {
+      const container = document.getElementById('watchlist-list');
+      
+      if(data.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-500 text-center py-5">Watchlist kosong. Tambahkan ticker.</p>`;
+        return;
+      }
+
+      container.innerHTML = data.map(q => {
+        const isUp = q.regularMarketChange >= 0;
+        const color = isUp ? 'text-emerald-400' : 'text-rose-400';
+        const isIDR = q.currency === 'IDR';
+        
+        return `
+        <div class="market-row py-3 flex items-center justify-between group">
+          <div class="flex items-center gap-3">
+            <button onclick="removeFromWatchlist('${q.symbol}')" class="text-slate-600 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-all focus:opacity-100">
+              <i class="fa-solid fa-circle-minus text-sm"></i>
+            </button>
+            <div>
+              <p class="font-bold text-slate-200 text-sm">${q.symbol}</p>
+              <p class="text-[10px] text-slate-500 truncate max-w-[100px]">${q.shortName || q.currency || ''}</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-semibold text-white tabular-nums">${formatNumber(q.regularMarketPrice, isIDR, !isIDR)}</p>
+            <p class="text-xs ${color} font-medium tabular-nums">${isUp ? '+' : ''}${q.regularMarketChangePercent?.toFixed(2)}%</p>
+          </div>
+        </div>
+      `}).join('');
+    }
+
+    // --- INTERACTIVITY ---
+
+    document.getElementById('watchlist-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = document.getElementById('wl-input');
+      let ticker = input.value.trim().toUpperCase();
+      
+      // Auto append .JK if it's 4 letters and user didn't specify (Simple heuristic for IDX)
+      if(ticker.length === 4 && !ticker.includes('.') && !ticker.includes('-')) {
+        ticker += '.JK';
+      }
+
+      if(ticker && !userWatchlist.includes(ticker)) {
+        userWatchlist.push(ticker);
+        localStorage.setItem('eduvesting_watchlist', JSON.stringify(userWatchlist));
+        input.value = '';
+        
+        // Show loading state briefly then fetch
+        document.getElementById('watchlist-list').innerHTML = `<div class="skeleton h-10 w-full mb-2"></div>`;
+        loadMarketData();
+      } else {
+        input.value = '';
+      }
     });
 
-    function logoutUser() {
-        localStorage.removeItem('userToken');
-        localStorage.removeItem('userData');
-        window.location.href = 'login.html';
+    window.removeFromWatchlist = function(ticker) {
+      userWatchlist = userWatchlist.filter(t => t !== ticker);
+      localStorage.setItem('eduvesting_watchlist', JSON.stringify(userWatchlist));
+      loadMarketData();
     }
 
-    // --- Calculator Engine ---
-    const brokers = {
-      saham: [
-        { name: "Ajaib Sekuritas", buyFee: 0.0015, sellFee: 0.0025, tax: "ppn_pph" },
-        { name: "Stockbit / Mahakarya", buyFee: 0.0015, sellFee: 0.0025, tax: "ppn_pph" },
-        { name: "Mandiri Sekuritas", buyFee: 0.0018, sellFee: 0.0028, tax: "ppn_pph" }
-      ],
-      kripto: [
-        { name: "Tokocrypto", buyFee: 0.001, sellFee: 0.001, tax: "ppn_pph_kripto" },
-        { name: "Indodax", buyFee: 0.0011, sellFee: 0.0011, tax: "ppn_pph_kripto" },
-        { name: "Ajaib Kripto", buyFee: 0.001, sellFee: 0.001, tax: "ppn_pph_kripto" }
-      ],
-      emas: [
-        { name: "Emas Digital (Umum)", buyFee: 0.005, sellFee: 0.015, tax: "none" }
-      ]
-    };
-
-    function updateUI() {
-      const inst = document.querySelector('input[name="instrument"]:checked').value;
-      const type = document.getElementById('calc-type').value;
-      const brokerSelect = document.getElementById('calc-broker');
-      
-      // Update broker options
-      brokerSelect.innerHTML = "";
-      brokers[inst].forEach((b, index) => {
-        brokerSelect.innerHTML += `<option value="${index}">${b.name}</option>`;
-      });
-
-      // Update Labels
-      const labelPrice = document.getElementById('label-price');
-      const tipTitle = document.getElementById('tip-title');
-      const tipDesc = document.getElementById('tip-desc');
-
-      if (inst === 'saham') {
-        labelPrice.innerText = "Harga Saham / Lembar";
-        tipTitle.innerText = "Tahukah Kamu? (Saham IDX)";
-        tipDesc.innerHTML = "Di Bursa Efek Indonesia, 1 Lot = 100 lembar. Kamu tidak bisa membeli pecahan saham (kurang dari 100 lembar) di pasar reguler. Fee sudah termasuk PPN 11% (dari komisi) dan *Levy* (biaya bursa).";
-      } else if (inst === 'kripto') {
-        labelPrice.innerText = "Harga Koin (IDR)";
-        tipTitle.innerText = "Tahukah Kamu? (Kripto Indonesia)";
-        tipDesc.innerHTML = "Transaksi kripto di bursa resmi Indonesia (Bappebti) dikenakan PPN 0.11% (saat beli) dan PPh 0.1% (saat jual) secara otomatis, dipotong dari *wallet* kamu.";
-      } else if (inst === 'emas') {
-        labelPrice.innerText = "Harga Emas / Gram";
-        tipTitle.innerText = "Tahukah Kamu? (Emas)";
-        tipDesc.innerHTML = "Emas adalah pelindung nilai jangka panjang. Hati-hati dengan *spread* (selisih harga beli dan harga jual (*buyback*)). Kadang selisihnya bisa mencapai Rp 50.000 per gram!";
-      }
-
-      calculateFee();
+    function startTimer() {
+      refreshInterval = setInterval(() => {
+        countdown--;
+        document.getElementById('refresh-timer').innerText = countdown;
+        if(countdown <= 0) {
+          countdown = 60;
+          loadMarketData();
+        }
+      }, 1000);
     }
 
-    function calculateFee() {
-      const inst = document.querySelector('input[name="instrument"]:checked').value;
-      const trxType = document.getElementById('calc-type').value;
-      const brokerIndex = document.getElementById('calc-broker').value;
-      const budget = parseFloat(document.getElementById('calc-budget').value) || 0;
-      const price = parseFloat(document.getElementById('calc-price').value) || 0;
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      checkAuth();
+      loadMarketData();
+      startTimer();
+    });
 
-      if (budget === 0 || price === 0 || !brokerIndex) return;
-
-      const broker = brokers[inst][brokerIndex];
-      let unitMultiplier = 1; // Default
-      let unitName = "";
-      let feeRate = trxType === 'beli' ? broker.buyFee : broker.sellFee;
-      
-      let baseTaxRate = 0;
-
-      // Konfigurasi Spesifik Instrumen
-      if (inst === 'saham') {
-        unitMultiplier = 100; // 1 Lot = 100 lembar
-        unitName = "Lot";
-      } else if (inst === 'kripto') {
-        unitMultiplier = 1;
-        unitName = "Koin";
-      } else if (inst === 'emas') {
-        unitMultiplier = 1;
-        unitName = "Gram";
-      }
-
-      // 1. Tentukan Maksimal Volume yang Bisa Dibeli (Mencegah saldo minus)
-      const pricePerUnit = price * unitMultiplier;
-      let totalFeePercentage = feeRate; // Start with base fee
-
-      // Tambah estimasi pajak murni ke persentase pembagi
-      if (inst === 'saham' && trxType === 'jual') totalFeePercentage += 0.001; // PPh Final 0.1%
-      if (inst === 'kripto' && trxType === 'beli') totalFeePercentage += 0.0011; // PPN 0.11%
-      if (inst === 'kripto' && trxType === 'jual') totalFeePercentage += 0.001; // PPh 0.1%
-
-      // Calculate Max Unit
-      let maxUnit = budget / (pricePerUnit * (1 + totalFeePercentage));
-      
-      if (inst === 'saham') {
-        maxUnit = Math.floor(maxUnit); // Harus lot utuh
-      } else {
-        maxUnit = Number(maxUnit.toFixed(5)); // Kripto bisa pecahan
-      }
-
-      // 2. Hitung Nominal Riil dari Max Unit Tersebut
-      const grossTransaction = maxUnit * pricePerUnit;
-      const feeAmount = grossTransaction * feeRate;
-      
-      let taxAmount = 0;
-      let taxLabel = "PPN / PPh:";
-
-      if (inst === 'saham') {
-        let ppn = feeAmount * 0.11; 
-        let pph = trxType === 'jual' ? grossTransaction * 0.001 : 0;
-        taxAmount = ppn + pph;
-        taxLabel = trxType === 'beli' ? "PPN (11% dr Fee):" : "PPN + PPh Final:";
-      } else if (inst === 'kripto') {
-        taxAmount = trxType === 'beli' ? grossTransaction * 0.0011 : grossTransaction * 0.001;
-        taxLabel = trxType === 'beli' ? "PPN Final (0.11%):" : "PPh Final (0.1%):";
-      } else {
-        taxAmount = 0; 
-        taxLabel = "Pajak:";
-      }
-
-      const totalFeeTax = feeAmount + taxAmount;
-      const totalPay = trxType === 'beli' ? grossTransaction + totalFeeTax : grossTransaction - totalFeeTax;
-      
-      let remainder = 0;
-      if(trxType === 'beli') {
-        remainder = budget - totalPay;
-      } else {
-        remainder = budget + totalPay;
-      }
-
-      // Format uang Rupiah
-      const fmt = (num) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
-
-      // --- UPDATE DOM ---
-      document.getElementById('res-budget').innerText = fmt(budget);
-      document.getElementById('res-unit-label').innerText = inst.charAt(0).toUpperCase() + inst.slice(1);
-      document.getElementById('res-price').innerText = fmt(price);
-      
-      document.getElementById('res-max-unit').innerText = maxUnit > 0 ? `${maxUnit} ${unitName}` : `0 ${unitName}`;
-      document.getElementById('res-max-desc').innerText = inst === 'saham' ? `(${maxUnit * 100} Lembar)` : '';
-      
-      document.getElementById('res-gross').innerText = fmt(grossTransaction);
-      
-      document.getElementById('res-fee-label').innerText = `Fee Broker (${(feeRate * 100).toFixed(2)}%):`;
-      document.getElementById('res-fee-amount').innerText = trxType === 'beli' ? `+ ${fmt(feeAmount)}` : `- ${fmt(feeAmount)}`;
-      
-      document.getElementById('res-tax-label').innerText = taxLabel;
-      document.getElementById('res-tax-amount').innerText = trxType === 'beli' ? `+ ${fmt(taxAmount)}` : `- ${fmt(taxAmount)}`;
-      
-      document.getElementById('res-total-pay').innerText = fmt(totalPay);
-      
-      const remainderEl = document.getElementById('res-remainder');
-      remainderEl.innerText = fmt(remainder);
-      
-      // Warn if no unit can be bought
-      if (maxUnit <= 0) {
-        remainderEl.classList.replace('text-emerald-300', 'text-rose-400');
-        document.getElementById('res-max-unit').classList.replace('text-white', 'text-rose-400');
-      } else {
-        remainderEl.classList.replace('text-rose-400', 'text-emerald-300');
-        document.getElementById('res-max-unit').classList.replace('text-rose-400', 'text-white');
-      }
-    }
-
-    async function calculateToBackend() {
-      try {
-        const instrument = document.querySelector('input[name="instrument"]:checked').value;
-        const transactionType = document.getElementById('calc-type').value;
-        const budget = parseFloat(document.getElementById('calc-budget').value);
-        const price = parseFloat(document.getElementById('calc-price').value);
-
-        const response = await fetch('http://localhost:5000/api/calculator', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ instrument, transactionType, budget, price })
-        });
-
-        const data = await response.json();
-        console.log(data);
-      } catch (error) {
-        console.log(error);
-      }
-    }
   </script>
 </body>
 </html>
