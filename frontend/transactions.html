@@ -44,7 +44,7 @@
   ::-webkit-scrollbar { width:5px; height: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius:9px; }
-  
+
   .metric-card { transition: transform .2s ease, box-shadow .2s ease; }
   .metric-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px -8px rgba(99,102,241,0.3); }
   .btn-primary { background: linear-gradient(135deg,#6366f1,#3b82f6); transition: opacity .2s ease, transform .15s ease, box-shadow .2s ease; }
@@ -53,7 +53,7 @@
   .form-input { background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); transition: border-color .2s ease, box-shadow .2s ease; color: #e2e8f0; }
   .form-input:focus { outline:none; border-color: rgba(99,102,241,0.6); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
   .logo-text { background: linear-gradient(90deg,#a5b4fc,#93c5fd); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-  
+
   @keyframes fadeUp { from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
   .fade-up { animation: fadeUp .5s ease both; }
   .delay-1{animation-delay:.07s;} .delay-2{animation-delay:.14s;} .delay-3{animation-delay:.21s;}
@@ -65,7 +65,7 @@
   .tx-item { transition: background 0.2s ease; border-bottom: 1px solid rgba(255,255,255,0.02); }
   .tx-item:last-child { border-bottom: none; }
   .tx-item:hover { background: rgba(255,255,255,0.03); }
-  
+
   /* Select fix */
   select.form-input option { background-color: #0f1423; color: #e2e8f0; }
 </style>
@@ -75,12 +75,12 @@
 <div class="mesh-bg" aria-hidden="true"></div>
 
 <div class="relative z-10 flex min-h-screen">
-  
+
   <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
 
   <aside id="sidebar" class="fixed top-0 left-0 h-screen w-64 flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out"
          style="background: rgba(10,14,24,0.95); border-right:1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
-    
+
     <button onclick="toggleSidebar()" class="md:hidden absolute top-6 right-4 text-slate-400 hover:text-white">
       <i class="fa-solid fa-xmark text-xl"></i>
     </button>
@@ -93,7 +93,6 @@
       </div>
 
     <div class="mx-4 mb-5 p-3 rounded-xl glass-lighter flex items-center gap-3">
-      <!-- Diperbarui dengan overflow-hidden agar gambar masknya membulat -->
       <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white overflow-hidden"
            style="background:linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
       <div class="min-w-0">
@@ -130,15 +129,14 @@
       <a href="settings.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
         <i class="fa-solid fa-gear w-4 text-center"></i> Pengaturan
       </a>
-      <button onclick="logoutUser()" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm">
+      <a href="logout.html" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm">
         <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout
-      </button>
+      </a>
     </nav>
   </aside>
 
   <main class="flex-1 w-full md:ml-64 px-4 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden">
-    
-    <!-- Topbar Mobile -->
+
     <div class="md:hidden flex items-center justify-between mb-6 fade-up">
       <div class="flex items-center gap-3">
         <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#6366f1,#3b82f6);">
@@ -151,7 +149,6 @@
       </button>
     </div>
 
-    <!-- Header -->
     <header class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 fade-up delay-1">
       <div>
         <h1 class="font-display text-2xl sm:text-3xl text-slate-100 font-semibold mb-1">Keuangan Harian</h1>
@@ -159,7 +156,6 @@
       </div>
     </header>
 
-    <!-- Ringkasan Atas -->
     <section class="grid grid-cols-3 gap-3 sm:gap-6 mb-8 fade-up delay-2">
       <div class="glass rounded-2xl p-4 sm:p-5 text-center metric-card">
         <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Pemasukan</p>
@@ -176,16 +172,14 @@
     </section>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 fade-up delay-3">
-      
-      <!-- List Pencatat Keuangan Kiri -->
+
       <div class="lg:col-span-2 glass rounded-2xl overflow-hidden flex flex-col h-full min-h-[400px]">
         <div class="px-5 py-4 border-b border-white/5 flex items-center justify-between bg-slate-800/30">
           <h2 class="font-display text-base font-medium text-slate-200"><i class="fa-solid fa-list-ul text-indigo-400 mr-2 text-sm"></i> Catatan Harian</h2>
         </div>
-        
+
         <div id="finance-list" class="flex-1 overflow-y-auto">
-          <!-- Data Dikelompokkan Harian Masuk Sini Lewat JS -->
-        </div>
+          </div>
 
         <div id="empty-state" class="px-5 py-12 text-center hidden h-full flex flex-col items-center justify-center">
           <i class="fa-solid fa-money-bill-transfer text-4xl text-slate-700 mb-3"></i>
@@ -193,14 +187,13 @@
         </div>
       </div>
 
-      <!-- Form Input Kanan -->
       <div class="glass rounded-2xl p-5 sm:p-6 shadow-[0_0_30px_-5px_rgba(99,102,241,0.1)] h-fit sticky top-6">
         <h2 class="font-display text-base font-medium text-slate-200 mb-5 flex items-center gap-2">
           <i class="fa-solid fa-plus-circle text-emerald-400 text-sm"></i> Tambah Catatan
         </h2>
-        
+
         <form id="finance-form" class="space-y-4">
-          
+
           <div class="grid grid-cols-2 gap-3 p-1 rounded-xl bg-[#0f1423] border border-white/5 mb-2">
             <label class="cursor-pointer">
               <input type="radio" name="tx_type" value="expense" class="peer sr-only" checked />
@@ -211,7 +204,7 @@
               <div class="text-center py-2 rounded-lg text-xs font-semibold text-slate-400 peer-checked:bg-blue-500/20 peer-checked:text-blue-400 transition-all">Pemasukan</div>
             </label>
           </div>
-          
+
           <div>
             <label class="text-xs text-slate-400 block mb-1">Tanggal</label>
             <input id="f-date" type="date" required class="form-input w-full rounded-xl px-4 py-2.5 text-sm text-slate-200">
@@ -220,8 +213,7 @@
           <div>
             <label class="text-xs text-slate-400 block mb-1">Kategori</label>
             <select id="f-category" required class="form-input w-full rounded-xl px-4 py-2.5 text-sm appearance-none">
-              <!-- JS will populate based on Type -->
-            </select>
+              </select>
           </div>
 
           <div>
@@ -284,9 +276,9 @@
       const user = session.user;
       const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
       const avatarUrl = user.user_metadata?.avatar_url; // CEK FOTO PROFIL
-      
+
       document.getElementById('sidebar-user-name').innerText = displayName;
-      
+
       // LOGIKA RENDER AVATAR SUNGGUHAN DI SIDEBAR
       const sbAvatar = document.getElementById('sidebar-user-initial');
       if (avatarUrl) {
@@ -300,7 +292,7 @@
     // Init form
     document.getElementById('f-date').valueAsDate = new Date();
     updateCategoryOptions(); // Set initial select options
-    
+
     // Listen to radio change
     const radios = document.querySelectorAll('input[name="tx_type"]');
     radios.forEach(r => r.addEventListener('change', updateCategoryOptions));
@@ -312,16 +304,10 @@
     loadFinances();
   });
 
-  async function logoutUser() {
-    await supabaseClient.auth.signOut();
-    localStorage.removeItem('userData');
-    window.location.href = 'login.html';
-  }
-
   // ==========================================
   // MONEY MANAGER LOGIC
   // ==========================================
-  
+
   const CAT_CONFIG = {
     expense: [
       { id: 'makan', label: 'Makan & Minum', icon: 'fa-bowl-food', color: 'text-orange-400' },
@@ -345,7 +331,7 @@
     const type = document.querySelector('input[name="tx_type"]:checked').value;
     const select = document.getElementById('f-category');
     select.innerHTML = '';
-    
+
     CAT_CONFIG[type].forEach(cat => {
       const opt = document.createElement('option');
       opt.value = cat.id;
@@ -403,7 +389,7 @@
   function renderFinances() {
     const listContainer = document.getElementById('finance-list');
     const emptyState = document.getElementById('empty-state');
-    
+
     let totalIncome = 0;
     let totalExpense = 0;
 
@@ -422,7 +408,7 @@
     records.forEach(r => {
       if (r.type === 'income') totalIncome += r.amount;
       if (r.type === 'expense') totalExpense += r.amount;
-      
+
       if (!grouped[r.date]) {
         grouped[r.date] = { dateStr: r.date, items: [], dayIncome: 0, dayExpense: 0 };
       }
@@ -440,7 +426,7 @@
 
     // Sort Dates (Newest First)
     const sortedDates = Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a));
-    
+
     listContainer.innerHTML = '';
 
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -451,7 +437,7 @@
       const dayNum = dObj.getDate().toString().padStart(2, '0');
       const dayName = days[dObj.getDay()];
       const monthYear = (dObj.getMonth() + 1).toString().padStart(2, '0') + '.' + dObj.getFullYear();
-      
+
       const badgeColor = (dObj.getDay() === 0) ? 'bg-rose-500 text-white' : (dObj.getDay() === 6) ? 'bg-blue-500 text-white' : 'bg-slate-600 text-slate-200';
 
       // Group Container
@@ -475,16 +461,16 @@
 
       // 2. Group Items
       const itemsContainer = document.createElement('div');
-      
+
       // Sort items inside group (newest added first visually)
       group.items.reverse().forEach(item => {
         const cat = getCategoryConfig(item.type, item.category);
         const amountColor = item.type === 'income' ? 'text-blue-400' : 'text-rose-400';
         const sign = item.type === 'expense' ? '-' : '+';
-        
+
         const itemEl = document.createElement('div');
         itemEl.className = 'tx-item px-5 py-3.5 flex items-center justify-between group';
-        
+
         itemEl.innerHTML = `
           <div class="flex items-center gap-4 w-full">
             <div class="w-8 flex justify-center ${cat.color}">
