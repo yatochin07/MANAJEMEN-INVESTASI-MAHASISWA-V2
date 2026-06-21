@@ -10,7 +10,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -30,7 +29,7 @@
 
 <style>
   * { box-sizing: border-box; }
-  body { font-family:'Inter', sans-serif; background-color:#07090f; color:#e2e8f0; min-height:100vh; }
+  body { font-family:'Inter', sans-serif; background-color:#07090f; color:#e2e8f0; min-height:100vh; overflow-x: hidden; }
   .nav-active { background: linear-gradient(90deg, rgba(99,102,241,0.18) 0%, transparent 100%); border-left: 3px solid #6366f1; }
   .nav-item { border-left: 3px solid transparent; transition: background .2s ease, border-color .2s ease, color .2s ease; }
   .nav-item:hover { background: linear-gradient(90deg, rgba(99,102,241,0.1) 0%, transparent 100%); border-left-color: rgba(99,102,241,0.5); color:#a5b4fc; }
@@ -42,7 +41,7 @@
       radial-gradient(ellipse 50% 50% at 85% 80%, rgba(59,130,246,0.07) 0%, transparent 60%),
       radial-gradient(ellipse 40% 30% at 60% 30%, rgba(124,58,237,0.05) 0%, transparent 60%);
   }
-  ::-webkit-scrollbar { width:5px; }
+  ::-webkit-scrollbar { width:5px; height:5px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius:9px; }
   .portfolio-row { transition: background .15s ease; border-bottom:1px solid rgba(255,255,255,0.04); }
@@ -60,19 +59,12 @@
   @keyframes fadeUp { from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
   .fade-up { animation: fadeUp .5s ease both; }
   .delay-1{animation-delay:.07s;} .delay-2{animation-delay:.14s;} .delay-3{animation-delay:.21s;} .delay-4{animation-delay:.28s;}
-  @media (max-width:767px){ aside{display:none;} .main-pad{padding-left:1rem;padding-right:1rem;} }
   .spin { animation: spin 1s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
+  
   /* Fix untuk native select option biar gelap */
-  select#f-type {
-    background-color: rgba(255, 255, 255, 0.04);
-  }
-  select#f-type option {
-    background-color: #0f1423; /* Warna base-900 dari palet */
-    color: #e2e8f0;
-    padding: 12px;
-  }
+  select#f-type { background-color: rgba(255, 255, 255, 0.04); }
+  select#f-type option { background-color: #0f1423; color: #e2e8f0; padding: 12px; }
 </style>
 </head>
 
@@ -81,8 +73,15 @@
 
 <div class="relative z-10 flex min-h-screen">
 
-  <aside class="fixed top-0 left-0 h-screen w-64 flex flex-col"
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
+
+  <aside id="sidebar" class="fixed top-0 left-0 h-screen w-64 flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out"
          style="background: rgba(10,14,24,0.95); border-right:1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
+    
+    <button onclick="toggleSidebar()" class="md:hidden absolute top-6 right-4 text-slate-400 hover:text-white">
+      <i class="fa-solid fa-xmark text-xl"></i>
+    </button>
+
     <div class="px-6 py-6 flex items-center gap-3">
       <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#6366f1,#3b82f6);">
         <i class="fa-solid fa-chart-line text-white text-sm"></i>
@@ -142,43 +141,48 @@
     </div>
   </aside>
 
-  <main class="ml-64 flex-1 px-8 py-8 main-pad" style="max-width: calc(100% - 16rem);">
+  <main class="flex-1 w-full md:ml-64 px-4 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden">
 
-    <header class="flex items-center justify-between mb-8 fade-up">
-      <div>
-        <h1 class="font-display text-2xl text-slate-100">Portofolio Saya</h1>
-        <p class="text-slate-500 text-sm mt-0.5">Kelola kuantitas dan harga beli rata-rata (avg) aset Anda di sini.</p>
+    <header class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 fade-up">
+      <div class="flex items-center gap-3">
+        <button onclick="toggleSidebar()" class="md:hidden glass w-10 h-10 rounded-xl flex items-center justify-center text-slate-300 hover:text-white transition-colors flex-shrink-0">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div>
+          <h1 class="font-display text-xl sm:text-2xl text-slate-100">Portofolio Saya</h1>
+          <p class="text-slate-500 text-xs sm:text-sm mt-0.5">Kelola kuantitas dan harga beli rata-rata (avg) aset Anda di sini.</p>
+        </div>
       </div>
-      <button onclick="handleRefreshCrypto()" id="refresh-btn" class="glass px-4 py-2 rounded-xl text-sm text-slate-300 flex items-center gap-2 hover:border-indigo-500/40 transition-all">
+      <button onclick="handleRefreshCrypto()" id="refresh-btn" class="glass px-4 py-2 rounded-xl text-sm text-slate-300 flex items-center justify-center gap-2 hover:border-indigo-500/40 transition-all sm:w-auto w-full">
         <i class="fa-solid fa-rotate" id="refresh-icon"></i> Sinkronisasi Harga
       </button>
     </header>
 
     <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-      <div class="glass rounded-2xl p-5 metric-card fade-up delay-1">
-        <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Total Nilai Aset</p>
-        <p id="sum-value" class="font-display text-2xl text-slate-100">Rp 0</p>
+      <div class="glass rounded-2xl p-4 sm:p-5 metric-card fade-up delay-1">
+        <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Total Nilai Aset</p>
+        <p id="sum-value" class="font-display text-xl sm:text-2xl text-slate-100">Rp 0</p>
       </div>
-      <div class="glass rounded-2xl p-5 metric-card fade-up delay-2">
-        <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Total Modal</p>
-        <p id="sum-cost" class="font-display text-2xl text-slate-100">Rp 0</p>
+      <div class="glass rounded-2xl p-4 sm:p-5 metric-card fade-up delay-2">
+        <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Total Modal</p>
+        <p id="sum-cost" class="font-display text-xl sm:text-2xl text-slate-100">Rp 0</p>
       </div>
-      <div class="glass rounded-2xl p-5 metric-card fade-up delay-3">
-        <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Floating P/L</p>
-        <p id="sum-pl" class="font-display text-2xl text-slate-100">Rp 0</p>
+      <div class="glass rounded-2xl p-4 sm:p-5 metric-card fade-up delay-3">
+        <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Floating P/L</p>
+        <p id="sum-pl" class="font-display text-xl sm:text-2xl text-slate-100">Rp 0</p>
       </div>
     </section>
 
     <section class="mb-8 fade-up delay-2">
-      <div class="glass rounded-2xl p-6">
+      <div class="glass rounded-2xl p-4 sm:p-6">
         <h2 class="font-display text-base text-slate-300 mb-4 flex items-center gap-2">
           <i class="fa-solid fa-plus text-indigo-400 text-sm"></i> <span id="form-title">Tambah Aset Baru</span>
         </h2>
         
-        <form id="asset-form" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <form id="asset-form" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
           <input type="hidden" id="edit-id" value="" />
 
-          <div class="md:col-span-1">
+          <div class="sm:col-span-1 md:col-span-1">
             <label class="text-xs text-slate-500 mb-1 block">Tipe Aset</label>
             <select id="f-type" class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200 bg-[#0f1423] focus:ring-2 focus:ring-indigo-500/50">
               <option value="saham">Saham</option>
@@ -188,35 +192,35 @@
             </select>
           </div>
 
-          <div class="md:col-span-1">
+          <div class="sm:col-span-1 md:col-span-1">
             <label class="text-xs text-slate-500 mb-1 block">Ticker / Kode</label>
             <input id="f-ticker" type="text" placeholder="BBCA / BTC" required
                    class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200 uppercase" />
           </div>
 
-          <div class="md:col-span-1">
+          <div class="sm:col-span-2 md:col-span-1">
             <label class="text-xs text-slate-500 mb-1 block">Nama Aset</label>
             <input id="f-name" type="text" placeholder="Bank Central Asia"
                    class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200" />
           </div>
 
-          <div class="md:col-span-1">
+          <div class="sm:col-span-1 md:col-span-1">
             <label class="text-xs text-slate-500 mb-1 block">Harga Beli Avg (Rp)</label>
             <input id="f-avg" type="number" min="0" step="any" placeholder="10000" required
                    class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200" />
           </div>
 
-          <div class="md:col-span-1">
+          <div class="sm:col-span-1 md:col-span-1">
             <label class="text-xs text-slate-500 mb-1 block">Jumlah / Qty</label>
             <input id="f-qty" type="number" min="0" step="any" placeholder="5" required
                    class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200" />
           </div>
 
-          <div class="md:col-span-5 flex justify-end gap-3 mt-2 border-t border-white/5 pt-4">
-            <button type="button" id="cancel-edit" onclick="resetForm()" class="hidden text-sm text-slate-400 hover:text-slate-200 py-2.5 px-4">
+          <div class="sm:col-span-2 md:col-span-5 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 mt-2 sm:border-t sm:border-white/5 sm:pt-4">
+            <button type="button" id="cancel-edit" onclick="resetForm()" class="hidden text-sm text-slate-400 hover:text-slate-200 py-2.5 px-4 text-center">
               Batal Edit
             </button>
-            <button type="submit" class="btn-primary w-full md:w-auto px-8 py-2.5 rounded-xl text-sm font-semibold text-white">
+            <button type="submit" class="btn-primary w-full sm:w-auto px-8 py-2.5 rounded-xl text-sm font-semibold text-white">
               <i class="fa-solid fa-floppy-disk mr-1"></i> <span id="submit-label">Simpan</span>
             </button>
           </div>
@@ -225,14 +229,14 @@
     </section>
 
     <section class="mb-8 fade-up delay-3">
-      <div class="glass rounded-2xl p-6 flex flex-col md:flex-row md:items-end gap-4">
+      <div class="glass rounded-2xl p-4 sm:p-6 flex flex-col md:flex-row md:items-end gap-4">
         <div class="flex-1">
           <label class="text-xs text-slate-500 mb-1 block">Kas / Buying Power saat ini (Rp)</label>
           <input id="cash-input" type="number" min="0" step="any" placeholder="0"
                  class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200" />
           <p class="text-xs text-slate-600 mt-1.5">Dana tunai yang belum diinvestasikan. Ikut dihitung sebagai bagian dari Total Ekuitas di Dashboard.</p>
         </div>
-        <button onclick="saveCash()" class="btn-primary py-2.5 px-6 rounded-xl text-sm font-semibold text-white whitespace-nowrap">
+        <button onclick="saveCash()" class="btn-primary w-full md:w-auto py-2.5 px-6 rounded-xl text-sm font-semibold text-white whitespace-nowrap">
           Simpan Kas
         </button>
       </div>
@@ -242,21 +246,22 @@
       <h2 class="font-display text-base text-slate-300 mb-4 flex items-center gap-2">
         <i class="fa-solid fa-table-list text-blue-400 text-sm"></i> Daftar Aset
       </h2>
-      <div class="glass rounded-2xl overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm" style="min-width:900px;"> <thead>
+      <div class="glass rounded-2xl overflow-hidden w-full">
+        <div class="overflow-x-auto w-full">
+          <table class="w-full text-sm min-w-[900px]">
+            <thead>
               <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
                 <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Aset</th>
                 <th class="px-4 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Tipe</th>
                 <th class="px-4 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Harga Beli Avg</th>
                 <th class="px-4 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Harga Terakhir</th>
                 <th class="px-4 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Qty</th>
-                <th class="px-4 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Harga</th> <th class="px-4 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Floating P/L</th>
+                <th class="px-4 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Harga</th> 
+                <th class="px-4 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Floating P/L</th>
                 <th class="px-5 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Aksi</th>
               </tr>
             </thead>
-            <tbody id="asset-tbody">
-              </tbody>
+            <tbody id="asset-tbody"></tbody>
           </table>
         </div>
         <div id="empty-state" class="px-5 py-10 text-center hidden">
@@ -276,6 +281,14 @@
 <script src="js/api.js"></script>
 
 <script>
+  // UI TOGGLE SCRIPT
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+  }
+
   // ==========================================
   // INISIALISASI SUPABASE CLIENT 
   // ==========================================
@@ -288,7 +301,6 @@
   // ==========================================
   document.addEventListener('DOMContentLoaded', async () => {
     try {
-      // 1. Cek sesi aktif Supabase
       const { data: { session }, error } = await supabaseClient.auth.getSession();
       
       if (error || !session) {
@@ -296,7 +308,6 @@
         return;
       }
 
-      // 2. Ambil data user dari sesi Supabase
       const user = session.user;
       const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
       
@@ -315,19 +326,13 @@
       const form = document.getElementById('asset-form');
       if (form) form.addEventListener('submit', onSubmit);
 
-      // Menarik data harga otomatis saat buka halaman
       handleRefreshCrypto(true);
-    } catch (err) {
-      console.error("Gagal memuat halaman portofolio:", err);
-    }
+    } catch (err) { console.error("Gagal memuat halaman portofolio:", err); }
   });
 
-  // ==========================================
-  // LOGOUT (SUPABASE)
-  // ==========================================
   async function logoutUser() {
     await supabaseClient.auth.signOut();
-    localStorage.removeItem('userData'); // Menghapus data lokal sisaan (kalau ada)
+    localStorage.removeItem('userData'); 
     window.location.href = 'login.html';
   }
 
@@ -362,7 +367,6 @@
         throw new Error("Objek 'EduVesting' tidak ada. Pastikan file api.js terhubung benar.");
       }
       
-      // Simpan data
       if (editId) {
         const existingAsset = EduVesting.getAssets().find(a => a.id === editId);
         const lastPrice = existingAsset ? existingAsset.lastPrice : avgPrice;
@@ -376,7 +380,6 @@
       resetForm();
       renderAll();
 
-      // Trigger sinkronisasi otomatis sesuai tipe aset
       if (type === 'kripto' && EduVesting.COINGECKO_IDS && EduVesting.COINGECKO_IDS[ticker]) {
         handleRefreshCrypto(); 
       } else if (type === 'saham') {
@@ -448,9 +451,7 @@
           renderAll(); 
         }
       }
-    } catch (e) {
-      console.error("Gagal refresh harga saham individu", e);
-    }
+    } catch (e) { console.error("Gagal refresh harga saham individu", e); }
   }
 
   async function handleRefreshCrypto(silent = false) {
@@ -461,13 +462,10 @@
     
     try {
       if (typeof EduVesting !== 'undefined') {
-        // Refresh Kripto (menggunakan API CoinGecko dari api.js)
         const resCrypto = await EduVesting.refreshCryptoPrices();
         if (resCrypto && resCrypto.error && !silent) {
             alert('Gagal ambil harga kripto: ' + resCrypto.error);
         }
-        
-        // Refresh Saham juga agar tombol "Sinkronisasi Harga" memperbarui semua aset
         await EduVesting.refreshStockPrices();
       }
     } catch (e) {
@@ -494,7 +492,7 @@
       if (plEl) {
         const sign = metrics.floatingPL >= 0 ? '+' : '';
         plEl.innerText = sign + EduVesting.formatRupiah(metrics.floatingPL) + ` (${sign}${metrics.plPercent.toFixed(1)}%)`;
-        plEl.className = 'font-display text-2xl ' + (metrics.floatingPL >= 0 ? 'text-emerald-400' : 'text-rose-400');
+        plEl.className = 'font-display text-xl sm:text-2xl ' + (metrics.floatingPL >= 0 ? 'text-emerald-400' : 'text-rose-400');
       }
 
       const tbody = document.getElementById('asset-tbody');
@@ -514,8 +512,7 @@
           label: 'Unknown', unit: 'unit', badgeBg: 'rgba(255,255,255,0.1)', badgeColor: '#fff', badgeBorder: 'rgba(255,255,255,0.2)'
         };
         
-        // Perhitungan Total Harga dan P/L
-        const totalPrice = a.avgPrice * a.qty; // TAMBAHAN: Kalkulasi Total Harga (Harga Beli Avg * Qty)
+        const totalPrice = a.avgPrice * a.qty; 
         const pl = (a.lastPrice - a.avgPrice) * a.qty;
         const plPct = a.avgPrice > 0 ? ((a.lastPrice - a.avgPrice) / a.avgPrice) * 100 : 0;
         const plColor = pl >= 0 ? 'text-emerald-400' : 'text-rose-400';
@@ -540,7 +537,8 @@
           <td class="px-4 py-4 text-right text-slate-300 font-medium tabular-nums">${EduVesting.formatRupiah(a.avgPrice)}</td>
           <td class="px-4 py-4 text-right text-slate-200 font-semibold tabular-nums">${EduVesting.formatRupiah(a.lastPrice)}</td>
           <td class="px-4 py-4 text-right text-slate-400 tabular-nums">${EduVesting.formatNumber(a.qty)} ${def.unit}</td>
-          <td class="px-4 py-4 text-right text-slate-300 font-medium tabular-nums">${EduVesting.formatRupiah(totalPrice)}</td> <td class="px-4 py-4 text-right">
+          <td class="px-4 py-4 text-right text-slate-300 font-medium tabular-nums">${EduVesting.formatRupiah(totalPrice)}</td> 
+          <td class="px-4 py-4 text-right">
             <span class="${plColor} font-semibold tabular-nums">${plSign}${EduVesting.formatRupiah(pl)}</span>
             <p class="${plColor} text-xs tabular-nums">${plSign}${plPct.toFixed(2)}%</p>
           </td>
@@ -551,9 +549,7 @@
         `;
         tbody.appendChild(tr);
       });
-    } catch (err) {
-      console.error("Gagal melakukan render data:", err);
-    }
+    } catch (err) { console.error("Gagal melakukan render data:", err); }
   }
 </script>
 </body>
