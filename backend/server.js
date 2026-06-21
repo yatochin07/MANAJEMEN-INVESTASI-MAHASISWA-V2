@@ -16,7 +16,7 @@ const transactionRoutes = require('./routes/transactionRoutes');
 const goalsRoutes = require('./routes/goalsRoutes');
 const aiRoutes = require('./routes/aiRoutes');
 const alloRoutes = require('./routes/alloRoutes');
-const marketRoutes = require('./routes/marketRoutes');
+const calculatorRoutes = require('./routes/calculatorRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 
 // ======================
@@ -76,7 +76,7 @@ app.use('/api/transactions', transactionRoutes);
 app.use('/api/goals', goalsRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/allocations', alloRoutes);
-app.use('/api/market', marketRoutes);
+app.use('/api/market', calculatorRoutes);
 app.use('/api/settings', settingsRoutes);
 
 // ======================
