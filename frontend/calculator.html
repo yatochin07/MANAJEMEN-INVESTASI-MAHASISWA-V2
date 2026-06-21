@@ -32,8 +32,850 @@
     * { box-sizing: border-box; }
     body { font-family: 'Inter', sans-serif; background-color: #07090f; color: #e2e8f0; min-height: 100vh; overflow-x: hidden; }
 
-    /* Sidebar active glow (DIKEMBALIKAN KE INDIGO) */
+    /* Sidebar active glow dikembalikan ke Indigo */
     .nav-active { background: linear-gradient(90deg, rgba(99,102,241,0.18) 0%, transparent 100%); border-left: 3px solid #6366f1; }
+    .nav-item { border-left: 3px solid transparent; transition: all 0.2s ease; }
+    .nav-item:hover { background: linear-gradient(90deg, rgba(99,102,241,0.1) 0%, transparent 100%); border-left-color: rgba(99,102,241,0.5); color: #a5b4fc; }
+
+    /* Glass Elements */
+    .glass { background: rgba(19, 25, 40, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); }
+    .glass-lighter { background: rgba(30,40,64,0.6); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.07); }
+    
+    /* Mesh Background dikembalikan ke Indigo */
+    .mesh-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background: radial-gradient(ellipse 60% 40% at 15% 10%, rgba(99,102,241,0.08) 0%, transparent 70%),
+                  radial-gradient(ellipse 50% 50% at 85% 80%, rgba(59,130,246,0.07) 0%, transparent 60%);
+    }
+
+    /* Scrollbar dikembalikan ke Indigo */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius: 9px; }
+    .hide-scroll::-webkit-scrollbar { display: none; }
+    .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Form Input dikembalikan ke Indigo */
+    .form-input { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); transition: all 0.2s ease; color: #e2e8f0; }
+    .form-input:focus { outline: none; border-color: rgba(99,102,241,0.6); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); background: rgba(99,102,241,0.04); }
+    select.form-input option { background-color: #0f1423; color: #e2e8f0; }
+
+    /* Fade-in */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-up { animation: fadeUp 0.5s ease both; }
+    .delay-1 { animation-delay: 0.07s; }
+    .delay-2 { animation-delay: 0.14s; }
+
+    .logo-text { background: linear-gradient(90deg,#a5b4fc,#93c5fd); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+
+    /* Tab Switcher */
+    .tab-btn { transition: all 0.2s ease; white-space: nowrap; }
+    .tab-btn.active { background: rgba(16,185,129,0.15); color: #34d399; border-color: rgba(16,185,129,0.4); }
+    .calc-panel { display: none; }
+    .calc-panel.active { display: grid; animation: fadeUp 0.4s ease both; }
+
+    /* Dynamic Pie Chart */
+    .pie-chart {
+      width: 200px; height: 200px; border-radius: 50%;
+      background: conic-gradient(var(--c-saham) 0% var(--p-saham), var(--c-obligasi) var(--p-saham) calc(var(--p-saham) + var(--p-obligasi)), var(--c-kas) calc(var(--p-saham) + var(--p-obligasi)) calc(var(--p-saham) + var(--p-obligasi) + var(--p-kas)), var(--c-crypto) calc(var(--p-saham) + var(--p-obligasi) + var(--p-kas)) 100%);
+      -webkit-mask: radial-gradient(circle, transparent 55%, black 56%);
+      mask: radial-gradient(circle, transparent 55%, black 56%);
+      transition: background 0.5s ease;
+    }
+
+    @media (max-width: 767px) { aside { display: none; } .main-pad { padding-left: 1rem; padding-right: 1rem; } }
+  </style>
+</head>
+
+<body class="relative">
+
+  <div class="mesh-bg" aria-hidden="true"></div>
+
+  <div class="relative z-10 flex min-h-screen">
+
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
+
+    <aside id="sidebar" class="fixed top-0 left-0 h-screen w-64 flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out"
+           style="background: rgba(10,14,24,0.95); border-right: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
+      
+      <button onclick="toggleSidebar()" class="md:hidden absolute top-6 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-xl"></i>
+      </button>
+
+      <div class="px-6 py-6 flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg,#6366f1,#3b82f6);">
+          <i class="fa-solid fa-chart-line text-white text-sm"></i>
+        </div>
+        <span class="font-display text-lg logo-text font-bold">EduVesting</span>
+      </div>
+
+      <div class="mx-4 mb-5 p-3 rounded-xl glass-lighter flex items-center gap-3">
+        <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white overflow-hidden" style="background: linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
+        <div class="min-w-0">
+          <p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">Memuat...</p>
+        </div>
+      </div>
+
+      <nav class="flex-1 px-2 space-y-0.5 overflow-y-auto">
+        <p class="px-4 py-1.5 text-xs font-semibold text-slate-600 uppercase tracking-widest">Utama</p>
+
+        <a href="dashboard.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+          <i class="fa-solid fa-gauge-high w-4 text-center"></i> Dashboard
+        </a>
+        <a href="portfolio.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+          <i class="fa-solid fa-briefcase w-4 text-center"></i> Portofolio
+        </a>
+        <a href="transactions.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+          <i class="fa-solid fa-wallet w-4 text-center"></i> Keuangan
+        </a>
+        <a href="goals.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+          <i class="fa-solid fa-bullseye w-4 text-center"></i> Target Dana
+        </a>
+
+        <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Analisa</p>
+        
+        <a href="insights.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+          <i class="fa-solid fa-robot w-4 text-center"></i> EduVesting AI
+        </a>
+        <a href="allocations.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+          <i class="fa-solid fa-chart-pie w-4 text-center"></i> Alokasi Aset
+        </a>
+        <a href="calculator.html" class="nav-item nav-active flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-indigo-300 text-sm font-semibold">
+          <i class="fa-solid fa-calculator w-4 text-center text-indigo-400"></i> Kalkulator Investasi
+        </a>
+
+        <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Akun</p>
+        <a href="settings.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+          <i class="fa-solid fa-gear w-4 text-center"></i> Pengaturan
+        </a>
+        <button onclick="logoutUser()" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm hover:bg-rose-500/10 transition">
+          <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout
+        </button>
+      </nav>
+    </aside>
+
+    <main class="flex-1 w-full md:ml-64 px-4 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden flex flex-col">
+
+      <div class="md:hidden flex items-center justify-between mb-6 fade-up">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#6366f1,#3b82f6);">
+            <i class="fa-solid fa-chart-line text-white text-sm"></i>
+          </div>
+          <span class="font-display text-lg logo-text font-bold tracking-wide">EduVesting</span>
+        </div>
+        <button onclick="toggleSidebar()" type="button" class="text-slate-300 hover:text-white transition-colors focus:outline-none z-20">
+          <i class="fa-solid fa-bars text-xl"></i>
+        </button>
+      </div>
+
+      <header class="flex flex-col sm:flex-row sm:items-end justify-between mb-6 gap-4 fade-up">
+        <div>
+          <h1 class="font-display text-2xl sm:text-3xl text-slate-100 font-semibold mb-1 flex items-center gap-3">
+            Kalkulator Investasi <i class="fa-solid fa-calculator text-emerald-400 text-xl"></i>
+          </h1>
+          <p class="text-slate-500 text-sm mt-0.5">Pusat perhitungan cerdas untuk membantu Anda membuat keputusan finansial.</p>
+        </div>
+      </header>
+
+      <div class="flex gap-2 overflow-x-auto hide-scroll pb-4 mb-2 fade-up delay-1 border-b border-slate-800">
+        <button onclick="switchTab('stock-fee')" class="tab-btn active px-4 py-2 rounded-xl text-sm font-medium border border-slate-700 text-slate-400 hover:text-slate-200 bg-slate-800/50"><i class="fa-solid fa-money-bill-transfer mr-1"></i> Stock Fee</button>
+        <button onclick="switchTab('dividend')" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium border border-slate-700 text-slate-400 hover:text-slate-200 bg-slate-800/50"><i class="fa-solid fa-hand-holding-dollar mr-1"></i> Dividen</button>
+        <button onclick="switchTab('compound')" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium border border-slate-700 text-slate-400 hover:text-slate-200 bg-slate-800/50"><i class="fa-solid fa-arrow-trend-up mr-1"></i> Compound Growth</button>
+        <button onclick="switchTab('goal')" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium border border-slate-700 text-slate-400 hover:text-slate-200 bg-slate-800/50"><i class="fa-solid fa-bullseye mr-1"></i> Financial Goal</button>
+        <button onclick="switchTab('risk-reward')" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium border border-slate-700 text-slate-400 hover:text-slate-200 bg-slate-800/50"><i class="fa-solid fa-scale-balanced mr-1"></i> Risk/Reward</button>
+        <button onclick="switchTab('position')" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium border border-slate-700 text-slate-400 hover:text-slate-200 bg-slate-800/50"><i class="fa-solid fa-shield-halved mr-1"></i> Position Size</button>
+        <button onclick="switchTab('allocation')" class="tab-btn px-4 py-2 rounded-xl text-sm font-medium border border-slate-700 text-slate-400 hover:text-slate-200 bg-slate-800/50"><i class="fa-solid fa-chart-pie mr-1"></i> Asset Allocation</button>
+      </div>
+
+      <div class="flex-1 w-full">
+
+        <div id="tab-stock-fee" class="calc-panel active grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-5 glass rounded-2xl p-6 h-fit">
+            <h3 class="font-display text-lg text-emerald-400 mb-4 border-b border-slate-700 pb-2">Parameter Simulasi Saham</h3>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Modal Investasi (Rp)</label>
+                <input type="number" id="sf-capital" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="1000000" oninput="calcStockFee()">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Harga Saham per Lembar (Rp)</label>
+                <input type="number" id="sf-price" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="5000" oninput="calcStockFee()">
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-medium text-slate-400 mb-1">Fee Beli (%)</label>
+                  <input type="number" id="sf-buy-fee" step="0.01" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="0.15" oninput="calcStockFee()">
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-slate-400 mb-1">Fee Jual (%)</label>
+                  <input type="number" id="sf-sell-fee" step="0.01" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="0.25" oninput="calcStockFee()">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="lg:col-span-7 flex flex-col gap-4">
+            <div class="glass rounded-2xl p-6 bg-gradient-to-br from-slate-900/90 to-slate-800/90 shadow-xl flex-1">
+              <h3 class="font-display text-lg text-slate-200 mb-5">Hasil Kalkulasi</h3>
+              <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                  <p class="text-[10px] text-slate-400 uppercase tracking-widest mb-1">Maksimal Lot Dibeli</p>
+                  <p id="sf-out-lot" class="text-2xl font-display text-white">0 Lot</p>
+                </div>
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                  <p class="text-[10px] text-slate-400 uppercase tracking-widest mb-1">Total Dana Keluar</p>
+                  <p id="sf-out-total" class="text-2xl font-display text-rose-400">Rp 0</p>
+                </div>
+              </div>
+              <div class="space-y-3 text-sm text-slate-300">
+                <div class="flex justify-between border-b border-slate-700/50 pb-2"><span>Total Transaksi Bruto</span> <span id="sf-out-gross">Rp 0</span></div>
+                <div class="flex justify-between border-b border-slate-700/50 pb-2 text-rose-400"><span>Estimasi Fee Beli</span> <span id="sf-out-buyfee">- Rp 0</span></div>
+                <div class="flex justify-between border-b border-slate-700/50 pb-2"><span>Target Break Even Price (BEP)</span> <span id="sf-out-bep" class="text-amber-400 font-bold">Rp 0</span></div>
+                <div class="flex justify-between pb-2"><span>Profit Minimal agar Tidak Rugi</span> <span id="sf-out-minprofit" class="text-emerald-400 font-bold">Rp 0</span></div>
+              </div>
+            </div>
+            <div class="glass rounded-xl p-4 border-l-4 border-emerald-500 bg-emerald-500/10 flex gap-3">
+              <i class="fa-solid fa-lightbulb text-emerald-400 mt-0.5"></i>
+              <p class="text-xs text-emerald-200 leading-relaxed"><strong class="text-white">Tahukah Kamu?</strong> Fee Jual selalu lebih besar daripada Fee Beli karena ada tambahan Pajak Penghasilan (PPh) final sebesar 0.1% yang dikenakan oleh Bursa.</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-dividend" class="calc-panel grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-5 glass rounded-2xl p-6 h-fit">
+            <h3 class="font-display text-lg text-blue-400 mb-4 border-b border-slate-700 pb-2">Simulasi Dividen</h3>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Jumlah Kepemilikan (Lot)</label>
+                <input type="number" id="div-lot" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="10" oninput="calcDividend()">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Dividen per Saham / DPS (Rp)</label>
+                <input type="number" id="div-dps" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="250" oninput="calcDividend()">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Harga Beli Rata-Rata (Rp) <span class="text-slate-600 text-[10px]">*untuk Yield</span></label>
+                <input type="number" id="div-price" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="5000" oninput="calcDividend()">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Pajak Dividen (%)</label>
+                <select id="div-tax" class="form-input w-full rounded-xl px-4 py-2.5 text-sm appearance-none bg-[#0f1423]" onchange="calcDividend()">
+                  <option value="10">10% (Standar WP Perorangan)</option>
+                  <option value="0">0% (Diinvestasikan Kembali)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="lg:col-span-7 flex flex-col gap-4">
+            <div class="glass rounded-2xl p-6 bg-gradient-to-br from-slate-900/90 to-slate-800/90 shadow-xl flex-1 flex flex-col justify-center">
+              <div class="text-center mb-8">
+                <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Total Dividen Bersih (Net)</p>
+                <p id="div-out-net" class="text-4xl font-display font-bold text-emerald-400">Rp 0</p>
+                <div class="inline-block mt-3 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-semibold border border-blue-500/30">
+                  Dividend Yield: <span id="div-out-yield">0%</span>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50 text-center">
+                  <p class="text-[10px] text-slate-400 uppercase">Dividen Kotor</p>
+                  <p id="div-out-gross" class="text-lg font-display text-white mt-1">Rp 0</p>
+                </div>
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50 text-center">
+                  <p class="text-[10px] text-rose-400 uppercase">Potongan Pajak</p>
+                  <p id="div-out-taxrp" class="text-lg font-display text-rose-400 mt-1">- Rp 0</p>
+                </div>
+              </div>
+            </div>
+            <div class="glass rounded-xl p-4 border-l-4 border-blue-500 bg-blue-500/10 flex gap-3">
+              <i class="fa-solid fa-lightbulb text-blue-400 mt-0.5"></i>
+              <p class="text-xs text-blue-200 leading-relaxed"><strong class="text-white">Tahukah Kamu?</strong> Mahasiswa bisa membebaskan diri dari pajak dividen 10% apabila dividen tersebut diinvestasikan kembali ke instrumen pasar modal dalam waktu tertentu sesuai aturan DJP.</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-compound" class="calc-panel grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-5 glass rounded-2xl p-6 h-fit">
+            <h3 class="font-display text-lg text-indigo-400 mb-4 border-b border-slate-700 pb-2">Kekuatan Bunga Berbunga</h3>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Modal Awal (Rp)</label>
+                <input type="number" id="cg-initial" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="5000000" oninput="calcCompound()">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Investasi Bulanan / Topup (Rp)</label>
+                <input type="number" id="cg-monthly" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="500000" oninput="calcCompound()">
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-medium text-slate-400 mb-1">Estimasi Return (% per thn)</label>
+                  <input type="number" id="cg-rate" step="0.1" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="10" oninput="calcCompound()">
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-slate-400 mb-1">Durasi (Tahun)</label>
+                  <input type="number" id="cg-years" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="10" oninput="calcCompound()">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="lg:col-span-7 flex flex-col gap-4">
+            <div class="glass rounded-2xl p-6 bg-gradient-to-br from-slate-900/90 to-slate-800/90 shadow-xl flex-1 flex flex-col">
+              <div class="flex justify-between items-start mb-6">
+                <div>
+                  <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Nilai Investasi Akhir</p>
+                  <p id="cg-out-final" class="text-3xl font-display font-bold text-indigo-400">Rp 0</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Pertumbuhan</p>
+                  <p id="cg-out-pct" class="text-xl font-bold text-emerald-400">+0%</p>
+                </div>
+              </div>
+              <div class="space-y-3 text-sm text-slate-300 mt-auto">
+                <div class="flex justify-between border-b border-slate-700/50 pb-2"><span>Total Modal Disetor</span> <span id="cg-out-invested" class="font-bold text-white">Rp 0</span></div>
+                <div class="flex justify-between pb-2 text-emerald-400"><span>Total Bunga / Profit</span> <span id="cg-out-profit" class="font-bold">+ Rp 0</span></div>
+              </div>
+              <div class="mt-4 h-6 w-full rounded-full flex overflow-hidden bg-slate-800">
+                <div id="cg-bar-invested" class="h-full bg-slate-600 transition-all duration-500" style="width: 50%" title="Modal Disetor"></div>
+                <div id="cg-bar-profit" class="h-full bg-indigo-500 transition-all duration-500" style="width: 50%" title="Bunga/Profit"></div>
+              </div>
+              <div class="flex gap-4 mt-2 text-[10px] text-slate-400 justify-center">
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-slate-600"></span> Modal Disetor</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-indigo-500"></span> Profit/Bunga</span>
+              </div>
+            </div>
+            <div class="glass rounded-xl p-4 border-l-4 border-indigo-500 bg-indigo-500/10 flex gap-3">
+              <i class="fa-solid fa-lightbulb text-indigo-400 mt-0.5"></i>
+              <p class="text-xs text-indigo-200 leading-relaxed"><strong class="text-white">Tahukah Kamu?</strong> Albert Einstein menyebut *Compound Interest* sebagai keajaiban dunia ke-8. Semakin awal kamu berinvestasi, semakin besar gulungan bola salju keuntunganmu di masa depan.</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-goal" class="calc-panel grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-5 glass rounded-2xl p-6 h-fit">
+            <h3 class="font-display text-lg text-amber-400 mb-4 border-b border-slate-700 pb-2">Target Masa Depan</h3>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Target Dana (Rp)</label>
+                <input type="number" id="fg-target" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="100000000" oninput="calcGoal()">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Jangka Waktu (Tahun)</label>
+                <input type="number" id="fg-years" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="5" oninput="calcGoal()">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Estimasi Return Investasi (% per thn)</label>
+                <input type="number" id="fg-rate" step="0.1" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="8" oninput="calcGoal()">
+              </div>
+            </div>
+          </div>
+          <div class="lg:col-span-7 flex flex-col gap-4">
+            <div class="glass rounded-2xl p-6 bg-gradient-to-br from-slate-900/90 to-slate-800/90 shadow-xl flex-1 flex flex-col justify-center text-center">
+              <p class="text-xs text-slate-400 uppercase tracking-widest mb-2">Kamu harus menabung/investasi sebesar</p>
+              <p id="fg-out-monthly" class="text-4xl font-display font-bold text-amber-400 mb-6">Rp 0 <span class="text-sm text-slate-500 font-normal">/ bulan</span></p>
+              
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                  <p class="text-[10px] text-slate-400 uppercase">Total Modal Disetor</p>
+                  <p id="fg-out-capital" class="text-base font-display text-white mt-1">Rp 0</p>
+                </div>
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                  <p class="text-[10px] text-emerald-400 uppercase">Bantuan Bunga/Return</p>
+                  <p id="fg-out-interest" class="text-base font-display text-emerald-400 mt-1">+ Rp 0</p>
+                </div>
+              </div>
+            </div>
+            <div class="glass rounded-xl p-4 border-l-4 border-amber-500 bg-amber-500/10 flex gap-3">
+              <i class="fa-solid fa-lightbulb text-amber-400 mt-0.5"></i>
+              <p class="text-xs text-amber-200 leading-relaxed"><strong class="text-white">Tahukah Kamu?</strong> Inflasi merampok daya beli uangmu setiap tahun. Dengan menginvestasikan tabungan targetmu di atas tingkat inflasi (misal di instrumen ber-return >5%), kamu tidak perlu menabung sebanyak nominal target aslinya.</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-risk-reward" class="calc-panel grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-5 glass rounded-2xl p-6 h-fit">
+            <h3 class="font-display text-lg text-rose-400 mb-4 border-b border-slate-700 pb-2">Trading Plan Profiler</h3>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Harga Beli / Entry (Rp)</label>
+                <input type="number" id="rr-entry" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="1000" oninput="calcRR()">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Harga Stop Loss (Rp)</label>
+                <input type="number" id="rr-sl" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="900" oninput="calcRR()">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Harga Target / Take Profit (Rp)</label>
+                <input type="number" id="rr-tp" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="1300" oninput="calcRR()">
+              </div>
+            </div>
+          </div>
+          <div class="lg:col-span-7 flex flex-col gap-4">
+            <div class="glass rounded-2xl p-6 bg-gradient-to-br from-slate-900/90 to-slate-800/90 shadow-xl flex-1 flex flex-col justify-center">
+              <div class="text-center mb-6">
+                <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Risk : Reward Ratio</p>
+                <div class="flex items-center justify-center gap-3 mt-2">
+                  <span class="text-2xl font-display font-bold text-rose-400">1</span>
+                  <span class="text-xl text-slate-500">:</span>
+                  <span id="rr-out-ratio" class="text-4xl font-display font-bold text-emerald-400">0</span>
+                </div>
+                <div id="rr-indicator" class="inline-block mt-3 px-4 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-semibold border border-slate-700">
+                  Menunggu Input...
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-rose-500/10 p-4 rounded-xl border border-rose-500/20 text-center">
+                  <p class="text-[10px] text-rose-400 uppercase mb-1">Risiko per Lembar</p>
+                  <p id="rr-out-risk" class="text-lg font-bold text-rose-400">Rp 0</p>
+                  <p id="rr-out-risk-pct" class="text-[10px] text-rose-500 mt-0.5">0%</p>
+                </div>
+                <div class="bg-emerald-500/10 p-4 rounded-xl border border-emerald-500/20 text-center">
+                  <p class="text-[10px] text-emerald-400 uppercase mb-1">Potensi per Lembar</p>
+                  <p id="rr-out-reward" class="text-lg font-bold text-emerald-400">Rp 0</p>
+                  <p id="rr-out-reward-pct" class="text-[10px] text-emerald-500 mt-0.5">0%</p>
+                </div>
+              </div>
+            </div>
+            <div class="glass rounded-xl p-4 border-l-4 border-rose-500 bg-rose-500/10 flex gap-3">
+              <i class="fa-solid fa-lightbulb text-rose-400 mt-0.5"></i>
+              <p class="text-xs text-rose-200 leading-relaxed"><strong class="text-white">Tahukah Kamu?</strong> Trader profesional mencari rasio minimal 1:2. Artinya, dengan win-rate (peluang tebakan benar) hanya 40% saja, portofoliomu tetap akan menghasilkan keuntungan dalam jangka panjang.</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-position" class="calc-panel grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-5 glass rounded-2xl p-6 h-fit">
+            <h3 class="font-display text-lg text-cyan-400 mb-4 border-b border-slate-700 pb-2">Manajemen Ukuran Posisi</h3>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Total Modal Trading (Rp)</label>
+                <input type="number" id="ps-capital" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="10000000" oninput="calcPosition()">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Max Risiko Ditoleransi (%)</label>
+                <input type="number" id="ps-riskpct" step="0.1" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="1" oninput="calcPosition()">
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-medium text-slate-400 mb-1">Harga Entry</label>
+                  <input type="number" id="ps-entry" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="2000" oninput="calcPosition()">
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-slate-400 mb-1">Stop Loss</label>
+                  <input type="number" id="ps-sl" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="1900" oninput="calcPosition()">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="lg:col-span-7 flex flex-col gap-4">
+            <div class="glass rounded-2xl p-6 bg-gradient-to-br from-slate-900/90 to-slate-800/90 shadow-xl flex-1 flex flex-col">
+              <div class="flex justify-between items-start mb-6">
+                <div>
+                  <p class="text-xs text-slate-400 uppercase tracking-widest mb-1">Ukuran Pembelian Maksimal</p>
+                  <p id="ps-out-ideal" class="text-3xl font-display font-bold text-cyan-400">Rp 0</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-xs text-rose-400 uppercase tracking-widest mb-1">Rupiah Direiskokan</p>
+                  <p id="ps-out-maxrisk" class="text-xl font-bold text-rose-400">Rp 0</p>
+                </div>
+              </div>
+              
+              <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50 mb-4 flex justify-between items-center">
+                <span class="text-sm text-slate-300">Setara dengan Pembelian:</span>
+                <span id="ps-out-lot" class="text-xl font-display text-white font-bold">0 Lot <span class="text-xs font-normal text-slate-500">(0 Lbr)</span></span>
+              </div>
+
+              <div id="ps-warning" class="hidden mt-auto bg-rose-500/10 p-3 rounded-lg border border-rose-500/20 text-xs text-rose-400 flex items-start gap-2">
+                <i class="fa-solid fa-triangle-exclamation mt-0.5"></i>
+                <p>Jarak Stop Loss terlalu lebar atau Risiko % terlalu besar. Ukuran posisi melebihi total modal Anda. Atur ulang parameter!</p>
+              </div>
+            </div>
+            <div class="glass rounded-xl p-4 border-l-4 border-cyan-500 bg-cyan-500/10 flex gap-3">
+              <i class="fa-solid fa-lightbulb text-cyan-400 mt-0.5"></i>
+              <p class="text-xs text-cyan-200 leading-relaxed"><strong class="text-white">Tahukah Kamu?</strong> Aturan emas dalam trading adalah *1% Rule*. Jangan pernah merisikokan lebih dari 1-2% total modalmu pada satu transaksi tunggal agar tidak cepat bangkrut saat salah analisa.</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-allocation" class="calc-panel grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-5 glass rounded-2xl p-6 h-fit">
+            <h3 class="font-display text-lg text-teal-400 mb-4 border-b border-slate-700 pb-2">Komposisi Portofolio</h3>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1">Usia Anda Saat Ini</label>
+                <input type="number" id="aa-age" class="form-input w-full rounded-xl px-4 py-2.5 text-sm" value="21" oninput="calcAllocation()">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-400 mb-2">Profil Risiko Anda</label>
+                <div class="grid grid-cols-1 gap-2">
+                  <label class="cursor-pointer flex items-center p-3 rounded-xl border border-slate-700 bg-slate-800/50 hover:bg-slate-700/50 transition">
+                    <input type="radio" name="aa-risk" value="konservatif" class="w-4 h-4 accent-teal-500" onchange="calcAllocation()">
+                    <span class="ml-3 text-sm text-slate-300">Konservatif (Aman & Stabil)</span>
+                  </label>
+                  <label class="cursor-pointer flex items-center p-3 rounded-xl border border-slate-700 bg-slate-800/50 hover:bg-slate-700/50 transition">
+                    <input type="radio" name="aa-risk" value="moderat" class="w-4 h-4 accent-teal-500" checked onchange="calcAllocation()">
+                    <span class="ml-3 text-sm text-slate-300">Moderat (Seimbang)</span>
+                  </label>
+                  <label class="cursor-pointer flex items-center p-3 rounded-xl border border-slate-700 bg-slate-800/50 hover:bg-slate-700/50 transition">
+                    <input type="radio" name="aa-risk" value="agresif" class="w-4 h-4 accent-teal-500" onchange="calcAllocation()">
+                    <span class="ml-3 text-sm text-slate-300">Agresif (High Risk High Return)</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="lg:col-span-7 flex flex-col gap-4">
+            <div class="glass rounded-2xl p-6 bg-gradient-to-br from-slate-900/90 to-slate-800/90 shadow-xl flex-1 flex flex-col md:flex-row items-center gap-8 justify-center">
+              
+              <div class="relative w-[180px] h-[180px] flex-shrink-0 flex items-center justify-center">
+                <div id="aa-chart" class="pie-chart absolute inset-0" style="--c-saham:#6366f1; --p-saham:60%; --c-obligasi:#10b981; --p-obligasi:20%; --c-kas:#06b6d4; --p-kas:10%; --c-crypto:#f59e0b; --p-crypto:10%;"></div>
+                <div class="relative z-10 text-center rounded-full bg-[#07090f] w-[100px] h-[100px] flex flex-col items-center justify-center shadow-inner border border-white/5">
+                  <i class="fa-solid fa-chart-pie text-slate-500 text-2xl"></i>
+                </div>
+              </div>
+
+              <div class="w-full space-y-3">
+                <div class="flex justify-between items-center text-sm">
+                  <span class="flex items-center gap-2 text-slate-300"><span class="w-3 h-3 rounded-full bg-indigo-500"></span> Saham (Beresiko)</span>
+                  <span id="aa-out-saham" class="font-bold text-white">60%</span>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                  <span class="flex items-center gap-2 text-slate-300"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> SBN / Obligasi</span>
+                  <span id="aa-out-obligasi" class="font-bold text-white">20%</span>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                  <span class="flex items-center gap-2 text-slate-300"><span class="w-3 h-3 rounded-full bg-cyan-500"></span> Kas / RDPU</span>
+                  <span id="aa-out-kas" class="font-bold text-white">10%</span>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                  <span class="flex items-center gap-2 text-slate-300"><span class="w-3 h-3 rounded-full bg-amber-500"></span> Crypto / Alternatif</span>
+                  <span id="aa-out-crypto" class="font-bold text-white">10%</span>
+                </div>
+              </div>
+
+            </div>
+            <div class="glass rounded-xl p-4 border-l-4 border-teal-500 bg-teal-500/10 flex gap-3">
+              <i class="fa-solid fa-lightbulb text-teal-400 mt-0.5"></i>
+              <p class="text-xs text-teal-200 leading-relaxed"><strong class="text-white">Tahukah Kamu?</strong> Rumus klasik alokasi aset adalah *"100 minus Usia"*. Jika usiamu 20 tahun, porsi aset beresiko (seperti Saham) bisa mencapai 80%. Semakin tua usiamu, porsi aset aman harus semakin dibesarkan.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <footer class="text-center pb-8 mt-10">
+        <p class="text-xs text-slate-700">EduVesting · Pusat Kalkulator Finansial Terpadu</p>
+      </footer>
+
+    </main>
+  </div>
+
+  <script>
+    // UI TOGGLE
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      sidebar.classList.toggle('-translate-x-full');
+      overlay.classList.toggle('hidden');
+    }
+
+    // TABS LOGIC
+    function switchTab(tabId) {
+      document.querySelectorAll('.calc-panel').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById('tab-' + tabId).classList.add('active');
+      event.currentTarget.classList.add('active');
+      
+      // Trigger calculation logic specifically for active tab to handle layouts if necessary
+      if(tabId === 'stock-fee') calcStockFee();
+      if(tabId === 'dividend') calcDividend();
+      if(tabId === 'compound') calcCompound();
+      if(tabId === 'goal') calcGoal();
+      if(tabId === 'risk-reward') calcRR();
+      if(tabId === 'position') calcPosition();
+      if(tabId === 'allocation') calcAllocation();
+    }
+
+    // SUPABASE AUTH & AVATAR BINDING
+    const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function checkAuth() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) { window.location.href = 'login.html'; return; }
+      
+      const user = session.user;
+      const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
+      const avatarUrl = user.user_metadata?.avatar_url; 
+      
+      document.getElementById('sidebar-user-name').innerText = displayName;
+      
+      const sbAvatar = document.getElementById('sidebar-user-initial');
+      if (avatarUrl) {
+        sbAvatar.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover">`;
+      } else {
+        sbAvatar.innerText = displayName.charAt(0).toUpperCase();
+      }
+    }
+    
+    async function logoutUser() {
+      await supabaseClient.auth.signOut();
+      localStorage.removeItem('userData');
+      window.location.href = 'login.html';
+    }
+
+    // UTILS
+    function fmtRp(num) {
+      if(isNaN(num) || !isFinite(num)) return "Rp 0";
+      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits:0, maximumFractionDigits:0 }).format(num);
+    }
+
+    // ==========================================
+    // CALCULATOR LOGICS
+    // ==========================================
+
+    // 1. Stock Fee
+    function calcStockFee() {
+      const cap = parseFloat(document.getElementById('sf-capital').value) || 0;
+      const price = parseFloat(document.getElementById('sf-price').value) || 0;
+      const bFee = parseFloat(document.getElementById('sf-buy-fee').value) || 0;
+      const sFee = parseFloat(document.getElementById('sf-sell-fee').value) || 0;
+
+      if(price <= 0) return;
+
+      const priceLot = price * 100;
+      const lotCapacity = Math.floor(cap / (priceLot * (1 + bFee/100)));
+      const gross = lotCapacity * priceLot;
+      const buyFeeRp = gross * (bFee/100);
+      const totalOut = gross + buyFeeRp;
+
+      let bep = price * (1 + bFee/100) / (1 - sFee/100);
+      bep = Math.ceil(bep); // Ticker price usually rounds up to not lose money
+      const minProfit = (bep - price) * lotCapacity * 100;
+
+      document.getElementById('sf-out-lot').innerText = `${lotCapacity} Lot`;
+      document.getElementById('sf-out-total').innerText = fmtRp(totalOut);
+      document.getElementById('sf-out-gross').innerText = fmtRp(gross);
+      document.getElementById('sf-out-buyfee').innerText = `- ${fmtRp(buyFeeRp)}`;
+      document.getElementById('sf-out-bep').innerText = fmtRp(bep);
+      document.getElementById('sf-out-minprofit').innerText = fmtRp(minProfit);
+    }
+
+    // 2. Dividend
+    function calcDividend() {
+      const lot = parseFloat(document.getElementById('div-lot').value) || 0;
+      const dps = parseFloat(document.getElementById('div-dps').value) || 0;
+      const price = parseFloat(document.getElementById('div-price').value) || 0;
+      const tax = parseFloat(document.getElementById('div-tax').value) || 0;
+
+      const shares = lot * 100;
+      const gross = shares * dps;
+      const taxRp = gross * (tax/100);
+      const net = gross - taxRp;
+      const yield = price > 0 ? (dps / price) * 100 : 0;
+
+      document.getElementById('div-out-net').innerText = fmtRp(net);
+      document.getElementById('div-out-gross').innerText = fmtRp(gross);
+      document.getElementById('div-out-taxrp').innerText = `- ${fmtRp(taxRp)}`;
+      document.getElementById('div-out-yield').innerText = yield.toFixed(2) + '%';
+    }
+
+    // 3. Compound Growth
+    function calcCompound() {
+      const initial = parseFloat(document.getElementById('cg-initial').value) || 0;
+      const monthly = parseFloat(document.getElementById('cg-monthly').value) || 0;
+      const rate = parseFloat(document.getElementById('cg-rate').value) || 0;
+      const years = parseFloat(document.getElementById('cg-years').value) || 0;
+
+      const r = rate / 100 / 12;
+      const n = years * 12;
+
+      let fv = 0;
+      if (r === 0) {
+        fv = initial + (monthly * n);
+      } else {
+        fv = initial * Math.pow(1 + r, n) + monthly * ((Math.pow(1 + r, n) - 1) / r);
+      }
+
+      const invested = initial + (monthly * n);
+      const profit = fv - invested;
+      const pct = invested > 0 ? (profit / invested) * 100 : 0;
+
+      document.getElementById('cg-out-final').innerText = fmtRp(fv);
+      document.getElementById('cg-out-invested').innerText = fmtRp(invested);
+      document.getElementById('cg-out-profit').innerText = `+ ${fmtRp(profit)}`;
+      document.getElementById('cg-out-pct').innerText = `+${pct.toFixed(2)}%`;
+
+      // Update bars
+      const total = fv > 0 ? fv : 1;
+      const invW = (invested / total) * 100;
+      const proW = (profit / total) * 100;
+      document.getElementById('cg-bar-invested').style.width = `${invW}%`;
+      document.getElementById('cg-bar-profit').style.width = `${proW}%`;
+    }
+
+    // 4. Financial Goal
+    function calcGoal() {
+      const target = parseFloat(document.getElementById('fg-target').value) || 0;
+      const years = parseFloat(document.getElementById('fg-years').value) || 0;
+      const rate = parseFloat(document.getElementById('fg-rate').value) || 0;
+
+      const r = rate / 100 / 12;
+      const n = years * 12;
+
+      let monthly = 0;
+      if (n > 0) {
+        if(r === 0) {
+          monthly = target / n;
+        } else {
+          monthly = target * r / (Math.pow(1 + r, n) - 1);
+        }
+      }
+
+      const invested = monthly * n;
+      const interest = target - invested;
+
+      document.getElementById('fg-out-monthly').innerHTML = `${fmtRp(monthly)} <span class="text-sm text-slate-500 font-normal">/ bulan</span>`;
+      document.getElementById('fg-out-capital').innerText = fmtRp(invested);
+      document.getElementById('fg-out-interest').innerText = `+ ${fmtRp(interest > 0 ? interest : 0)}`;
+    }
+
+    // 5. Risk Reward
+    function calcRR() {
+      const entry = parseFloat(document.getElementById('rr-entry').value) || 0;
+      const sl = parseFloat(document.getElementById('rr-sl').value) || 0;
+      const tp = parseFloat(document.getElementById('rr-tp').value) || 0;
+
+      if(entry <= 0 || sl >= entry || tp <= entry) {
+        document.getElementById('rr-out-ratio').innerText = "0";
+        document.getElementById('rr-indicator').innerText = "Setup Tidak Valid";
+        document.getElementById('rr-indicator').className = "inline-block mt-3 px-4 py-1 rounded-full bg-slate-800 text-slate-300 text-xs font-semibold border border-slate-700";
+        return;
+      }
+
+      const risk = entry - sl;
+      const reward = tp - entry;
+      const ratio = reward / risk;
+
+      const riskPct = (risk / entry) * 100;
+      const rewardPct = (reward / entry) * 100;
+
+      document.getElementById('rr-out-risk').innerText = fmtRp(risk);
+      document.getElementById('rr-out-reward').innerText = fmtRp(reward);
+      document.getElementById('rr-out-risk-pct').innerText = `${riskPct.toFixed(2)}% dari modal`;
+      document.getElementById('rr-out-reward-pct').innerText = `${rewardPct.toFixed(2)}% dari modal`;
+      document.getElementById('rr-out-ratio').innerText = ratio.toFixed(1);
+
+      const ind = document.getElementById('rr-indicator');
+      if (ratio >= 3) {
+        ind.innerText = "Sangat Ideal (Excellent)";
+        ind.className = "inline-block mt-3 px-4 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-semibold border border-emerald-500/30";
+      } else if (ratio >= 2) {
+        ind.innerText = "Bagus (Good)";
+        ind.className = "inline-block mt-3 px-4 py-1 rounded-full bg-blue-500/20 text-blue-400 text-xs font-semibold border border-blue-500/30";
+      } else if (ratio >= 1.5) {
+        ind.innerText = "Cukup (Average)";
+        ind.className = "inline-block mt-3 px-4 py-1 rounded-full bg-amber-500/20 text-amber-400 text-xs font-semibold border border-amber-500/30";
+      } else {
+        ind.innerText = "Buruk (Poor)";
+        ind.className = "inline-block mt-3 px-4 py-1 rounded-full bg-rose-500/20 text-rose-400 text-xs font-semibold border border-rose-500/30";
+      }
+    }
+
+    // 6. Position Size
+    function calcPosition() {
+      const cap = parseFloat(document.getElementById('ps-capital').value) || 0;
+      const rPct = parseFloat(document.getElementById('ps-riskpct').value) || 0;
+      const entry = parseFloat(document.getElementById('ps-entry').value) || 0;
+      const sl = parseFloat(document.getElementById('ps-sl').value) || 0;
+
+      const warn = document.getElementById('ps-warning');
+
+      if(cap <= 0 || rPct <= 0 || entry <= 0 || sl >= entry) {
+        document.getElementById('ps-out-maxrisk').innerText = "Rp 0";
+        document.getElementById('ps-out-ideal').innerText = "Rp 0";
+        document.getElementById('ps-out-lot').innerHTML = `0 Lot <span class="text-xs font-normal text-slate-500">(0 Lbr)</span>`;
+        warn.classList.add('hidden');
+        return;
+      }
+
+      const maxRiskRp = cap * (rPct/100);
+      const riskPerShare = entry - sl;
+      const shares = Math.floor(maxRiskRp / riskPerShare);
+      const lots = Math.floor(shares / 100);
+      const idealPos = lots * 100 * entry;
+
+      document.getElementById('ps-out-maxrisk').innerText = fmtRp(maxRiskRp);
+      
+      if (idealPos > cap) {
+        document.getElementById('ps-out-ideal').innerText = "Maksimum";
+        document.getElementById('ps-out-lot').innerHTML = `Overlimit!`;
+        warn.classList.remove('hidden');
+      } else {
+        document.getElementById('ps-out-ideal').innerText = fmtRp(idealPos);
+        document.getElementById('ps-out-lot').innerHTML = `${lots} Lot <span class="text-xs font-normal text-slate-500">(${lots*100} Lbr)</span>`;
+        warn.classList.add('hidden');
+      }
+    }
+
+    // 7. Asset Allocation
+    function calcAllocation() {
+      const age = parseInt(document.getElementById('aa-age').value) || 20;
+      const risk = document.querySelector('input[name="aa-risk"]:checked').value;
+
+      let pSaham, pObligasi, pKas, pCrypto;
+      
+      // Basic rule: 100 - age = risk asset portion
+      let riskCap = 100 - age;
+      if (riskCap < 20) riskCap = 20;
+      if (riskCap > 80) riskCap = 80;
+
+      if (risk === 'konservatif') {
+        pSaham = Math.floor(riskCap * 0.4);
+        pCrypto = 0;
+        pKas = 30;
+        pObligasi = 100 - pSaham - pKas;
+      } else if (risk === 'moderat') {
+        pSaham = Math.floor(riskCap * 0.8);
+        pCrypto = 5;
+        pKas = 15;
+        pObligasi = 100 - pSaham - pCrypto - pKas;
+      } else {
+        pSaham = Math.floor(riskCap * 0.8);
+        pCrypto = Math.floor(riskCap * 0.2);
+        pKas = 5;
+        pObligasi = 100 - pSaham - pCrypto - pKas;
+      }
+
+      // Safeguard strictly to 100%
+      if(pObligasi < 0) pObligasi = 0;
+      
+      document.getElementById('aa-out-saham').innerText = `${pSaham}%`;
+      document.getElementById('aa-out-obligasi').innerText = `${pObligasi}%`;
+      document.getElementById('aa-out-kas').innerText = `${pKas}%`;
+      document.getElementById('aa-out-crypto').innerText = `${pCrypto}%`;
+
+      // Update Chart CSS Variables
+      const chart = document.getElementById('aa-chart');
+      chart.style.setProperty('--p-saham', `${pSaham}%`);
+      chart.style.setProperty('--p-obligasi', `${pObligasi}%`);
+      chart.style.setProperty('--p-kas', `${pKas}%`);
+      chart.style.setProperty('--p-crypto', `${pCrypto}%`);
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      checkAuth();
+      calcStockFee();
+      calcDividend();
+      calcCompound();
+      calcGoal();
+      calcRR();
+      calcPosition();
+      calcAllocation();
+    });
+
+  </script>
+</body>
+</html>
     .nav-item { border-left: 3px solid transparent; transition: all 0.2s ease; }
     .nav-item:hover { background: linear-gradient(90deg, rgba(99,102,241,0.1) 0%, transparent 100%); border-left-color: rgba(99,102,241,0.5); color: #a5b4fc; }
 
