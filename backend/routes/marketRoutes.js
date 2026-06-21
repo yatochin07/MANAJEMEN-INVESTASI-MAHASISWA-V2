@@ -4,15 +4,15 @@ const router = express.Router();
 
 const {
 
-    calculateFee
+    marketInsights
 
 } = require(
-    '../controllers/calculatorController'
+    '../controllers/marketController'
 );
 
 router.post(
     '/',
-    calculateFee
+    marketInsights
 );
 
 module.exports = router;
