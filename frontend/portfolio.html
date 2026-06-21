@@ -302,6 +302,9 @@
   const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  
+  // MENGKONEKSIKAN SUPABASE CLIENT KE GLOBAL WINDOW
+  window.supabaseClient = supabaseClient;
 
   // ==========================================
   // AUTHENTICATION GUARD & INIT (SUPABASE)
@@ -336,16 +339,18 @@
         cashInput.value = EduVesting.getSettings().cash || '';
       }
 
-      renderAll();
+      // ASYNC AWAIT UNTUK CLOUD DATA
+      await renderAll();
 
       const form = document.getElementById('asset-form');
       if (form) form.addEventListener('submit', onSubmit);
 
-      handleRefreshCrypto(true);
+      await handleRefreshCrypto(true);
     } catch (err) { console.error("Gagal memuat halaman portofolio:", err); }
   });
 
-  function onSubmit(e) {
+  // UBAH JADI ASYNC AWAIT UNTUK INSERT & UPDATE
+  async function onSubmit(e) {
     e.preventDefault(); 
 
     try {
@@ -376,28 +381,40 @@
         throw new Error("Objek 'EduVesting' tidak ada. Pastikan file api.js terhubung benar.");
       }
 
+      // TOMBOL SAVE SEDANG MEMPROSES (UX TAMBAHAN BIAAR NGGA DI KLIK DOUBLE)
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner spin mr-1"></i> Menyimpan...';
+
       if (editId) {
-        const existingAsset = EduVesting.getAssets().find(a => a.id === editId);
+        const existingAssets = await EduVesting.getAssets();
+        const existingAsset = existingAssets.find(a => a.id === editId);
         const lastPrice = existingAsset ? existingAsset.lastPrice : avgPrice;
-        EduVesting.updateAsset(editId, { type, ticker, name, avgPrice, qty, lastPrice });
+        await EduVesting.updateAsset(editId, { type, ticker, name, avgPrice, qty, lastPrice });
         alert(`Aset ${ticker} berhasil diperbarui!`);
       } else {
-        EduVesting.addAsset({ type, ticker, name, avgPrice, qty, lastPrice: avgPrice });
+        await EduVesting.addAsset({ type, ticker, name, avgPrice, qty, lastPrice: avgPrice });
         alert(`Aset ${ticker} berhasil disimpan!`);
       }
 
       resetForm();
-      renderAll();
+      await renderAll();
 
       if (type === 'kripto' && EduVesting.COINGECKO_IDS && EduVesting.COINGECKO_IDS[ticker]) {
-        handleRefreshCrypto(); 
+        await handleRefreshCrypto(); 
       } else if (type === 'saham') {
-        handleRefreshStock(ticker);
+        await handleRefreshStock(ticker);
       }
+      
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk mr-1"></i> <span id="submit-label">Simpan</span>';
 
     } catch (error) {
       console.error("Detail Error:", error);
-      alert(`GAGAL MENYIMPAN!\n\nPenyebab: ${error.message}\n\nSolusi:\n1. Tekan Ctrl + F5 (Hard Refresh)\n2. Jika masih error, bersihkan LocalStorage.`);
+      alert(`GAGAL MENYIMPAN!\n\nPenyebab: ${error.message}\n\nPastikan koneksi internet stabil.`);
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk mr-1"></i> <span id="submit-label">Simpan</span>';
     }
   }
 
@@ -416,9 +433,11 @@
     if (cancelEdit) cancelEdit.classList.add('hidden');
   }
 
-  function editAsset(id) {
+  // UBAH JADI ASYNC KARENA GET ASSETS DARI CLOUD
+  async function editAsset(id) {
     if (typeof EduVesting === 'undefined') return;
-    const asset = EduVesting.getAssets().find(a => a.id === id);
+    const assets = await EduVesting.getAssets();
+    const asset = assets.find(a => a.id === id);
     if (!asset) return;
 
     document.getElementById('edit-id').value = id;
@@ -434,30 +453,35 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function removeAsset(id) {
+  // UBAH JADI ASYNC UNTUK DELETE
+  async function removeAsset(id) {
     if (!confirm('Hapus aset ini dari portofolio?')) return;
-    EduVesting.deleteAsset(id);
-    renderAll();
+    try {
+      await EduVesting.deleteAsset(id);
+      await renderAll();
+    } catch (err) {
+      alert("Gagal menghapus aset. " + err.message);
+    }
   }
 
-  function saveCash() {
+  async function saveCash() {
     const cashInput = document.getElementById('cash-input');
     if (!cashInput || typeof EduVesting === 'undefined') return;
     const cash = parseFloat(cashInput.value) || 0;
     EduVesting.saveSettings({ cash });
     alert('Saldo Kas berhasil diperbarui!');
-    renderAll();
+    await renderAll();
   }
 
   async function handleRefreshStock(ticker) {
     try {
       const price = await EduVesting.fetchStockPriceIDR(ticker);
       if (price) {
-        const assets = EduVesting.getAssets();
+        const assets = await EduVesting.getAssets();
         const assetToUpdate = assets.find(a => a.ticker === ticker && a.type === 'saham');
         if (assetToUpdate) {
-          EduVesting.updateAsset(assetToUpdate.id, { lastPrice: price });
-          renderAll(); 
+          await EduVesting.updateAsset(assetToUpdate.id, { lastPrice: price });
+          await renderAll(); 
         }
       }
     } catch (e) { console.error("Gagal refresh harga saham individu", e); }
@@ -482,14 +506,15 @@
     } finally {
       if (btn) btn.disabled = false;
       if (icon) icon.classList.remove('spin');
-      renderAll();
+      await renderAll();
     }
   }
 
-  function renderAll() {
+  // UBAH JADI ASYNC UNTUK RENDER
+  async function renderAll() {
     try {
       if (typeof EduVesting === 'undefined') return;
-      const metrics = EduVesting.computeMetrics();
+      const metrics = await EduVesting.computeMetrics();
 
       const sumValueEl = document.getElementById('sum-value');
       const sumCostEl = document.getElementById('sum-cost');
