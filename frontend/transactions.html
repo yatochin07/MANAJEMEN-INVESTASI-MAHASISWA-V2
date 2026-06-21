@@ -93,7 +93,8 @@
     </div>
 
     <div class="mx-4 mb-5 p-3 rounded-xl glass-lighter flex items-center gap-3">
-      <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white"
+      <!-- Diperbarui dengan overflow-hidden agar gambar masknya membulat -->
+      <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white overflow-hidden"
            style="background:linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
       <div class="min-w-0">
         <p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">Memuat...</p>
@@ -117,7 +118,7 @@
 
       <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Analisa</p>
       <a href="insights.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-        <i class="fa-solid fa-robot w-4 text-center"></i> AI Insights
+        <i class="fa-solid fa-globe w-4 text-center"></i> Market Insights
       </a>
       <a href="allocations.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
         <i class="fa-solid fa-chart-pie w-4 text-center"></i> Alokasi Aset
@@ -282,9 +283,17 @@
       }
       const user = session.user;
       const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
+      const avatarUrl = user.user_metadata?.avatar_url; // CEK FOTO PROFIL
       
       document.getElementById('sidebar-user-name').innerText = displayName;
-      document.getElementById('sidebar-user-initial').innerText = displayName.charAt(0).toUpperCase();
+      
+      // LOGIKA RENDER AVATAR SUNGGUHAN DI SIDEBAR
+      const sbAvatar = document.getElementById('sidebar-user-initial');
+      if (avatarUrl) {
+        sbAvatar.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover">`;
+      } else {
+        sbAvatar.innerText = displayName.charAt(0).toUpperCase();
+      }
 
     } catch (err) { console.error("Gagal auth:", err); }
 
@@ -449,7 +458,7 @@
       const groupEl = document.createElement('div');
       groupEl.className = 'daily-group';
 
-      // 1. Group Header (Matching User's Reference)
+      // 1. Group Header
       groupEl.innerHTML = `
         <div class="daily-header px-5 py-2.5 flex items-center justify-between sticky top-0 z-10 backdrop-blur-md">
           <div class="flex items-center gap-2">
