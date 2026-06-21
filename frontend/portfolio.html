@@ -143,17 +143,24 @@
 
   <main class="flex-1 w-full md:ml-64 px-4 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden">
 
-    <header class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 fade-up">
+    <div class="md:hidden flex items-center justify-between mb-6 fade-up">
       <div class="flex items-center gap-3">
-        <button onclick="toggleSidebar()" class="md:hidden glass w-10 h-10 rounded-xl flex items-center justify-center text-slate-300 hover:text-white transition-colors flex-shrink-0">
-          <i class="fa-solid fa-bars"></i>
-        </button>
-        <div>
-          <h1 class="font-display text-xl sm:text-2xl text-slate-100">Portofolio Saya</h1>
-          <p class="text-slate-500 text-xs sm:text-sm mt-0.5">Kelola kuantitas dan harga beli rata-rata (avg) aset Anda di sini.</p>
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#6366f1,#3b82f6);">
+          <i class="fa-solid fa-chart-line text-white text-sm"></i>
         </div>
+        <span class="font-display text-lg logo-text font-bold tracking-wide">EduVesting</span>
       </div>
-      <button onclick="handleRefreshCrypto()" id="refresh-btn" class="glass px-4 py-2 rounded-xl text-sm text-slate-300 flex items-center justify-center gap-2 hover:border-indigo-500/40 transition-all sm:w-auto w-full">
+      <button onclick="toggleSidebar()" type="button" class="text-slate-300 hover:text-white transition-colors focus:outline-none z-20">
+        <i class="fa-solid fa-bars text-xl"></i>
+      </button>
+    </div>
+
+    <header class="mb-8 fade-up delay-1 flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+      <div>
+        <h1 class="font-display text-2xl sm:text-3xl text-slate-100 font-semibold mb-1">Portofolio Saya</h1>
+        <p class="text-slate-500 text-sm">Kelola kuantitas dan harga beli rata-rata (avg) aset Anda di sini.</p>
+      </div>
+      <button onclick="handleRefreshCrypto()" id="refresh-btn" class="glass px-5 py-2.5 rounded-xl text-sm text-slate-200 flex items-center justify-center gap-2 hover:border-indigo-500/40 transition-all font-medium sm:w-auto w-full">
         <i class="fa-solid fa-rotate" id="refresh-icon"></i> Sinkronisasi Harga
       </button>
     </header>
