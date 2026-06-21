@@ -181,8 +181,7 @@ const EduVesting = (() => {
   // ---------- realtime stock price (Backend Vercel) ----------
   async function fetchStockPriceIDR(ticker) {
     try {
-      // PERUBAHAN PENTING: URL ini sekarang menggunakan Relative Path
-      // Vercel otomatis akan mengarahkannya ke backend/server.js berkat vercel.json
+      // Menggunakan relative path untuk Vercel Serverless Function
       const url = `/api/price/saham/${ticker}`;
       const res = await fetch(url);
       
