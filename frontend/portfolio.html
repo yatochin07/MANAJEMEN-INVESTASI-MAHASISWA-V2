@@ -243,7 +243,7 @@
                  class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200" />
           <p class="text-xs text-slate-600 mt-1.5">Dana tunai yang belum diinvestasikan. Ikut dihitung sebagai bagian dari Total Ekuitas di Dashboard.</p>
         </div>
-        <button onclick="saveCash()" class="btn-primary w-full md:w-auto py-2.5 px-6 rounded-xl text-sm font-semibold text-white whitespace-nowrap">
+        <button onclick="saveCash(event)" class="btn-primary w-full md:w-auto py-2.5 px-6 rounded-xl text-sm font-semibold text-white whitespace-nowrap">
           Simpan Kas
         </button>
       </div>
@@ -302,7 +302,7 @@
   const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  
+
   // MENGKONEKSIKAN SUPABASE CLIENT KE GLOBAL WINDOW
   window.supabaseClient = supabaseClient;
 
@@ -334,9 +334,11 @@
         }
       }
 
+      // TAMBAHKAN AWAIT SAAT MENGAMBIL SETTINGS PERTAMA KALI
+      const settings = await EduVesting.getSettings();
       const cashInput = document.getElementById('cash-input');
       if (cashInput && typeof EduVesting !== 'undefined') {
-        cashInput.value = EduVesting.getSettings().cash || '';
+        cashInput.value = settings.cash || '';
       }
 
       // ASYNC AWAIT UNTUK CLOUD DATA
@@ -405,7 +407,7 @@
       } else if (type === 'saham') {
         await handleRefreshStock(ticker);
       }
-      
+
       submitBtn.disabled = false;
       submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk mr-1"></i> <span id="submit-label">Simpan</span>';
 
@@ -464,13 +466,32 @@
     }
   }
 
-  async function saveCash() {
+  // UBAH JADI ASYNC UNTUK MENYIMPAN KE CLOUD DAN HANDLE LOADING BUTTON
+  async function saveCash(event) {
     const cashInput = document.getElementById('cash-input');
     if (!cashInput || typeof EduVesting === 'undefined') return;
     const cash = parseFloat(cashInput.value) || 0;
-    EduVesting.saveSettings({ cash });
-    alert('Saldo Kas berhasil diperbarui!');
-    await renderAll();
+
+    const btn = event ? event.target : document.querySelector('button[onclick="saveCash(event)"]');
+    let originalText = 'Simpan Kas';
+    if(btn) {
+      originalText = btn.innerText;
+      btn.disabled = true;
+      btn.innerText = 'Menyimpan...';
+    }
+
+    try {
+      await EduVesting.saveSettings({ cash });
+      alert('Saldo Kas berhasil diperbarui!');
+      await renderAll();
+    } catch (err) {
+      alert('Gagal menyimpan kas: ' + err.message);
+    } finally {
+      if(btn) {
+        btn.disabled = false;
+        btn.innerText = originalText;
+      }
+    }
   }
 
   async function handleRefreshStock(ticker) {
