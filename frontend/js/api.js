@@ -3,9 +3,32 @@
  * ---------------------------------------------------------------
  */
 const EduVesting = (() => {
-  const ASSETS_KEY   = 'eduvesting_assets_v1';
-  const GOALS_KEY    = 'eduvesting_goals_v1';
-  const SETTINGS_KEY = 'eduvesting_settings_v1';
+  
+  // ==============================================================
+  // PERUBAHAN: MEMBUAT DATA LOCALSTORAGE SPESIFIK UNTUK TIAP USER
+  // ==============================================================
+  function getCurrentUser() {
+    try {
+      // Membaca otomatis token sesi Supabase kamu yang tersimpan di browser
+      // (eirhdjllijilxjhigiwr adalah ID Project Supabase kamu)
+      const sbSession = localStorage.getItem('sb-eirhdjllijilxjhigiwr-auth-token');
+      if (sbSession) {
+        const parsed = JSON.parse(sbSession);
+        if (parsed && parsed.user && parsed.user.email) {
+          // Mengembalikan email user (misal: egatetama07@gmail.com)
+          return parsed.user.email.replace(/[^a-zA-Z0-9]/g, '_'); 
+        }
+      }
+    } catch (e) {}
+    return 'guest'; // Default jika belum login
+  }
+
+  // Kunci (Key) LocalStorage sekarang menjadi dinamis mengikuti email user
+  function ASSETS_KEY()   { return `eduvesting_assets_${getCurrentUser()}`; }
+  function GOALS_KEY()    { return `eduvesting_goals_${getCurrentUser()}`; }
+  function SETTINGS_KEY() { return `eduvesting_settings_${getCurrentUser()}`; }
+  // ==============================================================
+
 
   const ASSET_TYPES = {
     saham: {
@@ -64,8 +87,8 @@ const EduVesting = (() => {
   }
 
   // ---------- assets ----------
-  function getAssets() { return _read(ASSETS_KEY, []); }
-  function saveAssets(assets) { _write(ASSETS_KEY, assets); }
+  function getAssets() { return _read(ASSETS_KEY(), []); }
+  function saveAssets(assets) { _write(ASSETS_KEY(), assets); }
 
   function addAsset(asset) {
     const assets = getAssets();
@@ -109,8 +132,8 @@ const EduVesting = (() => {
   }
 
   // ---------- goals ----------
-  function getGoals() { return _read(GOALS_KEY, []); }
-  function saveGoals(goals) { _write(GOALS_KEY, goals); }
+  function getGoals() { return _read(GOALS_KEY(), []); }
+  function saveGoals(goals) { _write(GOALS_KEY(), goals); }
 
   function addGoal(goal) {
     const goals = getGoals();
@@ -141,8 +164,8 @@ const EduVesting = (() => {
   }
 
   // ---------- settings ----------
-  function getSettings() { return _read(SETTINGS_KEY, { cash: 0 }); }
-  function saveSettings(settings) { _write(SETTINGS_KEY, settings); }
+  function getSettings() { return _read(SETTINGS_KEY(), { cash: 0 }); }
+  function saveSettings(settings) { _write(SETTINGS_KEY(), settings); }
 
   // ---------- realtime crypto price (CoinGecko) ----------
   async function fetchCryptoPricesIDR(tickers) {
@@ -181,7 +204,7 @@ const EduVesting = (() => {
   // ---------- realtime stock price (Backend Vercel) ----------
   async function fetchStockPriceIDR(ticker) {
     try {
-      // Menggunakan relative path untuk Vercel Serverless Function
+      // Menggunakan relative path agar Vercel membaca API di serverless function-nya
       const url = `/api/price/saham/${ticker}`;
       const res = await fetch(url);
       
