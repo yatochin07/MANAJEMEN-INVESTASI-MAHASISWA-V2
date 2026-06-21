@@ -37,7 +37,10 @@
   .glass { background: rgba(19,25,40,0.85); backdrop-filter: blur(12px); border:1px solid rgba(255,255,255,0.06); }
   .glass-lighter { background: rgba(30,40,64,0.6); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.07); }
   .mesh-bg { position:fixed; inset:0; pointer-events:none; z-index:0;
-    background: radial-gradient(ellipse 60% 40% at 15% 10%, rgba(99,102,241,0.08) 0%, transparent 70%), radial-gradient(ellipse 50% 50% at 85% 80%, rgba(59,130,246,0.07) 0%, transparent 60%), radial-gradient(ellipse 40% 30% at 60% 30%, rgba(124,58,237,0.05) 0%, transparent 60%);
+    background:
+      radial-gradient(ellipse 60% 40% at 15% 10%, rgba(99,102,241,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 50% at 85% 80%, rgba(59,130,246,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 60% 30%, rgba(124,58,237,0.05) 0%, transparent 60%);
   }
   ::-webkit-scrollbar { width:5px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -49,45 +52,199 @@
   .metric-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px -8px rgba(99,102,241,0.3); }
   .btn-primary { background: linear-gradient(135deg,#6366f1,#3b82f6); transition: opacity .2s ease, transform .15s ease, box-shadow .2s ease; }
   .btn-primary:hover { opacity:.88; transform: translateY(-1px); box-shadow: 0 6px 20px -4px rgba(99,102,241,0.5); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { opacity:.5; cursor:not-allowed; transform:none; box-shadow:none; }
   .form-input { background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); transition: border-color .2s ease, box-shadow .2s ease; }
   .form-input:focus { outline:none; border-color: rgba(99,102,241,0.6); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
   .logo-text { background: linear-gradient(90deg,#a5b4fc,#93c5fd); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
   @keyframes fadeUp { from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
   .fade-up { animation: fadeUp .5s ease both; }
+  .delay-1{animation-delay:.07s;} .delay-2{animation-delay:.14s;} .delay-3{animation-delay:.21s;} .delay-4{animation-delay:.28s;}
   @media (max-width:767px){ aside{display:none;} .main-pad{padding-left:1rem;padding-right:1rem;} }
   .spin { animation: spin 1s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Fix untuk native select option biar gelap */
+  select#f-type {
+    background-color: rgba(255, 255, 255, 0.04);
+  }
+  select#f-type option {
+    background-color: #0f1423; /* Warna base-900 dari palet */
+    color: #e2e8f0;
+    padding: 12px;
+  }
 </style>
 </head>
 
 <body class="relative">
 <div class="mesh-bg" aria-hidden="true"></div>
+
 <div class="relative z-10 flex min-h-screen">
-  <aside class="fixed top-0 left-0 h-screen w-64 flex flex-col" style="background: rgba(10,14,24,0.95); border-right:1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
+
+  <aside class="fixed top-0 left-0 h-screen w-64 flex flex-col"
+         style="background: rgba(10,14,24,0.95); border-right:1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
     <div class="px-6 py-6 flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#6366f1,#3b82f6);"><i class="fa-solid fa-chart-line text-white text-sm"></i></div>
-        <span class="font-display text-lg logo-text">EduVesting</span>
+      <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#6366f1,#3b82f6);">
+        <i class="fa-solid fa-chart-line text-white text-sm"></i>
+      </div>
+      <span class="font-display text-lg logo-text">EduVesting</span>
     </div>
+
     <div class="mx-4 mb-5 p-3 rounded-xl glass-lighter flex items-center gap-3">
-        <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white" style="background:linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
-        <div class="min-w-0"><p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">Memuat...</p></div>
+      <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white"
+           style="background:linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
+      <div class="min-w-0">
+        <p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">Memuat...</p>
+      </div>
     </div>
+
     <nav class="flex-1 px-2 space-y-0.5 overflow-y-auto">
-        <a href="dashboard.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-gauge-high w-4 text-center"></i> Dashboard</a>
-        <a href="portfolio.html" class="nav-item nav-active flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-indigo-300 text-sm font-medium"><i class="fa-solid fa-briefcase w-4 text-center text-indigo-400"></i> Portofolio</a>
-        <button onclick="logoutUser()" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm"><i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout</button>
+      <p class="px-4 py-1.5 text-xs font-semibold text-slate-600 uppercase tracking-widest">Utama</p>
+      <a href="dashboard.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <i class="fa-solid fa-gauge-high w-4 text-center"></i> Dashboard
+      </a>
+      <a href="portfolio.html" class="nav-item nav-active flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-indigo-300 text-sm font-medium">
+        <i class="fa-solid fa-briefcase w-4 text-center text-indigo-400"></i> Portofolio
+      </a>
+      <a href="transactions.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <i class="fa-solid fa-arrow-right-arrow-left w-4 text-center"></i> Transaksi
+      </a>
+      <a href="goals.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <i class="fa-solid fa-bullseye w-4 text-center"></i> Target Dana
+      </a>
+      <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Analisa</p>
+      <a href="insights.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <i class="fa-solid fa-robot w-4 text-center"></i> AI Insights
+      </a>
+      <a href="allocations.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <i class="fa-solid fa-chart-pie w-4 text-center"></i> Alokasi Aset
+      </a>
+      <a href="calculator.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <i class="fa-solid fa-calculator w-4 text-center"></i> Kalkulator Fee
+      </a>
+      <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Akun</p>
+      <a href="settings.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <i class="fa-solid fa-gear w-4 text-center"></i> Pengaturan
+      </a>
+      <button onclick="logoutUser()" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm">
+        <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout
+      </button>
     </nav>
+
+    <div class="px-4 pb-5 pt-3">
+      <div class="rounded-xl p-3 text-xs" style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.15);">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-emerald-400 font-semibold">Harga Terintegrasi</span>
+        </div>
+        <p class="text-slate-500 mt-1">Data ditarik otomatis dari sistem/API backend secara berkala.</p>
+      </div>
+    </div>
   </aside>
 
   <main class="ml-64 flex-1 px-8 py-8 main-pad" style="max-width: calc(100% - 16rem);">
+
+    <header class="flex items-center justify-between mb-8 fade-up">
+      <div>
+        <h1 class="font-display text-2xl text-slate-100">Portofolio Saya</h1>
+        <p class="text-slate-500 text-sm mt-0.5">Kelola kuantitas dan harga beli rata-rata (avg) aset Anda di sini.</p>
+      </div>
+      <button onclick="handleRefreshCrypto()" id="refresh-btn" class="glass px-4 py-2 rounded-xl text-sm text-slate-300 flex items-center gap-2 hover:border-indigo-500/40 transition-all">
+        <i class="fa-solid fa-rotate" id="refresh-icon"></i> Sinkronisasi Harga
+      </button>
+    </header>
+
+    <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div class="glass rounded-2xl p-5 metric-card fade-up delay-1">
+        <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Total Nilai Aset</p>
+        <p id="sum-value" class="font-display text-2xl text-slate-100">Rp 0</p>
+      </div>
+      <div class="glass rounded-2xl p-5 metric-card fade-up delay-2">
+        <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Total Modal</p>
+        <p id="sum-cost" class="font-display text-2xl text-slate-100">Rp 0</p>
+      </div>
+      <div class="glass rounded-2xl p-5 metric-card fade-up delay-3">
+        <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Floating P/L</p>
+        <p id="sum-pl" class="font-display text-2xl text-slate-100">Rp 0</p>
+      </div>
+    </section>
+
+    <section class="mb-8 fade-up delay-2">
+      <div class="glass rounded-2xl p-6">
+        <h2 class="font-display text-base text-slate-300 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-plus text-indigo-400 text-sm"></i> <span id="form-title">Tambah Aset Baru</span>
+        </h2>
+        
+        <form id="asset-form" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+          <input type="hidden" id="edit-id" value="" />
+
+          <div class="md:col-span-1">
+            <label class="text-xs text-slate-500 mb-1 block">Tipe Aset</label>
+            <select id="f-type" class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200 bg-[#0f1423] focus:ring-2 focus:ring-indigo-500/50">
+              <option value="saham">Saham</option>
+              <option value="kripto">Kripto</option>
+              <option value="emas">Emas</option>
+              <option value="reksadana">Reksa Dana/Kas</option>
+            </select>
+          </div>
+
+          <div class="md:col-span-1">
+            <label class="text-xs text-slate-500 mb-1 block">Ticker / Kode</label>
+            <input id="f-ticker" type="text" placeholder="BBCA / BTC" required
+                   class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200 uppercase" />
+          </div>
+
+          <div class="md:col-span-1">
+            <label class="text-xs text-slate-500 mb-1 block">Nama Aset</label>
+            <input id="f-name" type="text" placeholder="Bank Central Asia"
+                   class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200" />
+          </div>
+
+          <div class="md:col-span-1">
+            <label class="text-xs text-slate-500 mb-1 block">Harga Beli Avg (Rp)</label>
+            <input id="f-avg" type="number" min="0" step="any" placeholder="10000" required
+                   class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200" />
+          </div>
+
+          <div class="md:col-span-1">
+            <label class="text-xs text-slate-500 mb-1 block">Jumlah / Qty</label>
+            <input id="f-qty" type="number" min="0" step="any" placeholder="5" required
+                   class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200" />
+          </div>
+
+          <div class="md:col-span-5 flex justify-end gap-3 mt-2 border-t border-white/5 pt-4">
+            <button type="button" id="cancel-edit" onclick="resetForm()" class="hidden text-sm text-slate-400 hover:text-slate-200 py-2.5 px-4">
+              Batal Edit
+            </button>
+            <button type="submit" class="btn-primary w-full md:w-auto px-8 py-2.5 rounded-xl text-sm font-semibold text-white">
+              <i class="fa-solid fa-floppy-disk mr-1"></i> <span id="submit-label">Simpan</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section class="mb-8 fade-up delay-3">
+      <div class="glass rounded-2xl p-6 flex flex-col md:flex-row md:items-end gap-4">
+        <div class="flex-1">
+          <label class="text-xs text-slate-500 mb-1 block">Kas / Buying Power saat ini (Rp)</label>
+          <input id="cash-input" type="number" min="0" step="any" placeholder="0"
+                 class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200" />
+          <p class="text-xs text-slate-600 mt-1.5">Dana tunai yang belum diinvestasikan. Ikut dihitung sebagai bagian dari Total Ekuitas di Dashboard.</p>
+        </div>
+        <button onclick="saveCash()" class="btn-primary py-2.5 px-6 rounded-xl text-sm font-semibold text-white whitespace-nowrap">
+          Simpan Kas
+        </button>
+      </div>
+    </section>
+
     <section class="mb-10 fade-up delay-4">
       <h2 class="font-display text-base text-slate-300 mb-4 flex items-center gap-2">
         <i class="fa-solid fa-table-list text-blue-400 text-sm"></i> Daftar Aset
       </h2>
       <div class="glass rounded-2xl overflow-hidden">
         <div class="overflow-x-auto">
-          <table class="w-full text-sm" style="min-width:900px;">
-            <thead>
+          <table class="w-full text-sm" style="min-width:900px;"> <thead>
               <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
                 <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Aset</th>
                 <th class="px-4 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Tipe</th>
@@ -98,50 +255,306 @@
                 <th class="px-5 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Aksi</th>
               </tr>
             </thead>
-            <tbody id="asset-tbody"></tbody>
+            <tbody id="asset-tbody">
+              </tbody>
           </table>
+        </div>
+        <div id="empty-state" class="px-5 py-10 text-center hidden">
+          <i class="fa-solid fa-inbox text-3xl text-slate-700 mb-3"></i>
+          <p class="text-slate-500 text-sm">Belum ada aset. Tambahkan aset pertama Anda menggunakan form di atas.</p>
         </div>
       </div>
     </section>
+
+    <footer class="text-center pb-8">
+      <p class="text-xs text-slate-700">EduVesting · Simulasi Portofolio untuk Mahasiswa · Bukan layanan keuangan berlisensi</p>
+    </footer>
+
   </main>
 </div>
 
 <script src="js/api.js"></script>
-<script>
-  const supabaseClient = window.supabase.createClient('https://eirhdjllijilxjhigiwr.supabase.co', 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD');
 
-  async function renderAll() {
-    const metrics = EduVesting.computeMetrics();
-    const tbody = document.getElementById('asset-tbody');
-    tbody.innerHTML = '';
+<script>
+  // ==========================================
+  // INISIALISASI SUPABASE CLIENT 
+  // ==========================================
+  const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // ==========================================
+  // AUTHENTICATION GUARD & INIT (SUPABASE)
+  // ==========================================
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      // 1. Cek sesi aktif Supabase
+      const { data: { session }, error } = await supabaseClient.auth.getSession();
+      
+      if (error || !session) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // 2. Ambil data user dari sesi Supabase
+      const user = session.user;
+      const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
+      
+      const sbName = document.getElementById('sidebar-user-name');
+      const sbInitial = document.getElementById('sidebar-user-initial');
+      if (sbName) sbName.innerText = displayName;
+      if (sbInitial) sbInitial.innerText = displayName.charAt(0).toUpperCase();
+      
+      const cashInput = document.getElementById('cash-input');
+      if (cashInput && typeof EduVesting !== 'undefined') {
+        cashInput.value = EduVesting.getSettings().cash || '';
+      }
+      
+      renderAll();
+      
+      const form = document.getElementById('asset-form');
+      if (form) form.addEventListener('submit', onSubmit);
+
+      // Menarik data harga otomatis saat buka halaman
+      handleRefreshCrypto(true);
+    } catch (err) {
+      console.error("Gagal memuat halaman portofolio:", err);
+    }
+  });
+
+  // ==========================================
+  // LOGOUT (SUPABASE)
+  // ==========================================
+  async function logoutUser() {
+    await supabaseClient.auth.signOut();
+    localStorage.removeItem('userData'); // Menghapus data lokal sisaan (kalau ada)
+    window.location.href = 'login.html';
+  }
+
+  function onSubmit(e) {
+    e.preventDefault(); 
     
-    metrics.assets.forEach(a => {
-        const def = EduVesting.ASSET_TYPES[a.type];
-        const totalPrice = a.avgPrice * a.qty; // Logika Total Harga
+    try {
+      const fType = document.getElementById('f-type');
+      const fTicker = document.getElementById('f-ticker');
+      const fName = document.getElementById('f-name');
+      const fAvg = document.getElementById('f-avg');
+      const fQty = document.getElementById('f-qty');
+      const editIdInput = document.getElementById('edit-id');
+
+      if (!fType || !fTicker || !fName || !fAvg || !fQty || !editIdInput) {
+        throw new Error("Elemen form tidak ditemukan di HTML.");
+      }
+
+      const type = fType.value;
+      const ticker = fTicker.value.trim().toUpperCase();
+      const name = fName.value.trim() || ticker;
+      const avgPrice = parseFloat(fAvg.value) || 0;
+      const qty = parseFloat(fQty.value) || 0;
+      const editId = editIdInput.value;
+
+      if (!ticker || avgPrice <= 0 || qty <= 0) {
+        alert('Mohon isi Ticker, Harga Beli Avg, dan Qty dengan nilai angka yang valid.');
+        return;
+      }
+
+      if (typeof EduVesting === 'undefined') {
+        throw new Error("Objek 'EduVesting' tidak ada. Pastikan file api.js terhubung benar.");
+      }
+      
+      // Simpan data
+      if (editId) {
+        const existingAsset = EduVesting.getAssets().find(a => a.id === editId);
+        const lastPrice = existingAsset ? existingAsset.lastPrice : avgPrice;
+        EduVesting.updateAsset(editId, { type, ticker, name, avgPrice, qty, lastPrice });
+        alert(`Aset ${ticker} berhasil diperbarui!`);
+      } else {
+        EduVesting.addAsset({ type, ticker, name, avgPrice, qty, lastPrice: avgPrice });
+        alert(`Aset ${ticker} berhasil disimpan!`);
+      }
+
+      resetForm();
+      renderAll();
+
+      // Trigger sinkronisasi otomatis sesuai tipe aset
+      if (type === 'kripto' && EduVesting.COINGECKO_IDS && EduVesting.COINGECKO_IDS[ticker]) {
+        handleRefreshCrypto(); 
+      } else if (type === 'saham') {
+        handleRefreshStock(ticker);
+      }
+      
+    } catch (error) {
+      console.error("Detail Error:", error);
+      alert(`GAGAL MENYIMPAN!\n\nPenyebab: ${error.message}\n\nSolusi:\n1. Tekan Ctrl + F5 (Hard Refresh)\n2. Jika masih error, bersihkan LocalStorage.`);
+    }
+  }
+
+  function resetForm() {
+    const form = document.getElementById('asset-form');
+    if (form) form.reset();
+    
+    const editId = document.getElementById('edit-id');
+    const formTitle = document.getElementById('form-title');
+    const submitLabel = document.getElementById('submit-label');
+    const cancelEdit = document.getElementById('cancel-edit');
+    
+    if (editId) editId.value = '';
+    if (formTitle) formTitle.innerText = 'Tambah Aset Baru';
+    if (submitLabel) submitLabel.innerText = 'Simpan';
+    if (cancelEdit) cancelEdit.classList.add('hidden');
+  }
+
+  function editAsset(id) {
+    if (typeof EduVesting === 'undefined') return;
+    const asset = EduVesting.getAssets().find(a => a.id === id);
+    if (!asset) return;
+    
+    document.getElementById('edit-id').value = id;
+    document.getElementById('f-type').value = asset.type;
+    document.getElementById('f-ticker').value = asset.ticker;
+    document.getElementById('f-name').value = asset.name;
+    document.getElementById('f-avg').value = asset.avgPrice;
+    document.getElementById('f-qty').value = asset.qty;
+    
+    document.getElementById('form-title').innerText = 'Edit Aset: ' + asset.ticker;
+    document.getElementById('submit-label').innerText = 'Update';
+    document.getElementById('cancel-edit').classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function removeAsset(id) {
+    if (!confirm('Hapus aset ini dari portofolio?')) return;
+    EduVesting.deleteAsset(id);
+    renderAll();
+  }
+
+  function saveCash() {
+    const cashInput = document.getElementById('cash-input');
+    if (!cashInput || typeof EduVesting === 'undefined') return;
+    const cash = parseFloat(cashInput.value) || 0;
+    EduVesting.saveSettings({ cash });
+    alert('Saldo Kas berhasil diperbarui!');
+    renderAll();
+  }
+
+  async function handleRefreshStock(ticker) {
+    try {
+      const price = await EduVesting.fetchStockPriceIDR(ticker);
+      if (price) {
+        const assets = EduVesting.getAssets();
+        const assetToUpdate = assets.find(a => a.ticker === ticker && a.type === 'saham');
+        if (assetToUpdate) {
+          EduVesting.updateAsset(assetToUpdate.id, { lastPrice: price });
+          renderAll(); 
+        }
+      }
+    } catch (e) {
+      console.error("Gagal refresh harga saham individu", e);
+    }
+  }
+
+  async function handleRefreshCrypto(silent = false) {
+    const btn = document.getElementById('refresh-btn');
+    const icon = document.getElementById('refresh-icon');
+    if (btn) btn.disabled = true;
+    if (icon) icon.classList.add('spin');
+    
+    try {
+      if (typeof EduVesting !== 'undefined') {
+        // Refresh Kripto (menggunakan API CoinGecko dari api.js)
+        const resCrypto = await EduVesting.refreshCryptoPrices();
+        if (resCrypto && resCrypto.error && !silent) {
+            alert('Gagal ambil harga kripto: ' + resCrypto.error);
+        }
+        
+        // Refresh Saham juga agar tombol "Sinkronisasi Harga" memperbarui semua aset
+        await EduVesting.refreshStockPrices();
+      }
+    } catch (e) {
+      console.error("Gagal sinkron:", e);
+    } finally {
+      if (btn) btn.disabled = false;
+      if (icon) icon.classList.remove('spin');
+      renderAll();
+    }
+  }
+
+  function renderAll() {
+    try {
+      if (typeof EduVesting === 'undefined') return;
+      const metrics = EduVesting.computeMetrics();
+      
+      const sumValueEl = document.getElementById('sum-value');
+      const sumCostEl = document.getElementById('sum-cost');
+      const plEl = document.getElementById('sum-pl');
+      
+      if (sumValueEl) sumValueEl.innerText = EduVesting.formatRupiah(metrics.totalValue);
+      if (sumCostEl) sumCostEl.innerText = EduVesting.formatRupiah(metrics.totalCost);
+
+      if (plEl) {
+        const sign = metrics.floatingPL >= 0 ? '+' : '';
+        plEl.innerText = sign + EduVesting.formatRupiah(metrics.floatingPL) + ` (${sign}${metrics.plPercent.toFixed(1)}%)`;
+        plEl.className = 'font-display text-2xl ' + (metrics.floatingPL >= 0 ? 'text-emerald-400' : 'text-rose-400');
+      }
+
+      const tbody = document.getElementById('asset-tbody');
+      const emptyState = document.getElementById('empty-state');
+      if (!tbody || !emptyState) return;
+      
+      tbody.innerHTML = '';
+
+      if (!metrics.assets || !metrics.assets.length) {
+        emptyState.classList.remove('hidden');
+        return;
+      }
+      emptyState.classList.add('hidden');
+
+      metrics.assets.forEach(a => {
+        const def = EduVesting.ASSET_TYPES[a.type] || {
+          label: 'Unknown', unit: 'unit', badgeBg: 'rgba(255,255,255,0.1)', badgeColor: '#fff', badgeBorder: 'rgba(255,255,255,0.2)'
+        };
+        
+        // Perhitungan Total Harga dan P/L
+        const totalPrice = a.avgPrice * a.qty; // TAMBAHAN: Kalkulasi Total Harga (Harga Beli Avg * Qty)
         const pl = (a.lastPrice - a.avgPrice) * a.qty;
         const plPct = a.avgPrice > 0 ? ((a.lastPrice - a.avgPrice) / a.avgPrice) * 100 : 0;
-        
+        const plColor = pl >= 0 ? 'text-emerald-400' : 'text-rose-400';
+        const plSign = pl >= 0 ? '+' : '';
+
         const tr = document.createElement('tr');
         tr.className = 'portfolio-row';
         tr.innerHTML = `
-            <td class="px-5 py-4 font-medium text-slate-200">${a.ticker}</td>
-            <td class="px-4 py-4"><span class="badge" style="background:${def.badgeBg}">${def.label}</span></td>
-            <td class="px-4 py-4 text-right tabular-nums">${EduVesting.formatRupiah(a.avgPrice)}</td>
-            <td class="px-4 py-4 text-right tabular-nums">${EduVesting.formatRupiah(a.lastPrice)}</td>
-            <td class="px-4 py-4 text-right tabular-nums">${EduVesting.formatNumber(a.qty)}</td>
-            <td class="px-4 py-4 text-right tabular-nums text-slate-300 font-semibold">${EduVesting.formatRupiah(totalPrice)}</td> <td class="px-4 py-4 text-right tabular-nums ${pl >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
-                ${pl >= 0 ? '+' : ''}${EduVesting.formatRupiah(pl)} (${plPct.toFixed(1)}%)
-            </td>
-            <td class="px-5 py-4 text-right">
-                <button onclick="editAsset('${a.id}')" class="text-indigo-400 mr-2"><i class="fa-solid fa-pen"></i></button>
-                <button onclick="removeAsset('${a.id}')" class="text-rose-400"><i class="fa-solid fa-trash"></i></button>
-            </td>
+          <td class="px-5 py-4">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0"
+                   style="background:${def.badgeBg}; color:${def.badgeColor};">${(a.ticker || '--').slice(0,2)}</div>
+              <div>
+                <p class="font-medium text-slate-200">${a.ticker}</p>
+                <p class="text-xs text-slate-500">${a.name}</p>
+              </div>
+            </div>
+          </td>
+          <td class="px-4 py-4">
+            <span class="badge" style="background:${def.badgeBg};color:${def.badgeColor};border:1px solid ${def.badgeBorder};">${def.label}</span>
+          </td>
+          <td class="px-4 py-4 text-right text-slate-300 font-medium tabular-nums">${EduVesting.formatRupiah(a.avgPrice)}</td>
+          <td class="px-4 py-4 text-right text-slate-200 font-semibold tabular-nums">${EduVesting.formatRupiah(a.lastPrice)}</td>
+          <td class="px-4 py-4 text-right text-slate-400 tabular-nums">${EduVesting.formatNumber(a.qty)} ${def.unit}</td>
+          <td class="px-4 py-4 text-right text-slate-300 font-medium tabular-nums">${EduVesting.formatRupiah(totalPrice)}</td> <td class="px-4 py-4 text-right">
+            <span class="${plColor} font-semibold tabular-nums">${plSign}${EduVesting.formatRupiah(pl)}</span>
+            <p class="${plColor} text-xs tabular-nums">${plSign}${plPct.toFixed(2)}%</p>
+          </td>
+          <td class="px-5 py-4 text-right whitespace-nowrap">
+            <button onclick="editAsset('${a.id}')" class="text-indigo-400 hover:text-indigo-300 text-xs mr-3"><i class="fa-solid fa-pen"></i></button>
+            <button onclick="removeAsset('${a.id}')" class="text-rose-400 hover:text-rose-300 text-xs"><i class="fa-solid fa-trash"></i></button>
+          </td>
         `;
         tbody.appendChild(tr);
-    });
+      });
+    } catch (err) {
+      console.error("Gagal melakukan render data:", err);
+    }
   }
-  
-  // Fungsi lain (logoutUser, onSubmit, dll) tetap sama
 </script>
 </body>
 </html>
