@@ -11,6 +11,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
   tailwind.config = {
     darkMode: 'class',
@@ -92,7 +94,7 @@
       <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white"
            style="background:linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
       <div class="min-w-0">
-        <p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">User</p>
+        <p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">Memuat...</p>
       </div>
     </div>
 
@@ -275,36 +277,58 @@
 <script src="js/api.js"></script>
 
 <script>
-  // ---- auth guard ----
-  const token = localStorage.getItem('userToken');
-  if (!token) window.location.href = 'login.html';
-  const user = JSON.parse(localStorage.getItem('userData') || 'null');
+  // ==========================================
+  // INISIALISASI SUPABASE CLIENT 
+  // ==========================================
+  const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  document.addEventListener('DOMContentLoaded', () => {
-    if (user) {
+  // ==========================================
+  // AUTHENTICATION GUARD & INIT (SUPABASE)
+  // ==========================================
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      // 1. Cek sesi aktif Supabase
+      const { data: { session }, error } = await supabaseClient.auth.getSession();
+      
+      if (error || !session) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // 2. Ambil data user dari sesi Supabase
+      const user = session.user;
+      const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
+      
       const sbName = document.getElementById('sidebar-user-name');
       const sbInitial = document.getElementById('sidebar-user-initial');
-      if (sbName) sbName.innerText = user.username;
-      if (sbInitial) sbInitial.innerText = user.username.charAt(0).toUpperCase();
-    }
-    
-    const cashInput = document.getElementById('cash-input');
-    if (cashInput && typeof EduVesting !== 'undefined') {
-      cashInput.value = EduVesting.getSettings().cash || '';
-    }
-    
-    renderAll();
-    
-    const form = document.getElementById('asset-form');
-    if (form) form.addEventListener('submit', onSubmit);
+      if (sbName) sbName.innerText = displayName;
+      if (sbInitial) sbInitial.innerText = displayName.charAt(0).toUpperCase();
+      
+      const cashInput = document.getElementById('cash-input');
+      if (cashInput && typeof EduVesting !== 'undefined') {
+        cashInput.value = EduVesting.getSettings().cash || '';
+      }
+      
+      renderAll();
+      
+      const form = document.getElementById('asset-form');
+      if (form) form.addEventListener('submit', onSubmit);
 
-    // Menarik data harga otomatis saat buka halaman
-    handleRefreshCrypto(true);
+      // Menarik data harga otomatis saat buka halaman
+      handleRefreshCrypto(true);
+    } catch (err) {
+      console.error("Gagal memuat halaman portofolio:", err);
+    }
   });
 
-  function logoutUser() {
-    localStorage.removeItem('userToken');
-    localStorage.removeItem('userData');
+  // ==========================================
+  // LOGOUT (SUPABASE)
+  // ==========================================
+  async function logoutUser() {
+    await supabaseClient.auth.signOut();
+    localStorage.removeItem('userData'); // Menghapus data lokal sisaan (kalau ada)
     window.location.href = 'login.html';
   }
 
