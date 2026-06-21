@@ -61,7 +61,7 @@
   .delay-1{animation-delay:.07s;} .delay-2{animation-delay:.14s;} .delay-3{animation-delay:.21s;} .delay-4{animation-delay:.28s;}
   .spin { animation: spin 1s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  
+
   /* Fix untuk native select option biar gelap */
   select#f-type { background-color: rgba(255, 255, 255, 0.04); }
   select#f-type option { background-color: #0f1423; color: #e2e8f0; padding: 12px; }
@@ -77,7 +77,7 @@
 
   <aside id="sidebar" class="fixed top-0 left-0 h-screen w-64 flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out"
          style="background: rgba(10,14,24,0.95); border-right:1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
-    
+
     <button onclick="toggleSidebar()" class="md:hidden absolute top-6 right-4 text-slate-400 hover:text-white">
       <i class="fa-solid fa-xmark text-xl"></i>
     </button>
@@ -125,9 +125,9 @@
       <a href="settings.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
         <i class="fa-solid fa-gear w-4 text-center"></i> Pengaturan
       </a>
-      <button onclick="logoutUser()" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm">
+      <a href="logout.html" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm">
         <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout
-      </button>
+      </a>
     </nav>
 
     <div class="px-4 pb-5 pt-3">
@@ -185,7 +185,7 @@
         <h2 class="font-display text-base text-slate-300 mb-4 flex items-center gap-2">
           <i class="fa-solid fa-plus text-indigo-400 text-sm"></i> <span id="form-title">Tambah Aset Baru</span>
         </h2>
-        
+
         <form id="asset-form" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
           <input type="hidden" id="edit-id" value="" />
 
@@ -309,7 +309,7 @@
   document.addEventListener('DOMContentLoaded', async () => {
     try {
       const { data: { session }, error } = await supabaseClient.auth.getSession();
-      
+
       if (error || !session) {
         window.location.href = 'login.html';
         return;
@@ -318,10 +318,10 @@
       const user = session.user;
       const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
       const avatarUrl = user.user_metadata?.avatar_url; // CEK FOTO PROFIL
-      
+
       const sbName = document.getElementById('sidebar-user-name');
       const sbInitial = document.getElementById('sidebar-user-initial');
-      
+
       if (sbName) sbName.innerText = displayName;
       if (sbInitial) {
         if (avatarUrl) {
@@ -330,14 +330,14 @@
           sbInitial.innerText = displayName.charAt(0).toUpperCase();
         }
       }
-      
+
       const cashInput = document.getElementById('cash-input');
       if (cashInput && typeof EduVesting !== 'undefined') {
         cashInput.value = EduVesting.getSettings().cash || '';
       }
-      
+
       renderAll();
-      
+
       const form = document.getElementById('asset-form');
       if (form) form.addEventListener('submit', onSubmit);
 
@@ -345,15 +345,9 @@
     } catch (err) { console.error("Gagal memuat halaman portofolio:", err); }
   });
 
-  async function logoutUser() {
-    await supabaseClient.auth.signOut();
-    localStorage.removeItem('userData'); 
-    window.location.href = 'login.html';
-  }
-
   function onSubmit(e) {
     e.preventDefault(); 
-    
+
     try {
       const fType = document.getElementById('f-type');
       const fTicker = document.getElementById('f-ticker');
@@ -381,7 +375,7 @@
       if (typeof EduVesting === 'undefined') {
         throw new Error("Objek 'EduVesting' tidak ada. Pastikan file api.js terhubung benar.");
       }
-      
+
       if (editId) {
         const existingAsset = EduVesting.getAssets().find(a => a.id === editId);
         const lastPrice = existingAsset ? existingAsset.lastPrice : avgPrice;
@@ -400,7 +394,7 @@
       } else if (type === 'saham') {
         handleRefreshStock(ticker);
       }
-      
+
     } catch (error) {
       console.error("Detail Error:", error);
       alert(`GAGAL MENYIMPAN!\n\nPenyebab: ${error.message}\n\nSolusi:\n1. Tekan Ctrl + F5 (Hard Refresh)\n2. Jika masih error, bersihkan LocalStorage.`);
@@ -410,12 +404,12 @@
   function resetForm() {
     const form = document.getElementById('asset-form');
     if (form) form.reset();
-    
+
     const editId = document.getElementById('edit-id');
     const formTitle = document.getElementById('form-title');
     const submitLabel = document.getElementById('submit-label');
     const cancelEdit = document.getElementById('cancel-edit');
-    
+
     if (editId) editId.value = '';
     if (formTitle) formTitle.innerText = 'Tambah Aset Baru';
     if (submitLabel) submitLabel.innerText = 'Simpan';
@@ -426,14 +420,14 @@
     if (typeof EduVesting === 'undefined') return;
     const asset = EduVesting.getAssets().find(a => a.id === id);
     if (!asset) return;
-    
+
     document.getElementById('edit-id').value = id;
     document.getElementById('f-type').value = asset.type;
     document.getElementById('f-ticker').value = asset.ticker;
     document.getElementById('f-name').value = asset.name;
     document.getElementById('f-avg').value = asset.avgPrice;
     document.getElementById('f-qty').value = asset.qty;
-    
+
     document.getElementById('form-title').innerText = 'Edit Aset: ' + asset.ticker;
     document.getElementById('submit-label').innerText = 'Update';
     document.getElementById('cancel-edit').classList.remove('hidden');
@@ -474,7 +468,7 @@
     const icon = document.getElementById('refresh-icon');
     if (btn) btn.disabled = true;
     if (icon) icon.classList.add('spin');
-    
+
     try {
       if (typeof EduVesting !== 'undefined') {
         const resCrypto = await EduVesting.refreshCryptoPrices();
@@ -496,11 +490,11 @@
     try {
       if (typeof EduVesting === 'undefined') return;
       const metrics = EduVesting.computeMetrics();
-      
+
       const sumValueEl = document.getElementById('sum-value');
       const sumCostEl = document.getElementById('sum-cost');
       const plEl = document.getElementById('sum-pl');
-      
+
       if (sumValueEl) sumValueEl.innerText = EduVesting.formatRupiah(metrics.totalValue);
       if (sumCostEl) sumCostEl.innerText = EduVesting.formatRupiah(metrics.totalCost);
 
@@ -513,7 +507,7 @@
       const tbody = document.getElementById('asset-tbody');
       const emptyState = document.getElementById('empty-state');
       if (!tbody || !emptyState) return;
-      
+
       tbody.innerHTML = '';
 
       if (!metrics.assets || !metrics.assets.length) {
@@ -526,7 +520,7 @@
         const def = EduVesting.ASSET_TYPES[a.type] || {
           label: 'Unknown', unit: 'unit', badgeBg: 'rgba(255,255,255,0.1)', badgeColor: '#fff', badgeBorder: 'rgba(255,255,255,0.2)'
         };
-        
+
         const totalPrice = a.avgPrice * a.qty; 
         const pl = (a.lastPrice - a.avgPrice) * a.qty;
         const plPct = a.avgPrice > 0 ? ((a.lastPrice - a.avgPrice) / a.avgPrice) * 100 : 0;
