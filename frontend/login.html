@@ -85,7 +85,7 @@
     =========================== */
     .left-panel { display: flex; flex-direction: column; justify-content: space-between; padding: 3rem 3.5rem; position: relative; overflow: hidden; border-right: 1px solid rgba(255,255,255,0.05); }
     .left-panel::after { content: ''; position: absolute; top: 0; right: 0; width: 1px; height: 100%; background: linear-gradient(to bottom, transparent, rgba(99,102,241,0.4), transparent); }
-    
+
     .stat-ticker { display: flex; flex-direction: column; gap: 0.75rem; }
     .stat-row { display: flex; align-items: center; gap: 1rem; padding: 0.85rem 1.1rem; border-radius: 14px; background: rgba(19,25,40,0.7); border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(8px); animation: slideRight 0.5s ease both; }
     .stat-row:nth-child(1) { animation-delay: 0.2s; }
@@ -108,7 +108,7 @@
     .right-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem 2rem; min-height: 100vh; }
     .form-card { width: 100%; max-width: 420px; }
     .glass-card { background: rgba(15, 20, 35, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); border-radius: 1.5rem; padding: 2.5rem; box-shadow: 0 32px 64px -16px rgba(0,0,0,0.5), 0 0 0 1px rgba(99,102,241,0.08) inset, 0 1px 0 rgba(255,255,255,0.06) inset; }
-    
+
     .field-wrap { position: relative; }
     .field-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 0.85rem; pointer-events: none; transition: color 0.2s; }
     .form-input { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); border-radius: 12px; padding: 0.75rem 0.9rem 0.75rem 2.6rem; font-size: 0.9rem; font-family: 'Inter', sans-serif; color: #e2e8f0; transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; outline: none; }
@@ -131,7 +131,13 @@
 
     .divider { display: flex; align-items: center; gap: 0.75rem; }
     .divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
-    .logo-text { background: linear-gradient(90deg, #a5b4fc, #93c5fd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    
+    /* MODIFIKASI: Mencerahkan gradasi agar lebih menyerupai teks solid di dashboard */
+    .logo-text { 
+      background: linear-gradient(90deg, #f8fafc, #a5b4fc); 
+      -webkit-background-clip: text; 
+      -webkit-text-fill-color: transparent; 
+    }
 
     .input-error  { border-color: rgba(244,63,94,0.6) !important; }
     .input-error:focus { box-shadow: 0 0 0 3px rgba(244,63,94,0.14) !important; }
@@ -183,7 +189,7 @@
                style="background: linear-gradient(135deg,#6366f1,#3b82f6); box-shadow: 0 6px 20px -4px rgba(99,102,241,0.5);">
             <i class="fa-solid fa-chart-line text-white text-base"></i>
           </div>
-          <span class="font-display text-xl logo-text">EduVesting</span>
+          <span class="font-display text-2xl font-bold tracking-wide logo-text">EduVesting</span>
         </div>
 
         <div style="animation: fadeUp 0.45s ease both 0.1s; animation-fill-mode: both;">
@@ -242,7 +248,7 @@
         <div class="flex items-center gap-2 mb-3">
           <p class="text-xs text-slate-500 uppercase tracking-widest font-semibold">Snapshot Pasar <span class="animate-pulse ml-1 text-emerald-400 text-[10px]">● LIVE</span></p>
         </div>
-        
+
         <div class="stat-ticker">
           <div class="stat-row">
             <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -308,7 +314,7 @@
                style="background: linear-gradient(135deg,#6366f1,#3b82f6);">
             <i class="fa-solid fa-chart-line text-white text-sm"></i>
           </div>
-          <span class="font-display text-lg logo-text">EduVesting</span>
+          <span class="font-display text-xl font-bold tracking-wide logo-text">EduVesting</span>
         </div>
 
         <div class="glass-card anim-in">
@@ -483,7 +489,7 @@
     // ==========================================
     const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
-    
+
     // BENTROK NAMA VARIABEL DIPERBAIKI DI SINI:
     // Mengganti nama `supabase` menjadi `supabaseClient` agar tidak bentrok dengan CDN global.
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -533,7 +539,7 @@
         let tickerHTML = '';
         if(dataCrypto.bitcoin) tickerHTML += `<span class="ticker-item">BTC/IDR <span class="${dataCrypto.bitcoin.idr_24h_change>=0?'up':'down'}">${formatRp(dataCrypto.bitcoin.idr)} ${dataCrypto.bitcoin.idr_24h_change>=0?'▲':'▼'}</span></span>`;
         if(dataCrypto.ethereum) tickerHTML += `<span class="ticker-item">ETH/IDR <span class="${dataCrypto.ethereum.idr_24h_change>=0?'up':'down'}">${formatRp(dataCrypto.ethereum.idr)} ${dataCrypto.ethereum.idr_24h_change>=0?'▲':'▼'}</span></span>`;
-        
+
         const container = document.getElementById('ticker-container');
         if(tickerHTML !== '') container.innerHTML = tickerHTML + tickerHTML + tickerHTML;
 
@@ -690,7 +696,7 @@
       if (!nameInput || !emailInput || !passwordInput) {
         return alert("Harap isi Nama, Email, dan Password.");
       }
-      
+
       const emailValidation = isValidEmailData(emailInput);
       if (!emailValidation.valid) {
         return alert(emailValidation.msg);
