@@ -10,7 +10,7 @@ const EduVesting = (() => {
   const ASSET_TYPES = {
     saham: {
       label: 'Saham', 
-      unit: 'lembar', // SUDAH DIUBAH DARI 'lot'
+      unit: 'lembar',
       unitFull: 'lembar', 
       gradient: ['#6366f1', '#818cf8'],
       badgeBg: 'rgba(99,102,241,0.15)', badgeColor: '#a5b4fc', badgeBorder: 'rgba(99,102,241,0.25)',
@@ -18,7 +18,7 @@ const EduVesting = (() => {
     },
     kripto: {
       label: 'Kripto', 
-      unit: 'koin', // SUDAH DIUBAH DARI 'unit'
+      unit: 'koin',
       unitFull: 'koin', 
       gradient: ['#f59e0b', '#fbbf24'],
       badgeBg: 'rgba(245,158,11,0.12)', badgeColor: '#fcd34d', badgeBorder: 'rgba(245,158,11,0.25)',
@@ -178,10 +178,12 @@ const EduVesting = (() => {
     }
   }
 
-  // ---------- realtime stock price (Backend Express) ----------
+  // ---------- realtime stock price (Backend Vercel) ----------
   async function fetchStockPriceIDR(ticker) {
     try {
-      const url = `http://localhost:5000/api/price/saham/${ticker}`;
+      // PERUBAHAN PENTING: URL ini sekarang menggunakan Relative Path
+      // Vercel otomatis akan mengarahkannya ke backend/server.js berkat vercel.json
+      const url = `/api/price/saham/${ticker}`;
       const res = await fetch(url);
       
       if (!res.ok) {
@@ -193,7 +195,7 @@ const EduVesting = (() => {
       return data.price;
       
     } catch (error) {
-      alert(`⚠️ GAGAL SINKRON SAHAM ${ticker}!\n\nPenyebab: ${error.message}\n\nPastikan:\n1. Server Node.js (backend) kamu menyala.\n2. Berjalan di port 5000.\n3. Koneksi internet stabil.`);
+      alert(`⚠️ GAGAL SINKRON SAHAM ${ticker}!\n\nPenyebab: ${error.message}\n\nPastikan koneksi internet stabil atau API backend sedang down.`);
       console.error(`Gagal ambil harga saham ${ticker}:`, error);
       return null;
     }
