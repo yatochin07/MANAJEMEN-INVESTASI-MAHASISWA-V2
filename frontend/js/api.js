@@ -105,11 +105,25 @@ const EduVesting = (() => {
     } catch (e) { return { updated: 0, total: cryptoAssets.length, error: e.message }; }
   }
 
+  // FUNGSI BARU UNTUK EMAS VIA COINGECKO (PAXG)
+  async function fetchGoldPriceIDR() {
+    try {
+      const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=idr');
+      if (!res.ok) throw new Error('CoinGecko Gold HTTP ' + res.status);
+      const data = await res.json();
+      const paxgIdr = data['pax-gold'].idr;
+      
+      // Konversi 1 Troy Ounce ke 1 Gram
+      return paxgIdr / 31.1034768;
+    } catch (e) {
+      console.error('Gagal tarik harga emas via proxy CoinGecko:', e);
+      return null;
+    }
+  }
+
   async function fetchStockPriceIDR(ticker) {
     try {
-      // PERBAIKAN: Encode ticker agar karakter '=' pada 'GC=F' tidak merusak URL
       const safeTicker = encodeURIComponent(ticker);
-      
       const url = `/api/price/saham/${safeTicker}`;
       const res = await fetch(url);
       
@@ -135,12 +149,9 @@ const EduVesting = (() => {
       let livePrice = null;
 
       if (a.type === 'emas') {
-        // Cek apakah ticker emas termasuk ticker global
         if (['XAU', 'XAUUSD', 'GC=F'].includes(a.ticker.toUpperCase())) {
             if (!cachedGoldPrice) {
-                const goldUsd = await fetchStockPriceIDR('GC=F');
-                const usdIdr = await fetchStockPriceIDR('IDR=X');
-                if (goldUsd && usdIdr) cachedGoldPrice = (goldUsd * usdIdr) / 31.1034768;
+                cachedGoldPrice = await fetchGoldPriceIDR();
             }
             livePrice = cachedGoldPrice;
         }
@@ -216,6 +227,7 @@ const EduVesting = (() => {
     getAssets, addAsset, updateAsset, deleteAsset,
     getSettings, saveSettings,
     fetchCryptoPricesIDR, refreshCryptoPrices,
+    fetchGoldPriceIDR, // PENTING: Mengekspor fungsi baru
     fetchStockPriceIDR, refreshStockPrices,
     computeMetrics, generateInsights,
     formatRupiah, formatNumber,
