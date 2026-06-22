@@ -118,6 +118,7 @@ const EduVesting = (() => {
 
   async function refreshCryptoPrices() {
     const assets = await getAssets();
+    // Hanya proses aset bertipe kripto yang ada di kamus
     const cryptoAssets = assets.filter(a => a.type === 'kripto' && COINGECKO_IDS[a.ticker]);
     if (!cryptoAssets.length) return { updated: 0, total: 0, error: null };
     try {
@@ -143,6 +144,7 @@ const EduVesting = (() => {
 
   async function refreshStockPrices() {
     const assets = await getAssets(); 
+    // Hanya proses aset bertipe saham (Lewati emas dan reksadana)
     const stockAssets = assets.filter(a => a.type === 'saham');
     if (!stockAssets.length) return { updated: 0, total: 0 };
     let updated = 0;
@@ -158,8 +160,8 @@ const EduVesting = (() => {
   // ==========================================
   async function computeMetrics() {
     const assets = await getAssets(); 
-    const settings = await getSettings(); // <--- SEKARANG MENGAMBIL KAS DARI DATABASE!
-    
+    const settings = await getSettings(); 
+
     let totalValue = 0, totalCost = 0;
     const byType = { saham: 0, kripto: 0, emas: 0, reksadana: 0 };
 
@@ -197,13 +199,26 @@ const EduVesting = (() => {
     const losers = assets.filter(a => a.lastPrice < a.avgPrice);
     if (losers.length) insights.push({ icon: 'fa-arrow-trend-down', tone: 'rose', title: 'Ada Posisi Merah', text: `${losers.length} aset sedang minus.` });
     if (floatingPL > 0 && metrics.plPercent > 10) insights.push({ icon: 'fa-arrow-trend-up', tone: 'emerald', title: 'Profit Mengambang Solid', text: `Floating P/L +${metrics.plPercent.toFixed(1)}%. Pertimbangkan take-profit parsial.` });
-    if (cashPercent < 10) insights.push({ icon: 'fa-piggy-bank', tone: 'amber', title: 'Buffer Kas Tipis', text: `Kas Anda hanya ${cashPercent.toFixed(0)}%. Jaga buffer kas darurat.` });
+    
+    // Perbaikan Logika AI Insight untuk Saldo Kas (Mengikuti style Dashboard)
+    if (metrics.cash === 0) {
+        insights.push({ icon: 'fa-piggy-bank', tone: 'rose', title: 'Kas Kosong Total', text: `Anda tidak punya kas darurat sama sekali untuk menyerok saham/kripto.` });
+    } else if (cashPercent < 10 && metrics.cash < 500000) { 
+        insights.push({ icon: 'fa-piggy-bank', tone: 'amber', title: 'Buffer Kas Tipis', text: `Kas Anda sangat minim. Siapkan dana darurat tambahan.` }); 
+    }
+
     if (!insights.length) insights.push({ icon: 'fa-circle-check', tone: 'emerald', title: 'Portofolio Seimbang', text: 'Portofolio Anda relatif terdiversifikasi dengan baik.' });
     return insights;
   }
 
-  function formatRupiah(n) { return 'Rp ' + Math.round(Number(n) || 0).toLocaleString('id-ID'); }
-  function formatNumber(n, dec = 2) { return Number(n).toLocaleString('id-ID', { maximumFractionDigits: dec }); }
+  // Dukungan hingga 8 desimal otomatis
+  function formatRupiah(n) { 
+      return 'Rp ' + Number(n).toLocaleString('id-ID', { maximumFractionDigits: 2 }); 
+  }
+  
+  function formatNumber(n, dec = 2) { 
+      return Number(n).toLocaleString('id-ID', { maximumFractionDigits: dec }); 
+  }
 
   return {
     ASSET_TYPES, COINGECKO_IDS,
