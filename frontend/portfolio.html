@@ -166,7 +166,10 @@
     </header>
 
     <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-      
+      <div class="glass rounded-2xl p-4 sm:p-5 metric-card fade-up delay-1" style="border-color: rgba(99,102,241,0.2);">
+        <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5 flex items-center gap-1.5"><i class="fa-solid fa-wallet text-indigo-400"></i> Total Ekuitas</p>
+        <p id="sum-equity" class="font-display text-xl sm:text-2xl text-slate-100">Rp 0</p>
+      </div>
 
       <div class="glass rounded-2xl p-4 sm:p-5 metric-card fade-up delay-2">
         <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Total Nilai Aset</p>
@@ -190,7 +193,6 @@
           <i class="fa-solid fa-plus text-indigo-400 text-sm"></i> <span id="form-title">Tambah Aset Baru</span>
         </h2>
 
-        <!-- FORM DIPERBARUI: Grid diubah jadi 4 kolom dan field Nama Aset dihapus -->
         <form id="asset-form" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           <input type="hidden" id="edit-id" value="" />
 
@@ -210,20 +212,18 @@
                    class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200 uppercase" />
           </div>
 
-          <!-- INPUT DESIMAL SUPPORT (type text dengan inputmode) -->
           <div class="sm:col-span-1 md:col-span-1">
             <label class="text-xs text-slate-500 mb-1 block">Harga Beli Avg (Rp)</label>
-            <input id="f-avg" type="text" inputmode="decimal" placeholder="Contoh: 10500,5" required
+            <input id="f-avg" type="text" inputmode="decimal" placeholder="Contoh: 1.500.000,5" required
                    class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200" />
           </div>
 
           <div class="sm:col-span-1 md:col-span-1">
             <label class="text-xs text-slate-500 mb-1 block">Jumlah / Qty</label>
-            <input id="f-qty" type="text" inputmode="decimal" placeholder="Contoh: 5,5" required
+            <input id="f-qty" type="text" inputmode="decimal" placeholder="Contoh: 0,000009" required
                    class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200" />
           </div>
 
-          <!-- Tombol Span Full Width -->
           <div class="sm:col-span-2 md:col-span-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 mt-2 sm:border-t sm:border-white/5 sm:pt-4">
             <button type="button" id="cancel-edit" onclick="resetForm()" class="hidden text-sm text-slate-400 hover:text-slate-200 py-2.5 px-4 text-center">
               Batal Edit
@@ -256,13 +256,11 @@
       </h2>
       <div class="glass rounded-2xl overflow-hidden w-full">
         <div class="overflow-x-auto w-full">
-          <!-- Tabel Diperlebar agar Kolom Flex Sejajar Bebas Sesak -->
           <table class="w-full text-sm min-w-[950px]">
             <thead>
               <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
                 <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Aset</th>
                 <th class="px-4 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Tipe</th>
-                <!-- TH Diubah ke Rata Kanan untuk Menyesuaikan dengan Rata Kanan Nominal -->
                 <th class="px-4 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Harga Beli Avg</th>
                 <th class="px-4 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Harga Terakhir</th>
                 <th class="px-4 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Qty</th>
@@ -335,7 +333,6 @@
   };
 
   function getAutoName(ticker) {
-    // Jika ada di kamus, ambil namanya. Jika tidak ada, pakai ticker aslinya.
     return ASSET_DICTIONARY[ticker.toUpperCase()] || ticker.toUpperCase();
   }
 
@@ -408,20 +405,19 @@
 
       const type = fType.value;
       const ticker = fTicker.value.trim().toUpperCase();
-      
-      // AUTO FILL NAME
       const name = getAutoName(ticker); 
-      
-      // MENDUKUNG KOMA UNTUK DESIMAL INDONESIA
-      const rawAvg = fAvg.value.replace(/,/g, '.');
-      const rawQty = fQty.value.replace(/,/g, '.');
+
+      // PINTAR MENGOLAH TITIK DAN KOMA (Format Indonesia)
+      // Hapus semua titik (sebagai ribuan), lalu ubah koma jadi titik (desimal)
+      const rawAvg = fAvg.value.replace(/\./g, '').replace(/,/g, '.');
+      const rawQty = fQty.value.replace(/\./g, '').replace(/,/g, '.');
       const avgPrice = parseFloat(rawAvg) || 0;
       const qty = parseFloat(rawQty) || 0;
-      
+
       const editId = editIdInput.value;
 
       if (!ticker || avgPrice <= 0 || qty <= 0) {
-        alert('Mohon isi Ticker, Harga Beli Avg, dan Qty dengan nilai angka yang valid (Boleh pakai koma).');
+        alert('Mohon isi Ticker, Harga Beli Avg, dan Qty dengan nilai angka yang valid.');
         return;
       }
 
@@ -489,10 +485,10 @@
     document.getElementById('edit-id').value = id;
     document.getElementById('f-type').value = asset.type;
     document.getElementById('f-ticker').value = asset.ticker;
-    
-    // Konversi titik ke koma untuk UX Indonesia saat diedit
-    document.getElementById('f-avg').value = asset.avgPrice.toString().replace('.', ',');
-    document.getElementById('f-qty').value = asset.qty.toString().replace('.', ',');
+
+    // Mengubah angka ke format Indonesia tanpa merusak desimal saat diedit (Anti Scientific Notation)
+    document.getElementById('f-avg').value = asset.avgPrice.toLocaleString('id-ID', { useGrouping: false, maximumFractionDigits: 10 });
+    document.getElementById('f-qty').value = asset.qty.toLocaleString('id-ID', { useGrouping: false, maximumFractionDigits: 10 });
 
     document.getElementById('form-title').innerText = 'Edit Aset: ' + asset.ticker;
     document.getElementById('submit-label').innerText = 'Update';
@@ -575,7 +571,7 @@
   }
 
   // ==========================================
-  // RENDER UI (DENGAN PENYELARASAN TABEL)
+  // RENDER UI (SUPPORT 8 DESIMAL KRIPTO)
   // ==========================================
   async function renderAll() {
     try {
@@ -637,22 +633,22 @@
             <span class="badge" style="background:${def.badgeBg};color:${def.badgeColor};border:1px solid ${def.badgeBorder};">${def.label}</span>
           </td>
           
-          <!-- TABEL SEJAJAR UNTUK NOMINAL UANG -->
           <td class="px-4 py-4">
             <div class="flex justify-between items-center w-full min-w-[85px]">
               <span class="text-slate-500 text-[10px] font-normal mr-3">Rp</span>
-              <span class="text-slate-300 font-medium tabular-nums text-right">${EduVesting.formatNumber(a.avgPrice)}</span>
+              <span class="text-slate-300 font-medium tabular-nums text-right">${EduVesting.formatNumber(a.avgPrice, 8)}</span>
             </div>
           </td>
+          
           <td class="px-4 py-4">
             <div class="flex justify-between items-center w-full min-w-[85px]">
               <span class="text-slate-500 text-[10px] font-normal mr-3">Rp</span>
-              <span class="text-slate-200 font-semibold tabular-nums text-right">${EduVesting.formatNumber(a.lastPrice)}</span>
+              <span class="text-slate-200 font-semibold tabular-nums text-right">${EduVesting.formatNumber(a.lastPrice, 8)}</span>
             </div>
           </td>
           
           <td class="px-4 py-4 text-right text-slate-400 tabular-nums">
-            ${EduVesting.formatNumber(a.qty)} <span class="text-[10px] ml-1">${def.unit}</span>
+            ${EduVesting.formatNumber(a.qty, 8)} <span class="text-[10px] ml-1">${def.unit}</span>
           </td>
           
           <td class="px-4 py-4">
