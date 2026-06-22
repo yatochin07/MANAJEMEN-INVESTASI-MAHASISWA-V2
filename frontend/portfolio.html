@@ -130,7 +130,7 @@
       </a>
     </nav>
 
-  
+
   </aside>
 
   <main class="flex-1 w-full md:ml-64 px-4 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden">
@@ -360,7 +360,8 @@
       if (sbName) sbName.innerText = displayName;
       if (sbInitial) {
         if (avatarUrl) {
-          sbInitial.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover">`;
+          // PERBAIKAN: Menambahkan class rounded-full agar gambar dari Google bulat
+          sbInitial.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover rounded-full">`;
         } else {
           sbInitial.innerText = displayName.charAt(0).toUpperCase();
         }
@@ -369,7 +370,8 @@
       const settings = await EduVesting.getSettings();
       const cashInput = document.getElementById('cash-input');
       if (cashInput && typeof EduVesting !== 'undefined') {
-        cashInput.value = settings.cash || '';
+        // PERBAIKAN: Menambahkan "?" (optional chaining) pada settings?.cash
+        cashInput.value = settings?.cash || '';
       }
 
       await renderAll();
