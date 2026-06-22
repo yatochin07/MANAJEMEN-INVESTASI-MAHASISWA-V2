@@ -105,15 +105,12 @@ const EduVesting = (() => {
     } catch (e) { return { updated: 0, total: cryptoAssets.length, error: e.message }; }
   }
 
-  // FUNGSI BARU UNTUK EMAS VIA COINGECKO (PAXG)
   async function fetchGoldPriceIDR() {
     try {
       const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=idr');
       if (!res.ok) throw new Error('CoinGecko Gold HTTP ' + res.status);
       const data = await res.json();
       const paxgIdr = data['pax-gold'].idr;
-      
-      // Konversi 1 Troy Ounce ke 1 Gram
       return paxgIdr / 31.1034768;
     } catch (e) {
       console.error('Gagal tarik harga emas via proxy CoinGecko:', e);
@@ -124,11 +121,17 @@ const EduVesting = (() => {
   async function fetchStockPriceIDR(ticker) {
     try {
       const safeTicker = encodeURIComponent(ticker);
-      const url = `/api/price/saham/${safeTicker}`;
+      
+      // ========================================================
+      // PERBAIKAN: Masukkan URL Backend Vercel Kamu Di Sini!
+      // ========================================================
+      const BACKEND_URL = 'https://NAMA-BACKEND-VERCEL-KAMU.vercel.app'; // <-- UBAH INI
+      const url = `${BACKEND_URL}/api/price/saham/${safeTicker}`;
+      
       const res = await fetch(url);
-      
+
       if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
-      
+
       const data = await res.json();
       return data.price;
     } catch (error) { 
@@ -227,7 +230,7 @@ const EduVesting = (() => {
     getAssets, addAsset, updateAsset, deleteAsset,
     getSettings, saveSettings,
     fetchCryptoPricesIDR, refreshCryptoPrices,
-    fetchGoldPriceIDR, // PENTING: Mengekspor fungsi baru
+    fetchGoldPriceIDR,
     fetchStockPriceIDR, refreshStockPrices,
     computeMetrics, generateInsights,
     formatRupiah, formatNumber,
