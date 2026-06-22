@@ -40,6 +40,7 @@
       background-color: #07090f;
       color: #e2e8f0;
       overflow-x: hidden;
+      scroll-behavior: smooth;
     }
 
     /* ===========================
@@ -131,8 +132,7 @@
 
     .divider { display: flex; align-items: center; gap: 0.75rem; }
     .divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
-    
-    /* MODIFIKASI: Mencerahkan gradasi agar lebih menyerupai teks solid di dashboard */
+
     .logo-text { 
       background: linear-gradient(90deg, #f8fafc, #a5b4fc); 
       -webkit-background-clip: text; 
@@ -169,6 +169,28 @@
     .ticker-item { display: inline-block; margin-right: 2.5rem; font-size: 0.75rem; color: #64748b; font-weight: 500;}
     .ticker-item .up   { color: #34d399; }
     .ticker-item .down { color: #f87171; }
+
+    /* ===========================
+       NEW LANDING PAGE SECTION CSS
+    =========================== */
+    .section-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 2.25rem; font-weight: 700; color: #f8fafc; text-align: center; margin-bottom: 3rem; }
+    .landing-glass { background: rgba(15, 20, 35, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); border-radius: 1.5rem; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .landing-glass:hover { transform: translateY(-5px); box-shadow: 0 10px 40px -10px rgba(99,102,241,0.2); border-color: rgba(99,102,241,0.2); }
+    
+    /* FAQ Accordion CSS */
+    .faq-item { border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-toggle { width: 100%; text-align: left; background: none; border: none; cursor: pointer; padding: 1.5rem 0; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .faq-toggle:hover .faq-q { color: #a5b4fc; }
+    .faq-q { font-size: 1.05rem; font-weight: 500; color: #e2e8f0; transition: color 0.2s; }
+    .faq-icon { flex-shrink: 0; color: #6366f1; transition: transform 0.3s ease; }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease; }
+    .faq-answer.open { max-height: 500px; padding-bottom: 1.5rem; }
+    .faq-icon.open { transform: rotate(180deg); }
+
+    .scroll-indicator { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); animation: bounce 2s infinite; color: rgba(255,255,255,0.4); z-index: 20; display: flex; flex-direction: column; align-items: center; cursor: pointer; text-decoration: none; }
+    .scroll-indicator:hover { color: #a5b4fc; }
+    @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); } 40% { transform: translateY(-10px) translateX(-50%); } 60% { transform: translateY(-5px) translateX(-50%); } }
   </style>
 </head>
 
@@ -180,6 +202,7 @@
   <div class="mesh-layer" aria-hidden="true"></div>
   <div class="dot-grid"  aria-hidden="true"></div>
 
+  <!-- HERO / LOGIN SECTION -->
   <div class="page-shell">
 
     <aside class="left-panel" aria-hidden="true">
@@ -301,9 +324,13 @@
             <span class="ticker-item text-slate-400">Memuat data realtime dari pasar...</span>
           </div>
         </div>
-
-        <p class="text-xs text-slate-700 mt-4">© 2025 EduVesting · Simulasi, bukan layanan investasi berlisensi.</p>
       </div>
+      
+      <!-- Scroll Indicator -->
+      <a href="#discover" class="scroll-indicator lg:hidden hidden md:flex">
+        <span class="text-xs mb-1 font-medium tracking-widest uppercase">Eksplor</span>
+        <i class="fa-solid fa-chevron-down text-lg"></i>
+      </a>
     </aside>
 
     <section class="right-panel" role="main">
@@ -455,17 +482,211 @@
           </div>
 
         </div>
+        
+        <!-- Scroll Indicator Mobile -->
+        <div class="text-center mt-8 lg:hidden animate-bounce">
+          <a href="#discover" class="text-slate-500 hover:text-slate-300 transition-colors">
+            <span class="block text-xs mb-1">Selengkapnya</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </a>
+        </div>
 
-        <p class="text-center text-xs text-slate-700 mt-5">
-          Dengan masuk, Anda menyetujui kebijakan privasi EduVesting.<br/>
-          Data simulasi. Bukan rekomendasi investasi nyata.
-        </p>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===========================
+       NEW: LANDING PAGE SECTIONS
+  =========================== -->
+  <main id="discover" class="relative z-10 w-full max-w-7xl mx-auto px-6 py-20 space-y-32">
+    
+    <!-- SECTION: Fitur Utama -->
+    <section>
+      <h2 class="section-title">Apa yang Bisa Anda Lakukan di Sini?</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Card 1 -->
+        <div class="landing-glass p-8 flex flex-col items-center text-center">
+          <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-6" style="background:rgba(99,102,241,0.15); color:#a5b4fc; font-size:1.75rem;">
+            <i class="fa-solid fa-wallet"></i>
+          </div>
+          <h3 class="text-xl font-display font-semibold text-slate-100 mb-3">Portofolio Virtual</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">Punya uang Rp 10 Juta? Belajar alokasikan ke berbagai instrumen (Saham, Kripto, Emas) dan lihat pergerakan nilainya secara *real-time* tanpa takut rugi.</p>
+        </div>
+        <!-- Card 2 -->
+        <div class="landing-glass p-8 flex flex-col items-center text-center">
+          <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-6" style="background:rgba(16,185,129,0.15); color:#6ee7b7; font-size:1.75rem;">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <h3 class="text-xl font-display font-semibold text-slate-100 mb-3">Materi Edukasi & AI Insight</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">Dapatkan evaluasi otomatis dari AI untuk setiap keputusan investasi yang Anda buat. Pahami tentang diversifikasi dan manajemen risiko dengan cepat.</p>
+        </div>
+        <!-- Card 3 -->
+        <div class="landing-glass p-8 flex flex-col items-center text-center">
+          <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-6" style="background:rgba(6,182,212,0.15); color:#67e8f9; font-size:1.75rem;">
+            <i class="fa-solid fa-calculator"></i>
+          </div>
+          <h3 class="text-xl font-display font-semibold text-slate-100 mb-3">Panduan Cepat & Kalkulator</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">Tidak perlu bingung menghitung biaya beli/jual. Gunakan fitur *Budget Optimizer* untuk mengkalkulasi *fee broker* dan menemukan nominal lot yang pas.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: Tim Developer & Contact Us -->
+    <section>
+      <h2 class="section-title">Di Balik Layar EduVesting</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Team List -->
+        <div class="lg:col-span-2 landing-glass p-8">
+          <h3 class="text-lg font-semibold text-slate-200 mb-6 flex items-center gap-2">
+            <i class="fa-solid fa-users text-indigo-400"></i> Tim Developer Mahasiswa
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+              <i class="fa-solid fa-user-astronaut text-indigo-400/70 text-lg w-6 text-center"></i>
+              <span class="text-sm font-medium text-slate-300">Junior Rafael Adi Siswanto</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+              <i class="fa-solid fa-user-astronaut text-indigo-400/70 text-lg w-6 text-center"></i>
+              <span class="text-sm font-medium text-slate-300">Muhammad Fahmi Amrullah</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+              <i class="fa-solid fa-user-astronaut text-indigo-400/70 text-lg w-6 text-center"></i>
+              <span class="text-sm font-medium text-slate-300">Hilmawan Ega Tetama</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+              <i class="fa-solid fa-user-astronaut text-indigo-400/70 text-lg w-6 text-center"></i>
+              <span class="text-sm font-medium text-slate-300">M. Hafiz Muhandzib</span>
+            </div>
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+              <i class="fa-solid fa-user-astronaut text-indigo-400/70 text-lg w-6 text-center"></i>
+              <span class="text-sm font-medium text-slate-300">Sigit Muyaki</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Us Card -->
+        <div class="landing-glass p-8 flex flex-col justify-center text-center relative overflow-hidden">
+          <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/20 rounded-full blur-2xl"></div>
+          <div class="relative z-10">
+            <div class="w-16 h-16 rounded-full mx-auto mb-4 bg-gradient-to-tr from-pink-500 via-purple-500 to-indigo-500 flex items-center justify-center shadow-lg">
+              <i class="fa-brands fa-instagram text-white text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-200 mb-2">Punya Pertanyaan?</h3>
+            <p class="text-xs text-slate-400 mb-6">Hubungi pengembang untuk kolaborasi, *feedback*, atau pelaporan bug.</p>
+            <a href="https://instagram.com/yattchn7" target="_blank" rel="noopener noreferrer" class="inline-block w-full py-3 rounded-xl bg-white/10 border border-white/10 text-sm font-medium text-slate-200 hover:bg-white/20 transition-colors">
+              DM @yattchn7
+            </a>
+          </div>
+        </div>
 
       </div>
     </section>
 
-  </div>
+    <!-- SECTION: FAQ Accordion -->
+    <section class="max-w-3xl mx-auto">
+      <h2 class="section-title">Pertanyaan Umum (FAQ)</h2>
+      <div class="landing-glass p-2 sm:p-8">
+        
+        <div class="faq-item">
+          <button class="faq-toggle" onclick="toggleFaqLanding(this)">
+            <span class="faq-q">Apa itu EduVesting?</span>
+            <i class="fa-solid fa-chevron-down faq-icon"></i>
+          </button>
+          <div class="faq-answer">
+            <p class="text-slate-400 text-sm leading-relaxed px-1">EduVesting adalah platform simulasi manajemen portofolio investasi yang dirancang khusus untuk mahasiswa Indonesia. Tujuannya adalah untuk belajar investasi secara praktis tanpa menggunakan uang nyata.</p>
+          </div>
+        </div>
 
+        <div class="faq-item">
+          <button class="faq-toggle" onclick="toggleFaqLanding(this)">
+            <span class="faq-q">Apakah ini menggunakan uang sungguhan?</span>
+            <i class="fa-solid fa-chevron-down faq-icon"></i>
+          </button>
+          <div class="faq-answer">
+            <p class="text-slate-400 text-sm leading-relaxed px-1"><strong>Tidak.</strong> Semua uang, aset, dan transaksi di dalam aplikasi ini adalah fiktif/simulasi belaka. Kami tidak pernah meminta informasi rekening atau kartu kredit Anda.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-toggle" onclick="toggleFaqLanding(this)">
+            <span class="faq-q">Bagaimana cara mendaftar?</span>
+            <i class="fa-solid fa-chevron-down faq-icon"></i>
+          </button>
+          <div class="faq-answer">
+            <p class="text-slate-400 text-sm leading-relaxed px-1">Sangat mudah! Anda bisa menggunakan tombol "Google" untuk login instan satu klik, atau mendaftar manual menggunakan email aktif universitas/pribadi Anda melalui tab "Daftar" di atas.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-toggle" onclick="toggleFaqLanding(this)">
+            <span class="faq-q">Instrumen investasi apa saja yang tersedia?</span>
+            <i class="fa-solid fa-chevron-down faq-icon"></i>
+          </button>
+          <div class="faq-answer">
+            <p class="text-slate-400 text-sm leading-relaxed px-1">Saat ini kami mendukung simulasi untuk Saham Indonesia (IDX), Kripto Spot, Emas, dan Reksa Dana Pasar Uang. Seluruh instrumen disesuaikan dengan perhitungan fee/pajak standar di Indonesia.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-toggle" onclick="toggleFaqLanding(this)">
+            <span class="faq-q">Apakah harga aset yang ditampilkan real-time?</span>
+            <i class="fa-solid fa-chevron-down faq-icon"></i>
+          </button>
+          <div class="faq-answer">
+            <p class="text-slate-400 text-sm leading-relaxed px-1">Ya! Harga Kripto ditarik secara live melalui API publik (seperti CoinGecko). Sedangkan untuk Saham IDX, data ditarik dari sistem backend kami agar mencerminkan harga pasar sesungguhnya.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-toggle" onclick="toggleFaqLanding(this)">
+            <span class="faq-q">Bagaimana kerahasiaan data saya?</span>
+            <i class="fa-solid fa-chevron-down faq-icon"></i>
+          </button>
+          <div class="faq-answer">
+            <p class="text-slate-400 text-sm leading-relaxed px-1">Data Anda (Nama dan Email) diamankan menggunakan sistem enkripsi tingkat industri dari <strong>Supabase</strong>. Anda memegang kendali penuh atas privasi Anda dan kami tidak membagikan data kepada pihak ketiga.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- ===========================
+       FOOTER
+  =========================== -->
+  <footer class="relative z-10 w-full border-t border-white/5 bg-[#0a0d16]/80 backdrop-blur-md pt-12 pb-8 mt-20">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-to-br from-indigo-500 to-blue-500">
+            <i class="fa-solid fa-chart-line text-white text-xs"></i>
+          </div>
+          <span class="font-display font-bold text-slate-200">EduVesting</span>
+        </div>
+        
+        <div class="flex flex-wrap justify-center gap-6 text-sm font-medium text-slate-400">
+          <a href="#" class="hover:text-indigo-400 transition-colors">Tentang Kami</a>
+          <a href="#discover" class="hover:text-indigo-400 transition-colors">FAQ</a>
+          <a href="#" class="hover:text-indigo-400 transition-colors">Privacy Policy</a>
+          <a href="#" class="hover:text-indigo-400 transition-colors">Terms of Service</a>
+        </div>
+      </div>
+
+      <div class="border-t border-white/5 pt-8 text-center">
+        <p class="text-xs text-slate-500 mb-2">
+          &copy; 2025 EduVesting Project. Hak Cipta Dilindungi.
+        </p>
+        <p class="text-[10px] text-slate-600 max-w-2xl mx-auto">
+          <strong>Disclaimer:</strong> Ini adalah proyek simulasi untuk tujuan edukasi yang dibuat oleh mahasiswa. Semua angka dan portofolio adalah fiktif. Kami tidak memberikan rekomendasi investasi sungguhan. Harap selalu gunakan penasihat keuangan berlisensi sebelum melakukan investasi di dunia nyata.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===========================
+       OVERLAY & SCRIPTS
+  =========================== -->
   <div id="success-overlay"
        style="display:none; position:fixed; inset:0; z-index:100; background:rgba(7,9,15,0.92); backdrop-filter:blur(16px);"
        class="flex items-center justify-center flex-col gap-4">
@@ -484,17 +705,31 @@
   </div>
 
   <script>
+    // FAQ Accordion Script
+    function toggleFaqLanding(btn) {
+      const answer = btn.nextElementSibling;
+      const icon = btn.querySelector('.faq-icon');
+      const isOpen = answer.classList.contains('open');
+
+      // Close all answers
+      document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('open'));
+      document.querySelectorAll('.faq-icon').forEach(i => i.classList.remove('open'));
+
+      // If it wasn't open, open it
+      if (!isOpen) {
+        answer.classList.add('open');
+        icon.classList.add('open');
+      }
+    }
+
     // ==========================================
     // INISIALISASI SUPABASE CLIENT
     // ==========================================
     const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
-
-    // BENTROK NAMA VARIABEL DIPERBAIKI DI SINI:
-    // Mengganti nama `supabase` menjadi `supabaseClient` agar tidak bentrok dengan CDN global.
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Cek apakah user sudah login, jika ya, lempar langsung ke dashboard
+    // Cek apakah user sudah login
     supabaseClient.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         window.location.href = 'dashboard.html';
@@ -604,7 +839,7 @@
     }
 
     // ==========================================
-    // LOGIN GOOGLE OAUTH (SUPABASE)
+    // LOGIN GOOGLE OAUTH
     // ==========================================
     async function handleGoogleLogin() {
       const { error } = await supabaseClient.auth.signInWithOAuth({
@@ -617,7 +852,7 @@
     }
 
     // ==========================================
-    // LOGIN EMAIL MANUAL (SUPABASE)
+    // LOGIN EMAIL MANUAL
     // ==========================================
     async function handleLogin() {
       const emailInput = document.getElementById('login-email');
@@ -649,7 +884,6 @@
       btn.disabled = true;
       btn.innerHTML = '<span class="spinner"></span> Memverifikasi…';
 
-      // Panggil Supabase Menggunakan supabaseClient
       const { data, error } = await supabaseClient.auth.signInWithPassword({
         email: emailInput.value.trim(),
         password: pwdInput.value.trim()
@@ -683,7 +917,7 @@
     }
 
     // ==========================================
-    // REGISTER NYATA (SUPABASE)
+    // REGISTER MANUAL
     // ==========================================
     async function handleRegister() {
       const nameInput = document.getElementById('reg-name').value;
@@ -709,7 +943,6 @@
       btn.disabled = true;
       btn.innerHTML = '<span class="spinner"></span> Mendaftarkan…';
 
-      // Panggil Supabase menggunakan supabaseClient
       const { data, error } = await supabaseClient.auth.signUp({
         email: emailInput,
         password: passwordInput,
