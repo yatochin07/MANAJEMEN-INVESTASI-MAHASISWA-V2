@@ -24,7 +24,7 @@ const chatWithAI = async (req, res) => {
         // PERUBAHAN 1: Pakai model universal 'gemini-pro'
         // ==========================================
         const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        const model = genAI.getGenerativeModel({ model: "gemini-flash" });
 
         // ==========================================
         // PERUBAHAN 2: Trik memasukkan kepribadian AI ke dalam prompt
