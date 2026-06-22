@@ -107,19 +107,27 @@ const EduVesting = (() => {
 
   async function fetchStockPriceIDR(ticker) {
     try {
-      const url = `/api/price/saham/${ticker}`;
+      // PERBAIKAN: Encode ticker agar karakter '=' pada 'GC=F' tidak merusak URL
+      const safeTicker = encodeURIComponent(ticker);
+      
+      const url = `/api/price/saham/${safeTicker}`;
       const res = await fetch(url);
+      
       if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
+      
       const data = await res.json();
       return data.price;
-    } catch (error) { return null; }
+    } catch (error) { 
+      console.error(`Gagal tarik harga untuk ${ticker}:`, error);
+      return null; 
+    }
   }
 
   async function refreshStockPrices() {
     const assets = await getAssets(); 
     const targetAssets = assets.filter(a => ['saham', 'reksadana', 'emas'].includes(a.type));
     if (!targetAssets.length) return { updated: 0, total: 0 };
-    
+
     let updated = 0;
     let cachedGoldPrice = null;
 
@@ -189,7 +197,7 @@ const EduVesting = (() => {
     const losers = assets.filter(a => a.lastPrice < a.avgPrice);
     if (losers.length) insights.push({ icon: 'fa-arrow-trend-down', tone: 'rose', title: 'Ada Posisi Merah', text: `${losers.length} aset sedang minus.` });
     if (floatingPL > 0 && metrics.plPercent > 10) insights.push({ icon: 'fa-arrow-trend-up', tone: 'emerald', title: 'Profit Mengambang Solid', text: `Floating P/L +${metrics.plPercent.toFixed(1)}%. Pertimbangkan take-profit parsial.` });
-    
+
     if (metrics.cash === 0) {
         insights.push({ icon: 'fa-piggy-bank', tone: 'rose', title: 'Kas Kosong Total', text: `Anda tidak punya kas darurat sama sekali untuk menyerok saham/kripto.` });
     } else if (cashPercent < 10 && metrics.cash < 500000) { 
