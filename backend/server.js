@@ -3,10 +3,9 @@ const cors = require('cors');
 require('dotenv').config();
 
 // ========================================================
-// FIX FINAL: CARA IMPORT YAHOO FINANCE VERSI 3 (V3)
-// Menggunakan destructing object sesuai aturan baru library
+// FIX FINAL: CARA IMPORT YAHOO FINANCE VERSI 3 YANG BENAR
 // ========================================================
-const { YahooFinance } = require('yahoo-finance2');
+const YahooFinance = require('yahoo-finance2').default;
 const yahooFinance = new YahooFinance();
 
 // ======================
