@@ -105,7 +105,9 @@ const EduVesting = (() => {
     } catch (e) { return { updated: 0, total: cryptoAssets.length, error: e.message }; }
   }
 
-  // FUNGSI BARU UNTUK EMAS VIA COINGECKO (PAXG)
+  // ========================================================
+  // FUNGSI EMAS VIA COINGECKO (PAXG)
+  // ========================================================
   async function fetchGoldPriceIDR() {
     try {
       const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=idr');
@@ -121,10 +123,20 @@ const EduVesting = (() => {
     }
   }
 
+  // ========================================================
+  // FIX: FUNGSI TARIK SAHAM PINTAR (ANTI-CORS & LOCAL/VERCEL)
+  // ========================================================
   async function fetchStockPriceIDR(ticker) {
     try {
       const safeTicker = encodeURIComponent(ticker);
-      const url = `/api/price/saham/${safeTicker}`;
+      
+      // Deteksi otomatis apakah sedang di laptop (localhost) atau di cloud (Vercel)
+      const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      
+      // Jika di lokal, panggil port 5000. Jika di Vercel, cukup pakai relative path
+      const baseUrl = isLocal ? 'http://localhost:5000' : ''; 
+      const url = `${baseUrl}/api/price/saham/${safeTicker}`;
+      
       const res = await fetch(url);
       
       if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
@@ -203,10 +215,13 @@ const EduVesting = (() => {
     const insights = [];
     const { assets, totalEquity, byType, floatingPL, cashPercent } = metrics;
     if (!assets.length) return [{ icon: 'fa-circle-info', tone: 'indigo', title: 'Belum Ada Data Portofolio', text: 'Tambahkan aset pertama Anda.' }];
+    
     const cryptoPct = totalEquity > 0 ? (byType.kripto / totalEquity) * 100 : 0;
     if (cryptoPct > 35) insights.push({ icon: 'fa-triangle-exclamation', tone: 'rose', title: 'Eksposur Kripto Tinggi', text: `Porsi kripto mencapai ${cryptoPct.toFixed(0)}%. Pertimbangkan manajemen risiko.` });
+    
     const losers = assets.filter(a => a.lastPrice < a.avgPrice);
     if (losers.length) insights.push({ icon: 'fa-arrow-trend-down', tone: 'rose', title: 'Ada Posisi Merah', text: `${losers.length} aset sedang minus.` });
+    
     if (floatingPL > 0 && metrics.plPercent > 10) insights.push({ icon: 'fa-arrow-trend-up', tone: 'emerald', title: 'Profit Mengambang Solid', text: `Floating P/L +${metrics.plPercent.toFixed(1)}%. Pertimbangkan take-profit parsial.` });
 
     if (metrics.cash === 0) {
@@ -227,7 +242,7 @@ const EduVesting = (() => {
     getAssets, addAsset, updateAsset, deleteAsset,
     getSettings, saveSettings,
     fetchCryptoPricesIDR, refreshCryptoPrices,
-    fetchGoldPriceIDR, // PENTING: Mengekspor fungsi baru
+    fetchGoldPriceIDR, 
     fetchStockPriceIDR, refreshStockPrices,
     computeMetrics, generateInsights,
     formatRupiah, formatNumber,
