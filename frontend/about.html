@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduVesting — Tentang Kami</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Plus Jakarta Sans', 'sans-serif'],
+            body:    ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* ===========================
+       GLOBAL RESET & BASE
+    =========================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      min-height: 100%;
+      font-family: 'Inter', sans-serif;
+      background-color: #07090f;
+      color: #e2e8f0;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    /* ===========================
+       ANIMATED BACKGROUND CANVAS
+    =========================== */
+    .mesh-layer {
+      position: fixed; inset: 0; z-index: -2; pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 60% at 10% 5%,  rgba(99,102,241,0.08) 0%, transparent 65%),
+        radial-gradient(ellipse 55% 50% at 90% 90%,  rgba(59,130,246,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 45% 40% at 55% 45%,  rgba(124,58,237,0.05) 0%, transparent 60%);
+    }
+    .orb {
+      position: fixed; border-radius: 50%; filter: blur(90px); opacity: 0.15; pointer-events: none; z-index: -1; animation: drift linear infinite;
+    }
+    .orb-1 { width: 500px; height: 500px; background: #6366f1; top: -100px; left: -100px; animation-duration: 30s; }
+    .orb-2 { width: 400px; height: 400px; background: #3b82f6; bottom: -50px; right: -50px; animation-duration: 25s; animation-direction: reverse; }
+    .dot-grid {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: radial-gradient(rgba(148,163,184,0.05) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    @keyframes drift {
+      0%   { transform: translate(0,  0) scale(1);    }
+      33%  { transform: translate(30px, 20px) scale(1.05); }
+      66%  { transform: translate(-20px, 40px) scale(0.95); }
+      100% { transform: translate(0,  0) scale(1);    }
+    }
+
+    /* ===========================
+       UI COMPONENTS
+    =========================== */
+    .glass-nav { background: rgba(10, 14, 24, 0.7); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .glass-card { background: rgba(15, 20, 35, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); border-radius: 1.5rem; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .glass-card:hover { border-color: rgba(99,102,241,0.25); box-shadow: 0 10px 40px -10px rgba(99,102,241,0.15); }
+    
+    .logo-text { background: linear-gradient(90deg, #f8fafc, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius: 10px; }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-up { animation: fadeUp 0.6s ease both; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+  </style>
+</head>
+<body class="relative">
+
+  <!-- Background Elements -->
+  <div class="orb orb-1" aria-hidden="true"></div>
+  <div class="orb orb-2" aria-hidden="true"></div>
+  <div class="mesh-layer" aria-hidden="true"></div>
+  <div class="dot-grid" aria-hidden="true"></div>
+
+  <!-- Navbar -->
+  <nav class="glass-nav sticky top-0 z-50 w-full px-6 py-4">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <a href="login.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg,#6366f1,#3b82f6);">
+          <i class="fa-solid fa-chart-line text-white text-sm"></i>
+        </div>
+        <span class="font-display text-xl font-bold tracking-wide logo-text">EduVesting</span>
+      </a>
+      <a href="login.html" class="text-sm font-medium text-slate-300 hover:text-white transition-colors flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10">
+        <i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="relative z-10 max-w-4xl mx-auto px-6 py-16 sm:py-24">
+    
+    <!-- Header Section -->
+    <header class="text-center mb-16 fade-up">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold uppercase tracking-widest mb-6">
+        <i class="fa-solid fa-circle-info"></i> Informasi Proyek
+      </div>
+      <h1 class="font-display text-3xl sm:text-5xl font-bold text-slate-100 mb-6 leading-tight">
+        Membangun Generasi <br class="hidden sm:block" /> 
+        <span style="background: linear-gradient(90deg,#a5b4fc,#67e8f9); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
+          Melek Finansial.
+        </span>
+      </h1>
+    </header>
+
+    <!-- Section: Pengantar -->
+    <section class="glass-card p-6 sm:p-10 mb-8 fade-up delay-1">
+      <div class="flex items-center gap-4 mb-4">
+        <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:rgba(99,102,241,0.15); color:#a5b4fc; font-size:1.25rem;">
+          <i class="fa-solid fa-rocket"></i>
+        </div>
+        <h2 class="font-display text-xl font-semibold text-slate-200">Apa itu EduVesting?</h2>
+      </div>
+      <div class="space-y-4 text-slate-400 text-sm sm:text-base leading-relaxed pl-2 sm:pl-16">
+        <p>
+          <strong class="text-slate-200">EduVesting</strong> adalah platform simulasi manajemen portofolio investasi yang dirancang secara khusus untuk membantu mahasiswa memahami dinamika pasar keuangan nyata tanpa mengekspos mereka pada risiko kerugian uang sungguhan.
+        </p>
+        <p>
+          Kami menggabungkan antarmuka <i>dashboard</i> profesional, pergerakan harga instrumen multi-aset (Saham, Kripto, Emas, dan Reksa Dana), serta sistem analitik AI berbasis aturan (<i>rule-based</i>). Hal ini memungkinkan pengguna untuk mempraktikkan teori alokasi aset, melakukan <i>rebalancing</i>, dan memahami profil risiko secara langsung dalam sebuah *sandbox* edukatif yang aman dan modern.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section: Latar Belakang & Problem -->
+    <section class="glass-card p-6 sm:p-10 mb-8 fade-up delay-2">
+      <div class="flex items-center gap-4 mb-4">
+        <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:rgba(244,63,94,0.15); color:#fda4af; font-size:1.25rem;">
+          <i class="fa-solid fa-lightbulb"></i>
+        </div>
+        <h2 class="font-display text-xl font-semibold text-slate-200">Latar Belakang Permasalahan</h2>
+      </div>
+      <div class="pl-2 sm:pl-16">
+        <p class="text-slate-400 text-sm sm:text-base leading-relaxed mb-4">
+          Tingkat literasi keuangan di kalangan anak muda Indonesia, khususnya mahasiswa, masih menghadapi tantangan serius. Ada kesenjangan yang besar antara teori akademik dan praktik nyata di lapangan. Hal ini memicu dua fenomena ekstrem di kalangan mahasiswa:
+        </p>
+        <ul class="space-y-3 text-slate-400 text-sm sm:text-base leading-relaxed list-disc pl-5">
+          <li><strong class="text-rose-400">Sindrom FOMO (Fear Of Missing Out):</strong> Mahasiswa terjun ke dunia investasi kripto atau saham spekulatif tanpa analisis fundamental, seringkali berujung pada kerugian besar atau terjerat aplikasi bodong.</li>
+          <li><strong class="text-amber-400">Ketakutan Memulai (Aversion to Risk):</strong> Di sisi lain, banyak yang memilih untuk tidak berinvestasi sama sekali karena takut rugi dan tidak paham cara kerja pasar modal.</li>
+        </ul>
+        <p class="text-slate-400 text-sm sm:text-base leading-relaxed mt-4">
+          EduVesting diciptakan sebagai "jembatan" untuk mengatasi kedua ekstrem ini, memberikan ruang eksperimen sebelum mereka terjun ke industri jasa keuangan sungguhan.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section: Visi & Misi (Grid Layout) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 fade-up delay-3">
+      <!-- Visi -->
+      <section class="glass-card p-6 sm:p-8 flex flex-col">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(16,185,129,0.15); color:#6ee7b7; font-size:1.1rem;">
+            <i class="fa-solid fa-eye"></i>
+          </div>
+          <h2 class="font-display text-lg font-semibold text-slate-200">Visi Kami</h2>
+        </div>
+        <p class="text-slate-400 text-sm leading-relaxed flex-1">
+          Menjadi platform simulasi edukasi finansial terdepan di lingkungan kampus Indonesia yang mampu mencetak generasi muda cerdas, rasional, dan mandiri secara finansial.
+        </p>
+      </section>
+
+      <!-- Misi -->
+      <section class="glass-card p-6 sm:p-8 flex flex-col">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(6,182,212,0.15); color:#67e8f9; font-size:1.1rem;">
+            <i class="fa-solid fa-bullseye"></i>
+          </div>
+          <h2 class="font-display text-lg font-semibold text-slate-200">Misi Kami</h2>
+        </div>
+        <ul class="text-slate-400 text-sm leading-relaxed space-y-2 list-none">
+          <li class="flex gap-2"><i class="fa-solid fa-check text-cyan-400 mt-1"></i> Menyediakan lingkungan simulasi bebas risiko.</li>
+          <li class="flex gap-2"><i class="fa-solid fa-check text-cyan-400 mt-1"></i> Membiasakan pengelolaan dan diversifikasi multi-aset.</li>
+          <li class="flex gap-2"><i class="fa-solid fa-check text-cyan-400 mt-1"></i> Mengintegrasikan teknologi analisis untuk mendidik tata cara mitigasi risiko.</li>
+        </ul>
+      </section>
+    </div>
+
+    <!-- Section: Tujuan & Target (Grid Layout) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 fade-up delay-4">
+      <!-- Tujuan -->
+      <section class="glass-card p-6 sm:p-8 border-t-4" style="border-top-color: #6366f1;">
+        <h2 class="font-display text-lg font-semibold text-slate-200 mb-3">Tujuan Proyek</h2>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          Mengubah stigma investasi dari "berjudi" menjadi kegiatan analitis yang terstruktur. Platform ini bertujuan membekali pengguna dengan pemahaman praktis mengenai manajemen kas, kalkulasi <i>fee broker</i>, dan ketahanan emosional dalam menghadapi volatilitas pasar (<i>Floating P/L</i>).
+        </p>
+      </section>
+
+      <!-- Target Pengguna -->
+      <section class="glass-card p-6 sm:p-8 border-t-4" style="border-top-color: #f59e0b;">
+        <h2 class="font-display text-lg font-semibold text-slate-200 mb-3">Target Pengguna</h2>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          Platform ini dirancang khusus untuk <strong class="text-slate-200">Mahasiswa Aktif di seluruh Indonesia</strong>—mulai dari pemula yang baru mengenal istilah reksa dana, hingga mereka yang ingin menguji strategi analisis saham teknikal/fundamental tanpa harus kehilangan modal bulanan mereka.
+        </p>
+      </section>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="relative z-10 w-full border-t border-white/5 bg-[#0a0d16]/80 backdrop-blur-md pt-8 pb-8 mt-10 text-center">
+    <div class="max-w-6xl mx-auto px-6">
+      <p class="text-xs text-slate-500 mb-2">
+        &copy; 2025 EduVesting Project. Hak Cipta Dilindungi.
+      </p>
+      <p class="text-[10px] text-slate-600 max-w-2xl mx-auto">
+        <strong>Disclaimer:</strong> EduVesting adalah proyek simulasi untuk tujuan edukasi. Semua angka, pergerakan, dan portofolio di dalam aplikasi ini adalah fiktif. Kami tidak memberikan rekomendasi investasi finansial sungguhan.
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>
