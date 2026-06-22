@@ -234,7 +234,7 @@
       <h2 id="allocation-heading" class="font-display text-base text-slate-300 mb-4 flex items-center gap-2">
         <i class="fa-solid fa-chart-pie text-indigo-400 text-sm"></i> Alokasi Aset & Manajemen Keuangan
       </h2>
-      
+
       <div class="glass rounded-2xl p-4 sm:p-6 w-full">
         <div class="flex items-center justify-between mb-5">
           <p class="text-sm font-semibold text-slate-300">Proporsi Portofolio</p>
@@ -243,7 +243,7 @@
         <div id="alloc-stack" class="flex rounded-full overflow-hidden h-4 mb-6 gap-0.5"></div>
         <div id="alloc-legend" class="space-y-3"></div>
       </div>
-      
+
     </section>
 
     <section aria-labelledby="ai-heading" class="mb-8 fade-up delay-3">
@@ -284,6 +284,9 @@
           </div>
         </div>
 
+        <div id="ai-tips" class="flex flex-col gap-3"></div>
+
+      </div>
     </section>
 
     <section aria-labelledby="portfolio-heading" class="mb-8 fade-up delay-4">
@@ -434,7 +437,7 @@
     document.getElementById('m-pl-bar').style.background = m.floatingPL >= 0 ? 'linear-gradient(90deg, #10b981, #34d399)' : 'linear-gradient(90deg, #f43f5e, #fb7185)';
 
     document.getElementById('m-cash').innerText = EduVesting.formatRupiah(m.cash);
-    
+
     // FORMAT DESIMAL 2 ANGKA UNTUK RASIO KAS
     document.getElementById('m-cashpct').innerText = m.cashPercent.toFixed(2) + '%';
     document.getElementById('m-cashpct-bar').style.width = Math.min(100, m.cashPercent) + '%';
@@ -453,7 +456,7 @@
 
       note.innerText = 'Kas kosong melompong! Bahaya nih kalau market lagi diskon, gak ada peluru buat serok bawah.';
       note.className = 'text-xs mt-2 text-rose-500 font-medium';
-      
+
     } else if (m.cashPercent < 10 && m.cash < 500000) { 
       // 2. Persentase Kecil DAN Nominal Kecil
       warnEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-xs"></i> Saldo kas rendah';
@@ -462,30 +465,30 @@
 
       note.innerText = 'Terlalu rendah woy! Rawan banget kalau tiba-tiba butuh dana darurat (UKT/kosan).'; 
       note.className = 'text-xs mt-2 text-rose-400 font-medium'; 
-      
+
     } else if (m.cashPercent <= 20) { 
       // 3. Persentase Rendah-Sedang, TAPI Nominal Gede (Atau emang porsi 10-20%)
       warnEl.classList.add('hidden'); // Sembunyikan tanda seru di kotak atas
-      
+
       if (m.cashPercent < 10 && m.cash >= 500000) {
         note.innerText = 'Secara nominal aman buat darurat, tapi porsi kas di portofolio agak kecil buat serok saham bawah.';
       } else {
         note.innerText = 'Masih agak rendah. Boleh lah buat nambah porsi dikit kalau ada saham incaran yang turun.'; 
       }
       note.className = 'text-xs mt-2 text-amber-400 font-medium'; 
-      
+
     } else if (m.cashPercent <= 30) { 
       // 4. Ideal (21 - 30%)
       warnEl.classList.add('hidden');
       note.innerText = 'Cukup ideal & aman! Portofolio imbang, batin tenang, tidur nyenyak.'; 
       note.className = 'text-xs mt-2 text-emerald-400 font-medium'; 
-      
+
     } else if (m.cashPercent <= 50) { 
       // 5. Moderat (31 - 50%)
       warnEl.classList.add('hidden');
       note.innerText = 'Moderat. Peluru kas kamu lumayan banyak nih, siap tempur kalau market lagi merah.'; 
       note.className = 'text-xs mt-2 text-cyan-400 font-medium'; 
-      
+
     } else { 
       // 6. Terlalu Besar (> 50%)
       warnEl.classList.add('hidden');
@@ -547,7 +550,12 @@
     if (m.assets.length) { score = 40 + typeCount * 10 + Math.min(20, m.cashPercent) - (volatilePct > 60 ? 15 : 0); score = Math.max(10, Math.min(95, Math.round(score))); }
     document.getElementById('ai-score').innerText = m.assets.length ? score + '/100' : '—';
 
-    const tips = document.getElementById('ai-tips'); tips.innerHTML = '';
+    const tips = document.getElementById('ai-tips'); 
+    
+    // Pastikan ID ai-tips ada di HTML sebelum mengeksekusi ini
+    if (!tips) return; 
+    
+    tips.innerHTML = '';
     insights.slice(1, 4).forEach(tip => {
       const div = document.createElement('div'); div.className = 'glass rounded-xl p-4 flex items-start gap-3 transition-all cursor-default';
       div.innerHTML = `
@@ -563,28 +571,47 @@
     if (!insights.slice(1).length) tips.innerHTML = '<p class="text-xs text-slate-600 text-center py-6">Tidak ada catatan tambahan.</p>';
   }
 
+  // UPDATE RENDER TABLE AGAR SAMA DENGAN PORTFOLIO.HTML
   function renderTable(m) {
-    const tbody = document.getElementById('dash-asset-tbody'); const emptyState = document.getElementById('dash-empty-state'); const footer = document.getElementById('dash-table-footer');
+    const tbody = document.getElementById('dash-asset-tbody'); 
+    const emptyState = document.getElementById('dash-empty-state'); 
+    const footer = document.getElementById('dash-table-footer');
+    
     tbody.innerHTML = '';
-    if (!m.assets.length) { emptyState.classList.remove('hidden'); footer.classList.add('hidden'); return; }
-    emptyState.classList.add('hidden'); footer.classList.remove('hidden');
+    
+    if (!m.assets.length) { 
+      emptyState.classList.remove('hidden'); 
+      footer.classList.add('hidden'); 
+      return; 
+    }
+    
+    emptyState.classList.add('hidden'); 
+    footer.classList.remove('hidden');
     document.getElementById('dash-count-text').innerText = `Menampilkan ${m.assets.length} posisi aktif`;
 
     m.assets.forEach(a => {
-      const def = EduVesting.ASSET_TYPES[a.type]; const pl = (a.lastPrice - a.avgPrice) * a.qty;
+      const def = EduVesting.ASSET_TYPES[a.type]; 
+      const pl = (a.lastPrice - a.avgPrice) * a.qty;
       const plPct = a.avgPrice > 0 ? ((a.lastPrice - a.avgPrice) / a.avgPrice) * 100 : 0;
-      const plColor = pl >= 0 ? 'text-emerald-400' : 'text-rose-400'; const sign = pl >= 0 ? '+' : '';
+      const plColor = pl >= 0 ? 'text-emerald-400' : 'text-rose-400'; 
+      const sign = pl >= 0 ? '+' : '';
       const totalHarga = a.avgPrice * a.qty;
 
-      const tr = document.createElement('tr'); tr.className = 'portfolio-row';
+      const tr = document.createElement('tr'); 
+      tr.className = 'portfolio-row';
       tr.innerHTML = `
         <td class="px-5 py-4">
           <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0" style="background:${def.badgeBg}; color:${def.badgeColor};">${a.ticker.slice(0,2)}</div>
-            <div><p class="font-medium text-slate-200">${a.ticker}</p><p class="text-xs text-slate-500">${a.name}</p></div>
+            <div>
+              <p class="font-medium text-slate-200">${a.ticker}</p>
+              <p class="text-xs text-slate-500">${a.name}</p>
+            </div>
           </div>
         </td>
-        <td class="px-4 py-4"><span class="badge" style="background:${def.badgeBg};color:${def.badgeColor};border:1px solid ${def.badgeBorder};">${def.label}</span></td>
+        <td class="px-4 py-4">
+          <span class="badge" style="background:${def.badgeBg};color:${def.badgeColor};border:1px solid ${def.badgeBorder};">${def.label}</span>
+        </td>
         
         <td class="px-4 py-4">
           <div class="flex justify-between items-center w-full min-w-[85px]">
