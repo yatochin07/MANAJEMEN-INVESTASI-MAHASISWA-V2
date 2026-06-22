@@ -424,8 +424,13 @@
   function renderSummary(m) {
     document.getElementById('m-equity').innerText = EduVesting.formatRupiah(m.totalEquity);
     const equityPctEl = document.getElementById('m-equity-pct');
-    const equityPct = m.totalCost > 0 ? ((m.totalEquity - m.totalCost) / m.totalCost) * 100 : 0;
-    const eqSign = equityPct >= 0 ? '+' : '';
+    
+    // PERBAIKAN: Persentase pertumbuhan 'vs modal' sekarang mengambil m.plPercent 
+    // yang murni dihitung dari (Floating P/L / Total Cost), sehingga saldo Kas
+    // tidak lagi mendistorsi/memalsukan persentase performa portofolio.
+    const equityPct = m.plPercent || 0; 
+    
+    const eqSign = equityPct > 0 ? '+' : ''; // Pakai > 0 agar angka 0 tidak ada + nya jika dirasa perlu, tp >= 0 jg gpp
     equityPctEl.innerHTML = `<i class="fa-solid fa-arrow-trend-${equityPct >= 0 ? 'up' : 'down'} text-xs"></i> ${eqSign}${equityPct.toFixed(1)}%`;
     equityPctEl.className = 'text-sm font-semibold flex items-center gap-1 ' + (equityPct >= 0 ? 'text-emerald-400' : 'text-rose-400');
 
@@ -551,10 +556,10 @@
     document.getElementById('ai-score').innerText = m.assets.length ? score + '/100' : '—';
 
     const tips = document.getElementById('ai-tips'); 
-    
+
     // Pastikan ID ai-tips ada di HTML sebelum mengeksekusi ini
     if (!tips) return; 
-    
+
     tips.innerHTML = '';
     insights.slice(1, 4).forEach(tip => {
       const div = document.createElement('div'); div.className = 'glass rounded-xl p-4 flex items-start gap-3 transition-all cursor-default';
@@ -576,15 +581,15 @@
     const tbody = document.getElementById('dash-asset-tbody'); 
     const emptyState = document.getElementById('dash-empty-state'); 
     const footer = document.getElementById('dash-table-footer');
-    
+
     tbody.innerHTML = '';
-    
+
     if (!m.assets.length) { 
       emptyState.classList.remove('hidden'); 
       footer.classList.add('hidden'); 
       return; 
     }
-    
+
     emptyState.classList.add('hidden'); 
     footer.classList.remove('hidden');
     document.getElementById('dash-count-text').innerText = `Menampilkan ${m.assets.length} posisi aktif`;
