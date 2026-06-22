@@ -73,11 +73,8 @@ const EduVesting = (() => {
   async function saveSettings(settings) {
     const userId = await _getUserId();
     if (!userId) throw new Error("Belum login");
-
-    const { error } = await window.supabaseClient
-      .from('users')
-      .upsert({ id: userId, cash: Number(settings.cash) || 0 }, { onConflict: 'id' });
-
+    // Gunakan upsert agar user baru OAuth tetap bisa menyimpan kas
+    const { error } = await window.supabaseClient.from('users').upsert({ id: userId, cash: Number(settings.cash) || 0 }, { onConflict: 'id' });
     if (error) throw error;
   }
 
@@ -127,9 +124,7 @@ const EduVesting = (() => {
       const safeTicker = encodeURIComponent(ticker);
       const url = `/api/price/saham/${safeTicker}`;
       const res = await fetch(url);
-
       if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
-
       const data = await res.json();
       return data.price;
     } catch (error) { 
@@ -142,28 +137,19 @@ const EduVesting = (() => {
     const assets = await getAssets(); 
     const targetAssets = assets.filter(a => ['saham', 'reksadana', 'emas'].includes(a.type));
     if (!targetAssets.length) return { updated: 0, total: 0 };
-
     let updated = 0;
     let cachedGoldPrice = null;
-
     for (let a of targetAssets) {
       let livePrice = null;
-
       if (a.type === 'emas') {
         if (['XAU', 'XAUUSD', 'GC=F'].includes(a.ticker.toUpperCase())) {
-            if (!cachedGoldPrice) {
-                cachedGoldPrice = await fetchGoldPriceIDR();
-            }
+            if (!cachedGoldPrice) cachedGoldPrice = await fetchGoldPriceIDR();
             livePrice = cachedGoldPrice;
         }
       } else {
         livePrice = await fetchStockPriceIDR(a.ticker);
       }
-
-      if (livePrice && livePrice > 0) { 
-        await _setPriceOnly(a.id, livePrice); 
-        updated++; 
-      }
+      if (livePrice && livePrice > 0) { await _setPriceOnly(a.id, livePrice); updated++; }
     }
     return { updated, total: targetAssets.length };
   }
@@ -171,10 +157,8 @@ const EduVesting = (() => {
   async function computeMetrics() {
     const assets = await getAssets(); 
     const settings = await getSettings(); 
-
     let totalValue = 0, totalCost = 0;
     const byType = { saham: 0, kripto: 0, emas: 0, reksadana: 0 };
-
     assets.forEach(a => {
       const value = (a.lastPrice || 0) * (a.qty || 0);
       const cost = (a.avgPrice || 0) * (a.qty || 0);
@@ -182,21 +166,14 @@ const EduVesting = (() => {
       totalCost += cost;
       byType[a.type] = (byType[a.type] || 0) + value;
     });
-
     const cash = Number(settings.cash) || 0;
     const totalEquity = totalValue + cash;
     const floatingPL = totalValue - totalCost;
     const plPercent = totalCost > 0 ? (floatingPL / totalCost) * 100 : 0;
-
     const allocation = Object.entries(byType)
       .filter(([, v]) => v > 0)
-      .map(([type, value]) => ({
-        type, value,
-        percent: totalEquity > 0 ? (value / totalEquity) * 100 : 0,
-        ...ASSET_TYPES[type],
-      }));
+      .map(([type, value]) => ({ type, value, percent: totalEquity > 0 ? (value / totalEquity) * 100 : 0, ...ASSET_TYPES[type] }));
     const cashPercent = totalEquity > 0 ? (cash / totalEquity) * 100 : 0;
-
     return { assets, settings, totalValue, totalCost, totalEquity, floatingPL, plPercent, byType, allocation, cash, cashPercent };
   }
 
@@ -209,14 +186,7 @@ const EduVesting = (() => {
     const losers = assets.filter(a => a.lastPrice < a.avgPrice);
     if (losers.length) insights.push({ icon: 'fa-arrow-trend-down', tone: 'rose', title: 'Ada Posisi Merah', text: `${losers.length} aset sedang minus.` });
     if (floatingPL > 0 && metrics.plPercent > 10) insights.push({ icon: 'fa-arrow-trend-up', tone: 'emerald', title: 'Profit Mengambang Solid', text: `Floating P/L +${metrics.plPercent.toFixed(1)}%. Pertimbangkan take-profit parsial.` });
-
-    if (metrics.cash === 0) {
-        insights.push({ icon: 'fa-piggy-bank', tone: 'rose', title: 'Kas Kosong Total', text: `Anda tidak punya kas darurat sama sekali untuk menyerok saham/kripto.` });
-    } else if (cashPercent < 10 && metrics.cash < 500000) { 
-        insights.push({ icon: 'fa-piggy-bank', tone: 'amber', title: 'Buffer Kas Tipis', text: `Kas Anda sangat minim. Siapkan dana darurat tambahan.` }); 
-    }
-
-    if (!insights.length) insights.push({ icon: 'fa-circle-check', tone: 'emerald', title: 'Portofolio Seimbang', text: 'Portofolio Anda relatif terdiversifikasi dengan baik.' });
+    if (metrics.cash === 0) insights.push({ icon: 'fa-piggy-bank', tone: 'rose', title: 'Kas Kosong Total', text: `Anda tidak punya kas darurat.` });
     return insights;
   }
 
@@ -228,8 +198,7 @@ const EduVesting = (() => {
     getAssets, addAsset, updateAsset, deleteAsset,
     getSettings, saveSettings,
     fetchCryptoPricesIDR, refreshCryptoPrices,
-    fetchGoldPriceIDR, 
-    fetchStockPriceIDR, refreshStockPrices,
+    fetchGoldPriceIDR, fetchStockPriceIDR, refreshStockPrices,
     computeMetrics, generateInsights,
     formatRupiah, formatNumber,
   };
