@@ -1,11 +1,12 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
-// Tambahan: Import Library Yahoo Finance versi terbaru (v3)
-const YahooFinance = require('yahoo-finance2').default;
-const yf = new YahooFinance();
+// ========================================================
+// FIX: Import Library Yahoo Finance versi terbaru
+// Jangan pakai 'new YahooFinance()', langsung panggil objeknya
+// ========================================================
+const yahooFinance = require('yahoo-finance2').default;
 
 // ======================
 // IMPORT ROUTES
@@ -19,28 +20,13 @@ const calculatorRoutes = require('./routes/calculatorRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 
 // ======================
-// APP
+// APP & MIDDLEWARE
 // ======================
 const app = express();
-
-// ======================
-// MIDDLEWARE
-// ======================
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 
-// ======================
-// DATABASE
-// ======================
-mongoose.connect(
-    process.env.MONGO_URI
-)
-.then(() => {
-    console.log('MongoDB Connected');
-})
-.catch((err) => {
-    console.error('MongoDB Connection Error:', err);
-});
+// (Sisa kodingan Mongoose / MongoDB sudah dihapus bersih dari sini karena sudah pakai Supabase)
 
 // ======================
 // ROUTES (API PIHAK KETIGA / EXTERNAL)
@@ -50,20 +36,20 @@ mongoose.connect(
 app.get('/api/price/saham/:ticker', async (req, res) => {
     try {
         let ticker = req.params.ticker.toUpperCase();
-        
-        // ========================================================
-        // FIX CERDAS: Jangan tambahkan .JK kalau tickernya Emas (GC=F, IDR=X) 
+
+        // Logika Cerdas: Jangan tambahkan .JK kalau tickernya Emas (GC=F) 
         // atau kalau tickernya sudah pakai titik (XPIN.JK)
-        // ========================================================
         if (!ticker.includes('=') && !ticker.includes('.')) {
             ticker += '.JK';
         }
 
         console.log(`[DEBUG] Mencoba tarik dari Yahoo: ${ticker}`);
-        
-        // Memanggil fungsi menggunakan instance 'yf'
-        const quote = await yf.quote(ticker);
-        
+
+        // ========================================================
+        // FIX: Panggil langsung dari 'yahooFinance'
+        // ========================================================
+        const quote = await yahooFinance.quote(ticker);
+
         if (!quote || !quote.regularMarketPrice) {
             return res.status(404).json({ error: "Harga tidak ditemukan" });
         }
@@ -81,7 +67,7 @@ app.get('/api/price/saham/:ticker', async (req, res) => {
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/goals', goalsRoutes);
-app.use('/api/ai', aiRoutes); // <--- Rute AI kamu di sini
+app.use('/api/ai', aiRoutes); // <--- Rute AI
 app.use('/api/allocations', alloRoutes);
 app.use('/api/market', calculatorRoutes);
 app.use('/api/settings', settingsRoutes);
