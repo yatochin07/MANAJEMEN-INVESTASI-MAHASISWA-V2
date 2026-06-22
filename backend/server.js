@@ -1,16 +1,13 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
-// Tambahan: Import Library Yahoo Finance versi terbaru (v3)
-const YahooFinance = require('yahoo-finance2').default;
-const yf = new YahooFinance();
+// Import Library Yahoo Finance versi terbaru
+const yahooFinance = require('yahoo-finance2').default;
 
 // ======================
 // IMPORT ROUTES
 // ======================
-// Catatan: authRoutes dihapus karena autentikasi sudah sepenuhnya ditangani oleh Supabase di Frontend
 const portfolioRoutes = require('./routes/portfolioRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
 const goalsRoutes = require('./routes/goalsRoutes');
@@ -20,42 +17,21 @@ const calculatorRoutes = require('./routes/calculatorRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 
 // ======================
-// APP
+// APP & MIDDLEWARE
 // ======================
 const app = express();
-
-// ======================
-// MIDDLEWARE
-// ======================
 app.use(cors());
 app.use(express.json());
-// Catatan: express-session dan passport dihapus karena Vercel Serverless bersifat stateless
 
 // ======================
-// DATABASE
+// ROUTES (EXTERNAL / YAHOO FINANCE)
 // ======================
-mongoose.connect(
-    process.env.MONGO_URI
-)
-.then(() => {
-    console.log('MongoDB Connected');
-})
-.catch((err) => {
-    console.error('MongoDB Connection Error:', err);
-});
-
-// ======================
-// ROUTES (API PIHAK KETIGA / EXTERNAL)
-// ======================
-
-// Endpoint untuk menarik harga saham realtime dari Yahoo Finance
 app.get('/api/price/saham/:ticker', async (req, res) => {
     try {
         const ticker = req.params.ticker.toUpperCase() + '.JK';
         console.log(`[DEBUG] Mencoba tarik: ${ticker}`);
         
-        // Memanggil fungsi menggunakan instance 'yf'
-        const quote = await yf.quote(ticker);
+        const quote = await yahooFinance.quote(ticker);
         
         if (!quote || !quote.regularMarketPrice) {
             return res.status(404).json({ error: "Harga saham tidak ditemukan" });
@@ -69,7 +45,7 @@ app.get('/api/price/saham/:ticker', async (req, res) => {
 });
 
 // ======================
-// ROUTES (INTERNAL / MODULAR)
+// ROUTES (INTERNAL)
 // ======================
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/transactions', transactionRoutes);
@@ -84,7 +60,6 @@ app.use('/api/settings', settingsRoutes);
 // ======================
 const PORT = process.env.PORT || 5000;
 
-// Jika dijalankan di localhost (node server.js), maka app.listen akan berjalan
 if (require.main === module) {
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
@@ -92,5 +67,4 @@ if (require.main === module) {
     });
 }
 
-// WAJIB UNTUK VERCEL: Export app agar Vercel bisa menjadikannya Serverless Function
 module.exports = app;
