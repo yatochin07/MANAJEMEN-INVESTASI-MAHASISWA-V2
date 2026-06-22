@@ -3,9 +3,10 @@ const cors = require('cors');
 require('dotenv').config();
 
 // ========================================================
-// FIX: CARA YANG BENAR UNTUK YAHOO FINANCE V3
+// FIX: YAHOO FINANCE V3 ANTI GAGAL (BULLETPROOF)
 // ========================================================
-const { YahooFinance } = require('yahoo-finance2');
+const yfRaw = require('yahoo-finance2');
+const YahooFinance = yfRaw.default || yfRaw.YahooFinance;
 const yahooFinance = new YahooFinance();
 
 // ======================
@@ -71,6 +72,7 @@ const PORT = process.env.PORT || 5000;
 if (require.main === module) {
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
+        console.log('✅ SERVER BERHASIL JALAN DI LOKAL');
     });
 }
 
