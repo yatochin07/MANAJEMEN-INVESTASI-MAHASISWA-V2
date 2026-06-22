@@ -234,51 +234,16 @@
       <h2 id="allocation-heading" class="font-display text-base text-slate-300 mb-4 flex items-center gap-2">
         <i class="fa-solid fa-chart-pie text-indigo-400 text-sm"></i> Alokasi Aset & Manajemen Keuangan
       </h2>
-      <div class="grid grid-cols-1 lg:grid-cols-5 gap-5">
-
-        <div class="glass rounded-2xl p-4 sm:p-6 lg:col-span-3">
-          <div class="flex items-center justify-between mb-5">
-            <p class="text-sm font-semibold text-slate-300">Proporsi Portofolio</p>
-            <span class="text-xs text-slate-500" id="alloc-updated">—</span>
-          </div>
-          <div id="alloc-stack" class="flex rounded-full overflow-hidden h-4 mb-6 gap-0.5"></div>
-          <div id="alloc-legend" class="space-y-3"></div>
+      
+      <div class="glass rounded-2xl p-4 sm:p-6 w-full">
+        <div class="flex items-center justify-between mb-5">
+          <p class="text-sm font-semibold text-slate-300">Proporsi Portofolio</p>
+          <span class="text-xs text-slate-500" id="alloc-updated">—</span>
         </div>
-
-        <div class="glass rounded-2xl p-4 sm:p-6 lg:col-span-2 flex flex-col">
-          <div class="flex items-center gap-2 mb-4">
-            <i class="fa-solid fa-sliders text-cyan-400 text-sm"></i>
-            <p class="text-sm font-semibold text-slate-300">Budget & Fee Optimizer</p>
-          </div>
-          <div class="space-y-3 flex-1">
-            <div>
-              <label class="text-xs text-slate-500 mb-1 block">Budget Investasi Bulan Ini (Rp)</label>
-              <input id="budget-input" type="number" min="0" placeholder="500000" class="form-input w-full rounded-xl px-4 py-2.5 text-sm text-slate-200 font-medium" />
-            </div>
-            <div>
-              <label class="text-xs text-slate-500 mb-1 block">Instrumen Target</label>
-              <select id="instrument-select" class="form-input w-full rounded-xl px-4 py-2.5 text-sm text-slate-200 appearance-none">
-                <option value="saham">Saham IDX (fee 0.19%)</option>
-                <option value="kripto">Kripto Spot (fee 0.10%)</option>
-                <option value="emas">Emas (fee 0.50%)</option>
-                <option value="reksadana">Reksa Dana (tanpa fee beli)</option>
-              </select>
-            </div>
-            <div>
-              <label class="text-xs text-slate-500 mb-1 block">Harga per Unit Saat Ini (Rp)</label>
-              <input id="price-input" type="number" min="0" placeholder="Isi harga terbaru" class="form-input w-full rounded-xl px-4 py-2.5 text-sm text-slate-200 font-medium" />
-              <p class="text-xs text-slate-600 mt-1">Otomatis terisi dari harga terakhir aset Anda.</p>
-            </div>
-          </div>
-          <button onclick="calcFee()" class="btn-primary mt-4 w-full py-2.5 rounded-xl text-sm font-semibold text-white">
-            <i class="fa-solid fa-calculator mr-2"></i>Hitung Optimal
-          </button>
-          <div id="fee-result" class="mt-3 rounded-xl p-3 text-sm hidden" style="background:rgba(6,182,212,0.07); border:1px solid rgba(6,182,212,0.2);">
-            <p id="fee-text" class="text-slate-300"></p>
-          </div>
-        </div>
-
+        <div id="alloc-stack" class="flex rounded-full overflow-hidden h-4 mb-6 gap-0.5"></div>
+        <div id="alloc-legend" class="space-y-3"></div>
       </div>
+      
     </section>
 
     <section aria-labelledby="ai-heading" class="mb-8 fade-up delay-3">
@@ -336,7 +301,6 @@
       </div>
       <div class="glass rounded-2xl overflow-hidden w-full">
         <div class="overflow-x-auto w-full">
-          <!-- Min-width diperbesar agar tidak sesak -->
           <table class="w-full text-sm min-w-[850px]">
             <thead>
               <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
@@ -421,11 +385,8 @@
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
       });
 
-      document.getElementById('instrument-select').addEventListener('change', prefillPrice);
-
       // ASYNC AWAIT UNTUK MENGAMBIL DATA DARI SUPABASE CLOUD
       await renderDashboard();
-      await prefillPrice();
       await handleRefreshCrypto(true);
     } catch (err) { console.error("Gagal inisialisasi dashboard:", err); }
   });
@@ -477,14 +438,33 @@
     document.getElementById('m-pl-bar').style.background = m.floatingPL >= 0 ? 'linear-gradient(90deg, #10b981, #34d399)' : 'linear-gradient(90deg, #f43f5e, #fb7185)';
 
     document.getElementById('m-cash').innerText = EduVesting.formatRupiah(m.cash);
-    document.getElementById('m-cash-warn').classList.toggle('hidden', m.cashPercent >= 10);
-    document.getElementById('m-cashpct').innerText = m.cashPercent.toFixed(0) + '%';
+    document.getElementById('m-cash-warn').classList.toggle('hidden', m.cashPercent < 10);
+    
+    // FORMAT DESIMAL 2 ANGKA UNTUK RASIO KAS
+    document.getElementById('m-cashpct').innerText = m.cashPercent.toFixed(2) + '%';
     document.getElementById('m-cashpct-bar').style.width = Math.min(100, m.cashPercent) + '%';
 
+    // PENILAIAN RASIO KAS BAHASA ASYIK MAHASISWA
     const note = document.getElementById('m-cashpct-note');
-    if (m.cashPercent < 10) { note.innerText = 'Buffer kas tipis — pertimbangkan menambah kas.'; note.className = 'text-xs mt-2 text-amber-400'; }
-    else if (m.cashPercent > 50) { note.innerText = 'Kas cukup besar — bisa diinvestasikan.'; note.className = 'text-xs mt-2 text-cyan-400'; }
-    else { note.innerText = 'Rasio kas dalam rentang sehat.'; note.className = 'text-xs mt-2 text-emerald-400'; }
+    if (m.cashPercent === 0) {
+      note.innerText = 'Kas kosong melompong! Bahaya nih kalau market lagi diskon, gak ada peluru buat serok bawah.';
+      note.className = 'text-xs mt-2 text-rose-500 font-medium';
+    } else if (m.cashPercent < 10) { 
+      note.innerText = 'Terlalu rendah woy! Rawan banget kalau tiba-tiba butuh dana darurat (UKT/kosan).'; 
+      note.className = 'text-xs mt-2 text-rose-400 font-medium'; 
+    } else if (m.cashPercent <= 20) { 
+      note.innerText = 'Masih agak rendah. Boleh lah buat nambah porsi dikit kalau ada saham incaran yang turun.'; 
+      note.className = 'text-xs mt-2 text-amber-400 font-medium'; 
+    } else if (m.cashPercent <= 30) { 
+      note.innerText = 'Cukup ideal & aman! Portofolio imbang, batin tenang, tidur nyenyak.'; 
+      note.className = 'text-xs mt-2 text-emerald-400 font-medium'; 
+    } else if (m.cashPercent <= 50) { 
+      note.innerText = 'Moderat. Peluru kas kamu lumayan banyak nih, siap tempur kalau market lagi merah.'; 
+      note.className = 'text-xs mt-2 text-cyan-400 font-medium'; 
+    } else { 
+      note.innerText = 'Kas nganggur kegedean bos. Duitnya jangan didiemin aja, mending sebagian diputerin!'; 
+      note.className = 'text-xs mt-2 text-indigo-400 font-medium'; 
+    }
   }
 
   function renderAllocation(m) {
@@ -577,7 +557,6 @@
         </td>
         <td class="px-4 py-4"><span class="badge" style="background:${def.badgeBg};color:${def.badgeColor};border:1px solid ${def.badgeBorder};">${def.label}</span></td>
         
-        <!-- Harga Avg disejajarkan rata kanan dengan Rp terpisah -->
         <td class="px-4 py-4">
           <div class="flex justify-between items-center w-full min-w-[85px]">
             <span class="text-slate-500 text-[10px] font-normal mr-3">Rp</span>
@@ -585,7 +564,6 @@
           </div>
         </td>
         
-        <!-- Harga Terakhir disejajarkan rata kanan dengan Rp terpisah -->
         <td class="px-4 py-4">
           <div class="flex justify-between items-center w-full min-w-[85px]">
             <span class="text-slate-500 text-[10px] font-normal mr-3">Rp</span>
@@ -593,12 +571,10 @@
           </div>
         </td>
         
-        <!-- Qty -->
         <td class="px-4 py-4 text-right text-slate-400 tabular-nums">
           ${EduVesting.formatNumber(a.qty, 8)} <span class="text-[10px] ml-1">${def.unit}</span>
         </td>
         
-        <!-- Total Harga disejajarkan rata kanan dengan Rp terpisah -->
         <td class="px-4 py-4">
           <div class="flex justify-between items-center w-full min-w-[90px]">
             <span class="text-slate-500 text-[10px] font-normal mr-3">Rp</span>
@@ -606,7 +582,6 @@
           </div>
         </td> 
         
-        <!-- Floating P/L disejajarkan rata kanan dengan Rp terpisah -->
         <td class="px-5 py-4">
           <div class="flex justify-between items-center w-full min-w-[90px] ${plColor}">
             <span class="opacity-70 text-[10px] font-normal mr-3">Rp</span>
@@ -617,32 +592,6 @@
       `;
       tbody.appendChild(tr);
     });
-  }
-
-  // DIUBAH MENJADI ASYNC KARENA MEMANGGIL EduVesting.getAssets()
-  async function prefillPrice() {
-    if (typeof EduVesting === 'undefined') return;
-    const instrument = document.getElementById('instrument-select').value; 
-
-    // Tunggu pengambilan data dari database
-    const assets = await EduVesting.getAssets(); 
-
-    const filteredAssets = assets.filter(a => a.type === instrument && a.lastPrice > 0); 
-    const priceInput = document.getElementById('price-input');
-
-    if (filteredAssets.length) { 
-        priceInput.value = Math.round(filteredAssets.reduce((s, a) => s + a.lastPrice, 0) / filteredAssets.length); 
-    } else { 
-        priceInput.value = ''; 
-    }
-  }
-
-  function calcFee() {
-    const budget = parseFloat(document.getElementById('budget-input').value) || 0; const instrument = document.getElementById('instrument-select').value; const price = parseFloat(document.getElementById('price-input').value) || 0;
-    const def = EduVesting.ASSET_TYPES[instrument]; const resultEl = document.getElementById('fee-result'); const textEl = document.getElementById('fee-text'); resultEl.classList.remove('hidden');
-    if (budget <= 0 || price <= 0) { textEl.innerHTML = `<span class="text-amber-400">Isi Budget dan Harga per Unit.</span>`; return; }
-    const fee = budget * def.feeRate; const netBudget = budget - fee; const lotDivisor = instrument === 'saham' ? 100 : 1; const maxUnit = Math.floor(netBudget / price / lotDivisor);
-    textEl.innerHTML = `<span class="text-cyan-400 font-semibold">Fee:</span><span class="text-slate-300"> ${EduVesting.formatRupiah(fee)}</span> &nbsp;·&nbsp; <span class="text-cyan-400 font-semibold">Net:</span><span class="text-slate-300"> ${EduVesting.formatRupiah(netBudget)}</span><br/><span class="text-emerald-400 font-semibold">Maks. Beli:</span><span class="text-slate-200 font-medium"> ~${maxUnit > 0 ? maxUnit : '<1'} ${def.unit}${instrument==='saham' ? ' (' + (maxUnit*100) + ' lbr)' : ''}</span>`;
   }
 
   function animateBars() { document.querySelectorAll('.alloc-bar, .progress-fill').forEach((bar, i) => { const target = bar.style.width; bar.style.width = '0'; setTimeout(() => { bar.style.width = target; }, 200 + i * 60); }); }
