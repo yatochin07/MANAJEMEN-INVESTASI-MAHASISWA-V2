@@ -7,7 +7,76 @@ require('dotenv').config();
 // WAJIB pakai 'new YahooFinance()' sesuai perintah dari Vercel
 // ========================================================
 const { YahooFinance } = require('yahoo-finance2');
-const yahooFinance = new YahooFinance();
+const yahooFinance = new YahooFinance();const express = require('express');
+const cors = require('cors');
+require('dotenv').config();
+
+// Import Library Yahoo Finance versi terbaru
+const yahooFinance = require('yahoo-finance2').default;
+
+// ======================
+// IMPORT ROUTES
+// ======================
+const portfolioRoutes = require('./routes/portfolioRoutes');
+const transactionRoutes = require('./routes/transactionRoutes');
+const goalsRoutes = require('./routes/goalsRoutes');
+const aiRoutes = require('./routes/aiRoutes');
+const alloRoutes = require('./routes/alloRoutes');
+const calculatorRoutes = require('./routes/calculatorRoutes');
+const settingsRoutes = require('./routes/settingsRoutes');
+
+// ======================
+// APP & MIDDLEWARE
+// ======================
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// ======================
+// ROUTES (EXTERNAL / YAHOO FINANCE)
+// ======================
+app.get('/api/price/saham/:ticker', async (req, res) => {
+    try {
+        const ticker = req.params.ticker.toUpperCase() + '.JK';
+        console.log(`[DEBUG] Mencoba tarik: ${ticker}`);
+        
+        const quote = await yahooFinance.quote(ticker);
+        
+        if (!quote || !quote.regularMarketPrice) {
+            return res.status(404).json({ error: "Harga saham tidak ditemukan" });
+        }
+
+        res.json({ ticker: req.params.ticker.toUpperCase(), price: quote.regularMarketPrice });
+    } catch (error) {
+        console.error("ERROR DETAIL:", error); 
+        res.status(500).json({ error: "Gagal: " + error.message }); 
+    }
+});
+
+// ======================
+// ROUTES (INTERNAL)
+// ======================
+app.use('/api/portfolio', portfolioRoutes);
+app.use('/api/transactions', transactionRoutes);
+app.use('/api/goals', goalsRoutes);
+app.use('/api/ai', aiRoutes);
+app.use('/api/allocations', alloRoutes);
+app.use('/api/market', calculatorRoutes);
+app.use('/api/settings', settingsRoutes);
+
+// ======================
+// SERVER EXPORT (VERCEL & LOKAL)
+// ======================
+const PORT = process.env.PORT || 5000;
+
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+        console.log('✅ SERVER BERHASIL JALAN DI LOKAL');
+    });
+}
+
+module.exports = app;
 
 // ======================
 // IMPORT ROUTES
