@@ -112,7 +112,7 @@ const EduVesting = (() => {
       if (!res.ok) throw new Error('CoinGecko Gold HTTP ' + res.status);
       const data = await res.json();
       const paxgIdr = data['pax-gold'].idr;
-
+      
       // Konversi 1 Troy Ounce ke 1 Gram
       return paxgIdr / 31.1034768;
     } catch (e) {
@@ -126,9 +126,9 @@ const EduVesting = (() => {
       const safeTicker = encodeURIComponent(ticker);
       const url = `/api/price/saham/${safeTicker}`;
       const res = await fetch(url);
-
+      
       if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
-
+      
       const data = await res.json();
       return data.price;
     } catch (error) { 
