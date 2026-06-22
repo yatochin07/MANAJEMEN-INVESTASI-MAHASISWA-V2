@@ -454,7 +454,7 @@
       warnEl.className = 'text-xs mt-2 text-rose-500 font-medium flex items-center gap-1';
       warnEl.classList.remove('hidden');
 
-      note.innerText = 'Kas kosong melompong, yang bener aja bos! Gawat nih kalau market lagi diskon, gak ada peluru buat serok bawah.';
+      note.innerText = 'Kas kosong melompong, yang bener aja bos! Gawat nih kalau market lagi diskon, gak ada peluru buat serok bawah';
       note.className = 'text-xs mt-2 text-rose-500 font-medium';
 
     } else if (m.cashPercent < 10 && m.cash < 500000) { 
@@ -473,7 +473,7 @@
       if (m.cashPercent < 10 && m.cash >= 500000) {
         note.innerText = 'Secara nominal oke sih, tapi dananya agak kecil buat serok menyerok.';
       } else {
-        note.innerText = 'Masih agak rendah. Boleh lah buat nambah porsi dikit kalau ada saham/kripto incaran yang turun.'; 
+        note.innerText = 'Masih agak rendah. Boleh lah buat nambah porsi dikit kalau ada saham/kripto incaran yang turun'; 
       }
       note.className = 'text-xs mt-2 text-amber-400 font-medium'; 
 
@@ -486,13 +486,13 @@
     } else if (m.cashPercent <= 50) { 
       // 5. Moderat (31 - 50%)
       warnEl.classList.add('hidden');
-      note.innerText = 'Moderat. Peluru kamu lumayan banyak nih, siap tempur kalau market lagi merah!.'; 
+      note.innerText = 'Moderat. Peluru kamu lumayan banyak nih, siap tempur kalau market lagi merah!'; 
       note.className = 'text-xs mt-2 text-cyan-400 font-medium'; 
 
     } else { 
       // 6. Terlalu Besar (> 50%)
       warnEl.classList.add('hidden');
-      note.innerText = 'Kas nganggur kegedean bos. Duitnya jangan didiemin aja, mending sebagian diputerin!'; 
+      note.innerText = 'Buset, duitnya nganggur kegedean ya bos?. Jangan didiemin aja, mending sebagian diputerin!'; 
       note.className = 'text-xs mt-2 text-indigo-400 font-medium'; 
     }
   }
