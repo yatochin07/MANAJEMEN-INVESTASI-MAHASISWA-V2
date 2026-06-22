@@ -438,30 +438,61 @@
     document.getElementById('m-pl-bar').style.background = m.floatingPL >= 0 ? 'linear-gradient(90deg, #10b981, #34d399)' : 'linear-gradient(90deg, #f43f5e, #fb7185)';
 
     document.getElementById('m-cash').innerText = EduVesting.formatRupiah(m.cash);
-    document.getElementById('m-cash-warn').classList.toggle('hidden', m.cashPercent < 10);
     
     // FORMAT DESIMAL 2 ANGKA UNTUK RASIO KAS
     document.getElementById('m-cashpct').innerText = m.cashPercent.toFixed(2) + '%';
     document.getElementById('m-cashpct-bar').style.width = Math.min(100, m.cashPercent) + '%';
 
-    // PENILAIAN RASIO KAS BAHASA ASYIK MAHASISWA
+    // ==========================================================
+    // LOGIKA PERINGATAN KAS & PENILAIAN RASIO (SMART LOGIC)
+    // ==========================================================
+    const warnEl = document.getElementById('m-cash-warn');
     const note = document.getElementById('m-cashpct-note');
-    if (m.cashPercent === 0) {
+
+    if (m.cash === 0) {
+      // 1. Kas Kosong
+      warnEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-xs"></i> Kas kosong';
+      warnEl.className = 'text-xs mt-2 text-rose-500 font-medium flex items-center gap-1';
+      warnEl.classList.remove('hidden');
+
       note.innerText = 'Kas kosong melompong! Bahaya nih kalau market lagi diskon, gak ada peluru buat serok bawah.';
       note.className = 'text-xs mt-2 text-rose-500 font-medium';
-    } else if (m.cashPercent < 10) { 
+      
+    } else if (m.cashPercent < 10 && m.cash < 500000) { 
+      // 2. Persentase Kecil DAN Nominal Kecil
+      warnEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-xs"></i> Saldo kas rendah';
+      warnEl.className = 'text-xs mt-2 text-rose-400 font-medium flex items-center gap-1';
+      warnEl.classList.remove('hidden');
+
       note.innerText = 'Terlalu rendah woy! Rawan banget kalau tiba-tiba butuh dana darurat (UKT/kosan).'; 
       note.className = 'text-xs mt-2 text-rose-400 font-medium'; 
+      
     } else if (m.cashPercent <= 20) { 
-      note.innerText = 'Masih agak rendah. Boleh lah buat nambah porsi dikit kalau ada saham incaran yang turun.'; 
+      // 3. Persentase Rendah-Sedang, TAPI Nominal Gede (Atau emang porsi 10-20%)
+      warnEl.classList.add('hidden'); // Sembunyikan tanda seru di kotak atas
+      
+      if (m.cashPercent < 10 && m.cash >= 500000) {
+        note.innerText = 'Secara nominal aman buat darurat, tapi porsi kas di portofolio agak kecil buat serok saham bawah.';
+      } else {
+        note.innerText = 'Masih agak rendah. Boleh lah buat nambah porsi dikit kalau ada saham incaran yang turun.'; 
+      }
       note.className = 'text-xs mt-2 text-amber-400 font-medium'; 
+      
     } else if (m.cashPercent <= 30) { 
+      // 4. Ideal (21 - 30%)
+      warnEl.classList.add('hidden');
       note.innerText = 'Cukup ideal & aman! Portofolio imbang, batin tenang, tidur nyenyak.'; 
       note.className = 'text-xs mt-2 text-emerald-400 font-medium'; 
+      
     } else if (m.cashPercent <= 50) { 
+      // 5. Moderat (31 - 50%)
+      warnEl.classList.add('hidden');
       note.innerText = 'Moderat. Peluru kas kamu lumayan banyak nih, siap tempur kalau market lagi merah.'; 
       note.className = 'text-xs mt-2 text-cyan-400 font-medium'; 
+      
     } else { 
+      // 6. Terlalu Besar (> 50%)
+      warnEl.classList.add('hidden');
       note.innerText = 'Kas nganggur kegedean bos. Duitnya jangan didiemin aja, mending sebagian diputerin!'; 
       note.className = 'text-xs mt-2 text-indigo-400 font-medium'; 
     }
