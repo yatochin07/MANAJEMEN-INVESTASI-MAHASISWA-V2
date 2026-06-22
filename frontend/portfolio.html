@@ -360,8 +360,7 @@
       if (sbName) sbName.innerText = displayName;
       if (sbInitial) {
         if (avatarUrl) {
-          // PERBAIKAN: Menambahkan class rounded-full agar gambar dari Google bulat
-          sbInitial.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover rounded-full">`;
+          sbInitial.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover">`;
         } else {
           sbInitial.innerText = displayName.charAt(0).toUpperCase();
         }
@@ -370,8 +369,7 @@
       const settings = await EduVesting.getSettings();
       const cashInput = document.getElementById('cash-input');
       if (cashInput && typeof EduVesting !== 'undefined') {
-        // PERBAIKAN: Menambahkan "?" (optional chaining) pada settings?.cash
-        cashInput.value = settings?.cash || '';
+        cashInput.value = settings.cash || '';
       }
 
       await renderAll();
