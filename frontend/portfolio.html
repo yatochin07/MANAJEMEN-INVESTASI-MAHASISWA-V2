@@ -165,16 +165,24 @@
       </button>
     </header>
 
-    <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-      <div class="glass rounded-2xl p-4 sm:p-5 metric-card fade-up delay-1">
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <!-- KOTAK BARU: TOTAL EKUITAS -->
+      <div class="glass rounded-2xl p-4 sm:p-5 metric-card fade-up delay-1" style="border-color: rgba(99,102,241,0.2);">
+        <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5 flex items-center gap-1.5"><i class="fa-solid fa-wallet text-indigo-400"></i> Total Ekuitas</p>
+        <p id="sum-equity" class="font-display text-xl sm:text-2xl text-slate-100">Rp 0</p>
+      </div>
+
+      <div class="glass rounded-2xl p-4 sm:p-5 metric-card fade-up delay-2">
         <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Total Nilai Aset</p>
         <p id="sum-value" class="font-display text-xl sm:text-2xl text-slate-100">Rp 0</p>
       </div>
-      <div class="glass rounded-2xl p-4 sm:p-5 metric-card fade-up delay-2">
+      
+      <div class="glass rounded-2xl p-4 sm:p-5 metric-card fade-up delay-3">
         <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Total Modal</p>
         <p id="sum-cost" class="font-display text-xl sm:text-2xl text-slate-100">Rp 0</p>
       </div>
-      <div class="glass rounded-2xl p-4 sm:p-5 metric-card fade-up delay-3">
+      
+      <div class="glass rounded-2xl p-4 sm:p-5 metric-card fade-up delay-4">
         <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Floating P/L</p>
         <p id="sum-pl" class="font-display text-xl sm:text-2xl text-slate-100">Rp 0</p>
       </div>
@@ -186,7 +194,8 @@
           <i class="fa-solid fa-plus text-indigo-400 text-sm"></i> <span id="form-title">Tambah Aset Baru</span>
         </h2>
 
-        <form id="asset-form" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+        <!-- FORM DIPERBARUI: Grid diubah jadi 4 kolom dan field Nama Aset dihapus -->
+        <form id="asset-form" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           <input type="hidden" id="edit-id" value="" />
 
           <div class="sm:col-span-1 md:col-span-1">
@@ -205,25 +214,21 @@
                    class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200 uppercase" />
           </div>
 
-          <div class="sm:col-span-2 md:col-span-1">
-            <label class="text-xs text-slate-500 mb-1 block">Nama Aset</label>
-            <input id="f-name" type="text" placeholder="Bank Central Asia"
-                   class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200" />
-          </div>
-
+          <!-- INPUT DESIMAL SUPPORT (type text dengan inputmode) -->
           <div class="sm:col-span-1 md:col-span-1">
             <label class="text-xs text-slate-500 mb-1 block">Harga Beli Avg (Rp)</label>
-            <input id="f-avg" type="number" min="0" step="any" placeholder="10000" required
+            <input id="f-avg" type="text" inputmode="decimal" placeholder="Contoh: 10500,5" required
                    class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200" />
           </div>
 
           <div class="sm:col-span-1 md:col-span-1">
             <label class="text-xs text-slate-500 mb-1 block">Jumlah / Qty</label>
-            <input id="f-qty" type="number" min="0" step="any" placeholder="5" required
+            <input id="f-qty" type="text" inputmode="decimal" placeholder="Contoh: 5,5" required
                    class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200" />
           </div>
 
-          <div class="sm:col-span-2 md:col-span-5 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 mt-2 sm:border-t sm:border-white/5 sm:pt-4">
+          <!-- Tombol Span Full Width -->
+          <div class="sm:col-span-2 md:col-span-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 mt-2 sm:border-t sm:border-white/5 sm:pt-4">
             <button type="button" id="cancel-edit" onclick="resetForm()" class="hidden text-sm text-slate-400 hover:text-slate-200 py-2.5 px-4 text-center">
               Batal Edit
             </button>
@@ -255,11 +260,13 @@
       </h2>
       <div class="glass rounded-2xl overflow-hidden w-full">
         <div class="overflow-x-auto w-full">
-          <table class="w-full text-sm min-w-[900px]">
+          <!-- Tabel Diperlebar agar Kolom Flex Sejajar Bebas Sesak -->
+          <table class="w-full text-sm min-w-[950px]">
             <thead>
               <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
                 <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Aset</th>
                 <th class="px-4 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Tipe</th>
+                <!-- TH Diubah ke Rata Kanan untuk Menyesuaikan dengan Rata Kanan Nominal -->
                 <th class="px-4 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Harga Beli Avg</th>
                 <th class="px-4 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Harga Terakhir</th>
                 <th class="px-4 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Qty</th>
@@ -300,13 +307,49 @@
   }
 
   // ==========================================
+  // KAMUS NAMA ASET OTOMATIS
+  // ==========================================
+  const ASSET_DICTIONARY = {
+    // Saham Populer
+    'BBCA': 'Bank Central Asia Tbk',
+    'BBRI': 'Bank Rakyat Indonesia Tbk',
+    'BMRI': 'Bank Mandiri Tbk',
+    'BBNI': 'Bank Negara Indonesia Tbk',
+    'TLKM': 'Telkom Indonesia Tbk',
+    'ASII': 'Astra International Tbk',
+    'GOTO': 'GoTo Gojek Tokopedia Tbk',
+    'AMMN': 'Amman Mineral Tbk',
+    'ANTM': 'Aneka Tambang Tbk',
+    'PTBA': 'Bukit Asam Tbk',
+    'ADRO': 'Adaro Energy Tbk',
+    'UNVR': 'Unilever Indonesia Tbk',
+    'ICBP': 'Indofood CBP Tbk',
+    // Kripto Populer
+    'BTC': 'Bitcoin',
+    'ETH': 'Ethereum',
+    'USDT': 'Tether',
+    'BNB': 'Binance Coin',
+    'SOL': 'Solana',
+    'XRP': 'Ripple',
+    'ADA': 'Cardano',
+    'DOGE': 'Dogecoin',
+    // Emas/Reksadana (Optional)
+    'EMAS': 'Emas Fisik/Digital',
+    'RDPU': 'Reksa Dana Pasar Uang'
+  };
+
+  function getAutoName(ticker) {
+    // Jika ada di kamus, ambil namanya. Jika tidak ada, pakai ticker aslinya.
+    return ASSET_DICTIONARY[ticker.toUpperCase()] || ticker.toUpperCase();
+  }
+
+  // ==========================================
   // INISIALISASI SUPABASE CLIENT 
   // ==========================================
   const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // MENGKONEKSIKAN SUPABASE CLIENT KE GLOBAL WINDOW
   window.supabaseClient = supabaseClient;
 
   // ==========================================
@@ -323,7 +366,7 @@
 
       const user = session.user;
       const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
-      const avatarUrl = user.user_metadata?.avatar_url; // CEK FOTO PROFIL
+      const avatarUrl = user.user_metadata?.avatar_url; 
 
       const sbName = document.getElementById('sidebar-user-name');
       const sbInitial = document.getElementById('sidebar-user-initial');
@@ -337,14 +380,12 @@
         }
       }
 
-      // TAMBAHKAN AWAIT SAAT MENGAMBIL SETTINGS PERTAMA KALI
       const settings = await EduVesting.getSettings();
       const cashInput = document.getElementById('cash-input');
       if (cashInput && typeof EduVesting !== 'undefined') {
         cashInput.value = settings.cash || '';
       }
 
-      // ASYNC AWAIT UNTUK CLOUD DATA
       await renderAll();
 
       const form = document.getElementById('asset-form');
@@ -361,24 +402,30 @@
     try {
       const fType = document.getElementById('f-type');
       const fTicker = document.getElementById('f-ticker');
-      const fName = document.getElementById('f-name');
       const fAvg = document.getElementById('f-avg');
       const fQty = document.getElementById('f-qty');
       const editIdInput = document.getElementById('edit-id');
 
-      if (!fType || !fTicker || !fName || !fAvg || !fQty || !editIdInput) {
+      if (!fType || !fTicker || !fAvg || !fQty || !editIdInput) {
         throw new Error("Elemen form tidak ditemukan di HTML.");
       }
 
       const type = fType.value;
       const ticker = fTicker.value.trim().toUpperCase();
-      const name = fName.value.trim() || ticker;
-      const avgPrice = parseFloat(fAvg.value) || 0;
-      const qty = parseFloat(fQty.value) || 0;
+      
+      // AUTO FILL NAME
+      const name = getAutoName(ticker); 
+      
+      // MENDUKUNG KOMA UNTUK DESIMAL INDONESIA
+      const rawAvg = fAvg.value.replace(/,/g, '.');
+      const rawQty = fQty.value.replace(/,/g, '.');
+      const avgPrice = parseFloat(rawAvg) || 0;
+      const qty = parseFloat(rawQty) || 0;
+      
       const editId = editIdInput.value;
 
       if (!ticker || avgPrice <= 0 || qty <= 0) {
-        alert('Mohon isi Ticker, Harga Beli Avg, dan Qty dengan nilai angka yang valid.');
+        alert('Mohon isi Ticker, Harga Beli Avg, dan Qty dengan nilai angka yang valid (Boleh pakai koma).');
         return;
       }
 
@@ -386,7 +433,6 @@
         throw new Error("Objek 'EduVesting' tidak ada. Pastikan file api.js terhubung benar.");
       }
 
-      // TOMBOL SAVE SEDANG MEMPROSES (UX TAMBAHAN BIAAR NGGA DI KLIK DOUBLE)
       const submitBtn = e.target.querySelector('button[type="submit"]');
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<i class="fa-solid fa-spinner spin mr-1"></i> Menyimpan...';
@@ -438,7 +484,6 @@
     if (cancelEdit) cancelEdit.classList.add('hidden');
   }
 
-  // UBAH JADI ASYNC KARENA GET ASSETS DARI CLOUD
   async function editAsset(id) {
     if (typeof EduVesting === 'undefined') return;
     const assets = await EduVesting.getAssets();
@@ -448,9 +493,10 @@
     document.getElementById('edit-id').value = id;
     document.getElementById('f-type').value = asset.type;
     document.getElementById('f-ticker').value = asset.ticker;
-    document.getElementById('f-name').value = asset.name;
-    document.getElementById('f-avg').value = asset.avgPrice;
-    document.getElementById('f-qty').value = asset.qty;
+    
+    // Konversi titik ke koma untuk UX Indonesia saat diedit
+    document.getElementById('f-avg').value = asset.avgPrice.toString().replace('.', ',');
+    document.getElementById('f-qty').value = asset.qty.toString().replace('.', ',');
 
     document.getElementById('form-title').innerText = 'Edit Aset: ' + asset.ticker;
     document.getElementById('submit-label').innerText = 'Update';
@@ -458,7 +504,6 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // UBAH JADI ASYNC UNTUK DELETE
   async function removeAsset(id) {
     if (!confirm('Hapus aset ini dari portofolio?')) return;
     try {
@@ -469,7 +514,6 @@
     }
   }
 
-  // UBAH JADI ASYNC UNTUK MENYIMPAN KE CLOUD DAN HANDLE LOADING BUTTON
   async function saveCash(event) {
     const cashInput = document.getElementById('cash-input');
     if (!cashInput || typeof EduVesting === 'undefined') return;
@@ -534,16 +578,20 @@
     }
   }
 
-  // UBAH JADI ASYNC UNTUK RENDER
+  // ==========================================
+  // RENDER UI (DENGAN PENYELARASAN TABEL)
+  // ==========================================
   async function renderAll() {
     try {
       if (typeof EduVesting === 'undefined') return;
       const metrics = await EduVesting.computeMetrics();
 
+      const sumEquityEl = document.getElementById('sum-equity'); 
       const sumValueEl = document.getElementById('sum-value');
       const sumCostEl = document.getElementById('sum-cost');
       const plEl = document.getElementById('sum-pl');
 
+      if (sumEquityEl) sumEquityEl.innerText = EduVesting.formatRupiah(metrics.totalEquity);
       if (sumValueEl) sumValueEl.innerText = EduVesting.formatRupiah(metrics.totalValue);
       if (sumCostEl) sumCostEl.innerText = EduVesting.formatRupiah(metrics.totalCost);
 
@@ -592,14 +640,40 @@
           <td class="px-4 py-4">
             <span class="badge" style="background:${def.badgeBg};color:${def.badgeColor};border:1px solid ${def.badgeBorder};">${def.label}</span>
           </td>
-          <td class="px-4 py-4 text-right text-slate-300 font-medium tabular-nums">${EduVesting.formatRupiah(a.avgPrice)}</td>
-          <td class="px-4 py-4 text-right text-slate-200 font-semibold tabular-nums">${EduVesting.formatRupiah(a.lastPrice)}</td>
-          <td class="px-4 py-4 text-right text-slate-400 tabular-nums">${EduVesting.formatNumber(a.qty)} ${def.unit}</td>
-          <td class="px-4 py-4 text-right text-slate-300 font-medium tabular-nums">${EduVesting.formatRupiah(totalPrice)}</td> 
-          <td class="px-4 py-4 text-right">
-            <span class="${plColor} font-semibold tabular-nums">${plSign}${EduVesting.formatRupiah(pl)}</span>
-            <p class="${plColor} text-xs tabular-nums">${plSign}${plPct.toFixed(2)}%</p>
+          
+          <!-- TABEL SEJAJAR UNTUK NOMINAL UANG -->
+          <td class="px-4 py-4">
+            <div class="flex justify-between items-center w-full min-w-[85px]">
+              <span class="text-slate-500 text-[10px] font-normal mr-3">Rp</span>
+              <span class="text-slate-300 font-medium tabular-nums text-right">${EduVesting.formatNumber(a.avgPrice)}</span>
+            </div>
           </td>
+          <td class="px-4 py-4">
+            <div class="flex justify-between items-center w-full min-w-[85px]">
+              <span class="text-slate-500 text-[10px] font-normal mr-3">Rp</span>
+              <span class="text-slate-200 font-semibold tabular-nums text-right">${EduVesting.formatNumber(a.lastPrice)}</span>
+            </div>
+          </td>
+          
+          <td class="px-4 py-4 text-right text-slate-400 tabular-nums">
+            ${EduVesting.formatNumber(a.qty)} <span class="text-[10px] ml-1">${def.unit}</span>
+          </td>
+          
+          <td class="px-4 py-4">
+            <div class="flex justify-between items-center w-full min-w-[90px]">
+              <span class="text-slate-500 text-[10px] font-normal mr-3">Rp</span>
+              <span class="text-slate-300 font-medium tabular-nums text-right">${EduVesting.formatNumber(totalPrice)}</span>
+            </div>
+          </td> 
+          
+          <td class="px-4 py-4">
+            <div class="flex justify-between items-center w-full min-w-[90px] ${plColor}">
+              <span class="opacity-70 text-[10px] font-normal mr-3">Rp</span>
+              <span class="font-semibold tabular-nums text-right">${plSign}${EduVesting.formatNumber(Math.abs(pl))}</span>
+            </div>
+            <p class="${plColor} text-xs tabular-nums text-right mt-1">${plSign}${plPct.toFixed(2)}%</p>
+          </td>
+          
           <td class="px-5 py-4 text-right whitespace-nowrap">
             <button onclick="editAsset('${a.id}')" class="text-indigo-400 hover:text-indigo-300 text-xs mr-3"><i class="fa-solid fa-pen"></i></button>
             <button onclick="removeAsset('${a.id}')" class="text-rose-400 hover:text-rose-300 text-xs"><i class="fa-solid fa-trash"></i></button>
