@@ -541,7 +541,6 @@ Berikan jawaban AI yang selalu merujuk pada angka-angka di atas.`;
       chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // FUNGSI INI SEKARANG PINTAR MENDETEKSI LOKAL ATAU VERCEL!
     async function simulateAIResponse(userText) {
       appendAITyping();
       suggestedPrompts.style.display = 'none';
@@ -550,17 +549,12 @@ Berikan jawaban AI yang selalu merujuk pada angka-angka di atas.`;
         const payloadMessage = `${aiContextString}\n\nPertanyaan User: ${userText}`;
 
         // ========================================================
-        // LOGIKA PINTAR URL BACKEND (LOKAL VS VERCEL)
+        // LOGIKA URL YANG SUDAH DIOPTIMASI UNTUK VERCEL (ANTI-CORS)
         // ========================================================
-        
-        // 1. Cek apakah ini dijalankan di laptop (localhost)
         const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         
-        // 2. Link Vercel Backend kamu sesuai screenshot
-        const VERCEL_BACKEND_URL = 'https://eduvesting.vercel.app/api/ai/chat';
-        
-        // 3. Sistem akan otomatis memilih mana URL yang benar
-        const BACKEND_URL = isLocal ? 'http://localhost:5000/api/ai/chat' : VERCEL_BACKEND_URL;
+        // Cukup gunakan relative path jika di Vercel agar otomatis mengikuti domain yang sedang aktif!
+        const BACKEND_URL = isLocal ? 'http://localhost:5000/api/ai/chat' : '/api/ai/chat';
 
         const response = await fetch(BACKEND_URL, {
           method: 'POST',
