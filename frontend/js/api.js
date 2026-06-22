@@ -84,23 +84,6 @@ const EduVesting = (() => {
   }
 
   // ==========================================
-  // LOCAL STORAGE: GOALS (SEMENTARA)
-  // ==========================================
-  function _getCurrentUserEmail() {
-    try {
-      const sbSession = localStorage.getItem('sb-eirhdjllijilxjhigiwr-auth-token');
-      if (sbSession) { const parsed = JSON.parse(sbSession); if (parsed?.user?.email) return parsed.user.email.replace(/[^a-zA-Z0-9]/g, '_'); }
-    } catch (e) {} return 'guest';
-  }
-  function _read(key, fb) { try { const r = localStorage.getItem(key); return r ? JSON.parse(r) : fb; } catch(e){ return fb; } }
-  function _write(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
-  function getGoals() { return _read(GOALS_KEY + '_' + _getCurrentUserEmail(), []); }
-  function saveGoals(goals) { _write(GOALS_KEY + '_' + _getCurrentUserEmail(), goals); }
-  function addGoal(goal) { const goals = getGoals(); goals.push({ id: 'g_'+Date.now(), name: goal.name, target: Number(goal.target)||0, saved: Number(goal.saved)||0, monthly: Number(goal.monthly)||0 }); saveGoals(goals); }
-  function updateGoal(id, patch) { const goals = getGoals(); const idx = goals.findIndex(g => g.id === id); if (idx !== -1) { goals[idx] = { ...goals[idx], ...patch }; saveGoals(goals); } }
-  function deleteGoal(id) { saveGoals(getGoals().filter(g => g.id !== id)); }
-
-  // ==========================================
   // SINKRONISASI HARGA API
   // ==========================================
   async function fetchCryptoPricesIDR(tickers) {
@@ -118,7 +101,6 @@ const EduVesting = (() => {
 
   async function refreshCryptoPrices() {
     const assets = await getAssets();
-    // Hanya proses aset bertipe kripto yang ada di kamus
     const cryptoAssets = assets.filter(a => a.type === 'kripto' && COINGECKO_IDS[a.ticker]);
     if (!cryptoAssets.length) return { updated: 0, total: 0, error: null };
     try {
@@ -144,12 +126,13 @@ const EduVesting = (() => {
 
   async function refreshStockPrices() {
     const assets = await getAssets(); 
-    // Hanya proses aset bertipe saham (Lewati emas dan reksadana)
-    const stockAssets = assets.filter(a => a.type === 'saham');
+    // SEKARANG MENGAMBIL SAHAM, EMAS, DAN REKSADANA (Semua dilempar ke Yahoo Finance)
+    const stockAssets = assets.filter(a => ['saham', 'emas', 'reksadana'].includes(a.type));
     if (!stockAssets.length) return { updated: 0, total: 0 };
     let updated = 0;
     for (let a of stockAssets) {
       const livePrice = await fetchStockPriceIDR(a.ticker);
+      // Hanya diupdate jika Yahoo mengembalikan harga valid (lebih dari 0)
       if (livePrice && livePrice > 0) { await _setPriceOnly(a.id, livePrice); updated++; }
     }
     return { updated, total: stockAssets.length };
@@ -200,7 +183,6 @@ const EduVesting = (() => {
     if (losers.length) insights.push({ icon: 'fa-arrow-trend-down', tone: 'rose', title: 'Ada Posisi Merah', text: `${losers.length} aset sedang minus.` });
     if (floatingPL > 0 && metrics.plPercent > 10) insights.push({ icon: 'fa-arrow-trend-up', tone: 'emerald', title: 'Profit Mengambang Solid', text: `Floating P/L +${metrics.plPercent.toFixed(1)}%. Pertimbangkan take-profit parsial.` });
     
-    // Perbaikan Logika AI Insight untuk Saldo Kas (Mengikuti style Dashboard)
     if (metrics.cash === 0) {
         insights.push({ icon: 'fa-piggy-bank', tone: 'rose', title: 'Kas Kosong Total', text: `Anda tidak punya kas darurat sama sekali untuk menyerok saham/kripto.` });
     } else if (cashPercent < 10 && metrics.cash < 500000) { 
@@ -211,19 +193,12 @@ const EduVesting = (() => {
     return insights;
   }
 
-  // Dukungan hingga 8 desimal otomatis
-  function formatRupiah(n) { 
-      return 'Rp ' + Number(n).toLocaleString('id-ID', { maximumFractionDigits: 2 }); 
-  }
-  
-  function formatNumber(n, dec = 2) { 
-      return Number(n).toLocaleString('id-ID', { maximumFractionDigits: dec }); 
-  }
+  function formatRupiah(n) { return 'Rp ' + Number(n).toLocaleString('id-ID', { maximumFractionDigits: 2 }); }
+  function formatNumber(n, dec = 2) { return Number(n).toLocaleString('id-ID', { maximumFractionDigits: dec }); }
 
   return {
     ASSET_TYPES, COINGECKO_IDS,
     getAssets, addAsset, updateAsset, deleteAsset,
-    getGoals, addGoal, updateGoal, deleteGoal,
     getSettings, saveSettings,
     fetchCryptoPricesIDR, refreshCryptoPrices,
     fetchStockPriceIDR, refreshStockPrices,
