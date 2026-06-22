@@ -70,22 +70,14 @@ const EduVesting = (() => {
     } catch (e) { return { cash: 0 }; }
   }
 
-  // ===============================================================
-  // BAGIAN PERBAIKAN: Menggunakan UPSERT untuk menangani OAuth User
-  // ===============================================================
   async function saveSettings(settings) {
     const userId = await _getUserId();
     if (!userId) throw new Error("Belum login");
-    
+
     const { error } = await window.supabaseClient
       .from('users')
-      .upsert({ 
-        id: userId, 
-        cash: Number(settings.cash) || 0 
-      }, { 
-        onConflict: 'id' 
-      });
-      
+      .upsert({ id: userId, cash: Number(settings.cash) || 0 }, { onConflict: 'id' });
+
     if (error) throw error;
   }
 
@@ -117,15 +109,12 @@ const EduVesting = (() => {
     } catch (e) { return { updated: 0, total: cryptoAssets.length, error: e.message }; }
   }
 
-  // FUNGSI BARU UNTUK EMAS VIA COINGECKO (PAXG)
   async function fetchGoldPriceIDR() {
     try {
       const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=pax-gold&vs_currencies=idr');
       if (!res.ok) throw new Error('CoinGecko Gold HTTP ' + res.status);
       const data = await res.json();
       const paxgIdr = data['pax-gold'].idr;
-
-      // Konversi 1 Troy Ounce ke 1 Gram
       return paxgIdr / 31.1034768;
     } catch (e) {
       console.error('Gagal tarik harga emas via proxy CoinGecko:', e);
@@ -230,16 +219,6 @@ const EduVesting = (() => {
     if (!insights.length) insights.push({ icon: 'fa-circle-check', tone: 'emerald', title: 'Portofolio Seimbang', text: 'Portofolio Anda relatif terdiversifikasi dengan baik.' });
     return insights;
   }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    // Tambahan Optional Chaining Aman untuk mengantisipasi object null/undefined pada UI
-    const cashInput = document.getElementById('cash-input');
-    if (cashInput && typeof EduVesting !== 'undefined') {
-      getSettings().then(settings => {
-        cashInput.value = settings?.cash || '';
-      });
-    }
-  });
 
   function formatRupiah(n) { return 'Rp ' + Number(n).toLocaleString('id-ID', { maximumFractionDigits: 2 }); }
   function formatNumber(n, dec = 2) { return Number(n).toLocaleString('id-ID', { maximumFractionDigits: dec }); }
