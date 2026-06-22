@@ -166,18 +166,18 @@
     </header>
 
     <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-      
+
 
       <div class="glass rounded-2xl p-4 sm:p-5 metric-card fade-up delay-2">
         <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Total Nilai Aset</p>
         <p id="sum-value" class="font-display text-xl sm:text-2xl text-slate-100">Rp 0</p>
       </div>
-      
+
       <div class="glass rounded-2xl p-4 sm:p-5 metric-card fade-up delay-3">
         <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Total Modal</p>
         <p id="sum-cost" class="font-display text-xl sm:text-2xl text-slate-100">Rp 0</p>
       </div>
-      
+
       <div class="glass rounded-2xl p-4 sm:p-5 metric-card fade-up delay-4">
         <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Floating P/L</p>
         <p id="sum-pl" class="font-display text-xl sm:text-2xl text-slate-100">Rp 0</p>
@@ -324,9 +324,14 @@
     'XRP': 'Ripple',
     'ADA': 'Cardano',
     'DOGE': 'Dogecoin',
-    // Emas/Reksadana (Optional)
+    // Emas/Reksadana
     'EMAS': 'Emas Fisik/Digital',
-    'RDPU': 'Reksa Dana Pasar Uang'
+    'XAU': 'Gold (XAU)',                
+    'XAUUSD': 'Gold Spot USD',          
+    'GC=F': 'Gold Futures',             // Tambahan Yahoo Ticker Emas
+    'RDPU': 'Reksa Dana Pasar Uang',
+    'XPIN': 'Reksa Dana ETF Pefindo',   
+    'XPIN.JK': 'Reksa Dana ETF Pefindo' 
   };
 
   function getAutoName(ticker) {
@@ -405,7 +410,6 @@
       const name = getAutoName(ticker); 
 
       // PINTAR MENGOLAH TITIK DAN KOMA (Format Indonesia)
-      // Hapus semua titik (sebagai ribuan), lalu ubah koma jadi titik (desimal)
       const rawAvg = fAvg.value.replace(/\./g, '').replace(/,/g, '.');
       const rawQty = fQty.value.replace(/\./g, '').replace(/,/g, '.');
       const avgPrice = parseFloat(rawAvg) || 0;
@@ -440,10 +444,14 @@
       resetForm();
       await renderAll();
 
+      // ==============================================================
+      // PERBAIKAN: Semua aset akan mencoba mencari harga saat di-submit
+      // Jika kripto lewat Coingecko, sisanya lewat Yahoo Finance.
+      // ==============================================================
       if (type === 'kripto' && EduVesting.COINGECKO_IDS && EduVesting.COINGECKO_IDS[ticker]) {
-        await handleRefreshCrypto(); 
-      } else if (type === 'saham') {
-        await handleRefreshStock(ticker);
+        await handleRefreshCrypto(true); 
+      } else {
+        await handleRefreshStock(ticker, type);
       }
 
       submitBtn.disabled = false;
@@ -483,7 +491,6 @@
     document.getElementById('f-type').value = asset.type;
     document.getElementById('f-ticker').value = asset.ticker;
 
-    // Mengubah angka ke format Indonesia tanpa merusak desimal saat diedit (Anti Scientific Notation)
     document.getElementById('f-avg').value = asset.avgPrice.toLocaleString('id-ID', { useGrouping: false, maximumFractionDigits: 10 });
     document.getElementById('f-qty').value = asset.qty.toLocaleString('id-ID', { useGrouping: false, maximumFractionDigits: 10 });
 
@@ -530,18 +537,22 @@
     }
   }
 
-  async function handleRefreshStock(ticker) {
+  // ==============================================================
+  // PERBAIKAN: Fungsi HandleRefreshStock menerima parameter Type
+  // Untuk merefresh Saham, Emas, dan Reksadana per baris saat disubmit
+  // ==============================================================
+  async function handleRefreshStock(ticker, type) {
     try {
       const price = await EduVesting.fetchStockPriceIDR(ticker);
       if (price) {
         const assets = await EduVesting.getAssets();
-        const assetToUpdate = assets.find(a => a.ticker === ticker && a.type === 'saham');
+        const assetToUpdate = assets.find(a => a.ticker === ticker && a.type === type);
         if (assetToUpdate) {
           await EduVesting.updateAsset(assetToUpdate.id, { lastPrice: price });
           await renderAll(); 
         }
       }
-    } catch (e) { console.error("Gagal refresh harga saham individu", e); }
+    } catch (e) { console.error("Gagal refresh harga individu", e); }
   }
 
   async function handleRefreshCrypto(silent = false) {
@@ -568,7 +579,7 @@
   }
 
   // ==========================================
-  // RENDER UI (SUPPORT 8 DESIMAL KRIPTO)
+  // RENDER UI 
   // ==========================================
   async function renderAll() {
     try {
