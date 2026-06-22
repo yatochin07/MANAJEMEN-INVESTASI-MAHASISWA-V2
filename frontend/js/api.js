@@ -70,10 +70,22 @@ const EduVesting = (() => {
     } catch (e) { return { cash: 0 }; }
   }
 
+  // ===============================================================
+  // BAGIAN PERBAIKAN: Menggunakan UPSERT untuk menangani OAuth User
+  // ===============================================================
   async function saveSettings(settings) {
     const userId = await _getUserId();
     if (!userId) throw new Error("Belum login");
-    const { error } = await window.supabaseClient.from('users').update({ cash: Number(settings.cash) || 0 }).eq('id', userId);
+    
+    const { error } = await window.supabaseClient
+      .from('users')
+      .upsert({ 
+        id: userId, 
+        cash: Number(settings.cash) || 0 
+      }, { 
+        onConflict: 'id' 
+      });
+      
     if (error) throw error;
   }
 
@@ -112,7 +124,7 @@ const EduVesting = (() => {
       if (!res.ok) throw new Error('CoinGecko Gold HTTP ' + res.status);
       const data = await res.json();
       const paxgIdr = data['pax-gold'].idr;
-      
+
       // Konversi 1 Troy Ounce ke 1 Gram
       return paxgIdr / 31.1034768;
     } catch (e) {
@@ -126,9 +138,9 @@ const EduVesting = (() => {
       const safeTicker = encodeURIComponent(ticker);
       const url = `/api/price/saham/${safeTicker}`;
       const res = await fetch(url);
-      
+
       if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
-      
+
       const data = await res.json();
       return data.price;
     } catch (error) { 
@@ -219,6 +231,16 @@ const EduVesting = (() => {
     return insights;
   }
 
+  document.addEventListener('DOMContentLoaded', () => {
+    // Tambahan Optional Chaining Aman untuk mengantisipasi object null/undefined pada UI
+    const cashInput = document.getElementById('cash-input');
+    if (cashInput && typeof EduVesting !== 'undefined') {
+      getSettings().then(settings => {
+        cashInput.value = settings?.cash || '';
+      });
+    }
+  });
+
   function formatRupiah(n) { return 'Rp ' + Number(n).toLocaleString('id-ID', { maximumFractionDigits: 2 }); }
   function formatNumber(n, dec = 2) { return Number(n).toLocaleString('id-ID', { maximumFractionDigits: dec }); }
 
@@ -227,7 +249,7 @@ const EduVesting = (() => {
     getAssets, addAsset, updateAsset, deleteAsset,
     getSettings, saveSettings,
     fetchCryptoPricesIDR, refreshCryptoPrices,
-    fetchGoldPriceIDR, // PENTING: Mengekspor fungsi baru
+    fetchGoldPriceIDR, 
     fetchStockPriceIDR, refreshStockPrices,
     computeMetrics, generateInsights,
     formatRupiah, formatNumber,
