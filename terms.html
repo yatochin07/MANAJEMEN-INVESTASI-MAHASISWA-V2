@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduVesting — Syarat & Ketentuan</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Plus Jakarta Sans', 'sans-serif'],
+            body:    ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* ===========================
+       GLOBAL RESET & BASE
+    =========================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      min-height: 100%;
+      font-family: 'Inter', sans-serif;
+      background-color: #07090f;
+      color: #e2e8f0;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    /* ===========================
+       ANIMATED BACKGROUND CANVAS
+    =========================== */
+    .mesh-layer {
+      position: fixed; inset: 0; z-index: -2; pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 60% at 10% 5%,  rgba(99,102,241,0.08) 0%, transparent 65%),
+        radial-gradient(ellipse 55% 50% at 90% 90%,  rgba(59,130,246,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 45% 40% at 55% 45%,  rgba(124,58,237,0.05) 0%, transparent 60%);
+    }
+    .orb {
+      position: fixed; border-radius: 50%; filter: blur(90px); opacity: 0.15; pointer-events: none; z-index: -1; animation: drift linear infinite;
+    }
+    .orb-1 { width: 500px; height: 500px; background: #6366f1; top: -100px; left: -100px; animation-duration: 30s; }
+    .orb-2 { width: 400px; height: 400px; background: #3b82f6; bottom: -50px; right: -50px; animation-duration: 25s; animation-direction: reverse; }
+    .dot-grid {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: radial-gradient(rgba(148,163,184,0.05) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    @keyframes drift {
+      0%   { transform: translate(0,  0) scale(1);    }
+      33%  { transform: translate(30px, 20px) scale(1.05); }
+      66%  { transform: translate(-20px, 40px) scale(0.95); }
+      100% { transform: translate(0,  0) scale(1);    }
+    }
+
+    /* ===========================
+       UI COMPONENTS
+    =========================== */
+    .glass-nav { background: rgba(10, 14, 24, 0.7); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .glass-card { background: rgba(15, 20, 35, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); border-radius: 1.5rem; }
+    
+    .logo-text { background: linear-gradient(90deg, #f8fafc, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius: 10px; }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-up { animation: fadeUp 0.6s ease both; }
+    
+    /* Typography Styles for Content */
+    .terms-content h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.25rem; font-weight: 600; color: #f8fafc; margin-top: 2rem; margin-bottom: 1rem; }
+    .terms-content p { color: #94a3b8; font-size: 0.95rem; line-height: 1.7; margin-bottom: 1rem; }
+    .terms-content ul { list-style-type: disc; padding-left: 1.5rem; color: #94a3b8; font-size: 0.95rem; line-height: 1.7; margin-bottom: 1.5rem; }
+    .terms-content li { margin-bottom: 0.5rem; }
+    .terms-content strong { color: #e2e8f0; font-weight: 600; }
+  </style>
+</head>
+<body class="relative">
+
+  <!-- Background Elements -->
+  <div class="orb orb-1" aria-hidden="true"></div>
+  <div class="orb orb-2" aria-hidden="true"></div>
+  <div class="mesh-layer" aria-hidden="true"></div>
+  <div class="dot-grid" aria-hidden="true"></div>
+
+  <!-- Navbar -->
+  <nav class="glass-nav sticky top-0 z-50 w-full px-6 py-4">
+    <div class="max-w-4xl mx-auto flex items-center justify-between">
+      <a href="login.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+        <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg,#6366f1,#3b82f6);">
+          <i class="fa-solid fa-chart-line text-white text-sm"></i>
+        </div>
+        <span class="font-display text-xl font-bold tracking-wide logo-text">EduVesting</span>
+      </a>
+      <a href="login.html" class="text-sm font-medium text-slate-300 hover:text-white transition-colors flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10">
+        <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">Kembali ke Beranda</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="relative z-10 max-w-3xl mx-auto px-6 py-12 sm:py-16">
+    
+    <!-- Header Section -->
+    <header class="mb-10 fade-up">
+      <h1 class="font-display text-3xl sm:text-4xl font-bold text-slate-100 mb-4">
+        Syarat & Ketentuan
+      </h1>
+      <p class="text-indigo-400 text-sm font-medium">Terakhir Diperbarui: 22 Juni 2026</p>
+    </header>
+
+    <!-- Terms Content -->
+    <section class="glass-card p-6 sm:p-10 fade-up terms-content">
+      
+      <p>
+        Syarat dan ketentuan ini berlaku untuk aplikasi web <strong>EduVesting</strong> beserta seluruh layanan terkait yang dioperasikan oleh Hilmawan Ega Tetama dan Tim Developer (selanjutnya disebut sebagai "Penyedia Layanan"). 
+      </p>
+      <p>
+        Dengan mengakses atau menggunakan aplikasi ini, Anda setuju untuk terikat oleh Syarat dan Ketentuan ini. Harap baca dengan saksama sebelum mulai menggunakan EduVesting.
+      </p>
+
+      <h2>1. Sifat Aplikasi (Simulasi/Edukasi)</h2>
+      <p>
+        EduVesting adalah sebuah <strong>aplikasi simulasi</strong> yang ditujukan sepenuhnya untuk keperluan edukasi dan tugas akademik. Anda memahami dan menyetujui bahwa:
+      </p>
+      <ul>
+        <li>Semua mata uang, saldo kas, dan aset yang ada di dalam aplikasi ini adalah <strong>virtual/fiktif</strong> dan tidak memiliki nilai tukar di dunia nyata.</li>
+        <li>Informasi harga pasar (seperti Kripto dan Saham) yang ditampilkan ditarik dari API publik pihak ketiga dan mungkin mengalami penundaan (<i>delay</i>) atau ketidakakuratan.</li>
+        <li>EduVesting bukanlah broker, penasihat keuangan, atau entitas investasi yang terdaftar. Platform ini tidak boleh dijadikan sebagai rujukan mutlak untuk melakukan transaksi investasi dengan uang sungguhan.</li>
+      </ul>
+
+      <h2>2. Lisensi Penggunaan</h2>
+      <p>
+        Penyedia Layanan memberi Anda lisensi terbatas, non-eksklusif, dan dapat dibatalkan untuk mengakses serta menggunakan Aplikasi secara personal. Anda <strong>tidak diperkenankan</strong> untuk menyalin, mendistribusikan, memodifikasi, merekayasa balik (<i>reverse engineer</i>), atau mengekstrak kode sumber aplikasi tanpa izin tertulis dari Penyedia Layanan.
+      </p>
+
+      <h2>3. Kekayaan Intelektual</h2>
+      <p>
+        Seluruh hak kekayaan intelektual yang terdapat dalam aplikasi, termasuk namun tidak terbatas pada kode pemrograman, desain antarmuka, tata letak, logo, dan merek (<i>branding</i>), adalah milik sah Penyedia Layanan. Penggunaan Anda atas aplikasi tidak memberikan Anda hak apa pun atas kekayaan intelektual tersebut.
+      </p>
+
+      <h2>4. Penggunaan yang Diperbolehkan</h2>
+      <p>
+        Dalam menggunakan EduVesting, Anda setuju untuk <strong>tidak</strong> melakukan hal-hal berikut:
+      </p>
+      <ul>
+        <li>Mencoba mengeksploitasi, meretas, atau menyuntikkan <i>malware/spam</i> ke dalam sistem dan <i>database</i> aplikasi.</li>
+        <li>Menggunakan aplikasi untuk tujuan komersial atau menjual belikan akun/saldo fiktif di dalam aplikasi kepada pihak lain.</li>
+        <li>Memberikan informasi registrasi yang menyesatkan atau menggunakan data orang lain tanpa izin.</li>
+      </ul>
+
+      <h2>5. Batasan Tanggung Jawab (Limitation of Liability)</h2>
+      <p>
+        Sejauh diizinkan oleh hukum yang berlaku, Penyedia Layanan <strong>tidak bertanggung jawab</strong> atas kerugian langsung, tidak langsung, insidental, atau konsekuensial yang mungkin Anda alami. Hal ini mencakup:
+      </p>
+      <ul>
+        <li>Kerugian finansial di dunia nyata yang Anda alami akibat meniru atau mengandalkan pola portofolio yang ada di dalam simulasi EduVesting.</li>
+        <li>Gangguan fungsi aplikasi akibat masalah pada koneksi internet Anda atau <i>downtime</i> dari server pihak ketiga (seperti API harga koin atau layanan Supabase/Vercel).</li>
+        <li>Hilangnya data portofolio simulasi Anda akibat penghapusan *cache browser* (jika menggunakan fitur <i>LocalStorage</i>) atau insiden teknis lainnya.</li>
+      </ul>
+
+      <h2>6. Penghentian Akses (Termination)</h2>
+      <p>
+        Penyedia Layanan berhak secara sepihak untuk menangguhkan, membatasi, atau menghapus akses Anda ke aplikasi dan <i>database</i> secara permanen jika Anda ditemukan melanggar Syarat & Ketentuan ini, melakukan aktivitas mencurigakan, atau jika aplikasi ini dihentikan masa operasionalnya (misalnya setelah masa tugas akademik selesai).
+      </p>
+
+      <h2>7. Perubahan Syarat & Ketentuan</h2>
+      <p>
+        Penyedia Layanan dapat memperbarui Syarat dan Ketentuan ini dari waktu ke waktu tanpa pemberitahuan sebelumnya. Dengan terus menggunakan aplikasi setelah perubahan tersebut dipublikasikan, Anda dianggap menyetujui versi terbaru dari Syarat dan Ketentuan ini.
+      </p>
+
+      <h2>8. Hubungi Kami</h2>
+      <p>
+        Jika Anda memiliki pertanyaan, saran, atau masukan terkait Syarat & Ketentuan ini, jangan ragu untuk menghubungi pengembang melalui:
+      </p>
+      <ul>
+        <li><strong>Email:</strong> <a href="mailto:eduvesting67@gmail.com" class="text-indigo-400 hover:text-indigo-300">eduvesting67@gmail.com</a></li>
+        <li><strong>Instagram:</strong> <a href="https://instagram.com/yattchn7" target="_blank" class="text-indigo-400 hover:text-indigo-300">@yattchn7</a></li>
+      </ul>
+
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="relative z-10 w-full border-t border-white/5 bg-[#0a0d16]/80 backdrop-blur-md pt-8 pb-8 mt-10 text-center">
+    <div class="max-w-6xl mx-auto px-6">
+      <p class="text-xs text-slate-500 mb-2">
+        &copy; 2026 EduVesting Project. Hak Cipta Dilindungi.
+      </p>
+      <p class="text-[10px] text-slate-600 max-w-2xl mx-auto">
+        <strong>Disclaimer:</strong> EduVesting adalah proyek simulasi untuk tujuan edukasi yang dirancang oleh mahasiswa. Semua aset, kas, dan nilai portofolio bersifat fiktif.
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>
