@@ -1,65 +1,33 @@
 // ======================
-// AI CHAT CONTROLLER
+// AI CHAT CONTROLLER (REAL GEMINI AI)
 // ======================
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-
-// Pastikan dotenv di-load agar process.env.GEMINI_API_KEY terbaca
-require('dotenv').config();
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const chatWithAI = async (req, res) => {
     try {
         const { message } = req.body;
 
-        // VALIDASI
         if (!message) {
-            return res.status(400).json({
-                success: false,
-                message: 'Message wajib diisi woy!'
-            });
+            return res.status(400).json({ success: false, message: 'Message wajib diisi' });
         }
 
-        // INISIALISASI GEMINI API
-        // Pastikan GEMINI_API_KEY sudah ada di file .env
+        // PENTING: Inisialisasi API Key
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        
-        // Kita pakai model gemini-1.5-flash yang super cepat dan gratis
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        const model = genAI.getGenerativeModel({ 
+            model: "gemini-1.5-flash",
+            systemInstruction: "Kamu adalah EduVesting AI, asisten virtual cerdas yang ahli dalam investasi saham, kripto, reksadana, dan emas. Pengguna kamu adalah mahasiswa Indonesia. Jawablah dengan gaya bahasa yang asyik, relatable, santai tapi tetap profesional. Berikan saran yang realistis."
+        });
 
-        // ======================
-        // SYSTEM PROMPT (PERAN AI)
-        // ======================
-        // Kita suntikkan instruksi agar AI menjawab sesuai persona EduVesting
-        const promptContext = `
-            Kamu adalah EduVesting AI, asisten finansial pintar dan gaul khusus untuk mahasiswa Indonesia.
-            Tugasmu adalah menganalisis portofolio investasi (Saham, Kripto, Emas, Reksa Dana, Kas) dan menjawab pertanyaan terkait keuangan.
-            Gunakan bahasa yang asyik, santai, tapi tetap profesional dan mendidik. Panggil user dengan sebutan 'Bos' atau 'Bro/Sis'.
-            Berikan jawaban yang singkat, padat, tidak bertele-tele, dan langsung ke intinya.
-
-            Pertanyaan dari user: "${message}"
-        `;
-
-        // PANGGIL AI
-        const result = await model.generateContent(promptContext);
+        const result = await model.generateContent(message);
         const aiResponse = result.response.text();
 
-        // ======================
-        // RESPONSE KE FRONTEND
-        // ======================
-        res.status(200).json({
-            success: true,
-            reply: aiResponse
-        });
+        res.status(200).json({ success: true, reply: aiResponse });
 
     } catch (error) {
-        console.error("Gagal nyambung ke AI:", error);
-        res.status(500).json({
-            success: false,
-            message: 'Server Error atau API Limit habis bos!'
-        });
+        // JIKA API GEMINI GAGAL, DIA LARI KESINI (Ini yang bikin pesan di layarmu muncul)
+        console.error("Gemini API Error:", error);
+        res.status(500).json({ success: false, message: 'Gagal menghubungi Gemini' });
     }
 };
 
-// EXPORT
-module.exports = {
-    chatWithAI
-};
+module.exports = { chatWithAI };
