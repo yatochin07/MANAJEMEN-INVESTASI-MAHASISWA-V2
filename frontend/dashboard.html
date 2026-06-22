@@ -581,7 +581,7 @@
         <td class="px-4 py-4">
           <div class="flex justify-between items-center w-full min-w-[85px]">
             <span class="text-slate-500 text-[10px] font-normal mr-3">Rp</span>
-            <span class="text-slate-300 font-medium tabular-nums text-right">${EduVesting.formatNumber(a.avgPrice)}</span>
+            <span class="text-slate-300 font-medium tabular-nums text-right">${EduVesting.formatNumber(a.avgPrice, 8)}</span>
           </div>
         </td>
         
@@ -589,13 +589,13 @@
         <td class="px-4 py-4">
           <div class="flex justify-between items-center w-full min-w-[85px]">
             <span class="text-slate-500 text-[10px] font-normal mr-3">Rp</span>
-            <span class="text-slate-200 font-semibold tabular-nums text-right">${EduVesting.formatNumber(a.lastPrice)}</span>
+            <span class="text-slate-200 font-semibold tabular-nums text-right">${EduVesting.formatNumber(a.lastPrice, 8)}</span>
           </div>
         </td>
         
         <!-- Qty -->
         <td class="px-4 py-4 text-right text-slate-400 tabular-nums">
-          ${EduVesting.formatNumber(a.qty)} <span class="text-[10px] ml-1">${def.unit}</span>
+          ${EduVesting.formatNumber(a.qty, 8)} <span class="text-[10px] ml-1">${def.unit}</span>
         </td>
         
         <!-- Total Harga disejajarkan rata kanan dengan Rp terpisah -->
