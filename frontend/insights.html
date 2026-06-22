@@ -148,13 +148,12 @@
         </a>
         <a href="calculator.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
           <i class="fa-solid fa-calculator w-4 text-center"></i> Kalkulator Investasi
-      </a>
+        </a>
 
         <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Akun</p>
         <a href="settings.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
           <i class="fa-solid fa-gear w-4 text-center"></i> Pengaturan
         </a>
-        <!-- Link diubah mengarah ke logout.html -->
         <a href="logout.html" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm">
           <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout
         </a>
@@ -166,7 +165,7 @@
             <span class="w-2 h-2 rounded-full bg-violet-400 animate-pulse"></span>
             <span class="text-violet-400 font-semibold">AI Copilot Aktif</span>
           </div>
-          <p class="text-slate-500">Menganalisis data real-time</p>
+          <p class="text-slate-500">Terhubung dengan Portofolio</p>
         </div>
       </div>
     </aside>
@@ -188,9 +187,9 @@
       <header class="flex items-center justify-between mb-8 fade-up">
         <div>
           <h1 class="font-display text-2xl text-slate-100 flex items-center gap-3">
-            EduVesting AI <span class="text-xs bg-violet-500/20 text-violet-300 px-2 py-1 rounded-md border border-violet-500/30 uppercase tracking-wider font-semibold">Beta</span>
+            EduVesting AI <span class="text-xs bg-violet-500/20 text-violet-300 px-2 py-1 rounded-md border border-violet-500/30 uppercase tracking-wider font-semibold">Live Data</span>
           </h1>
-          <p class="text-slate-500 text-sm mt-0.5">Asisten pintar untuk evaluasi risiko dan optimalisasi portofolio mahasiswa.</p>
+          <p class="text-slate-500 text-sm mt-0.5">Asisten pintar untuk evaluasi risiko dan optimalisasi berdasarkan portofolio nyatamu.</p>
         </div>
       </header>
 
@@ -202,7 +201,7 @@
           <div class="relative w-40 h-40 flex items-center justify-center mb-4">
             <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 100 100">
               <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8" />
-              <circle cx="50" cy="50" r="45" fill="none" stroke="url(#gradient)" stroke-width="8" stroke-dasharray="209 283" stroke-linecap="round" class="animate-pulse-slow" />
+              <circle id="score-circle" cx="50" cy="50" r="45" fill="none" stroke="url(#gradient)" stroke-width="8" stroke-dasharray="0 283" stroke-linecap="round" class="animate-pulse-slow transition-all duration-1000" />
               <defs>
                 <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
                   <stop offset="0%" stop-color="#3b82f6" />
@@ -212,13 +211,13 @@
               </defs>
             </svg>
             <div class="flex flex-col items-center">
-              <span class="font-display text-5xl text-white">74</span>
+              <span id="health-score-val" class="font-display text-5xl text-white">0</span>
               <span class="text-xs text-slate-400">/ 100</span>
             </div>
           </div>
 
-          <p class="text-lg font-display text-emerald-400 mb-1">Cukup Baik</p>
-          <p class="text-xs text-slate-400 leading-relaxed px-4">Tingkat pengembalian bagus, namun eksposur risiko margin dan kripto cukup tinggi.</p>
+          <p id="health-score-label" class="text-lg font-display text-emerald-400 mb-1">Memuat...</p>
+          <p id="health-score-desc" class="text-xs text-slate-400 leading-relaxed px-4">Sedang menganalisis metrik portofolio Anda...</p>
         </div>
 
         <div class="glass rounded-2xl p-6 lg:col-span-2 flex flex-col">
@@ -226,31 +225,11 @@
             <h2 class="text-sm font-semibold text-slate-300 flex items-center gap-2">
               <i class="fa-solid fa-list-check text-violet-400"></i> Rekomendasi Aksi Cerdas
             </h2>
-            <button class="text-xs text-slate-500 hover:text-white transition"><i class="fa-solid fa-rotate-right"></i> Perbarui</button>
+            <button onclick="window.location.reload()" class="text-xs text-slate-500 hover:text-white transition"><i class="fa-solid fa-rotate-right"></i> Perbarui</button>
           </div>
 
-          <div class="space-y-4 flex-1">
-            <div class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 flex items-start gap-4">
-              <div class="w-8 h-8 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <i class="fa-solid fa-triangle-exclamation text-xs"></i>
-              </div>
-              <div>
-                <h3 class="text-sm font-semibold text-slate-200 mb-1">Kurangi Beban Margin (Prioritas Tinggi)</h3>
-                <p class="text-xs text-slate-400 leading-relaxed mb-2">Margin Anda mencapai 82%. Risiko *margin call* meningkat jika IHSG terkoreksi >3%. Saran: Jual sebagian BBCA untuk melunasi margin.</p>
-                <button class="text-[10px] font-bold uppercase tracking-wide text-rose-400 hover:text-rose-300">Lihat Simulasi Jual &rarr;</button>
-              </div>
-            </div>
-
-            <div class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 flex items-start gap-4">
-              <div class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <i class="fa-brands fa-bitcoin text-xs"></i>
-              </div>
-              <div>
-                <h3 class="text-sm font-semibold text-slate-200 mb-1">Realisasikan Profit Kripto</h3>
-                <p class="text-xs text-slate-400 leading-relaxed mb-2">BTC Anda untung +14.13%. Amankan keuntungan (Take Profit) minimal 30% dari posisi, alihkan ke Reksadana untuk pendanaan skripsi.</p>
-                <button class="text-[10px] font-bold uppercase tracking-wide text-amber-400 hover:text-amber-300">Buka Kalkulator Rebalancing &rarr;</button>
-              </div>
-            </div>
+          <div id="recom-container" class="space-y-4 flex-1 overflow-y-auto max-h-[300px] pr-2">
+            <p class="text-sm text-slate-500 text-center mt-10"><i class="fa-solid fa-circle-notch fa-spin"></i> Menarik data portofolio...</p>
           </div>
         </div>
 
@@ -261,34 +240,15 @@
         <div class="glass rounded-2xl p-6">
           <div class="flex items-center gap-2 mb-6">
             <i class="fa-solid fa-chart-simple text-cyan-400"></i>
-            <h2 class="text-sm font-semibold text-slate-300">Analisis Konsentrasi Sektor</h2>
+            <h2 class="text-sm font-semibold text-slate-300">Analisis Konsentrasi Kelas Aset</h2>
           </div>
 
-          <div class="space-y-4">
-            <div>
-              <div class="flex justify-between text-xs mb-1">
-                <span class="text-slate-300">Keuangan (BBCA, BMRI)</span>
-                <span class="text-rose-400 font-medium">Overweight (55%)</span>
-              </div>
-              <div class="progress-bar"><div class="progress-fill bg-rose-400" style="width:55%;"></div></div>
-            </div>
-            <div>
-              <div class="flex justify-between text-xs mb-1">
-                <span class="text-slate-300">Aset Digital (BTC, ETH)</span>
-                <span class="text-amber-400 font-medium">Warning (25%)</span>
-              </div>
-              <div class="progress-bar"><div class="progress-fill bg-amber-400" style="width:25%;"></div></div>
-            </div>
-            <div>
-              <div class="flex justify-between text-xs mb-1">
-                <span class="text-slate-300">Logam Mulia (XAU)</span>
-                <span class="text-emerald-400 font-medium">Ideal (15%)</span>
-              </div>
-              <div class="progress-bar"><div class="progress-fill bg-emerald-400" style="width:15%;"></div></div>
-            </div>
+          <div id="sector-container" class="space-y-4">
+             <p class="text-sm text-slate-500 text-center"><i class="fa-solid fa-circle-notch fa-spin"></i> Menghitung alokasi...</p>
           </div>
-          <p class="text-xs text-slate-500 mt-5 border-t border-slate-700/50 pt-3">
-            <i class="fa-solid fa-circle-info text-cyan-400 mr-1"></i> Terlalu berat di sektor Keuangan. Jika suku bunga naik, 55% portofolio Anda rentan terkoreksi tajam.
+          
+          <p id="sector-info" class="text-xs text-slate-500 mt-5 border-t border-slate-700/50 pt-3">
+            <i class="fa-solid fa-circle-info text-cyan-400 mr-1"></i> Proporsi aset menentukan tingkat risiko Anda.
           </p>
         </div>
 
@@ -304,28 +264,26 @@
               </div>
               <div>
                 <h3 class="text-sm font-semibold text-slate-200">EduVesting Copilot</h3>
-                <p class="text-[10px] text-emerald-400">Online · Berbasis Data Anda</p>
+                <p class="text-[10px] text-emerald-400">Online · Membaca Data Real-time</p>
               </div>
             </div>
             <button class="text-slate-500 hover:text-white transition"><i class="fa-solid fa-ellipsis-vertical"></i></button>
           </div>
 
           <div id="chat-box" class="flex-1 p-4 overflow-y-auto space-y-4 text-sm flex flex-col">
-
             <div class="flex gap-3 max-w-[85%]">
               <div class="w-6 h-6 rounded-full bg-violet-500/20 flex items-center justify-center flex-shrink-0 mt-1">
                 <i class="fa-solid fa-robot text-violet-400 text-[10px]"></i>
               </div>
               <div class="chat-bubble-ai rounded-2xl p-3 text-slate-300 leading-relaxed shadow-sm">
-                Halo <span id="chat-user-name" class="font-semibold text-white">Mahasiswa</span>! Saya asisten AI portofolio Anda. Berdasarkan data terbaru, ada pertanyaan spesifik tentang strategi diversifikasi atau target dana Anda hari ini?
+                Halo <span id="chat-user-name" class="font-semibold text-white">Mahasiswa</span>! Saya sudah membaca portofolio kamu. Ada pertanyaan tentang strategimu hari ini atau mau coba simulasi rebalancing?
               </div>
             </div>
-
           </div>
 
-          <div id="suggested-prompts" class="px-4 py-2 flex gap-2 overflow-x-auto whitespace-nowrap hide-scrollbar">
-            <button onclick="sendPredefinedPrompt('Apakah aman pakai margin sekarang?')" class="text-xs bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-full transition">🤔 Apakah aman pakai margin sekarang?</button>
-            <button onclick="sendPredefinedPrompt('Simulasi rebalancing kripto')" class="text-xs bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-full transition">⚖️ Simulasi rebalancing kripto</button>
+          <div id="suggested-prompts" class="px-4 py-2 flex gap-2 overflow-x-auto whitespace-nowrap hide-scrollbar hidden">
+            <button onclick="sendPredefinedPrompt('Apakah porsi Kas saya saat ini sudah aman?')" class="text-xs bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-full transition">🤔 Evaluasi Porsi Kas</button>
+            <button onclick="sendPredefinedPrompt('Bagaimana cara terbaik merealisasikan profit saya saat ini?')" class="text-xs bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-full transition">⚖️ Strategi Take Profit</button>
           </div>
 
           <div class="p-4 bg-slate-900/50 border-t border-white/5">
@@ -343,7 +301,7 @@
       </section>
 
       <footer class="text-center pb-8">
-        <p class="text-xs text-slate-700">EduVesting · AI Insights Beta</p>
+        <p class="text-xs text-slate-700">EduVesting · AI Insights Powered by Gemini</p>
         <p class="text-xs text-slate-700 mt-2">
         Dikembangkan dengan <i class="fa-solid fa-heart text-rose-500/50 mx-0.5"></i> oleh Tim Developer EduVesting
         </p>
@@ -351,6 +309,8 @@
 
     </main>
   </div>
+
+  <script src="js/api.js"></script>
 
   <script>
     // UI TOGGLE SCRIPT
@@ -362,11 +322,17 @@
     }
 
     // ==========================================
-    // SUPABASE CONFIG & AUTH GUARD
+    // SUPABASE CONFIG & INIT
     // ==========================================
     const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    window.supabaseClient = supabaseClient; 
+
+    // ==========================================
+    // DATA GLOBAL UNTUK DISUNTIK KE GEMINI
+    // ==========================================
+    let aiContextString = "Belum ada data portofolio yang disinkronisasi.";
 
     document.addEventListener('DOMContentLoaded', async () => {
       try {
@@ -377,15 +343,13 @@
           return;
         }
 
-        // Tampilkan data session user di Sidebar dan Chat AI
         const user = session.user;
         const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
-        const avatarUrl = user.user_metadata?.avatar_url; // LOGIKA AVATAR
+        const avatarUrl = user.user_metadata?.avatar_url;
 
         document.getElementById('sidebar-user-name').innerText = displayName;
         document.getElementById('chat-user-name').innerText = displayName;
 
-        // RENDER AVATAR DI SIDEBAR
         const sbAvatar = document.getElementById('sidebar-user-initial');
         if (avatarUrl) {
           sbAvatar.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover">`;
@@ -393,13 +357,133 @@
           sbAvatar.innerText = displayName.charAt(0).toUpperCase();
         }
 
+        // ==========================================
+        // AMBIL DATA DARI API.JS & RENDER HALAMAN
+        // ==========================================
+        if (typeof EduVesting !== 'undefined') {
+           const metrics = await EduVesting.computeMetrics();
+           renderAiDashboard(metrics);
+        } else {
+           console.error("api.js tidak ditemukan.");
+        }
+
       } catch (err) {
-        console.error("Gagal mendapatkan sesi Auth:", err);
+        console.error("Gagal inisialisasi AI Dashboard:", err);
       }
     });
 
     // ==========================================
-    // AI CHAT LOGIC
+    // LOGIKA RENDER DINAMIS
+    // ==========================================
+    function renderAiDashboard(metrics) {
+      const alokasi = metrics.allocation.map(a => `${a.type.toUpperCase()} (${a.percent.toFixed(1)}%)`).join(', ');
+      aiContextString = `Data Portofolio Nyata User: 
+- Total Ekuitas/Net Worth: Rp ${metrics.totalEquity.toLocaleString('id-ID')}
+- Total P/L (Keuntungan/Kerugian): Rp ${metrics.floatingPL.toLocaleString('id-ID')} (${metrics.plPercent.toFixed(2)}%)
+- Saldo Kas Tersisa: Rp ${metrics.cash.toLocaleString('id-ID')} (${metrics.cashPercent.toFixed(2)}% dari aset)
+- Rincian Alokasi: ${alokasi ? alokasi : 'Belum beli aset'}
+Berikan jawaban AI yang selalu merujuk pada angka-angka di atas.`;
+
+      document.getElementById('suggested-prompts').classList.remove('hidden');
+
+      let score = 50; 
+      const typesCount = Object.keys(metrics.byType).filter(k => metrics.byType[k] > 0).length;
+      
+      if (metrics.assets.length > 0) {
+        score = 40; 
+        score += (typesCount * 10); 
+        score += (metrics.plPercent > 0 ? 15 : -10); 
+        if (metrics.cashPercent >= 10 && metrics.cashPercent <= 30) score += 15; 
+        score = Math.max(10, Math.min(99, Math.round(score))); 
+      } else {
+        score = 0; 
+      }
+
+      document.getElementById('health-score-val').innerText = score;
+      const circle = document.getElementById('score-circle');
+      const circumference = 2 * Math.PI * 45; 
+      const dashoffset = circumference - (score / 100) * circumference;
+      circle.style.strokeDasharray = `${circumference - dashoffset} ${circumference}`;
+
+      const labelEl = document.getElementById('health-score-label');
+      const descEl = document.getElementById('health-score-desc');
+      
+      if (score === 0) {
+         labelEl.innerText = "Belum Ada Data"; labelEl.className = "text-lg font-display text-slate-400 mb-1";
+         descEl.innerText = "Mulai investasi dengan menambahkan aset di menu Portofolio.";
+      } else if (score >= 80) {
+         labelEl.innerText = "Sangat Sehat"; labelEl.className = "text-lg font-display text-emerald-400 mb-1";
+         descEl.innerText = "Diversifikasi portofolio sangat baik. Pertahankan kedisiplinan alokasi Anda.";
+      } else if (score >= 60) {
+         labelEl.innerText = "Cukup Baik"; labelEl.className = "text-lg font-display text-cyan-400 mb-1";
+         descEl.innerText = "Performa cukup stabil. AI merekomendasikan rebalancing ringan untuk optimasi.";
+      } else {
+         labelEl.innerText = "Risiko Tinggi"; labelEl.className = "text-lg font-display text-rose-400 mb-1";
+         descEl.innerText = "Porsi aset tidak seimbang atau mengalami kerugian tajam. Segera evaluasi ulang.";
+      }
+
+      const insights = EduVesting.generateInsights(metrics);
+      const recomContainer = document.getElementById('recom-container');
+      recomContainer.innerHTML = '';
+      
+      const toneMap = {
+        'rose': { bg: 'bg-rose-500/10', border: 'border-rose-500/20', iconBg: 'bg-rose-500/20', text: 'text-rose-400' },
+        'amber': { bg: 'bg-amber-500/10', border: 'border-amber-500/20', iconBg: 'bg-amber-500/20', text: 'text-amber-400' },
+        'emerald': { bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', iconBg: 'bg-emerald-500/20', text: 'text-emerald-400' },
+        'indigo': { bg: 'bg-indigo-500/10', border: 'border-indigo-500/20', iconBg: 'bg-indigo-500/20', text: 'text-indigo-400' },
+        'cyan': { bg: 'bg-cyan-500/10', border: 'border-cyan-500/20', iconBg: 'bg-cyan-500/20', text: 'text-cyan-400' }
+      };
+
+      insights.forEach(insight => {
+        const t = toneMap[insight.tone] || toneMap['indigo'];
+        const div = document.createElement('div');
+        div.className = `${t.bg} border ${t.border} rounded-xl p-4 flex items-start gap-4`;
+        div.innerHTML = `
+          <div class="w-8 h-8 rounded-full ${t.iconBg} ${t.text} flex items-center justify-center flex-shrink-0 mt-0.5">
+            <i class="fa-solid ${insight.icon} text-xs"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-slate-200 mb-1">${insight.title}</h3>
+            <p class="text-xs text-slate-400 leading-relaxed mb-2">${insight.text}</p>
+            <button onclick="sendPredefinedPrompt('Tolong jelaskan lebih lanjut mengenai: ${insight.title}')" class="text-[10px] font-bold uppercase tracking-wide ${t.text} hover:opacity-80">Tanya AI Tentang Ini &rarr;</button>
+          </div>
+        `;
+        recomContainer.appendChild(div);
+      });
+
+      const sectorContainer = document.getElementById('sector-container');
+      sectorContainer.innerHTML = '';
+      const allItems = [...metrics.allocation];
+      if (metrics.cash > 0) {
+        allItems.push({ type: 'cash', label: 'Kas Tunai', value: metrics.cash, percent: metrics.cashPercent, gradient: ['#94a3b8', '#cbd5e1'], badgeColor: '#94a3b8' });
+      }
+
+      if (allItems.length === 0) {
+        sectorContainer.innerHTML = '<p class="text-sm text-slate-500">Tidak ada aset.</p>';
+      } else {
+        allItems.forEach(item => {
+          let statusText = 'Normal';
+          let statusColor = 'text-emerald-400';
+          let barBg = item.gradient[0]; 
+          
+          if (item.percent > 40) { statusText = 'Overweight'; statusColor = 'text-rose-400'; }
+          else if (item.percent < 10) { statusText = 'Rendah'; statusColor = 'text-amber-400'; }
+
+          const div = document.createElement('div');
+          div.innerHTML = `
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-slate-300 font-medium">${item.label}</span>
+              <span class="${statusColor} font-medium">${statusText} (${item.percent.toFixed(1)}%)</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${item.percent}%; background:${barBg};"></div></div>
+          `;
+          sectorContainer.appendChild(div);
+        });
+      }
+    }
+
+    // ==========================================
+    // AI CHAT LOGIC (KONEK KE BACKEND EXPRESS)
     // ==========================================
     const chatBox = document.getElementById('chat-box');
     const chatInput = document.getElementById('chat-input');
@@ -457,28 +541,57 @@
       chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    function simulateAIResponse(userText) {
-      const typingEl = appendAITyping();
-
+    // FUNGSI INI SEKARANG PINTAR MENDETEKSI LOKAL ATAU VERCEL!
+    async function simulateAIResponse(userText) {
+      appendAITyping();
       suggestedPrompts.style.display = 'none';
 
-      setTimeout(() => {
-        let response = "";
-        const lowerText = userText.toLowerCase();
+      try {
+        const payloadMessage = `${aiContextString}\n\nPertanyaan User: ${userText}`;
 
-        if (lowerText.includes("margin") || lowerText.includes("aman")) {
-          response = "Saat ini penggunaan margin Anda mencapai **82%**, yang tergolong berisiko tinggi (*High Risk*) untuk pelajar. Mengingat IHSG sedang fluktuatif, saya sarankan menurunkan porsi margin ke batas aman (maksimal 30%) dengan merealisasikan sebagian aset saham perbankan Anda.";
-        } else if (lowerText.includes("kripto") || lowerText.includes("rebalancing")) {
-          response = "Porsi Kripto Anda (BTC & ETH) saat ini menyumbang **25%** dari portofolio. Meskipun menguntungkan (+14%), volatilitas harian kripto sangat tinggi. Memindahkan 10% keuntungan ke instrumen rendah risiko seperti Reksa Dana Pasar Uang akan mempercepat pencapaian target 'Dana Darurat' Anda.";
-        } else {
-          response = "Berdasarkan pemantauan AI, portofolio Anda tumbuh +18.4% secara keseluruhan. Namun, harap perhatikan konsentrasi aset pada sektor Keuangan (BBCA) yang terlalu mendominasi. Apakah Anda ingin saya buatkan simulasi pembelian sektor Konsumer/Teknologi?";
+        // ========================================================
+        // LOGIKA PINTAR URL BACKEND (LOKAL VS VERCEL)
+        // ========================================================
+        
+        // 1. Cek apakah ini dijalankan di laptop (localhost)
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        
+        // 2. Link Vercel Backend kamu sesuai screenshot
+        const VERCEL_BACKEND_URL = 'https://eduvesting.vercel.app/api/ai/chat';
+        
+        // 3. Sistem akan otomatis memilih mana URL yang benar
+        const BACKEND_URL = isLocal ? 'http://localhost:5000/api/ai/chat' : VERCEL_BACKEND_URL;
+
+        const response = await fetch(BACKEND_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: payloadMessage })
+        });
+
+        const data = await response.json();
+
+        if (document.getElementById('ai-typing')) {
+            document.getElementById('ai-typing').remove();
         }
 
-        response = response.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>');
-        response = response.replace(/\*(.*?)\*/g, '<em class="text-violet-300">$1</em>');
+        if (data.success) {
+          let formattedReply = data.reply
+            .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em class="text-violet-300">$1</em>')
+            .replace(/\n/g, '<br>'); 
+          
+          appendAIResponse(formattedReply);
+        } else {
+          appendAIResponse("Waduh, koneksi ke otak AI sedang gangguan nih. Coba cek log Vercel kamu ya.");
+        }
 
-        appendAIResponse(response);
-      }, 1500);
+      } catch (error) {
+        console.error("Fetch Error:", error);
+        if (document.getElementById('ai-typing')) {
+            document.getElementById('ai-typing').remove();
+        }
+        appendAIResponse("Maaf, terjadi kesalahan jaringan saat menghubungi server backend.");
+      }
     }
 
     function handleChatSubmit(e) {
@@ -488,7 +601,7 @@
 
       appendUserMessage(text);
       chatInput.value = '';
-      simulateAIResponse(text);
+      simulateAIResponse(text); 
     }
 
     function sendPredefinedPrompt(text) {
