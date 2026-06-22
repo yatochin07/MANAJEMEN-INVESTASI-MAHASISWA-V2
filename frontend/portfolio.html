@@ -532,20 +532,15 @@
   }
 
   // ==============================================================
-  // IMPLEMENTASI: Penambahan konversi Emas ke Rupiah per Gram 
-  // menyesuaikan kalkulasi yang sudah ada pada refreshStockPrices()
+  // UPDATE: Memanggil fungsi fetchGoldPriceIDR dari CoinGecko 
   // ==============================================================
   async function handleRefreshStock(ticker, type) {
     try {
       let finalPrice = null;
 
       if (type === 'emas' && ['XAU', 'XAUUSD', 'GC=F'].includes(ticker.toUpperCase())) {
-        const goldUsd = await EduVesting.fetchStockPriceIDR('GC=F');
-        const usdIdr = await EduVesting.fetchStockPriceIDR('IDR=X');
-        
-        if (goldUsd && usdIdr) {
-          finalPrice = (goldUsd * usdIdr) / 31.1034768;
-        }
+        // Tarik harga langsung dari proxy CoinGecko
+        finalPrice = await EduVesting.fetchGoldPriceIDR();
       } else {
         finalPrice = await EduVesting.fetchStockPriceIDR(ticker);
       }
