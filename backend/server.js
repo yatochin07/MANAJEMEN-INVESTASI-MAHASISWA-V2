@@ -33,8 +33,6 @@ app.get('/api/price/saham/:ticker', async (req, res) => {
     try {
         let ticker = req.params.ticker.toUpperCase();
 
-        // Logika cerdas: Jangan tambahkan .JK kalau tickernya Emas (GC=F)
-        // atau kalau tickernya sudah pakai titik (XPIN.JK)
         if (!ticker.includes('=') && !ticker.includes('.')) {
             ticker += '.JK';
         }
@@ -60,7 +58,7 @@ app.get('/api/price/saham/:ticker', async (req, res) => {
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/goals', goalsRoutes);
-app.use('/api/ai', aiRoutes); // <--- Rute AI Gemini
+app.use('/api/ai', aiRoutes);
 app.use('/api/allocations', alloRoutes);
 app.use('/api/market', calculatorRoutes);
 app.use('/api/settings', settingsRoutes);
@@ -73,9 +71,7 @@ const PORT = process.env.PORT || 5000;
 if (require.main === module) {
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
-        console.log('✅ SERVER BERHASIL JALAN DI LOKAL');
     });
 }
 
-// WAJIB UNTUK VERCEL
 module.exports = app;
