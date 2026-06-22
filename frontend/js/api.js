@@ -20,9 +20,6 @@ const EduVesting = (() => {
     return user ? user.id : null;
   }
 
-  // ==========================================
-  // CLOUD DATABASE: ASSETS (SUPABASE)
-  // ==========================================
   async function getAssets() {
     if (!window.supabaseClient) return [];
     const { data, error } = await window.supabaseClient.from('assets').select('*').order('created_at', { ascending: true });
@@ -63,9 +60,6 @@ const EduVesting = (() => {
     await window.supabaseClient.from('assets').update({ last_price: price, last_updated: new Date().toISOString() }).eq('id', id);
   }
 
-  // ==========================================
-  // CLOUD DATABASE: SETTINGS / KAS (SUPABASE)
-  // ==========================================
   async function getSettings() {
     try {
       const userId = await _getUserId();
@@ -83,9 +77,6 @@ const EduVesting = (() => {
     if (error) throw error;
   }
 
-  // ==========================================
-  // SINKRONISASI HARGA API
-  // ==========================================
   async function fetchCryptoPricesIDR(tickers) {
     const unique = [...new Set(tickers.map(t => t.toUpperCase()))];
     const ids = unique.map(t => COINGECKO_IDS[t]).filter(Boolean);
@@ -126,21 +117,37 @@ const EduVesting = (() => {
 
   async function refreshStockPrices() {
     const assets = await getAssets(); 
-    // SEKARANG MENGAMBIL SAHAM, EMAS, DAN REKSADANA (Semua dilempar ke Yahoo Finance)
-    const stockAssets = assets.filter(a => ['saham', 'emas', 'reksadana'].includes(a.type));
-    if (!stockAssets.length) return { updated: 0, total: 0 };
+    const targetAssets = assets.filter(a => ['saham', 'reksadana', 'emas'].includes(a.type));
+    if (!targetAssets.length) return { updated: 0, total: 0 };
+    
     let updated = 0;
-    for (let a of stockAssets) {
-      const livePrice = await fetchStockPriceIDR(a.ticker);
-      // Hanya diupdate jika Yahoo mengembalikan harga valid (lebih dari 0)
-      if (livePrice && livePrice > 0) { await _setPriceOnly(a.id, livePrice); updated++; }
+    let cachedGoldPrice = null;
+
+    for (let a of targetAssets) {
+      let livePrice = null;
+
+      if (a.type === 'emas') {
+        // Cek apakah ticker emas termasuk ticker global
+        if (['XAU', 'XAUUSD', 'GC=F'].includes(a.ticker.toUpperCase())) {
+            if (!cachedGoldPrice) {
+                const goldUsd = await fetchStockPriceIDR('GC=F');
+                const usdIdr = await fetchStockPriceIDR('IDR=X');
+                if (goldUsd && usdIdr) cachedGoldPrice = (goldUsd * usdIdr) / 31.1034768;
+            }
+            livePrice = cachedGoldPrice;
+        }
+      } else {
+        livePrice = await fetchStockPriceIDR(a.ticker);
+      }
+
+      if (livePrice && livePrice > 0) { 
+        await _setPriceOnly(a.id, livePrice); 
+        updated++; 
+      }
     }
-    return { updated, total: stockAssets.length };
+    return { updated, total: targetAssets.length };
   }
 
-  // ==========================================
-  // KALKULASI METRICS (ASYNC)
-  // ==========================================
   async function computeMetrics() {
     const assets = await getAssets(); 
     const settings = await getSettings(); 
