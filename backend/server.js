@@ -1,9 +1,11 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
-// Import Library Yahoo Finance versi terbaru
-const yahooFinance = require('yahoo-finance2').default;
+// Tambahan: Import Library Yahoo Finance versi terbaru (v3)
+const YahooFinance = require('yahoo-finance2').default;
+const yf = new YahooFinance();
 
 // ======================
 // IMPORT ROUTES
@@ -17,24 +19,53 @@ const calculatorRoutes = require('./routes/calculatorRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 
 // ======================
-// APP & MIDDLEWARE
+// APP
 // ======================
 const app = express();
-app.use(cors());
+
+// ======================
+// MIDDLEWARE
+// ======================
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 // ======================
-// ROUTES (EXTERNAL / YAHOO FINANCE)
+// DATABASE
 // ======================
+mongoose.connect(
+    process.env.MONGO_URI
+)
+.then(() => {
+    console.log('MongoDB Connected');
+})
+.catch((err) => {
+    console.error('MongoDB Connection Error:', err);
+});
+
+// ======================
+// ROUTES (API PIHAK KETIGA / EXTERNAL)
+// ======================
+
+// Endpoint untuk menarik harga realtime dari Yahoo Finance
 app.get('/api/price/saham/:ticker', async (req, res) => {
     try {
-        const ticker = req.params.ticker.toUpperCase() + '.JK';
-        console.log(`[DEBUG] Mencoba tarik: ${ticker}`);
+        let ticker = req.params.ticker.toUpperCase();
         
-        const quote = await yahooFinance.quote(ticker);
+        // ========================================================
+        // FIX CERDAS: Jangan tambahkan .JK kalau tickernya Emas (GC=F, IDR=X) 
+        // atau kalau tickernya sudah pakai titik (XPIN.JK)
+        // ========================================================
+        if (!ticker.includes('=') && !ticker.includes('.')) {
+            ticker += '.JK';
+        }
+
+        console.log(`[DEBUG] Mencoba tarik dari Yahoo: ${ticker}`);
+        
+        // Memanggil fungsi menggunakan instance 'yf'
+        const quote = await yf.quote(ticker);
         
         if (!quote || !quote.regularMarketPrice) {
-            return res.status(404).json({ error: "Harga saham tidak ditemukan" });
+            return res.status(404).json({ error: "Harga tidak ditemukan" });
         }
 
         res.json({ ticker: req.params.ticker.toUpperCase(), price: quote.regularMarketPrice });
@@ -45,12 +76,12 @@ app.get('/api/price/saham/:ticker', async (req, res) => {
 });
 
 // ======================
-// ROUTES (INTERNAL)
+// ROUTES (INTERNAL / MODULAR)
 // ======================
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/goals', goalsRoutes);
-app.use('/api/ai', aiRoutes);
+app.use('/api/ai', aiRoutes); // <--- Rute AI kamu di sini
 app.use('/api/allocations', alloRoutes);
 app.use('/api/market', calculatorRoutes);
 app.use('/api/settings', settingsRoutes);
@@ -60,6 +91,7 @@ app.use('/api/settings', settingsRoutes);
 // ======================
 const PORT = process.env.PORT || 5000;
 
+// Jika dijalankan di localhost (node server.js), maka app.listen akan berjalan
 if (require.main === module) {
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
@@ -67,4 +99,5 @@ if (require.main === module) {
     });
 }
 
+// WAJIB UNTUK VERCEL
 module.exports = app;
