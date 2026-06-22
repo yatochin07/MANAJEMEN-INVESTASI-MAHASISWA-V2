@@ -336,7 +336,8 @@
       </div>
       <div class="glass rounded-2xl overflow-hidden w-full">
         <div class="overflow-x-auto w-full">
-          <table class="w-full text-sm min-w-[700px]">
+          <!-- Min-width diperbesar agar tidak sesak -->
+          <table class="w-full text-sm min-w-[850px]">
             <thead>
               <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
                 <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Aset / Ticker</th>
@@ -575,14 +576,45 @@
           </div>
         </td>
         <td class="px-4 py-4"><span class="badge" style="background:${def.badgeBg};color:${def.badgeColor};border:1px solid ${def.badgeBorder};">${def.label}</span></td>
-        <td class="px-4 py-4 text-right text-slate-300 font-medium tabular-nums">${EduVesting.formatRupiah(a.avgPrice)}</td>
-        <td class="px-4 py-4 text-right text-slate-200 font-semibold tabular-nums">${EduVesting.formatRupiah(a.lastPrice)}</td>
-        <td class="px-4 py-4 text-right text-slate-400 tabular-nums">${EduVesting.formatNumber(a.qty)} ${def.unit}</td>
-        <td class="px-4 py-4 text-right text-slate-300 font-medium tabular-nums">${EduVesting.formatRupiah(totalHarga)}</td>
-        <td class="px-5 py-4 text-right">
-          <span class="${plColor} font-semibold tabular-nums">${sign}${EduVesting.formatRupiah(pl)}</span>
-          <p class="${plColor} text-xs tabular-nums">${sign}${plPct.toFixed(2)}%</p>
-        </td>`;
+        
+        <!-- Harga Avg disejajarkan rata kanan dengan Rp terpisah -->
+        <td class="px-4 py-4">
+          <div class="flex justify-between items-center w-full min-w-[85px]">
+            <span class="text-slate-500 text-[10px] font-normal mr-3">Rp</span>
+            <span class="text-slate-300 font-medium tabular-nums text-right">${EduVesting.formatNumber(a.avgPrice)}</span>
+          </div>
+        </td>
+        
+        <!-- Harga Terakhir disejajarkan rata kanan dengan Rp terpisah -->
+        <td class="px-4 py-4">
+          <div class="flex justify-between items-center w-full min-w-[85px]">
+            <span class="text-slate-500 text-[10px] font-normal mr-3">Rp</span>
+            <span class="text-slate-200 font-semibold tabular-nums text-right">${EduVesting.formatNumber(a.lastPrice)}</span>
+          </div>
+        </td>
+        
+        <!-- Qty -->
+        <td class="px-4 py-4 text-right text-slate-400 tabular-nums">
+          ${EduVesting.formatNumber(a.qty)} <span class="text-[10px] ml-1">${def.unit}</span>
+        </td>
+        
+        <!-- Total Harga disejajarkan rata kanan dengan Rp terpisah -->
+        <td class="px-4 py-4">
+          <div class="flex justify-between items-center w-full min-w-[90px]">
+            <span class="text-slate-500 text-[10px] font-normal mr-3">Rp</span>
+            <span class="text-slate-300 font-medium tabular-nums text-right">${EduVesting.formatNumber(totalHarga)}</span>
+          </div>
+        </td> 
+        
+        <!-- Floating P/L disejajarkan rata kanan dengan Rp terpisah -->
+        <td class="px-5 py-4">
+          <div class="flex justify-between items-center w-full min-w-[90px] ${plColor}">
+            <span class="opacity-70 text-[10px] font-normal mr-3">Rp</span>
+            <span class="font-semibold tabular-nums text-right">${sign}${EduVesting.formatNumber(Math.abs(pl))}</span>
+          </div>
+          <p class="${plColor} text-xs tabular-nums text-right mt-1">${sign}${plPct.toFixed(2)}%</p>
+        </td>
+      `;
       tbody.appendChild(tr);
     });
   }
