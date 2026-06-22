@@ -34,7 +34,7 @@ const chatWithAI = async (req, res) => {
         const genAI = new GoogleGenerativeAI(apiKey);
         
         // Menggunakan model Gemini 1.5 Flash Terbaru (Sangat cepat & pintar)
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
         // 5. Menyusun Prompt / Persona EduVesting AI
         const superPrompt = `Kamu adalah EduVesting AI, asisten virtual cerdas yang ahli dalam investasi saham, kripto, reksadana, dan emas. Pengguna kamu adalah mahasiswa Indonesia. Jawablah dengan gaya bahasa yang asyik, relatable, santai tapi tetap profesional layaknya mentor finansial anak muda. Berikan saran yang realistis untuk kantong mahasiswa.\n\nPertanyaan User:\n${message}`;
