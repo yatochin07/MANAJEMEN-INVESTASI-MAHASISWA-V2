@@ -167,7 +167,6 @@
 
     <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
 
-
       <div class="glass rounded-2xl p-4 sm:p-5 metric-card fade-up delay-2">
         <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Total Nilai Aset</p>
         <p id="sum-value" class="font-display text-xl sm:text-2xl text-slate-100">Rp 0</p>
@@ -328,7 +327,7 @@
     'EMAS': 'Emas Fisik/Digital',
     'XAU': 'Gold (XAU)',                
     'XAUUSD': 'Gold Spot USD',          
-    'GC=F': 'Gold Futures',             // Tambahan Yahoo Ticker Emas
+    'GC=F': 'Gold Futures',             
     'RDPU': 'Reksa Dana Pasar Uang',
     'XPIN': 'Reksa Dana ETF Pefindo',   
     'XPIN.JK': 'Reksa Dana ETF Pefindo' 
@@ -390,7 +389,6 @@
     } catch (err) { console.error("Gagal memuat halaman portofolio:", err); }
   });
 
-  // UBAH JADI ASYNC AWAIT UNTUK INSERT & UPDATE
   async function onSubmit(e) {
     e.preventDefault(); 
 
@@ -444,10 +442,6 @@
       resetForm();
       await renderAll();
 
-      // ==============================================================
-      // PERBAIKAN: Semua aset akan mencoba mencari harga saat di-submit
-      // Jika kripto lewat Coingecko, sisanya lewat Yahoo Finance.
-      // ==============================================================
       if (type === 'kripto' && EduVesting.COINGECKO_IDS && EduVesting.COINGECKO_IDS[ticker]) {
         await handleRefreshCrypto(true); 
       } else {
@@ -538,17 +532,29 @@
   }
 
   // ==============================================================
-  // PERBAIKAN: Fungsi HandleRefreshStock menerima parameter Type
-  // Untuk merefresh Saham, Emas, dan Reksadana per baris saat disubmit
+  // IMPLEMENTASI: Penambahan konversi Emas ke Rupiah per Gram 
+  // menyesuaikan kalkulasi yang sudah ada pada refreshStockPrices()
   // ==============================================================
   async function handleRefreshStock(ticker, type) {
     try {
-      const price = await EduVesting.fetchStockPriceIDR(ticker);
-      if (price) {
+      let finalPrice = null;
+
+      if (type === 'emas' && ['XAU', 'XAUUSD', 'GC=F'].includes(ticker.toUpperCase())) {
+        const goldUsd = await EduVesting.fetchStockPriceIDR('GC=F');
+        const usdIdr = await EduVesting.fetchStockPriceIDR('IDR=X');
+        
+        if (goldUsd && usdIdr) {
+          finalPrice = (goldUsd * usdIdr) / 31.1034768;
+        }
+      } else {
+        finalPrice = await EduVesting.fetchStockPriceIDR(ticker);
+      }
+
+      if (finalPrice && finalPrice > 0) {
         const assets = await EduVesting.getAssets();
         const assetToUpdate = assets.find(a => a.ticker === ticker && a.type === type);
         if (assetToUpdate) {
-          await EduVesting.updateAsset(assetToUpdate.id, { lastPrice: price });
+          await EduVesting.updateAsset(assetToUpdate.id, { lastPrice: finalPrice });
           await renderAll(); 
         }
       }
