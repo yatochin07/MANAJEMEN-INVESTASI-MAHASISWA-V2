@@ -480,14 +480,16 @@
       const seg = document.createElement('div');
       seg.style.width = it.percent.toFixed(2) + '%';
       seg.style.background = `linear-gradient(90deg,${it.gradient[0]},${it.gradient[1]})`;
-      seg.title = `${it.label} ${it.percent.toFixed(1)}%`; stack.appendChild(seg);
+      seg.title = `${it.label} ${it.percent.toFixed(2)}%`; stack.appendChild(seg);
 
       const row = document.createElement('div'); row.className = 'flex items-center gap-3';
       row.innerHTML = `
         <span class="w-3 h-3 rounded-sm flex-shrink-0" style="background: linear-gradient(135deg,${it.gradient[0]},${it.gradient[1]});"></span>
         <span class="text-sm text-slate-300 flex-1">${it.label}</span>
         <div class="flex-1 px-2 hidden sm:block"><div class="alloc-bar" style="width:${it.percent.toFixed(2)}%; background:linear-gradient(90deg,${it.gradient[0]},${it.gradient[1]});"></div></div>
-        <span class="text-sm font-semibold text-slate-200 w-12 text-right">${it.percent.toFixed(0)}%</span>
+        
+        <span class="text-sm font-semibold text-slate-200 w-16 text-right">${it.percent.toFixed(2)}%</span>
+        
         <span class="text-xs text-slate-500 w-24 sm:w-32 text-right">${EduVesting.formatRupiah(it.value)}</span>
       `;
       legend.appendChild(row);
