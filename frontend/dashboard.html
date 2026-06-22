@@ -67,16 +67,6 @@
   .delay-1{animation-delay:.07s;} .delay-2{animation-delay:.14s;} .delay-3{animation-delay:.21s;} .delay-4{animation-delay:.28s;} .delay-5{animation-delay:.35s;}
   .spin { animation: spin 1s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* FAQ accordion */
-  .faq-item { border-bottom: 1px solid rgba(255,255,255,0.05); }
-  .faq-toggle { width:100%; text-align:left; background:none; border:none; cursor:pointer; padding: 1rem 0; display:flex; align-items:center; justify-content:space-between; gap:1rem; }
-  .faq-toggle:hover .faq-q { color:#a5b4fc; }
-  .faq-q { font-size:.875rem; font-weight:500; color:#cbd5e1; transition: color .2s; }
-  .faq-icon { flex-shrink:0; color:#6366f1; font-size:.75rem; transition: transform .25s ease; }
-  .faq-answer { max-height:0; overflow:hidden; transition: max-height .35s ease, padding .25s ease; }
-  .faq-answer.open { max-height: 300px; padding-bottom:.75rem; }
-  .faq-icon.open { transform: rotate(180deg); }
 </style>
 </head>
 
@@ -374,124 +364,7 @@
       </div>
     </section>
 
-    <section aria-labelledby="faq-heading" class="mb-10 fade-up delay-5">
-      <div class="flex items-center justify-between mb-4">
-        <h2 id="faq-heading" class="font-display text-base text-slate-300 flex items-center gap-2">
-          <i class="fa-solid fa-circle-question text-cyan-400 text-sm"></i> Pusat Bantuan & Informasi
-        </h2>
-        <a href="help.html" class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1 font-medium">
-          Lihat semua <i class="fa-solid fa-chevron-right text-xs"></i>
-        </a>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-
-        <div class="glass rounded-2xl p-5 lg:col-span-2">
-          <p class="text-xs text-slate-500 uppercase tracking-widest font-semibold mb-4">Pertanyaan Umum</p>
-
-          <div class="faq-item">
-            <button class="faq-toggle" onclick="toggleFaq(this)">
-              <span class="faq-q">Apa itu EduVesting dan untuk siapa aplikasi ini?</span>
-              <i class="fa-solid fa-chevron-down faq-icon"></i>
-            </button>
-            <div class="faq-answer">
-              <p class="text-xs text-slate-400 leading-relaxed">EduVesting adalah simulasi portofolio investasi yang dirancang khusus untuk mahasiswa dan pemula. Aplikasi ini membantu Anda belajar mengelola aset multi-instrumen — saham, kripto, emas, dan reksa dana — dalam lingkungan yang aman tanpa risiko uang nyata.</p>
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button class="faq-toggle" onclick="toggleFaq(this)">
-              <span class="faq-q">Bagaimana cara menambahkan aset ke portofolio?</span>
-              <i class="fa-solid fa-chevron-down faq-icon"></i>
-            </button>
-            <div class="faq-answer">
-              <p class="text-xs text-slate-400 leading-relaxed">Klik menu <strong class="text-slate-300">Portofolio</strong> di sidebar, lalu klik tombol <strong class="text-slate-300">+ Tambah Aset</strong>. Isi ticker, nama aset, tipe instrumen, harga rata-rata beli, dan jumlah (qty). Data tersimpan otomatis di perangkat Anda.</p>
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button class="faq-toggle" onclick="toggleFaq(this)">
-              <span class="faq-q">Apakah harga aset diperbarui secara real-time?</span>
-              <i class="fa-solid fa-chevron-down faq-icon"></i>
-            </button>
-            <div class="faq-answer">
-              <p class="text-xs text-slate-400 leading-relaxed">Harga kripto diperbarui secara live melalui API publik. Untuk saham IDX, harga dapat diperbarui manual atau melalui tombol <strong class="text-slate-300">Sinkron</strong> di header. Pastikan koneksi internet Anda aktif untuk mendapatkan harga terkini.</p>
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button class="faq-toggle" onclick="toggleFaq(this)">
-              <span class="faq-q">Apakah data saya aman dan tersimpan di mana?</span>
-              <i class="fa-solid fa-chevron-down faq-icon"></i>
-            </button>
-            <div class="faq-answer">
-              <p class="text-xs text-slate-400 leading-relaxed">Data portofolio Anda tersimpan secara lokal di browser (localStorage) dan dienkripsi melalui autentikasi Supabase. Tidak ada data finansial Anda yang dibagikan ke pihak ketiga. Selalu lakukan ekspor backup secara berkala.</p>
-            </div>
-          </div>
-
-          <div class="faq-item" style="border-bottom:none;">
-            <button class="faq-toggle" onclick="toggleFaq(this)">
-              <span class="faq-q">Apa perbedaan Floating P/L dan Realized P/L?</span>
-              <i class="fa-solid fa-chevron-down faq-icon"></i>
-            </button>
-            <div class="faq-answer">
-              <p class="text-xs text-slate-400 leading-relaxed"><strong class="text-slate-300">Floating P/L</strong> adalah keuntungan/kerugian yang belum direalisasikan — posisi masih terbuka. <strong class="text-slate-300">Realized P/L</strong> adalah profit/loss yang sudah dikunci setelah aset dijual. Dashboard ini menampilkan Floating P/L dari posisi aktif Anda.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="flex flex-col gap-4">
-
-          <div class="glass rounded-2xl p-5" style="border-color: rgba(6,182,212,0.2);">
-            <div class="flex items-center gap-3 mb-3">
-              <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(6,182,212,0.12);">
-                <i class="fa-solid fa-book-open text-cyan-400 text-sm"></i>
-              </div>
-              <p class="text-sm font-semibold text-slate-200">Panduan Cepat</p>
-            </div>
-            <ul class="space-y-2">
-              <li class="flex items-start gap-2 text-xs text-slate-400">
-                <i class="fa-solid fa-circle-check text-emerald-500 mt-0.5 flex-shrink-0"></i>
-                Tambah kas awal di menu <span class="text-slate-300 font-medium">Transaksi</span>
-              </li>
-              <li class="flex items-start gap-2 text-xs text-slate-400">
-                <i class="fa-solid fa-circle-check text-emerald-500 mt-0.5 flex-shrink-0"></i>
-                Input aset portofolio di <span class="text-slate-300 font-medium">Portofolio</span>
-              </li>
-              <li class="flex items-start gap-2 text-xs text-slate-400">
-                <i class="fa-solid fa-circle-check text-emerald-500 mt-0.5 flex-shrink-0"></i>
-                Pantau analisis di <span class="text-slate-300 font-medium">EduVesting AI</span>
-              </li>
-              <li class="flex items-start gap-2 text-xs text-slate-400">
-                <i class="fa-solid fa-circle-check text-emerald-500 mt-0.5 flex-shrink-0"></i>
-                Hitung biaya di <span class="text-slate-300 font-medium">Kalkulator Fee</span>
-              </li>
-            </ul>
-          </div>
-
-          <div class="glass rounded-2xl p-5" style="border-color: rgba(99,102,241,0.2);">
-            <div class="flex items-center gap-3 mb-3">
-              <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(99,102,241,0.12);">
-                <i class="fa-solid fa-code text-indigo-400 text-sm"></i>
-              </div>
-              <p class="text-sm font-semibold text-slate-200">Tim Developer</p>
-            </div>
-            <p class="text-xs text-slate-500 mb-3 leading-relaxed">Aplikasi ini dirancang dan dikembangkan oleh tim mahasiswa untuk mahasiswa.</p>
-            <ul class="space-y-1.5 text-xs text-slate-400">
-              <li class="flex items-center gap-2"><i class="fa-solid fa-user-astronaut text-indigo-500/50"></i> Junior Rafael Adi Siswanto</li>
-              <li class="flex items-center gap-2"><i class="fa-solid fa-user-astronaut text-indigo-500/50"></i> Muhammad Fahmi Amrullah</li>
-              <li class="flex items-center gap-2"><i class="fa-solid fa-user-astronaut text-indigo-500/50"></i> Hilmawan Ega Tetama</li>
-              <li class="flex items-center gap-2"><i class="fa-solid fa-user-astronaut text-indigo-500/50"></i> M. Hafiz Muhandzib</li>
-              <li class="flex items-center gap-2"><i class="fa-solid fa-user-astronaut text-indigo-500/50"></i> Sigit Muyaki</li>
-            </ul>
-          </div>
-
-        </div>
-
-      </div>
-    </section>
-
-    <footer class="text-center pb-8 pt-4 border-t border-white/5">
+    <footer class="text-center pb-8 pt-4 border-t border-white/5 mt-10">
       <p class="text-xs text-slate-600 mb-1">EduVesting · Simulasi Portofolio untuk Mahasiswa</p>
       <p class="text-xs text-slate-700 mt-2">
         Dikembangkan dengan <i class="fa-solid fa-heart text-rose-500/50 mx-0.5"></i> oleh Tim Developer EduVesting
@@ -511,26 +384,11 @@
     overlay.classList.toggle('hidden');
   }
 
-  // FAQ ACCORDION
-  function toggleFaq(btn) {
-    const answer = btn.nextElementSibling;
-    const icon = btn.querySelector('.faq-icon');
-    const isOpen = answer.classList.contains('open');
-    // Close all
-    document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('open'));
-    document.querySelectorAll('.faq-icon').forEach(i => i.classList.remove('open'));
-    // Toggle current
-    if (!isOpen) {
-      answer.classList.add('open');
-      icon.classList.add('open');
-    }
-  }
-
   // SUPABASE CONFIG
   const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  
+
   // MENGKONEKSIKAN SUPABASE CLIENT KE GLOBAL WINDOW AGAR TERBACA OLEH API.JS
   window.supabaseClient = supabaseClient;
 
@@ -575,18 +433,18 @@
     const btn = document.getElementById('refresh-btn');
     const icon = document.getElementById('refresh-icon');
     btn.disabled = true; icon.classList.add('spin');
-    
+
     const resultCrypto = await EduVesting.refreshCryptoPrices();
     const resultStock = await EduVesting.refreshStockPrices();
-    
+
     icon.classList.remove('spin'); btn.disabled = false;
     const note = document.getElementById('last-refresh');
-    
+
     if ((resultCrypto && resultCrypto.error) || (resultStock && resultStock.error)) {
       note.innerText = 'Gagal sinkron (cek koneksi)';
       if (!silent) alert('Gagal mengambil sebagian harga realtime.');
     } else { note.innerText = 'Sinkron ' + new Date().toLocaleTimeString('id-ID'); }
-    
+
     await renderDashboard();
   }
 
@@ -594,7 +452,7 @@
   async function renderDashboard() {
     if (typeof EduVesting === 'undefined') return;
     const metrics = await EduVesting.computeMetrics();
-    
+
     renderSummary(metrics); 
     renderAllocation(metrics); 
     renderInsights(metrics); 
@@ -733,13 +591,13 @@
   async function prefillPrice() {
     if (typeof EduVesting === 'undefined') return;
     const instrument = document.getElementById('instrument-select').value; 
-    
+
     // Tunggu pengambilan data dari database
     const assets = await EduVesting.getAssets(); 
-    
+
     const filteredAssets = assets.filter(a => a.type === instrument && a.lastPrice > 0); 
     const priceInput = document.getElementById('price-input');
-    
+
     if (filteredAssets.length) { 
         priceInput.value = Math.round(filteredAssets.reduce((s, a) => s + a.lastPrice, 0) / filteredAssets.length); 
     } else { 
