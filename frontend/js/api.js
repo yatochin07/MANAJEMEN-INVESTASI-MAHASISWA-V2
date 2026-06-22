@@ -9,7 +9,7 @@ const EduVesting = (() => {
     saham: { label: 'Saham', unit: 'lembar', unitFull: 'lembar', gradient: ['#6366f1', '#818cf8'], badgeBg: 'rgba(99,102,241,0.15)', badgeColor: '#a5b4fc', badgeBorder: 'rgba(99,102,241,0.25)', feeRate: 0.0019, livePrice: false },
     kripto: { label: 'Kripto', unit: 'koin', unitFull: 'koin', gradient: ['#f59e0b', '#fbbf24'], badgeBg: 'rgba(245,158,11,0.12)', badgeColor: '#fcd34d', badgeBorder: 'rgba(245,158,11,0.25)', feeRate: 0.001, livePrice: true },
     emas: { label: 'Emas', unit: 'gram', unitFull: 'gram', gradient: ['#d97706', '#fcd34d'], badgeBg: 'rgba(217,119,6,0.12)', badgeColor: '#fde68a', badgeBorder: 'rgba(217,119,6,0.3)', feeRate: 0.005, livePrice: false },
-    reksadana: { label: 'Kas/RD', unit: 'unit', unitFull: 'unit penyertaan', gradient: ['#06b6d4', '#22d3ee'], badgeBg: 'rgba(6,182,212,0.1)', badgeColor: '#67e8f9', badgeBorder: 'rgba(6,182,212,0.25)', feeRate: 0.0, livePrice: false },
+    reksadana: { label: 'Reksadana', unit: 'unit', unitFull: 'unit penyertaan', gradient: ['#06b6d4', '#22d3ee'], badgeBg: 'rgba(6,182,212,0.1)', badgeColor: '#67e8f9', badgeBorder: 'rgba(6,182,212,0.25)', feeRate: 0.0, livePrice: false },
   };
 
   const COINGECKO_IDS = { BTC: 'bitcoin', ETH: 'ethereum', BNB: 'binancecoin', SOL: 'solana', USDT: 'tether', USDC: 'usd-coin', ADA: 'cardano', XRP: 'ripple', DOGE: 'dogecoin', MATIC: 'polygon-ecosystem-token', AVAX: 'avalanche-2', DOT: 'polkadot', LTC: 'litecoin', TRX: 'tron', LINK: 'chainlink' };
