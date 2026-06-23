@@ -1,6 +1,6 @@
 // ========================================================
 // AI CHAT CONTROLLER (GROQ PURE FETCH API)
-// 100% Murni Fetch, Super Cepat, dan Bebas SDK Bug! 
+// 100% Murni Fetch, Super Cepat, dan Bebas SDK Bug! Cihuyy
 // ========================================================
 
 const chatWithAI = async (req, res) => {
