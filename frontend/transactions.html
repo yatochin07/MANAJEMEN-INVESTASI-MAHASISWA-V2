@@ -168,7 +168,8 @@
       <p class="text-slate-500 text-sm">Catat arus kas masuk (pemasukan) dan keluar (pengeluaran) Anda.</p>
     </header>
 
-    <section class="grid grid-cols-3 gap-3 sm:gap-6 mb-6 fade-up delay-2">
+    <!-- BAGIAN INI YANG DIGANTI: grid-cols-1 md:grid-cols-3 -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-6 mb-6 fade-up delay-2">
       <div class="glass rounded-2xl p-4 sm:p-5 text-center metric-card">
         <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Pemasukan</p>
         <p id="sum-income" class="font-display text-sm sm:text-xl text-blue-400 font-semibold truncate">Rp 0</p>
@@ -223,7 +224,7 @@
           <span><i class="fa-solid fa-chart-pie text-indigo-400 mr-2"></i> Ringkasan Pengeluaran</span>
           <span class="text-[10px] bg-slate-800 border border-slate-700 px-2 py-1 rounded text-slate-400 uppercase tracking-wider">Bulan Ini</span>
         </h2>
-        
+
         <div class="flex items-center justify-center py-10 w-full">
           <div id="pie-chart" class="pie-chart">
             <div class="pie-hole flex items-center justify-center flex-col">
@@ -319,7 +320,7 @@
     // Set active
     document.getElementById('tab-' + tabId).className = "tab-btn tab-active px-5 sm:px-6 py-3 font-medium text-sm flex items-center gap-2 whitespace-nowrap";
     document.getElementById('view-' + tabId).classList.remove('hidden');
-    
+
     // Specifically flex display for list/stats to maintain layout
     if(tabId === 'list') document.getElementById('view-list').classList.add('flex');
     if(tabId === 'stats') document.getElementById('view-stats').classList.add('flex');
@@ -336,7 +337,7 @@
     try {
       const { data: { session }, error } = await supabaseClient.auth.getSession();
       if (error || !session) { window.location.href = 'login.html'; return; }
-      
+
       const user = session.user;
       currentUserId = user.id; 
 
@@ -480,14 +481,14 @@
       listContainer.innerHTML = ''; 
       emptyState.classList.remove('hidden'); 
       emptyState.classList.add('flex');
-      
+
       document.getElementById('sum-income').innerText = 'Rp 0';
       document.getElementById('sum-expense').innerText = 'Rp 0';
       document.getElementById('sum-total').innerText = 'Rp 0';
       renderPieChart({}, 0); // Reset Pie Chart
       return;
     }
-    
+
     emptyState.classList.remove('flex');
     emptyState.classList.add('hidden');
 
@@ -585,7 +586,7 @@
   function renderPieChart(expenseData, totalExpense) {
       const pie = document.getElementById('pie-chart'); 
       const legend = document.getElementById('stat-legend');
-      
+
       if(totalExpense === 0) {
           pie.style.background = 'conic-gradient(rgba(255,255,255,0.05) 100%)';
           legend.innerHTML = '<div class="text-center py-10"><p class="text-sm text-slate-500">Belum ada data pengeluaran.</p></div>'; 
