@@ -329,9 +329,18 @@
 
         const user = session.user;
         const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
+        const avatarUrl = user.user_metadata?.avatar_url; // GET AVATAR LOGIC ADDED
 
         document.getElementById('sidebar-user-name').innerText = displayName;
         document.getElementById('chat-user-name').innerText = displayName;
+
+        // RENDER AVATAR LOGIC ADDED
+        const sbAvatar = document.getElementById('sidebar-user-initial');
+        if (avatarUrl) {
+          sbAvatar.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover rounded-full">`;
+        } else {
+          sbAvatar.innerText = displayName.charAt(0).toUpperCase();
+        }
 
         if (typeof EduVesting !== 'undefined') {
            const metrics = await EduVesting.computeMetrics();
