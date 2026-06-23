@@ -29,12 +29,12 @@
 
 <style>
   * { box-sizing: border-box; }
-  body { font-family:'Inter', sans-serif; background-color:#07090f; color:#e2e8f0; min-height:100vh; overflow-x: hidden; }
+  body { font-family:'Inter', sans-serif; background-color:#07090f; color:#e2e8f0; min-height:100vh; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
   .nav-active { background: linear-gradient(90deg, rgba(99,102,241,0.18) 0%, transparent 100%); border-left: 3px solid #6366f1; }
   .nav-item { border-left: 3px solid transparent; transition: background .2s ease, border-color .2s ease, color .2s ease; }
   .nav-item:hover { background: linear-gradient(90deg, rgba(99,102,241,0.1) 0%, transparent 100%); border-left-color: rgba(99,102,241,0.5); color:#a5b4fc; }
-  .glass { background: rgba(19,25,40,0.85); backdrop-filter: blur(12px); border:1px solid rgba(255,255,255,0.06); }
-  .glass-lighter { background: rgba(30,40,64,0.6); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.07); }
+  .glass { background: rgba(19,25,40,0.85); backdrop-filter: blur(12px); border:1px solid rgba(255,255,255,0.06); transition: all 0.3s ease; }
+  .glass-lighter { background: rgba(30,40,64,0.6); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.07); transition: all 0.3s ease; }
   .mesh-bg { position:fixed; inset:0; pointer-events:none; z-index:0;
     background:
       radial-gradient(ellipse 60% 40% at 15% 10%, rgba(99,102,241,0.08) 0%, transparent 70%),
@@ -91,10 +91,37 @@
   }
   .legend-item { display: flex; align-items: center; justify-content: space-between; font-size: 12px; margin-bottom: 8px; padding: 12px; }
   .legend-color { width: 12px; height: 12px; border-radius: 4px; margin-right: 10px; }
+
+  /* ==========================================
+     LIGHT MODE STYLES
+  ========================================== */
+  body.light-mode { background-color: #f8fafc; color: #0f1423; }
+  body.light-mode .glass, body.light-mode .glass-lighter { background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+  body.light-mode .text-slate-200, body.light-mode .text-slate-300, body.light-mode .text-slate-100 { color: #1e293b; }
+  body.light-mode .text-slate-400, body.light-mode .text-slate-500 { color: #475569; }
+  body.light-mode .form-input, body.light-mode select.form-input { background: #ffffff !important; border-color: #cbd5e1; color: #0f1423; }
+  body.light-mode select.form-input option { background-color: #ffffff; color: #0f1423; }
+  body.light-mode aside { background: rgba(255, 255, 255, 0.95) !important; border-right: 1px solid rgba(0,0,0,0.08); }
+  
+  /* Spesifik Keuangan Harian */
+  body.light-mode .bg-slate-800\/50, body.light-mode .bg-slate-800\/80, body.light-mode .bg-slate-800\/40, body.light-mode .bg-slate-800 { background-color: #f1f5f9 !important; border-color: #cbd5e1; color: #1e293b; }
+  body.light-mode .daily-header { background: rgba(255, 255, 255, 0.9); border-bottom: 1px solid rgba(0,0,0,0.08); }
+  body.light-mode .daily-group { border-bottom: 8px solid rgba(241, 245, 249, 0.8); }
+  body.light-mode .tx-item { border-bottom: 1px solid rgba(0,0,0,0.05); background: rgba(255,255,255,0.5); }
+  body.light-mode .tx-item:hover { background: #f8fafc; }
+  body.light-mode .pie-chart { background: conic-gradient(rgba(0,0,0,0.05) 100%); box-shadow: inset 0 0 0 15px rgba(255,255,255,1); }
+  body.light-mode .pie-hole { background: #ffffff; }
 </style>
 </head>
 
 <body class="relative">
+<script>
+  // Cek dan sesuaikan tema sedini mungkin
+  if(localStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light-mode');
+  }
+</script>
+
 <div class="mesh-bg" aria-hidden="true"></div>
 
 <div class="relative z-10 flex min-h-screen">
@@ -358,7 +385,9 @@
       currentUserId = user.id; 
 
       const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
-      const avatarUrl = user.user_metadata?.avatar_url;
+      
+      // Update: Mengambil custom_avatar_url prioritas pertama
+      const avatarUrl = user.user_metadata?.custom_avatar_url || user.user_metadata?.avatar_url;
 
       document.getElementById('sidebar-user-name').innerText = displayName;
 
@@ -450,7 +479,7 @@
       document.getElementById('f-amount').value = '';
       document.getElementById('f-note').value = '';
       await loadFinances();
-      switchTab('list'); // Auto Redirect ke Tab Daftar setelah simpan
+      switchTab('list'); 
     }
     btn.disabled = false; btn.innerText = 'Simpan Transaksi';
   }
@@ -501,7 +530,7 @@
       document.getElementById('sum-income').innerText = 'Rp 0';
       document.getElementById('sum-expense').innerText = 'Rp 0';
       document.getElementById('sum-total').innerText = 'Rp 0';
-      renderPieChart({}, 0); // Reset Pie Chart
+      renderPieChart({}, 0); 
       return;
     }
 
@@ -526,8 +555,7 @@
     document.getElementById('sum-income').innerText = formatRupiahClean(totalIncome);
     document.getElementById('sum-expense').innerText = formatRupiahClean(totalExpense);
     document.getElementById('sum-total').innerText = formatRupiahClean(totalDiff);
-    
-    // BAGIAN YANG DIREVISI: Memastikan ukuran teks total tetap konsisten saat data ter-render
+
     document.getElementById('sum-total').className = `font-display text-2xl sm:text-3xl font-bold truncate ${totalDiff < 0 ? 'text-rose-400' : 'text-slate-100'}`;
 
     const sortedDates = Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a));
