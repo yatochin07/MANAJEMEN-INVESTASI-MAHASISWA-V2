@@ -3,9 +3,12 @@ const cors = require('cors');
 require('dotenv').config();
 
 // ========================================================
-// IMPORT YAHOO FINANCE (VERSI RESMI & AMAN)
+// FIX MUTLAK: YAHOO FINANCE V3
 // ========================================================
-const yahooFinance = require('yahoo-finance2').default;
+// 1. Panggil class utamanya dari .default
+const YahooFinance = require('yahoo-finance2').default;
+// 2. Wajib nyalakan pakai 'new' sesuai permintaan error tadi
+const yahooFinance = new YahooFinance();
 
 // ======================
 // IMPORT ROUTES
@@ -17,7 +20,7 @@ const alloRoutes = require('./routes/alloRoutes');
 const calculatorRoutes = require('./routes/calculatorRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 
-// SEMENTARA KITA MATIKAN ROUTE AI AGAR TIDAK BIKIN SERVER CRASH
+// SEMENTARA KITA MATIKAN ROUTE AI AGAR SERVER FOKUS KE SAHAM
 // const aiRoutes = require('./routes/aiRoutes');
 
 // ======================
@@ -34,7 +37,6 @@ app.get('/api/price/saham/:ticker', async (req, res) => {
     try {
         let ticker = req.params.ticker.toUpperCase();
 
-        // Tambahkan akhiran .JK otomatis jika saham Indonesia
         if (!ticker.includes('=') && !ticker.includes('.')) {
             ticker += '.JK';
         }
@@ -64,7 +66,6 @@ app.use('/api/allocations', alloRoutes);
 app.use('/api/market', calculatorRoutes);
 app.use('/api/settings', settingsRoutes);
 
-// SEMENTARA KITA MATIKAN PENGGUNAAN ROUTE AI
 // app.use('/api/ai', aiRoutes);
 
 // ======================
