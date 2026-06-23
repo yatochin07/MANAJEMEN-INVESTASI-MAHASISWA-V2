@@ -2,9 +2,8 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
-// ✅ FIX: Import langsung, TANPA 'new'
-const yahooFinance = require('yahoo-finance2').default;
-
+// Hapus semua cara import sebelumnya, ganti dengan ini:
+const yahooFinance = require('yahoo-finance2');
 // ======================
 // IMPORT ROUTES
 // ======================
