@@ -162,6 +162,7 @@
     </header>
 
     <section aria-labelledby="summary-heading" class="mb-8">
+      <h2 id="summary-heading" class="sr-only">Ringkasan Portofolio</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
         <div class="glass rounded-2xl p-5 metric-card fade-up delay-1" style="border-color: rgba(99,102,241,0.2);">
@@ -180,7 +181,7 @@
           </div>
         </div>
 
-                <div class="glass rounded-2xl p-5 metric-card fade-up delay-2">
+        <div class="glass rounded-2xl p-5 metric-card fade-up delay-2">
           <div class="flex items-start justify-between">
             <div class="min-w-0 pr-3">
               <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Floating P/L</p>
@@ -193,7 +194,6 @@
           <p class="text-slate-500 text-xs mt-2">Belum direalisasikan</p>
           <div class="progress-bar mt-3"><div id="m-pl-bar" class="progress-fill" style="width:0%; background: linear-gradient(90deg, #10b981, #34d399);"></div></div>
         </div>
-
 
         <div class="glass rounded-2xl p-5 metric-card fade-up delay-3">
           <div class="flex items-start justify-between">
@@ -260,21 +260,24 @@
               </div>
             </div>
             <div class="grid grid-cols-3 gap-2 sm:gap-3 mt-5">
-              
+
+              <!-- KOTAK RISIKO -->
               <div class="rounded-xl p-2 sm:p-3 text-center" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06);">
                 <p class="text-[10px] sm:text-xs text-slate-500 mb-1">Risiko</p>
                 <div id="ai-risk-container">
                   <p id="ai-risk" class="text-slate-600 font-display text-base sm:text-lg">—</p>
                 </div>
               </div>
-              
+
+              <!-- KOTAK DIVERSIFIKASI -->
               <div class="rounded-xl p-2 sm:p-3 text-center" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06);">
                 <p class="text-[10px] sm:text-xs text-slate-500 mb-1">Diversifikasi</p>
                 <div id="ai-div-container">
                   <p id="ai-diversification" class="text-slate-600 font-display text-base sm:text-lg">—</p>
                 </div>
               </div>
-              
+
+              <!-- KOTAK SKOR 0-10 -->
               <div class="rounded-xl p-2 sm:p-3 text-center flex flex-col items-center justify-center" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06);">
                 <p class="text-[10px] sm:text-xs text-slate-500 mb-1">Skor AI (0-10)</p>
                 <div id="ai-score-container" class="w-full flex flex-col items-center justify-center">
@@ -429,7 +432,7 @@
     const plEl = document.getElementById('m-pl');
     const plSign = m.floatingPL >= 0 ? '+' : '';
     plEl.innerText = plSign + EduVesting.formatRupiah(m.floatingPL);
-    plEl.className = 'font-display text-2xl ' + (m.floatingPL >= 0 ? 'text-emerald-400' : 'text-rose-400');
+    plEl.className = 'font-display text-2xl whitespace-nowrap overflow-hidden text-ellipsis ' + (m.floatingPL >= 0 ? 'text-emerald-400' : 'text-rose-400');
     document.getElementById('m-pl-bar').style.width = Math.min(100, Math.abs(m.plPercent)) + '%';
     document.getElementById('m-pl-bar').style.background = m.floatingPL >= 0 ? 'linear-gradient(90deg, #10b981, #34d399)' : 'linear-gradient(90deg, #f43f5e, #fb7185)';
 
@@ -485,21 +488,37 @@
 
     if (!items.length) { legend.innerHTML = '<p class="text-sm text-slate-500 text-center py-4">Belum ada data alokasi.</p>'; return; }
 
+    // ==========================================
+    // FIX: KAMUS WARNA SPESIFIK UNTUK TIAP ASET
+    // ==========================================
+    const colorMap = {
+      'saham': ['#6366f1', '#818cf8'],      // Indigo / Ungu
+      'kripto': ['#f97316', '#fb923c'],     // Oranye Terang (Beda dengan Emas)
+      'emas': ['#eab308', '#fde047'],       // Emas / Kuning Terang
+      'reksadana': ['#06b6d4', '#22d3ee'],  // Cyan / Biru Muda
+      'cash': ['#64748b', '#94a3b8']        // Abu-abu / Slate
+    };
+
     items.forEach(it => {
+      // Paksa ambil warna dari colorMap berdasarkan tipe, kalau tidak ada baru pakai bawaan API
+      const grad = colorMap[it.type] || it.gradient || ['#3b82f6', '#60a5fa'];
+
       const seg = document.createElement('div');
       seg.style.width = it.percent.toFixed(2) + '%';
-      seg.style.background = `linear-gradient(90deg,${it.gradient[0]},${it.gradient[1]})`;
+      seg.style.background = `linear-gradient(90deg,${grad[0]},${grad[1]})`;
       seg.title = `${it.label} ${it.percent.toFixed(2)}%`; stack.appendChild(seg);
 
       const row = document.createElement('div'); row.className = 'flex items-center gap-3';
+      
+      // FIX: Tambahan whitespace-nowrap pada angka Rupiah agar tidak turun ke bawah saat nominalnya miliaran
       row.innerHTML = `
-        <span class="w-3 h-3 rounded-sm flex-shrink-0" style="background: linear-gradient(135deg,${it.gradient[0]},${it.gradient[1]});"></span>
+        <span class="w-3 h-3 rounded-sm flex-shrink-0" style="background: linear-gradient(135deg,${grad[0]},${grad[1]});"></span>
         <span class="text-sm text-slate-300 flex-1">${it.label}</span>
-        <div class="flex-1 px-2 hidden sm:block"><div class="alloc-bar" style="width:${it.percent.toFixed(2)}%; background:linear-gradient(90deg,${it.gradient[0]},${it.gradient[1]});"></div></div>
+        <div class="flex-1 px-2 hidden sm:block"><div class="alloc-bar" style="width:${it.percent.toFixed(2)}%; background:linear-gradient(90deg,${grad[0]},${grad[1]});"></div></div>
         
         <span class="text-sm font-semibold text-slate-200 w-16 text-right">${it.percent.toFixed(2)}%</span>
         
-        <span class="text-xs text-slate-500 w-24 sm:w-32 text-right">${EduVesting.formatRupiah(it.value)}</span>
+        <span class="text-xs text-slate-500 w-auto min-w-[90px] sm:min-w-[120px] text-right whitespace-nowrap">${EduVesting.formatRupiah(it.value)}</span>
       `;
       legend.appendChild(row);
     });
@@ -521,9 +540,9 @@
     const riskEl = document.getElementById('ai-risk');
     const divEl = document.getElementById('ai-diversification');
     const scoreEl = document.getElementById('ai-score');
-    
+
     const savedScoreRaw = localStorage.getItem('eduvesting_ai_score');
-    
+
     if (!m.assets.length) {
       // Tampilan jika user belum punya portofolio
       riskEl.innerText = '—'; riskEl.className = 'text-slate-600 font-display text-base sm:text-lg';
@@ -533,7 +552,7 @@
     else if (savedScoreRaw) {
       // Tampilan jika memori cache dari AI ditemukan
       const parsed = JSON.parse(savedScoreRaw);
-      
+
       // Render Risiko
       riskEl.innerText = parsed.risk;
       if(parsed.risk.toLowerCase().includes('tinggi')) riskEl.className = 'font-display text-base sm:text-lg text-rose-400';
