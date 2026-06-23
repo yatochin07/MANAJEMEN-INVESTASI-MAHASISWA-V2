@@ -30,8 +30,8 @@
 
   <style>
     * { box-sizing: border-box; }
-    /* Mode Gelap Default */
-    body { font-family: 'Inter', sans-serif; background-color: #07090f; color: #e2e8f0; min-height: 100vh; overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
+    /* Transisi Halus untuk Mode Gelap/Terang */
+    body { font-family: 'Inter', sans-serif; background-color: #07090f; color: #e2e8f0; min-height: 100vh; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
 
     /* Sidebar active glow */
     .nav-active { background: linear-gradient(90deg, rgba(148,163,184,0.15) 0%, transparent 100%); border-left: 3px solid #94a3b8; }
@@ -39,8 +39,8 @@
     .nav-item:hover { background: linear-gradient(90deg, rgba(99,102,241,0.1) 0%, transparent 100%); border-left-color: rgba(99,102,241,0.5); color: #a5b4fc; }
 
     /* Glass Elements */
-    .glass { background: rgba(19, 25, 40, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); transition: all 0.3s; }
-    .glass-lighter { background: rgba(30,40,64,0.6); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.07); transition: all 0.3s; }
+    .glass { background: rgba(19, 25, 40, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); transition: all 0.3s ease; }
+    .glass-lighter { background: rgba(30,40,64,0.6); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.07); transition: all 0.3s ease; }
 
     /* Mesh Background */
     .mesh-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0;
@@ -60,7 +60,7 @@
     select option { background-color: #0f1423; color: #e2e8f0; padding: 12px; }
 
     /* ==========================================
-       LIGHT MODE OVERRIDES
+       LIGHT MODE STYLES
        ========================================== */
     body.light-mode { background-color: #f8fafc; color: #0f1423; }
     body.light-mode .glass, body.light-mode .glass-lighter { background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
@@ -69,7 +69,7 @@
     body.light-mode .form-input { background: #ffffff !important; border-color: #cbd5e1; color: #0f1423; }
     body.light-mode aside { background: rgba(255, 255, 255, 0.95) !important; border-right: 1px solid rgba(0,0,0,0.08); }
     body.light-mode select option { background-color: #ffffff; color: #0f1423; }
-    body.light-mode .bg-slate-800, body.light-mode .bg-slate-800\/50 { background-color: #f1f5f9 !important; border-color: #cbd5e1; color: #1e293b; }
+    body.light-mode .bg-slate-800, body.light-mode .bg-slate-800\/50, body.light-mode .bg-slate-800\/30 { background-color: #f1f5f9 !important; border-color: #cbd5e1; color: #1e293b; }
 
     /* Fade-in */
     @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
@@ -115,41 +115,19 @@
 
       <nav class="flex-1 px-2 space-y-0.5 overflow-y-auto">
         <p class="px-4 py-1.5 text-xs font-semibold text-slate-600 uppercase tracking-widest">Utama</p>
-
-        <a href="dashboard.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-gauge-high w-4 text-center"></i> Dashboard
-        </a>
-        <a href="portfolio.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-briefcase w-4 text-center"></i> Portofolio
-        </a>
-        <a href="transactions.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-wallet w-4 text-center"></i> Keuangan
-        </a>
-        <a href="goals.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-bullseye w-4 text-center"></i> Target Dana
-        </a>
+        <a href="dashboard.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-gauge-high w-4 text-center"></i> Dashboard</a>
+        <a href="portfolio.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-briefcase w-4 text-center"></i> Portofolio</a>
+        <a href="transactions.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-wallet w-4 text-center"></i> Keuangan</a>
+        <a href="goals.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-bullseye w-4 text-center"></i> Target Dana</a>
 
         <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Analisa</p>
-
-        <a href="insights.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-globe w-4 text-center"></i> EduVesting AI
-        </a>
-        <a href="allocations.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-chart-pie w-4 text-center"></i> Alokasi Aset
-        </a>
-        <a href="calculator.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-calculator w-4 text-center"></i> Kalkulator Investasi
-        </a>
+        <a href="insights.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-globe w-4 text-center"></i> EduVesting AI</a>
+        <a href="allocations.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-chart-pie w-4 text-center"></i> Alokasi Aset</a>
+        <a href="calculator.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-calculator w-4 text-center"></i> Kalkulator Investasi</a>
 
         <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Akun</p>
-
-        <a href="settings.html" class="nav-item nav-active flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-200 text-sm font-medium">
-          <i class="fa-solid fa-gear w-4 text-center text-indigo-400"></i> Pengaturan
-        </a>
-
-        <a href="logout.html" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm">
-          <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout
-        </a>
+        <a href="settings.html" class="nav-item nav-active flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-200 text-sm font-medium"><i class="fa-solid fa-gear w-4 text-center text-indigo-400"></i> Pengaturan</a>
+        <a href="logout.html" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm"><i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout</a>
       </nav>
     </aside>
 
@@ -167,30 +145,30 @@
         </button>
       </div>
 
-      <header class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 fade-up">
+      <header class="flex flex-row items-center justify-between mb-8 gap-4 fade-up">
         <div>
           <h1 class="font-display text-2xl sm:text-3xl text-slate-100 font-semibold mb-1">Pengaturan Akun</h1>
-          <p class="text-slate-500 text-sm mt-0.5">Kelola informasi pribadi, keamanan, dan preferensi EduVesting Anda.</p>
+          <p class="text-slate-500 text-sm mt-0.5">Kelola informasi pribadi, keamanan, dan preferensi Anda.</p>
         </div>
         
-        <!-- Toggle Dark/Light Mode -->
-        <button onclick="toggleTheme()" class="w-10 h-10 rounded-xl glass flex items-center justify-center text-slate-400 hover:text-amber-400 transition-colors shadow-sm" title="Ubah Mode Tampilan">
-          <i id="theme-icon" class="fa-solid fa-moon"></i>
+        <!-- Toggle Mode Gelap / Terang -->
+        <button onclick="toggleTheme()" class="w-11 h-11 rounded-xl glass flex items-center justify-center text-slate-400 hover:text-amber-400 transition-colors shadow-sm flex-shrink-0" title="Ubah Mode Tampilan">
+          <i id="theme-icon" class="fa-solid fa-moon text-lg"></i>
         </button>
       </header>
 
       <div class="max-w-4xl space-y-6">
 
-        <!-- PROFIL PENGGUNA -->
+        <!-- SECTION: PROFIL PENGGUNA -->
         <section class="glass rounded-2xl p-4 sm:p-6 md:p-8 fade-up delay-1">
           <h2 class="text-base sm:text-lg font-display text-slate-200 mb-6 flex items-center gap-2 border-b border-white/5 pb-4">
             <i class="fa-regular fa-id-badge text-indigo-400"></i> Profil Pengguna
           </h2>
 
           <form id="profile-form" onsubmit="saveProfile(event)">
-
             <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mb-8">
 
+              <!-- FOTO PROFIL UPLOAD -->
               <div class="relative group cursor-pointer flex-shrink-0">
                 <label for="avatar-upload" class="cursor-pointer block relative">
                   <div id="settings-avatar-container" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center text-2xl sm:text-3xl font-bold text-white shadow-lg overflow-hidden transition-transform group-hover:scale-105" style="background: linear-gradient(135deg,#7c3aed,#6366f1);">
@@ -206,14 +184,15 @@
 
               <div class="text-center sm:text-left mt-2 sm:mt-0">
                 <h3 class="text-sm sm:text-base font-semibold text-slate-200">Foto Profil</h3>
-                <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto sm:mx-0">Klik ikon kamera untuk mengunggah. (Bypass Google Reset).</p>
+                <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto sm:mx-0">Klik ikon kamera untuk mengunggah. Gambar akan diprioritaskan di atas foto Google Anda.</p>
                 <p id="upload-status" class="text-xs text-emerald-400 font-semibold mt-2 hidden animate-pulse">Mengunggah dan menyimpan...</p>
               </div>
             </div>
 
+            <!-- HILANGKAN INPUT UNIVERSITAS & NIM -->
             <div class="grid grid-cols-1 gap-4 sm:gap-5">
               <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1.5">Nama Lengkap</label>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5">Nama Lengkap / Username</label>
                 <input id="setting-name" type="text" class="form-input w-full rounded-xl px-4 py-2.5 text-sm bg-[#0f1423]" required>
               </div>
             </div>
@@ -226,10 +205,10 @@
           </form>
         </section>
 
-        <!-- KREDENSIAL AKUN (GANTI EMAIL & PASSWORD) -->
+        <!-- SECTION: KREDENSIAL AKUN (UBAH EMAIL & PASSWORD) -->
         <section class="glass rounded-2xl p-4 sm:p-6 md:p-8 fade-up delay-2">
           <h2 class="text-base sm:text-lg font-display text-slate-200 mb-6 flex items-center gap-2 border-b border-white/5 pb-4">
-            <i class="fa-solid fa-shield-halved text-amber-400"></i> Kredensial Akun
+            <i class="fa-solid fa-shield-halved text-amber-400"></i> Kredensial & Keamanan
           </h2>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
@@ -242,15 +221,17 @@
               <div class="space-y-3">
                 <input type="email" id="new-email" placeholder="Masukkan email baru" class="form-input w-full rounded-xl px-4 py-2.5 text-sm bg-[#0f1423]" required>
                 <button type="submit" id="btn-change-email" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors">
-                  Kirim Link Verifikasi
+                  Ubah Email Saya
                 </button>
               </div>
             </form>
 
             <!-- Ubah Password -->
             <form onsubmit="handlePasswordChange(event)" class="bg-slate-800/30 p-5 rounded-2xl border border-slate-700/50">
-              <h3 class="text-sm font-semibold text-slate-200 mb-2">Ubah Password</h3>
-              <p class="text-xs text-slate-500 mb-4">Ganti kata sandi demi keamanan. (Max: 3x sehari).</p>
+              <h3 class="text-sm font-semibold text-slate-200 mb-2">Atur / Ubah Password</h3>
+              <p class="text-xs text-slate-500 mb-4">
+                Jika Anda daftar via Google, mengatur password di sini memungkinkan Anda untuk login secara manual. (Batas Ubah: 3x Sehari).
+              </p>
               
               <div class="space-y-3">
                 <input type="password" id="new-password" placeholder="Password baru (Min. 8 karakter)" class="form-input w-full rounded-xl px-4 py-2.5 text-sm bg-[#0f1423]" required minlength="8">
@@ -263,10 +244,10 @@
           </div>
         </section>
 
-        <!-- PREFERENSI INVESTASI (DUMMY) -->
+        <!-- SECTION: PREFERENSI INVESTASI (DUMMY UI) -->
         <section class="glass rounded-2xl p-4 sm:p-6 md:p-8 fade-up delay-3">
           <h2 class="text-base sm:text-lg font-display text-slate-200 mb-6 flex items-center gap-2 border-b border-white/5 pb-4">
-            <i class="fa-solid fa-sliders text-emerald-400"></i> Preferensi Investasi (Dummy)
+            <i class="fa-solid fa-sliders text-emerald-400"></i> Preferensi Investasi (Simulasi)
           </h2>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
@@ -336,15 +317,15 @@
       body.classList.toggle('light-mode');
       
       if(body.classList.contains('light-mode')) {
-        icon.className = "fa-solid fa-sun text-amber-500";
+        icon.className = "fa-solid fa-sun text-amber-500 text-lg";
         localStorage.setItem('theme', 'light');
       } else {
-        icon.className = "fa-solid fa-moon";
+        icon.className = "fa-solid fa-moon text-lg";
         localStorage.setItem('theme', 'dark');
       }
     }
 
-    // Cek preferensi tema sebelumnya
+    // Inisialisasi Tema
     if(localStorage.getItem('theme') === 'light') {
       toggleTheme();
     }
@@ -357,7 +338,7 @@
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     // ==========================================
-    // AUTHENTICATION GUARD & INIT (SUPABASE)
+    // AUTHENTICATION INIT (SUPABASE)
     // ==========================================
     document.addEventListener('DOMContentLoaded', async () => {
       try {
@@ -371,14 +352,13 @@
         const user = session.user;
         const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
         
-        // TRIK AVATAR: Cek custom_avatar_url dulu, jika kosong baru pakai bawaan google (avatar_url)
+        // PENTING: Panggil custom_avatar_url dulu (anti-overwrite google)
         const avatarUrl = user.user_metadata?.custom_avatar_url || user.user_metadata?.avatar_url; 
 
         document.getElementById('sidebar-user-name').innerText = displayName;
         document.getElementById('setting-name').value = displayName;
         document.getElementById('current-email-display').innerText = user.email;
 
-        // Render Avatar
         updateAvatarUI(avatarUrl, displayName.charAt(0).toUpperCase());
 
       } catch (err) {
@@ -386,7 +366,6 @@
       }
     });
 
-    // Fungsi Render UI Avatar
     function updateAvatarUI(imgUrl, initialText = 'U') {
       const sbAvatar = document.getElementById('sidebar-user-initial');
       const settingsImg = document.getElementById('settings-avatar-img');
@@ -406,7 +385,7 @@
     }
 
     // ==========================================
-    // FITUR UPLOAD AVATAR (ANTI-OVERWRITE GOOGLE)
+    // FUNGSI UPLOAD FOTO (ANTI-OVERWRITE GOOGLE)
     // ==========================================
     function handleAvatarUpload(event) {
       const file = event.target.files[0];
@@ -435,11 +414,12 @@
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
 
+          // Simpan sebagai Base64
           const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
           updateAvatarUI(compressedDataUrl);
 
           try {
-            // SIMPAN KE "custom_avatar_url" AGAR TIDAK DITIMPA OLEH GOOGLE
+            // SIMPAN KE "custom_avatar_url" (Akan selalu diprioritaskan saat render)
             const { error } = await supabaseClient.auth.updateUser({
               data: { custom_avatar_url: compressedDataUrl, avatar_url: compressedDataUrl }
             });
@@ -459,7 +439,7 @@
     }
 
     // ==========================================
-    // FUNGSI SIMPAN PROFIL NAMA
+    // FUNGSI SIMPAN PROFIL USERNAME
     // ==========================================
     async function saveProfile(e) {
       e.preventDefault();
@@ -477,8 +457,8 @@
         });
 
         if (error) throw error;
-        document.getElementById('sidebar-user-name').innerText = newName;
         
+        document.getElementById('sidebar-user-name').innerText = newName;
         const settingsText = document.getElementById('settings-avatar-text');
         if(!settingsText.classList.contains('hidden')) {
            updateAvatarUI(null, newName.charAt(0).toUpperCase());
@@ -493,14 +473,14 @@
     }
 
     // ==========================================
-    // FUNGSI UBAH EMAIL (REALTIME)
+    // FUNGSI UBAH EMAIL
     // ==========================================
     async function handleEmailChange(e) {
       e.preventDefault();
       const newEmail = document.getElementById('new-email').value.trim();
       const btn = document.getElementById('btn-change-email');
       
-      if(!confirm(`Anda yakin ingin mengubah email login ke: ${newEmail}?`)) return;
+      if(!confirm(`Anda yakin ingin mengubah email ke: ${newEmail}? Pastikan email tersebut aktif!`)) return;
 
       btn.innerText = "Mengirim..."; btn.disabled = true;
       
@@ -509,21 +489,42 @@
       if(error) {
         alert("Gagal mengubah email: " + error.message);
       } else {
-        alert("BERHASIL: Link konfirmasi telah dikirim ke alamat email LAMA dan email BARU Anda. Anda harus mengeklik link di KEDUA email tersebut agar perubahan berlaku.");
+        alert("BERHASIL: Link konfirmasi telah dikirim ke email lama dan email baru Anda. Buka email Anda untuk menyetujui perubahan.");
         document.getElementById('new-email').value = "";
       }
       
-      btn.innerText = "Kirim Link Verifikasi"; btn.disabled = false;
+      btn.innerText = "Ubah Email Saya"; btn.disabled = false;
     }
 
     // ==========================================
-    // FUNGSI UBAH PASSWORD (REALTIME)
+    // FUNGSI UBAH PASSWORD (Limit 3x Sehari & Mendukung Google to Email Login)
     // ==========================================
+    function checkPasswordLimit() {
+      const today = new Date().toDateString();
+      let limitData = JSON.parse(localStorage.getItem('pwdLimit')) || { date: today, count: 0 };
+      if (limitData.date !== today) { limitData = { date: today, count: 0 }; }
+      return limitData;
+    }
+
+    function incrementPasswordLimit() {
+      let limitData = checkPasswordLimit();
+      limitData.count++;
+      localStorage.setItem('pwdLimit', JSON.stringify(limitData));
+    }
+
     async function handlePasswordChange(e) {
       e.preventDefault();
       const newPwd = document.getElementById('new-password').value;
       const btn = document.getElementById('btn-change-password');
+
+      let limitData = checkPasswordLimit();
+      if(limitData.count >= 3) {
+        alert("PERHATIAN: Anda telah mencapai batas maksimal penggantian password (3 kali) untuk hari ini. Silakan coba lagi besok.");
+        return;
+      }
       
+      if(!confirm("Anda yakin ingin mengganti password akun Anda? (Bagi pengguna Google Login, ini akan mengaktifkan opsi login manual menggunakan Email dan Password ini).")) return;
+
       btn.innerText = "Menyimpan..."; btn.disabled = true;
 
       const { data, error } = await supabaseClient.auth.updateUser({ password: newPwd });
@@ -531,7 +532,8 @@
       if(error) {
         alert("Gagal mengubah password: " + error.message);
       } else {
-        alert("Password berhasil diubah! Gunakan password baru ini untuk login berikutnya.");
+        incrementPasswordLimit();
+        alert("Password berhasil diubah! Jika Anda menggunakan login Google, kini Anda juga bisa login secara manual menggunakan email dan password ini.");
         document.getElementById('new-password').value = "";
       }
       
