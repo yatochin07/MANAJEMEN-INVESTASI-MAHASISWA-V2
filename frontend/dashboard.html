@@ -29,12 +29,12 @@
 
 <style>
   * { box-sizing: border-box; }
-  body { font-family:'Inter', sans-serif; background-color:#07090f; color:#e2e8f0; min-height:100vh; overflow-x: hidden; }
+  body { font-family:'Inter', sans-serif; background-color:#07090f; color:#e2e8f0; min-height:100vh; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
   .nav-active { background: linear-gradient(90deg, rgba(99,102,241,0.18) 0%, transparent 100%); border-left: 3px solid #6366f1; }
   .nav-item { border-left: 3px solid transparent; transition: background .2s ease, border-color .2s ease, color .2s ease; }
   .nav-item:hover { background: linear-gradient(90deg, rgba(99,102,241,0.1) 0%, transparent 100%); border-left-color: rgba(99,102,241,0.5); color:#a5b4fc; }
-  .glass { background: rgba(19,25,40,0.85); backdrop-filter: blur(12px); border:1px solid rgba(255,255,255,0.06); }
-  .glass-lighter { background: rgba(30,40,64,0.6); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.07); }
+  .glass { background: rgba(19,25,40,0.85); backdrop-filter: blur(12px); border:1px solid rgba(255,255,255,0.06); transition: all 0.3s ease; }
+  .glass-lighter { background: rgba(30,40,64,0.6); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.07); transition: all 0.3s ease; }
   .mesh-bg { position:fixed; inset:0; pointer-events:none; z-index:0;
     background:
       radial-gradient(ellipse 60% 40% at 15% 10%, rgba(99,102,241,0.08) 0%, transparent 70%),
@@ -64,10 +64,26 @@
   .delay-1{animation-delay:.07s;} .delay-2{animation-delay:.14s;} .delay-3{animation-delay:.21s;} .delay-4{animation-delay:.28s;}
   .spin { animation: spin 1s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ==========================================
+     LIGHT MODE STYLES
+  ========================================== */
+  body.light-mode { background-color: #f8fafc; color: #0f1423; }
+  body.light-mode .glass, body.light-mode .glass-lighter { background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+  body.light-mode .text-slate-200, body.light-mode .text-slate-300, body.light-mode .text-slate-100 { color: #1e293b; }
+  body.light-mode .text-slate-400, body.light-mode .text-slate-500 { color: #475569; }
+  body.light-mode aside { background: rgba(255, 255, 255, 0.95) !important; border-right: 1px solid rgba(0,0,0,0.08); }
 </style>
 </head>
 
 <body class="relative">
+<script>
+  // Script untuk mengecek dan menerapkan tema sesegera mungkin agar tidak berkedip
+  if(localStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light-mode');
+  }
+</script>
+
 <div class="mesh-bg" aria-hidden="true"></div>
 
 <div class="relative z-10 flex min-h-screen">
@@ -163,7 +179,7 @@
 
     <section aria-labelledby="summary-heading" class="mb-8">
       <h2 id="summary-heading" class="sr-only">Ringkasan Portofolio</h2>
-      
+
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-5 sm:gap-6">
 
         <div class="glass rounded-2xl p-5 sm:p-6 metric-card fade-up delay-1 lg:col-span-3" style="border-color: rgba(99,102,241,0.2);">
@@ -367,7 +383,7 @@
   const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   window.supabaseClient = supabaseClient;
-  
+
   let currentUserId = null;
 
   document.addEventListener('DOMContentLoaded', async () => {
@@ -382,7 +398,7 @@
       currentUserId = user.id; 
 
       const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
-      const avatarUrl = user.user_metadata?.avatar_url; 
+      const avatarUrl = user.user_metadata?.custom_avatar_url || user.user_metadata?.avatar_url; 
 
       document.getElementById('welcome-user').innerText = `Selamat Datang, ${displayName} 👋`;
       document.getElementById('sidebar-user-name').innerText = displayName;
