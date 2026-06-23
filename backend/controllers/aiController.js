@@ -1,6 +1,6 @@
 // ========================================================
-// AI CHAT CONTROLLER (GEMINI PURE FETCH API)
-// 100% Murni Fetch, Bebas SDK Bug, dan Gratis Selamanya! 
+// AI CHAT CONTROLLER (GROQ PURE FETCH API)
+// 100% Murni Fetch, Super Cepat, dan Bebas SDK Bug! 
 // ========================================================
 
 const chatWithAI = async (req, res) => {
@@ -12,65 +12,60 @@ const chatWithAI = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Message wajib diisi' });
         }
 
-        // 2. Ambil API Key Gemini dari Vercel
-        const apiKey = process.env.GEMINI_API_KEY;
+        // 2. Ambil API Key Groq dari Vercel
+        const apiKey = process.env.GROQ_API_KEY;
 
         // ========================================================
         // INDIKATOR DEBUG: Cek tulisan ini di Vercel Logs kamu nanti!
         // ========================================================
-        console.log("=== [DEBUG EDUVESTING AI - GEMINI FETCH] ===");
-        console.log("Status API Key Gemini di Server Vercel:", apiKey ? "✅ TERBACA / DITEMUKAN!" : "❌ KOSONG / UNDEFINED!");
+        console.log("=== [DEBUG EDUVESTING AI - GROQ FETCH] ===");
+        console.log("Status API Key Groq di Server Vercel:", apiKey ? "✅ TERBACA / DITEMUKAN!" : "❌ KOSONG / UNDEFINED!");
         console.log("============================================");
 
         // 3. Proteksi jika Environment Variable belum masuk
         if (!apiKey) {
             return res.status(200).json({ 
                 success: true, 
-                reply: "⚠️ **System Alert:** Vercel gagal membaca `GEMINI_API_KEY`. Pastikan kamu sudah memasukkan kembali kunci Gemini di Vercel Settings, dicentang semua environment-nya, dan di-Redeploy!" 
+                reply: "⚠️ **System Alert:** Vercel gagal membaca `GROQ_API_KEY`. Pastikan kamu sudah memasukkan kunci Groq di Vercel Settings, dicentang semua environment-nya, dan di-Redeploy!" 
             });
         }
 
         // 4. Menyusun Persona EduVesting AI
         const systemPrompt = "Kamu adalah EduVesting AI, asisten virtual cerdas yang ahli dalam investasi saham, kripto, reksadana, dan emas. Pengguna kamu adalah mahasiswa Indonesia. Jawablah dengan gaya bahasa yang asyik, relatable, santai tapi tetap profesional layaknya mentor finansial anak muda. Berikan saran yang realistis untuk kantong mahasiswa.";
 
-        // 5. URL Endpoint Resmi Gemini Cloud (Sudah Fix Pake -latest)
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${apiKey}`;
+        // 5. URL Endpoint Resmi Groq Cloud
+        const url = "https://api.groq.com/openai/v1/chat/completions";
 
-        // 6. Eksekusi PURE FETCH ke Server Google
+        // 6. Eksekusi PURE FETCH ke Server Groq
         const response = await fetch(url, {
             method: "POST",
             headers: {
+                "Authorization": `Bearer ${apiKey}`,
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                contents: [
-                    {
-                        role: "user",
-                        parts: [{ text: message }]
-                    }
+                model: "llama3-70b-8192", // Pilihan model ngebut dari Groq
+                messages: [
+                    { role: "system", content: systemPrompt },
+                    { role: "user", content: message }
                 ],
-                systemInstruction: {
-                    parts: [{ text: systemPrompt }]
-                },
-                generationConfig: {
-                    temperature: 0.7 // Tingkat kreativitas AI
-                }
+                temperature: 0.7 // Tingkat kreativitas AI
             })
         });
 
         const data = await response.json();
 
-        // 7. Tangani jika Google Menolak (Misal API Key salah)
+        // 7. Tangani jika Groq Menolak (Misal API Key salah)
         if (!response.ok) {
-            console.error("Gemini Fetch Error Detail:", data);
+            console.error("Groq Fetch Error Detail:", data);
             return res.status(200).json({ 
                 success: true, 
-                reply: `🚨 **Error Gemini API:** *${data.error?.message || 'Gagal menghubungi server Gemini Cloud'}*`
+                reply: `🚨 **Error Groq API:** *${data.error?.message || 'Gagal menghubungi server Groq Cloud'}*`
             });
         }
 
-        // 8. Tarik balasan teks dari struktur JSON asli Google Gemini dan kirim ke Frontend
-        const aiResponse = data.candidates[0].content.parts[0].text;
+        // 8. Tarik balasan teks dari struktur JSON asli Groq dan kirim ke Frontend
+        const aiResponse = data.choices[0].message.content;
         res.status(200).json({ success: true, reply: aiResponse });
 
     } catch (error) {
