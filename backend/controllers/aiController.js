@@ -44,7 +44,7 @@ const chatWithAI = async (req, res) => {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                model: "llama-3.3-70b-versatile", // <--- SUDAH DISESUAIKAN DENGAN SCREENSHOT
+                model: "qwen/qwen3.6-27b", // <--- SUDAH DISESUAIKAN DENGAN SCREENSHOT
                 messages: [
                     { role: "system", content: systemPrompt },
                     { role: "user", content: message }
