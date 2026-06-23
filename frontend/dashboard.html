@@ -220,6 +220,19 @@
           <p id="m-cashpct-note" class="text-xs mt-2 text-slate-600"></p>
         </div>
 
+        <div class="glass rounded-2xl p-5 metric-card fade-up delay-4 sm:col-span-2 lg:col-span-1 border border-cyan-500/20">
+          <div class="flex items-start justify-between">
+            <div class="min-w-0 pr-3">
+              <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Uang Dingin (Sisa Kas)</p>
+              <p id="m-uang-dingin" class="font-display text-2xl whitespace-nowrap overflow-hidden text-ellipsis text-slate-100">Rp 0</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: rgba(6, 182, 212, 0.15);">
+              <i class="fa-solid fa-snowflake text-cyan-400"></i>
+            </div>
+          </div>
+          <p id="m-uang-dingin-note" class="text-xs mt-3 text-slate-500 font-medium">Memuat data sinkronisasi...</p>
+        </div>
+
       </div>
     </section>
 
@@ -261,7 +274,6 @@
             </div>
             <div class="grid grid-cols-3 gap-2 sm:gap-3 mt-5">
 
-              <!-- KOTAK RISIKO -->
               <div class="rounded-xl p-2 sm:p-3 text-center" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06);">
                 <p class="text-[10px] sm:text-xs text-slate-500 mb-1">Risiko</p>
                 <div id="ai-risk-container">
@@ -269,7 +281,6 @@
                 </div>
               </div>
 
-              <!-- KOTAK DIVERSIFIKASI -->
               <div class="rounded-xl p-2 sm:p-3 text-center" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06);">
                 <p class="text-[10px] sm:text-xs text-slate-500 mb-1">Diversifikasi</p>
                 <div id="ai-div-container">
@@ -277,7 +288,6 @@
                 </div>
               </div>
 
-              <!-- KOTAK SKOR 0-10 -->
               <div class="rounded-xl p-2 sm:p-3 text-center flex flex-col items-center justify-center" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06);">
                 <p class="text-[10px] sm:text-xs text-slate-500 mb-1">Skor AI (0-10)</p>
                 <div id="ai-score-container" class="w-full flex flex-col items-center justify-center">
@@ -357,6 +367,8 @@
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   window.supabaseClient = supabaseClient;
 
+  let currentUserId = null;
+
   document.addEventListener('DOMContentLoaded', async () => {
     try {
       const { data: { session }, error } = await supabaseClient.auth.getSession();
@@ -366,6 +378,7 @@
       }
 
       const user = session.user;
+      currentUserId = user.id;
       const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
       const avatarUrl = user.user_metadata?.avatar_url; 
 
@@ -384,9 +397,47 @@
       });
 
       await renderDashboard();
+      await fetchUangDingin();
       await handleRefreshCrypto(true);
     } catch (err) { console.error("Gagal inisialisasi dashboard:", err); }
   });
+
+  async function fetchUangDingin() {
+    if (!currentUserId) return;
+    try {
+      const { data, error } = await supabaseClient
+        .from('daily_finances')
+        .select('type, amount')
+        .eq('user_id', currentUserId);
+
+      let total = 0;
+      if (!error && data) {
+        let income = 0; let expense = 0;
+        data.forEach(item => {
+          if (item.type === 'income') income += item.amount;
+          if (item.type === 'expense') expense += item.amount;
+        });
+        total = income - expense;
+      }
+
+      const uangDinginValue = total > 0 ? total : 0;
+      document.getElementById('m-uang-dingin').innerText = EduVesting.formatRupiah(uangDinginValue);
+
+      const noteEl = document.getElementById('m-uang-dingin-note');
+      if (total > 0) {
+        noteEl.innerText = 'Wih, ada dana nganggur nih! Gaskeun top up ke porto buat serok bawah 🤑';
+        noteEl.className = 'text-xs mt-3 text-cyan-400 font-medium';
+      } else if (total < 0) {
+        noteEl.innerText = 'Waduh, pengeluaran lagi boncos bro! Ngerem jajan dulu, jangan maksain top-up porto 🛑';
+        noteEl.className = 'text-xs mt-3 text-rose-400 font-medium';
+      } else {
+        noteEl.innerText = 'Belum ada sisa uang dingin. Catat pemasukan di menu Keuangan Harian ya!';
+        noteEl.className = 'text-xs mt-3 text-slate-500 font-medium';
+      }
+    } catch (e) {
+      console.error("Gagal menarik data uang dingin: ", e);
+    }
+  }
 
   async function handleRefreshCrypto(silent) {
     const btn = document.getElementById('refresh-btn');
@@ -488,19 +539,15 @@
 
     if (!items.length) { legend.innerHTML = '<p class="text-sm text-slate-500 text-center py-4">Belum ada data alokasi.</p>'; return; }
 
-    // ==========================================
-    // FIX: KAMUS WARNA SPESIFIK UNTUK TIAP ASET
-    // ==========================================
     const colorMap = {
-      'saham': ['#6366f1', '#818cf8'],      // Indigo / Ungu
-      'kripto': ['#f97316', '#fb923c'],     // Oranye Terang (Beda dengan Emas)
-      'emas': ['#eab308', '#fde047'],       // Emas / Kuning Terang
-      'reksadana': ['#06b6d4', '#22d3ee'],  // Cyan / Biru Muda
-      'cash': ['#64748b', '#94a3b8']        // Abu-abu / Slate
+      'saham': ['#6366f1', '#818cf8'],
+      'kripto': ['#f97316', '#fb923c'],
+      'emas': ['#eab308', '#fde047'],
+      'reksadana': ['#06b6d4', '#22d3ee'],
+      'cash': ['#64748b', '#94a3b8']
     };
 
     items.forEach(it => {
-      // Paksa ambil warna dari colorMap berdasarkan tipe, kalau tidak ada baru pakai bawaan API
       const grad = colorMap[it.type] || it.gradient || ['#3b82f6', '#60a5fa'];
 
       const seg = document.createElement('div');
@@ -509,8 +556,7 @@
       seg.title = `${it.label} ${it.percent.toFixed(2)}%`; stack.appendChild(seg);
 
       const row = document.createElement('div'); row.className = 'flex items-center gap-3';
-      
-      // FIX: Tambahan whitespace-nowrap pada angka Rupiah agar tidak turun ke bawah saat nominalnya miliaran
+
       row.innerHTML = `
         <span class="w-3 h-3 rounded-sm flex-shrink-0" style="background: linear-gradient(135deg,${grad[0]},${grad[1]});"></span>
         <span class="text-sm text-slate-300 flex-1">${it.label}</span>
@@ -534,9 +580,6 @@
     document.getElementById('ai-main-icon').className = `fa-solid ${main.icon} text-lg sm:text-xl`;
     document.getElementById('ai-main-icon').style.color = toneColor[main.tone] || '#c4b5fd';
 
-    // ==========================================================
-    // LOGIKA TARIK SKOR DARI CACHE LOCALSTORAGE UNTUK DASHBOARD
-    // ==========================================================
     const riskEl = document.getElementById('ai-risk');
     const divEl = document.getElementById('ai-diversification');
     const scoreEl = document.getElementById('ai-score');
@@ -544,35 +587,29 @@
     const savedScoreRaw = localStorage.getItem('eduvesting_ai_score');
 
     if (!m.assets.length) {
-      // Tampilan jika user belum punya portofolio
       riskEl.innerText = '—'; riskEl.className = 'text-slate-600 font-display text-base sm:text-lg';
       divEl.innerText = '—'; divEl.className = 'text-slate-600 font-display text-base sm:text-lg';
       scoreEl.innerText = '—'; scoreEl.className = 'text-slate-600 font-display text-base sm:text-lg';
     } 
     else if (savedScoreRaw) {
-      // Tampilan jika memori cache dari AI ditemukan
       const parsed = JSON.parse(savedScoreRaw);
 
-      // Render Risiko
       riskEl.innerText = parsed.risk;
       if(parsed.risk.toLowerCase().includes('tinggi')) riskEl.className = 'font-display text-base sm:text-lg text-rose-400';
       else if(parsed.risk.toLowerCase().includes('sedang')) riskEl.className = 'font-display text-base sm:text-lg text-amber-400';
       else riskEl.className = 'font-display text-base sm:text-lg text-emerald-400';
 
-      // Render Diversifikasi
       divEl.innerText = parsed.div;
       if(parsed.div.toLowerCase().includes('kurang')) divEl.className = 'font-display text-base sm:text-lg text-rose-400';
       else if(parsed.div.toLowerCase().includes('sedang')) divEl.className = 'font-display text-base sm:text-lg text-amber-400';
       else divEl.className = 'font-display text-base sm:text-lg text-emerald-400';
 
-      // Render Skor 0-10
       scoreEl.innerText = parsed.score + '/10';
       if(parsed.score >= 8) scoreEl.className = 'font-display text-base sm:text-lg text-emerald-400';
       else if(parsed.score >= 5) scoreEl.className = 'font-display text-base sm:text-lg text-cyan-400';
       else scoreEl.className = 'font-display text-base sm:text-lg text-rose-400';
     } 
     else {
-      // Tampilan jika punya portofolio TAPI user belum memencet tombol Generate sama sekali
       riskEl.innerText = '—'; riskEl.className = 'text-slate-600 font-display text-base sm:text-lg mt-1';
       divEl.innerText = '—'; divEl.className = 'text-slate-600 font-display text-base sm:text-lg mt-1';
       scoreEl.innerHTML = '<a href="insights.html" class="text-[11px] font-bold text-violet-400 hover:text-violet-300 uppercase tracking-wide"><i class="fa-solid fa-bolt mr-1"></i> Analisis AI</a>';
