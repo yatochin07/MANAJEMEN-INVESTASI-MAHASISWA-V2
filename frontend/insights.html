@@ -150,7 +150,7 @@
           <h1 class="font-display text-2xl text-slate-100 flex items-center gap-3">
             EduVesting AI <span class="text-xs bg-violet-500/20 text-violet-300 px-2 py-1 rounded-md border border-violet-500/30 uppercase tracking-wider font-semibold">Beta</span>
           </h1>
-          <p class="text-slate-500 text-sm mt-1">Asisten pintar untuk evaluasi risiko portofolio nyatamu.</p>
+          <p class="text-slate-500 text-sm mt-1">Asisten pintar untuk evaluasi portofolio & manajemen arus kas.</p>
         </div>
       </header>
 
@@ -240,7 +240,7 @@
               </div>
               <div>
                 <h3 class="text-base font-bold text-white tracking-wide">EduVesting AI Copilot</h3>
-                <p class="text-xs text-emerald-400 font-medium">Tersambung ke Data Portofoliomu</p>
+                <p class="text-xs text-emerald-400 font-medium">Tersambung ke Data Portofolio & Keuangan Harianmu</p>
               </div>
             </div>
           </div>
@@ -251,13 +251,14 @@
                 <i class="fa-solid fa-robot text-violet-400 text-xs"></i>
               </div>
               <div class="chat-bubble-ai rounded-2xl p-4 text-slate-200 leading-relaxed shadow-md text-[14px]">
-                Halo <strong id="chat-user-name" class="text-white">Mahasiswa</strong>! Gue EduVesting AI. Gue udah pegang data portofolio lu. Mau minta gue <em class="text-violet-300">roasting</em> isi portonya, atau lu mau nanya soal saham/kripto spesifik yang lagi lu incer?
+                Halo <strong id="chat-user-name" class="text-white">Mahasiswa</strong>! Gue EduVesting AI. Gue udah pegang data investasi portofolio dan juga <em class="text-emerald-300">data keuangan arus kas harian</em> lu. Mau minta gue <em class="text-violet-300">roasting</em> isi portonya, evaluasi cashflow, atau lu mau nanya soal saham/kripto spesifik yang lagi lu incer?
               </div>
             </div>
           </div>
 
           <div id="suggested-prompts" class="px-5 py-3 flex gap-2 overflow-x-auto whitespace-nowrap hide-scrollbar border-t border-white/5 bg-slate-900/50">
-            <button onclick="sendPredefinedPrompt('Tolong analisis dan roasting isi portofolio gue secara brutal dari segi manajemen risiko dan alokasi kas.')" class="text-xs font-medium bg-slate-800 border border-slate-700 hover:bg-slate-700 hover:text-white text-slate-300 px-4 py-2 rounded-full transition shadow-sm">🔥 Roasting Portofolio Gue</button>
+            <button onclick="sendPredefinedPrompt('Tolong analisis dan roasting isi portofolio gue secara brutal dari segi manajemen risiko dan alokasi kas.')" class="text-xs font-medium bg-slate-800 border border-slate-700 hover:bg-slate-700 hover:text-white text-slate-300 px-4 py-2 rounded-full transition shadow-sm">🔥 Roasting Portofolio</button>
+            <button onclick="sendPredefinedPrompt('Coba evaluasi pengeluaran dan pemasukan harian gue, apakah cashflow gue bulan ini masih sehat buat nambah investasi?')" class="text-xs font-medium bg-slate-800 border border-slate-700 hover:bg-slate-700 hover:text-white text-slate-300 px-4 py-2 rounded-full transition shadow-sm">💸 Evaluasi Cashflow Harian</button>
             <button onclick="sendPredefinedPrompt('Berdasarkan data yang lu baca, apa saran strategi paling masuk akal buat gue minggu ini?')" class="text-xs font-medium bg-slate-800 border border-slate-700 hover:bg-slate-700 hover:text-white text-slate-300 px-4 py-2 rounded-full transition shadow-sm">🎯 Saran Strategi Cerdas</button>
           </div>
 
@@ -321,7 +322,7 @@
     window.supabaseClient = supabaseClient; 
 
     let aiContextString = "Belum ada data portofolio.";
-    let currentUserId = null; // Menambahkan variabel penyimpan ID User
+    let currentUserId = null; 
 
     document.addEventListener('DOMContentLoaded', async () => {
       try {
@@ -329,7 +330,7 @@
         if (error || !session) { window.location.href = 'login.html'; return; }
 
         const user = session.user;
-        currentUserId = user.id; // Menangkap ID unik Supabase user
+        currentUserId = user.id; 
 
         const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
         const avatarUrl = user.user_metadata?.avatar_url; 
@@ -393,7 +394,7 @@
     // MINTA SKOR KE AI & SIMPAN KE SUPABASE
     // ==========================================
     async function generateScoreFromAI() {
-      if (!currentUserId) return; // Keamanan agar tidak error
+      if (!currentUserId) return; 
 
       const btn = document.getElementById('btn-generate-score');
       btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Sedang Menganalisis...';
@@ -401,10 +402,10 @@
       btn.classList.add('opacity-70');
 
       const secretPrompt = `${aiContextString}
-TUGAS RAHASIA SISTEM: Evaluasi portofolio dengan 3 parameter.
+TUGAS RAHASIA SISTEM: Evaluasi kondisi finansial berdasarkan data di atas dengan 3 parameter.
 1. Skor Keseluruhan (skala 0 sampai 10).
-2. Tingkat Risiko (Pilih salah satu: Tinggi / Sedang / Rendah).
-3. Tingkat Diversifikasi (Pilih salah satu: Bagus / Sedang / Kurang). Catatan: Diversifikasi dinilai dari TOTAL JUMLAH aset individu di portofolio (jumlah emiten/koin), bukan kategorinya. Semakin banyak aset yang dimiliki, semakin bagus.
+2. Tingkat Risiko Portofolio (Tinggi / Sedang / Rendah).
+3. Tingkat Diversifikasi (Bagus / Sedang / Kurang). Catatan: Diversifikasi dinilai dari TOTAL JUMLAH aset individu di portofolio, bukan kategorinya.
 
 ATURAN MUTLAK: Jawab HANYA dengan format text baris tunggal seperti di bawah ini tanpa basa-basi:
 SKOR_ANGKA|RISIKO|DIVERSIFIKASI
@@ -433,7 +434,6 @@ Contoh Output yang benar: 7|Sedang|Bagus`;
           }
           if (score > 10) score = 10;
 
-          // HAPUS LOGIKA LOCALSTORAGE, GANTI DENGAN UPSERT SUPABASE
           const { error: dbError } = await supabaseClient
             .from('ai_scores')
             .upsert({ 
@@ -449,16 +449,15 @@ Contoh Output yang benar: 7|Sedang|Bagus`;
              throw new Error("Gagal terhubung ke Database Supabase.");
           }
           
-          // Setelah berhasil tersimpan di Cloud, update UI layar
           updateScoreUI({ score, risk, div });
 
           setTimeout(() => {
             switchTab('chat');
-            appendUserMessage(`Kenapa portofolio gue dapet Skor ${score}/10, Risiko ${risk}, dan Diversifikasi ${div}?`);
-            simulateAIResponse(`Jelaskan secara brutal dan analitis kenapa portofolio gue dapet Skor: ${score}/10, Risiko: ${risk}, dan Diversifikasi: ${div}. Bahas dari segi alokasi kas dan jumlah aset.`);
+            appendUserMessage(`Kenapa portofolio dan keuangan gue dapet Skor ${score}/10, Risiko ${risk}, dan Diversifikasi ${div}?`);
+            simulateAIResponse(`Jelaskan secara brutal dan analitis kenapa portofolio gue dapet Skor: ${score}/10, Risiko: ${risk}, dan Diversifikasi: ${div}. Bahas dari segi alokasi kas investasi serta cashflow harian gue.`);
           }, 1500);
 
-        } else { throw new Error("Gagal parsing dari Groq"); }
+        } else { throw new Error("Gagal parsing dari API"); }
 
       } catch (error) {
         console.error("Score Gen Error:", error);
@@ -475,12 +474,48 @@ Contoh Output yang benar: 7|Sedang|Bagus`;
     async function renderAiDashboard(metrics) {
       const alokasi = metrics.allocation.map(a => `${a.type.toUpperCase()} (${a.percent.toFixed(1)}%)`).join(', ');
 
-      aiContextString = `Data Portofolio Nyata User: 
+      // MENGAMBIL DATA TRANSAKSI KEUANGAN DARI SUPABASE
+      let totalIncome = 0;
+      let totalExpense = 0;
+      let expenseStr = "Belum ada pengeluaran.";
+
+      if (currentUserId) {
+        const { data: finances, error } = await supabaseClient
+          .from('daily_finances')
+          .select('*')
+          .eq('user_id', currentUserId);
+
+        if (finances && !error) {
+          let expenseCategories = {};
+          finances.forEach(tx => {
+            if (tx.type === 'income') totalIncome += tx.amount;
+            if (tx.type === 'expense') {
+              totalExpense += tx.amount;
+              expenseCategories[tx.category] = (expenseCategories[tx.category] || 0) + tx.amount;
+            }
+          });
+          const catEntries = Object.entries(expenseCategories);
+          if (catEntries.length > 0) {
+             expenseStr = catEntries.map(([cat, amount]) => `${cat} (Rp ${amount.toLocaleString('id-ID')})`).join(', ');
+          }
+        }
+      }
+
+      // INTEGRASI KEDUA DATA (PORTOFOLIO + KEUANGAN) KE KONTEKS AI
+      aiContextString = `Data Portofolio Investasi User: 
 - Total Ekuitas/Net Worth: Rp ${metrics.totalEquity.toLocaleString('id-ID')}
 - Total P/L: Rp ${metrics.floatingPL.toLocaleString('id-ID')} (${metrics.plPercent.toFixed(2)}%)
-- Saldo Kas: Rp ${metrics.cash.toLocaleString('id-ID')} (${metrics.cashPercent.toFixed(2)}% dari aset)
-- Total Aset Individu (Jumlah emiten/koin berbeda): ${metrics.assets.length} aset
-- Rincian Kategori: ${alokasi || 'Kosong'}.`;
+- Saldo Kas Investasi: Rp ${metrics.cash.toLocaleString('id-ID')} (${metrics.cashPercent.toFixed(2)}% dari aset)
+- Total Aset Individu (Jumlah emiten/koin): ${metrics.assets.length} aset
+- Rincian Kategori: ${alokasi || 'Kosong'}
+
+Data Keuangan & Cashflow Harian User:
+- Total Pemasukan: Rp ${totalIncome.toLocaleString('id-ID')}
+- Total Pengeluaran: Rp ${totalExpense.toLocaleString('id-ID')}
+- Arus Kas Bersih (Pemasukan dikurangi Pengeluaran): Rp ${(totalIncome - totalExpense).toLocaleString('id-ID')}
+- Detail Pengeluaran per Kategori: ${expenseStr}.
+
+Tugas AI: Kolaborasikan analisis portofolio di atas dengan kondisi cashflow hariannya saat memberikan saran strategi.`;
 
       const insights = EduVesting.generateInsights(metrics);
       const recomContainer = document.getElementById('recom-container');
@@ -546,7 +581,6 @@ Contoh Output yang benar: 7|Sedang|Bagus`;
           .single();
           
         if (data) {
-          // Jika ada skor di database Cloud, langsung tempel ke layar UI
           updateScoreUI({ score: data.score, risk: data.risk, div: data.diversification });
         }
       }
