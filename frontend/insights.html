@@ -36,7 +36,7 @@
     * { box-sizing: border-box; }
     body { font-family: 'Inter', sans-serif; background-color: #07090f; color: #e2e8f0; min-height: 100vh; overflow-x: hidden; }
 
-    /* Sidebar active glow khusus AI (Violet) */
+    /* Sidebar active glow */
     .nav-active { background: linear-gradient(90deg, rgba(124,58,237,0.18) 0%, transparent 100%); border-left: 3px solid #7c3aed; }
     .nav-item { border-left: 3px solid transparent; transition: all 0.2s ease; }
     .nav-item:hover { background: linear-gradient(90deg, rgba(99,102,241,0.1) 0%, transparent 100%); border-left-color: rgba(99,102,241,0.5); color: #a5b4fc; }
@@ -61,15 +61,12 @@
     .progress-fill { height: 100%; border-radius: 99px; transition: width 1s cubic-bezier(0.22,1,0.36,1); position: relative; }
 
     /* AI Specific Styles */
-    .ai-border {
-      position: relative;
-    }
+    .ai-border { position: relative; }
     .ai-border::before {
       content: ''; position: absolute; inset: -1px; border-radius: inherit; padding: 1px;
       background: linear-gradient(45deg, transparent, rgba(124,58,237,0.5), rgba(6,182,212,0.5), transparent);
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor; mask-composite: exclude;
-      pointer-events: none;
+      -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
     }
 
     /* Chat Bubbles */
@@ -86,9 +83,14 @@
     @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
     .fade-up { animation: fadeUp 0.5s ease both; }
     .delay-1 { animation-delay: 0.07s; }
-    .delay-2 { animation-delay: 0.14s; }
 
     .logo-text { background: linear-gradient(90deg,#a5b4fc,#93c5fd); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    
+    /* Tab System Styles */
+    .tab-btn { border-bottom: 2px solid transparent; transition: all 0.3s ease; }
+    .tab-active { border-bottom: 2px solid #7c3aed; color: #a5b4fc; background: linear-gradient(0deg, rgba(124,58,237,0.1) 0%, transparent 100%); }
+    .tab-inactive { color: #64748b; }
+    .tab-inactive:hover { color: #cbd5e1; }
   </style>
 </head>
 
@@ -100,6 +102,7 @@
 
     <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
 
+    <!-- SIDEBAR KIRI (TETAP SAMA) -->
     <aside id="sidebar" class="fixed top-0 left-0 h-screen w-64 flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out"
            style="background: rgba(10,14,24,0.95); border-right: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
 
@@ -123,54 +126,23 @@
 
       <nav class="flex-1 px-2 space-y-0.5 overflow-y-auto">
         <p class="px-4 py-1.5 text-xs font-semibold text-slate-600 uppercase tracking-widest">Utama</p>
-
-        <a href="dashboard.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-gauge-high w-4 text-center"></i> Dashboard
-        </a>
-        <a href="portfolio.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-briefcase w-4 text-center"></i> Portofolio
-        </a>
-        <a href="transactions.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-wallet w-4 text-center"></i> Keuangan
-        </a>
-        <a href="goals.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-bullseye w-4 text-center"></i> Target Dana
-        </a>
+        <a href="dashboard.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-gauge-high w-4 text-center"></i> Dashboard</a>
+        <a href="portfolio.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-briefcase w-4 text-center"></i> Portofolio</a>
+        <a href="transactions.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-wallet w-4 text-center"></i> Keuangan</a>
+        <a href="goals.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-bullseye w-4 text-center"></i> Target Dana</a>
 
         <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Analisa</p>
-
-        <a href="insights.html" class="nav-item nav-active flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-violet-300 text-sm font-medium">
-          <i class="fa-solid fa-robot w-4 text-center text-violet-400"></i> EduVesting AI
-        </a>
-
-        <a href="allocations.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-chart-pie w-4 text-center"></i> Alokasi Aset
-        </a>
-        <a href="calculator.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-calculator w-4 text-center"></i> Kalkulator Investasi
-        </a>
+        <a href="insights.html" class="nav-item nav-active flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-violet-300 text-sm font-medium"><i class="fa-solid fa-robot w-4 text-center text-violet-400"></i> EduVesting AI</a>
+        <a href="allocations.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-chart-pie w-4 text-center"></i> Alokasi Aset</a>
+        <a href="calculator.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-calculator w-4 text-center"></i> Kalkulator Investasi</a>
 
         <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Akun</p>
-        <a href="settings.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-gear w-4 text-center"></i> Pengaturan
-        </a>
-        <a href="logout.html" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm">
-          <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout
-        </a>
+        <a href="settings.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-gear w-4 text-center"></i> Pengaturan</a>
+        <a href="logout.html" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm"><i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout</a>
       </nav>
-
-      <div class="px-4 pb-5 pt-3">
-        <div class="rounded-xl p-3 text-xs" style="background:rgba(124,58,237,0.08); border:1px solid rgba(124,58,237,0.15);">
-          <div class="flex items-center gap-2 mb-1">
-            <span class="w-2 h-2 rounded-full bg-violet-400 animate-pulse"></span>
-            <span class="text-violet-400 font-semibold">AI Copilot Aktif</span>
-          </div>
-          <p class="text-slate-500">Terhubung dengan Portofolio</p>
-        </div>
-      </div>
     </aside>
 
-    <main class="flex-1 w-full md:max-w-[calc(100%-16rem)] md:ml-64 px-4 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden">
+    <main class="flex-1 w-full md:max-w-[calc(100%-16rem)] md:ml-64 px-4 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden flex flex-col">
 
       <div class="md:hidden flex items-center justify-between mb-6 fade-up">
         <div class="flex items-center gap-3">
@@ -184,128 +156,135 @@
         </button>
       </div>
 
-      <header class="flex items-center justify-between mb-8 fade-up">
+      <header class="flex items-center justify-between mb-6 fade-up">
         <div>
           <h1 class="font-display text-2xl text-slate-100 flex items-center gap-3">
             EduVesting AI <span class="text-xs bg-violet-500/20 text-violet-300 px-2 py-1 rounded-md border border-violet-500/30 uppercase tracking-wider font-semibold">Beta</span>
           </h1>
-          <p class="text-slate-500 text-sm mt-0.5">Asisten pintar untuk evaluasi risiko dan optimalisasi berdasarkan portofolio nyatamu.</p>
+          <p class="text-slate-500 text-sm mt-1">Asisten pintar untuk evaluasi risiko portofolio nyatamu.</p>
         </div>
       </header>
 
-      <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 fade-up delay-1">
+      <!-- TAB NAVIGATION MENU -->
+      <div class="flex border-b border-slate-700/50 mb-6 fade-up delay-1">
+        <button onclick="switchTab('analytics')" id="tab-analytics" class="tab-btn tab-active px-6 py-3 font-medium text-sm flex items-center gap-2">
+          <i class="fa-solid fa-chart-pie"></i> Visualisasi Metrik
+        </button>
+        <button onclick="switchTab('chat')" id="tab-chat" class="tab-btn tab-inactive px-6 py-3 font-medium text-sm flex items-center gap-2">
+          <i class="fa-solid fa-robot"></i> Copilot Chat
+        </button>
+      </div>
 
-        <div class="glass ai-border rounded-2xl p-6 flex flex-col items-center justify-center text-center">
-          <h2 class="text-sm font-semibold text-slate-300 mb-6 w-full text-left">Skor Kesehatan Portofolio</h2>
+      <!-- ========================================== -->
+      <!-- VIEW 1: ANALYTICS DASHBOARD -->
+      <!-- ========================================== -->
+      <div id="view-analytics" class="fade-up delay-1 space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- KOTAK SKOR KESEHATAN (SEKARANG DINAMIS BY AI) -->
+          <div class="glass ai-border rounded-2xl p-6 flex flex-col items-center justify-center text-center relative overflow-hidden">
+            <h2 class="text-sm font-semibold text-slate-300 w-full text-left mb-6 relative z-10">Skor Kesehatan AI</h2>
 
-          <div class="relative w-40 h-40 flex items-center justify-center mb-4">
-            <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8" />
-              <circle id="score-circle" cx="50" cy="50" r="45" fill="none" stroke="url(#gradient)" stroke-width="8" stroke-dasharray="0 283" stroke-linecap="round" class="animate-pulse-slow transition-all duration-1000" />
-              <defs>
-                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stop-color="#3b82f6" />
-                  <stop offset="50%" stop-color="#8b5cf6" />
-                  <stop offset="100%" stop-color="#06b6d4" />
-                </linearGradient>
-              </defs>
-            </svg>
-            <div class="flex flex-col items-center">
-              <span id="health-score-val" class="font-display text-5xl text-white">0</span>
-              <span class="text-xs text-slate-400">/ 100</span>
+            <div class="relative w-40 h-40 flex items-center justify-center mb-4 z-10">
+              <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8" />
+                <circle id="score-circle" cx="50" cy="50" r="45" fill="none" stroke="url(#gradient)" stroke-width="8" stroke-dasharray="283 283" stroke-linecap="round" class="transition-all duration-1500 ease-out" />
+                <defs>
+                  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#3b82f6" />
+                    <stop offset="50%" stop-color="#8b5cf6" />
+                    <stop offset="100%" stop-color="#06b6d4" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div class="flex flex-col items-center">
+                <span id="health-score-val" class="font-display text-4xl font-bold text-slate-500">?</span>
+                <span class="text-xs text-slate-500 mt-1">/ 100</span>
+              </div>
+            </div>
+
+            <p id="health-score-label" class="text-lg font-display text-slate-400 mb-2 z-10">Belum Dianalisis</p>
+            
+            <button id="btn-generate-score" onclick="generateScoreFromAI()" class="mt-2 w-full py-2.5 rounded-xl text-sm font-semibold bg-violet-600 hover:bg-violet-500 text-white transition shadow-lg shadow-violet-500/20 z-10">
+              <i class="fa-solid fa-bolt mr-2"></i> Minta AI Analisis Skor
+            </button>
+            <p id="health-score-desc" class="text-xs text-slate-500 mt-3 hidden z-10">Menarik data dari AI Copilot...</p>
+          </div>
+
+          <!-- REKOMENDASI OTOMATIS -->
+          <div class="glass rounded-2xl p-6 lg:col-span-2 flex flex-col">
+            <div class="flex items-center justify-between mb-5">
+              <h2 class="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                <i class="fa-solid fa-list-check text-violet-400"></i> Pantauan Aset Otomatis
+              </h2>
+            </div>
+            <div id="recom-container" class="space-y-4 flex-1 overflow-y-auto pr-2">
+              <p class="text-sm text-slate-500 text-center mt-10"><i class="fa-solid fa-circle-notch fa-spin"></i> Menarik data portofolio...</p>
             </div>
           </div>
-
-          <p id="health-score-label" class="text-lg font-display text-emerald-400 mb-1">Memuat...</p>
-          <p id="health-score-desc" class="text-xs text-slate-400 leading-relaxed px-4">Sedang menganalisis metrik portofolio Anda...</p>
         </div>
 
-        <div class="glass rounded-2xl p-6 lg:col-span-2 flex flex-col">
-          <div class="flex items-center justify-between mb-5">
-            <h2 class="text-sm font-semibold text-slate-300 flex items-center gap-2">
-              <i class="fa-solid fa-list-check text-violet-400"></i> Rekomendasi Aksi Cerdas
-            </h2>
-            <button onclick="window.location.reload()" class="text-xs text-slate-500 hover:text-white transition"><i class="fa-solid fa-rotate-right"></i> Perbarui</button>
-          </div>
-
-          <div id="recom-container" class="space-y-4 flex-1 overflow-y-auto max-h-[300px] pr-2">
-            <p class="text-sm text-slate-500 text-center mt-10"><i class="fa-solid fa-circle-notch fa-spin"></i> Menarik data portofolio...</p>
-          </div>
-        </div>
-
-      </section>
-
-      <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 fade-up delay-2">
-
+        <!-- ALOKASI ASET BAWAH -->
         <div class="glass rounded-2xl p-6">
           <div class="flex items-center gap-2 mb-6">
             <i class="fa-solid fa-chart-simple text-cyan-400"></i>
-            <h2 class="text-sm font-semibold text-slate-300">Analisis Konsentrasi Kelas Aset</h2>
+            <h2 class="text-sm font-semibold text-slate-300">Konsentrasi Kelas Aset (Bahan Analisis AI)</h2>
           </div>
-
-          <div id="sector-container" class="space-y-4">
-             <p class="text-sm text-slate-500 text-center"><i class="fa-solid fa-circle-notch fa-spin"></i> Menghitung alokasi...</p>
+          <div id="sector-container" class="space-y-4 grid grid-cols-1 md:grid-cols-2 gap-x-8">
+             <p class="text-sm text-slate-500 col-span-2"><i class="fa-solid fa-circle-notch fa-spin"></i> Menghitung alokasi...</p>
           </div>
-
-          <p id="sector-info" class="text-xs text-slate-500 mt-5 border-t border-slate-700/50 pt-3">
-            <i class="fa-solid fa-circle-info text-cyan-400 mr-1"></i> Proporsi aset menentukan tingkat risiko Anda.
-          </p>
         </div>
+      </div>
 
-        <div class="glass ai-border rounded-2xl flex flex-col h-[420px] overflow-hidden">
-
-          <div class="p-4 border-b border-white/10 bg-slate-900/50 flex items-center justify-between">
+      <!-- ========================================== -->
+      <!-- VIEW 2: AI COPILOT CHAT (FULL SCREEN MODE) -->
+      <!-- ========================================== -->
+      <div id="view-chat" class="hidden flex-1 flex flex-col mb-4">
+        <div class="glass ai-border rounded-2xl flex flex-col flex-1 min-h-[600px] overflow-hidden">
+          
+          <div class="p-4 border-b border-white/10 bg-slate-900/80 flex items-center justify-between backdrop-blur-md">
             <div class="flex items-center gap-3">
               <div class="relative">
-                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-violet-500 to-cyan-500 flex items-center justify-center">
-                  <i class="fa-solid fa-sparkles text-white text-xs"></i>
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-violet-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-violet-500/30">
+                  <i class="fa-solid fa-sparkles text-white text-sm"></i>
                 </div>
-                <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 border-2 border-slate-900 rounded-full"></span>
+                <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-slate-900 rounded-full animate-pulse"></span>
               </div>
               <div>
-                <h3 class="text-sm font-semibold text-slate-200">EduVesting Copilot</h3>
-                <p class="text-[10px] text-emerald-400">Online · Membaca Data Real-time</p>
+                <h3 class="text-base font-bold text-white tracking-wide">Copilot Assistant</h3>
+                <p class="text-xs text-emerald-400 font-medium">Tersambung ke Data Portofoliomu</p>
               </div>
             </div>
-            <button class="text-slate-500 hover:text-white transition"><i class="fa-solid fa-ellipsis-vertical"></i></button>
           </div>
 
-          <div id="chat-box" class="flex-1 p-4 overflow-y-auto space-y-4 text-sm flex flex-col">
+          <div id="chat-box" class="flex-1 p-5 overflow-y-auto space-y-5 text-sm flex flex-col" style="background: rgba(15, 20, 35, 0.4);">
             <div class="flex gap-3 max-w-[85%]">
-              <div class="w-6 h-6 rounded-full bg-violet-500/20 flex items-center justify-center flex-shrink-0 mt-1">
-                <i class="fa-solid fa-robot text-violet-400 text-[10px]"></i>
+              <div class="w-8 h-8 rounded-full bg-violet-500/20 flex items-center justify-center flex-shrink-0 mt-1 border border-violet-500/30">
+                <i class="fa-solid fa-robot text-violet-400 text-xs"></i>
               </div>
-              <div class="chat-bubble-ai rounded-2xl p-3 text-slate-300 leading-relaxed shadow-sm">
-                Halo <span id="chat-user-name" class="font-semibold text-white">Mahasiswa</span>! Saya sudah membaca portofolio kamu. Ada pertanyaan tentang strategimu hari ini atau mau coba simulasi rebalancing?
+              <div class="chat-bubble-ai rounded-2xl p-4 text-slate-200 leading-relaxed shadow-md text-[14px]">
+                Halo <strong id="chat-user-name" class="text-white">Mahasiswa</strong>! Gue EduVesting AI. Gue udah pegang data portofolio lu. Mau minta gue <em class="text-violet-300">roasting</em> isi portonya, atau lu mau nanya soal saham/kripto spesifik yang lagi lu incer?
               </div>
             </div>
           </div>
 
-          <div id="suggested-prompts" class="px-4 py-2 flex gap-2 overflow-x-auto whitespace-nowrap hide-scrollbar hidden">
-            <button onclick="sendPredefinedPrompt('Apakah porsi Kas saya saat ini sudah aman?')" class="text-xs bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-full transition">🤔 Evaluasi Porsi Kas</button>
-            <button onclick="sendPredefinedPrompt('Bagaimana cara terbaik merealisasikan profit saya saat ini?')" class="text-xs bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-full transition">⚖️ Strategi Take Profit</button>
+          <div id="suggested-prompts" class="px-5 py-3 flex gap-2 overflow-x-auto whitespace-nowrap hide-scrollbar border-t border-white/5 bg-slate-900/50">
+            <button onclick="sendPredefinedPrompt('Tolong analisis dan roasting isi portofolio gue secara brutal dari segi manajemen risiko dan alokasi kas.')" class="text-xs font-medium bg-slate-800 border border-slate-700 hover:bg-slate-700 hover:text-white text-slate-300 px-4 py-2 rounded-full transition shadow-sm">🔥 Roasting Portofolio Gue</button>
+            <button onclick="sendPredefinedPrompt('Berdasarkan data yang lu baca, apa saran strategi paling masuk akal buat gue minggu ini?')" class="text-xs font-medium bg-slate-800 border border-slate-700 hover:bg-slate-700 hover:text-white text-slate-300 px-4 py-2 rounded-full transition shadow-sm">🎯 Saran Strategi Cerdas</button>
           </div>
 
-          <div class="p-4 bg-slate-900/50 border-t border-white/5">
+          <div class="p-4 bg-slate-900 border-t border-white/10">
             <form id="chat-form" class="relative" onsubmit="handleChatSubmit(event)">
-              <input id="chat-input" type="text" placeholder="Tanya AI tentang portofolio Anda..." 
-                     class="w-full bg-slate-800 border border-slate-700 rounded-xl pl-4 pr-12 py-3 text-sm text-white focus:outline-none focus:border-violet-500 transition-colors" autocomplete="off">
-              <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-violet-500 hover:bg-violet-600 text-white flex items-center justify-center transition-colors">
-                <i class="fa-solid fa-paper-plane text-xs"></i>
+              <input id="chat-input" type="text" placeholder="Ketik pertanyaan atau nama saham (cth: Analisis teknikal SMDR)..." 
+                     class="w-full bg-slate-800/80 border border-slate-700 rounded-xl pl-5 pr-14 py-4 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all" autocomplete="off">
+              <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-lg bg-violet-600 hover:bg-violet-500 text-white flex items-center justify-center transition-colors shadow-md">
+                <i class="fa-solid fa-paper-plane text-sm"></i>
               </button>
             </form>
           </div>
 
         </div>
-
-      </section>
-
-      <footer class="text-center pb-8">
-        <p class="text-xs text-slate-700">EduVesting · AI Insights Powered by Groq</p>
-        <p class="text-xs text-slate-700 mt-2">
-        Dikembangkan dengan <i class="fa-solid fa-heart text-rose-500/50 mx-0.5"></i> oleh Tim Developer EduVesting
-        </p>
-      </footer>
+      </div>
 
     </main>
   </div>
@@ -313,7 +292,32 @@
   <script src="js/api.js"></script>
 
   <script>
-    // UI TOGGLE SCRIPT
+    // ==========================================
+    // UI TAB LOGIC
+    // ==========================================
+    function switchTab(tabId) {
+      const btnAnalytics = document.getElementById('tab-analytics');
+      const btnChat = document.getElementById('tab-chat');
+      const viewAnalytics = document.getElementById('view-analytics');
+      const viewChat = document.getElementById('view-chat');
+
+      if (tabId === 'analytics') {
+        btnAnalytics.className = "tab-btn tab-active px-6 py-3 font-medium text-sm flex items-center gap-2";
+        btnChat.className = "tab-btn tab-inactive px-6 py-3 font-medium text-sm flex items-center gap-2";
+        viewAnalytics.classList.remove('hidden');
+        viewChat.classList.add('hidden');
+      } else {
+        btnChat.className = "tab-btn tab-active px-6 py-3 font-medium text-sm flex items-center gap-2";
+        btnAnalytics.className = "tab-btn tab-inactive px-6 py-3 font-medium text-sm flex items-center gap-2";
+        viewAnalytics.classList.add('hidden');
+        viewChat.classList.remove('hidden');
+        viewChat.classList.add('flex');
+        
+        // Auto focus input when opening chat
+        setTimeout(() => document.getElementById('chat-input').focus(), 100);
+      }
+    }
+
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebar-overlay');
@@ -329,153 +333,93 @@
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     window.supabaseClient = supabaseClient; 
 
-    // ==========================================
-    // DATA GLOBAL UNTUK DISUNTIK KE AI
-    // ==========================================
-    let aiContextString = "Belum ada data portofolio yang disinkronisasi.";
+    let aiContextString = "Belum ada data portofolio.";
 
     document.addEventListener('DOMContentLoaded', async () => {
       try {
         const { data: { session }, error } = await supabaseClient.auth.getSession();
-
-        if (error || !session) {
-          window.location.href = 'login.html';
-          return;
-        }
+        if (error || !session) { window.location.href = 'login.html'; return; }
 
         const user = session.user;
         const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
-        const avatarUrl = user.user_metadata?.avatar_url;
-
+        
         document.getElementById('sidebar-user-name').innerText = displayName;
         document.getElementById('chat-user-name').innerText = displayName;
 
-        const sbAvatar = document.getElementById('sidebar-user-initial');
-        if (avatarUrl) {
-          sbAvatar.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover">`;
-        } else {
-          sbAvatar.innerText = displayName.charAt(0).toUpperCase();
-        }
-
-        // ==========================================
-        // AMBIL DATA DARI API.JS & RENDER HALAMAN
-        // ==========================================
         if (typeof EduVesting !== 'undefined') {
            const metrics = await EduVesting.computeMetrics();
            renderAiDashboard(metrics);
-        } else {
-           console.error("api.js tidak ditemukan.");
         }
-
       } catch (err) {
-        console.error("Gagal inisialisasi AI Dashboard:", err);
+        console.error("Init Error:", err);
       }
     });
 
     // ==========================================
-    // LOGIKA RENDER DINAMIS
+    // RENDER VISUAL DATA (NON-SKOR)
     // ==========================================
     function renderAiDashboard(metrics) {
       const alokasi = metrics.allocation.map(a => `${a.type.toUpperCase()} (${a.percent.toFixed(1)}%)`).join(', ');
+      
       aiContextString = `Data Portofolio Nyata User: 
 - Total Ekuitas/Net Worth: Rp ${metrics.totalEquity.toLocaleString('id-ID')}
-- Total P/L (Keuntungan/Kerugian): Rp ${metrics.floatingPL.toLocaleString('id-ID')} (${metrics.plPercent.toFixed(2)}%)
-- Saldo Kas Tersisa: Rp ${metrics.cash.toLocaleString('id-ID')} (${metrics.cashPercent.toFixed(2)}% dari aset)
-- Rincian Alokasi: ${alokasi ? alokasi : 'Belum beli aset'}
-Berikan jawaban AI yang selalu merujuk pada angka-angka di atas.`;
+- Total P/L: Rp ${metrics.floatingPL.toLocaleString('id-ID')} (${metrics.plPercent.toFixed(2)}%)
+- Saldo Kas Tersisa: Rp ${metrics.cash.toLocaleString('id-ID')} (${metrics.cashPercent.toFixed(2)}% dari total aset)
+- Rincian Alokasi: ${alokasi || 'Kosong'}. 
+Ingat: Evaluasi data ini dengan brutal dan objektif.`;
 
-      document.getElementById('suggested-prompts').classList.remove('hidden');
-
-      let score = 50; 
-      const typesCount = Object.keys(metrics.byType).filter(k => metrics.byType[k] > 0).length;
-
-      if (metrics.assets.length > 0) {
-        score = 40; 
-        score += (typesCount * 10); 
-        score += (metrics.plPercent > 0 ? 15 : -10); 
-        if (metrics.cashPercent >= 10 && metrics.cashPercent <= 30) score += 15; 
-        score = Math.max(10, Math.min(99, Math.round(score))); 
-      } else {
-        score = 0; 
-      }
-
-      document.getElementById('health-score-val').innerText = score;
-      const circle = document.getElementById('score-circle');
-      const circumference = 2 * Math.PI * 45; 
-      const dashoffset = circumference - (score / 100) * circumference;
-      circle.style.strokeDasharray = `${circumference - dashoffset} ${circumference}`;
-
-      const labelEl = document.getElementById('health-score-label');
-      const descEl = document.getElementById('health-score-desc');
-
-      if (score === 0) {
-         labelEl.innerText = "Belum Ada Data"; labelEl.className = "text-lg font-display text-slate-400 mb-1";
-         descEl.innerText = "Mulai investasi dengan menambahkan aset di menu Portofolio.";
-      } else if (score >= 80) {
-         labelEl.innerText = "Sangat Sehat"; labelEl.className = "text-lg font-display text-emerald-400 mb-1";
-         descEl.innerText = "Diversifikasi portofolio sangat baik. Pertahankan kedisiplinan alokasi Anda.";
-      } else if (score >= 60) {
-         labelEl.innerText = "Cukup Baik"; labelEl.className = "text-lg font-display text-cyan-400 mb-1";
-         descEl.innerText = "Performa cukup stabil. AI merekomendasikan rebalancing ringan untuk optimasi.";
-      } else {
-         labelEl.innerText = "Risiko Tinggi"; labelEl.className = "text-lg font-display text-rose-400 mb-1";
-         descEl.innerText = "Porsi aset tidak seimbang atau mengalami kerugian tajam. Segera evaluasi ulang.";
-      }
-
+      // Render Rekomendasi (JS Lokal)
       const insights = EduVesting.generateInsights(metrics);
       const recomContainer = document.getElementById('recom-container');
       recomContainer.innerHTML = '';
-
+      
       const toneMap = {
-        'rose': { bg: 'bg-rose-500/10', border: 'border-rose-500/20', iconBg: 'bg-rose-500/20', text: 'text-rose-400' },
-        'amber': { bg: 'bg-amber-500/10', border: 'border-amber-500/20', iconBg: 'bg-amber-500/20', text: 'text-amber-400' },
-        'emerald': { bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', iconBg: 'bg-emerald-500/20', text: 'text-emerald-400' },
-        'indigo': { bg: 'bg-indigo-500/10', border: 'border-indigo-500/20', iconBg: 'bg-indigo-500/20', text: 'text-indigo-400' },
-        'cyan': { bg: 'bg-cyan-500/10', border: 'border-cyan-500/20', iconBg: 'bg-cyan-500/20', text: 'text-cyan-400' }
+        'rose': { bg: 'bg-rose-500/10', border: 'border-rose-500/20', text: 'text-rose-400' },
+        'amber': { bg: 'bg-amber-500/10', border: 'border-amber-500/20', text: 'text-amber-400' },
+        'emerald': { bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', text: 'text-emerald-400' }
       };
 
-      insights.forEach(insight => {
-        const t = toneMap[insight.tone] || toneMap['indigo'];
-        const div = document.createElement('div');
-        div.className = `${t.bg} border ${t.border} rounded-xl p-4 flex items-start gap-4`;
-        div.innerHTML = `
-          <div class="w-8 h-8 rounded-full ${t.iconBg} ${t.text} flex items-center justify-center flex-shrink-0 mt-0.5">
-            <i class="fa-solid ${insight.icon} text-xs"></i>
-          </div>
-          <div>
-            <h3 class="text-sm font-semibold text-slate-200 mb-1">${insight.title}</h3>
-            <p class="text-xs text-slate-400 leading-relaxed mb-2">${insight.text}</p>
-            <button onclick="sendPredefinedPrompt('Tolong jelaskan lebih lanjut mengenai: ${insight.title}')" class="text-[10px] font-bold uppercase tracking-wide ${t.text} hover:opacity-80">Tanya AI Tentang Ini &rarr;</button>
-          </div>
-        `;
-        recomContainer.appendChild(div);
-      });
+      if(insights.length === 0) {
+          recomContainer.innerHTML = '<p class="text-sm text-slate-500 py-4">Belum ada peringatan mendesak. Data aman.</p>';
+      } else {
+          insights.forEach(insight => {
+            const t = toneMap[insight.tone] || toneMap['emerald'];
+            const div = document.createElement('div');
+            div.className = `${t.bg} border ${t.border} rounded-xl p-4 flex items-start gap-3`;
+            div.innerHTML = `
+              <div class="mt-0.5 ${t.text}"><i class="fa-solid ${insight.icon}"></i></div>
+              <div>
+                <h3 class="text-sm font-semibold text-slate-200 mb-1">${insight.title}</h3>
+                <p class="text-xs text-slate-400 leading-relaxed mb-2">${insight.text}</p>
+                <button onclick="askAIAbout('${insight.title}')" class="text-[10px] font-bold uppercase tracking-wider text-violet-400 hover:text-violet-300">Tanya AI Tentang Ini &rarr;</button>
+              </div>
+            `;
+            recomContainer.appendChild(div);
+          });
+      }
 
+      // Render Alokasi Bar
       const sectorContainer = document.getElementById('sector-container');
       sectorContainer.innerHTML = '';
       const allItems = [...metrics.allocation];
-      if (metrics.cash > 0) {
-        allItems.push({ type: 'cash', label: 'Kas Tunai', value: metrics.cash, percent: metrics.cashPercent, gradient: ['#94a3b8', '#cbd5e1'], badgeColor: '#94a3b8' });
-      }
+      if (metrics.cash > 0) allItems.push({ label: 'Kas Tunai', percent: metrics.cashPercent, gradient: ['#94a3b8'], badgeColor: '#94a3b8' });
 
       if (allItems.length === 0) {
-        sectorContainer.innerHTML = '<p class="text-sm text-slate-500">Tidak ada aset.</p>';
+        sectorContainer.innerHTML = '<p class="text-sm text-slate-500">Tidak ada data aset untuk ditampilkan.</p>';
       } else {
         allItems.forEach(item => {
-          let statusText = 'Normal';
-          let statusColor = 'text-emerald-400';
-          let barBg = item.gradient[0]; 
-
-          if (item.percent > 40) { statusText = 'Overweight'; statusColor = 'text-rose-400'; }
+          let statusText = 'Normal'; let statusColor = 'text-emerald-400';
+          if (item.percent > 40 && item.label !== 'Kas Tunai') { statusText = 'Overweight'; statusColor = 'text-rose-400'; }
           else if (item.percent < 10) { statusText = 'Rendah'; statusColor = 'text-amber-400'; }
 
           const div = document.createElement('div');
+          div.className = "mb-2";
           div.innerHTML = `
-            <div class="flex justify-between text-xs mb-1">
+            <div class="flex justify-between text-xs mb-1.5">
               <span class="text-slate-300 font-medium">${item.label}</span>
               <span class="${statusColor} font-medium">${statusText} (${item.percent.toFixed(1)}%)</span>
             </div>
-            <div class="progress-bar"><div class="progress-fill" style="width:${item.percent}%; background:${barBg};"></div></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${item.percent}%; background:${item.gradient ? item.gradient[0] : '#3b82f6'};"></div></div>
           `;
           sectorContainer.appendChild(div);
         });
@@ -483,7 +427,84 @@ Berikan jawaban AI yang selalu merujuk pada angka-angka di atas.`;
     }
 
     // ==========================================
-    // AI CHAT LOGIC (KONEK KE BACKEND EXPRESS)
+    // LOGIKA SKORING DINAMIS OLEH AI
+    // ==========================================
+    async function generateScoreFromAI() {
+      const btn = document.getElementById('btn-generate-score');
+      const valEl = document.getElementById('health-score-val');
+      const labelEl = document.getElementById('health-score-label');
+      const descEl = document.getElementById('health-score-desc');
+      const circle = document.getElementById('score-circle');
+
+      btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Sedang Menghitung...';
+      btn.disabled = true;
+      btn.classList.add('opacity-70');
+
+      // Prompt rahasia ke backend khusus minta 1 angka
+      const secretPrompt = `${aiContextString}\n\nTUGAS RAHASIA SISTEM: Berdasarkan data portofolio di atas, berikan evaluasi skor kesehatan dari 0 sampai 100. 
+ATURAN MUTLAK: OUTPUT HARUS HANYA 1 ANGKA BULAT. DILARANG MENULIS HURUF, KATA, ATAU KALIMAT APAPUN. Contoh output yang benar: 45`;
+
+      try {
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const BACKEND_URL = isLocal ? 'http://localhost:5000/api/ai/chat' : '/api/ai/chat';
+
+        const response = await fetch(BACKEND_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: secretPrompt })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Ekstrak angka dari jawaban AI (mengantisipasi jika AI bandel nulis teks)
+          let match = data.reply.match(/\d+/);
+          let score = match ? parseInt(match[0]) : 50;
+          if (score > 100) score = 100;
+
+          // Update UI Lingkaran Animasi
+          valEl.innerText = score;
+          valEl.classList.remove('text-slate-500');
+          valEl.classList.add('text-white');
+          
+          const circumference = 2 * Math.PI * 45; 
+          const dashoffset = circumference - (score / 100) * circumference;
+          circle.style.strokeDasharray = `${circumference - dashoffset} ${circumference}`;
+
+          if (score >= 80) {
+             labelEl.innerText = "Sangat Sehat"; labelEl.className = "text-lg font-display font-bold text-emerald-400 mb-2 z-10";
+             circle.style.stroke = "url(#gradient)"; // Keep gradient
+          } else if (score >= 60) {
+             labelEl.innerText = "Cukup Baik"; labelEl.className = "text-lg font-display font-bold text-cyan-400 mb-2 z-10";
+          } else {
+             labelEl.innerText = "Risiko Tinggi / Bahaya"; labelEl.className = "text-lg font-display font-bold text-rose-400 mb-2 z-10";
+          }
+
+          btn.style.display = 'none';
+          descEl.innerText = "Skor berhasil dievaluasi oleh AI. Cek Tab Copilot Chat untuk melihat alasan dan roasting detailnya.";
+          descEl.classList.remove('hidden');
+
+          // Otomatis kirim prompt ke chat untuk minta penjelasan
+          setTimeout(() => {
+            switchTab('chat');
+            appendUserMessage(`Tolong jelaskan secara detail dan blak-blakan, kenapa lu ngasih skor portofolio gue ${score}/100?`);
+            simulateAIResponse(`Tolong jelaskan secara blak-blakan dan tajam, kenapa portofolio gue dapet skor ${score}/100 berdasarkan data yang lu pegang tadi. Apa yang salah atau apa yang udah bener?`);
+          }, 1500);
+
+        } else {
+          throw new Error("Gagal parsing dari Groq");
+        }
+
+      } catch (error) {
+        console.error("Score Gen Error:", error);
+        btn.innerHTML = '<i class="fa-solid fa-rotate-right mr-2"></i> Gagal. Coba Lagi';
+        btn.disabled = false;
+        btn.classList.remove('opacity-70');
+      }
+    }
+
+    // ==========================================
+    // AI CHAT LOGIC 
     // ==========================================
     const chatBox = document.getElementById('chat-box');
     const chatInput = document.getElementById('chat-input');
@@ -491,12 +512,12 @@ Berikan jawaban AI yang selalu merujuk pada angka-angka di atas.`;
 
     function appendUserMessage(text) {
       const msgDiv = document.createElement('div');
-      msgDiv.className = 'flex gap-3 max-w-[85%] self-end flex-row-reverse';
+      msgDiv.className = 'flex gap-3 max-w-[85%] self-end flex-row-reverse fade-up';
       msgDiv.innerHTML = `
-        <div class="w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center flex-shrink-0 mt-1">
-          <i class="fa-solid fa-user text-indigo-400 text-[10px]"></i>
+        <div class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center flex-shrink-0 mt-1 border border-indigo-500/30">
+          <i class="fa-solid fa-user text-indigo-400 text-xs"></i>
         </div>
-        <div class="chat-bubble-user rounded-2xl p-3 text-slate-200 leading-relaxed shadow-sm">
+        <div class="chat-bubble-user rounded-2xl p-4 text-slate-200 leading-relaxed shadow-sm text-[14px]">
           ${text}
         </div>
       `;
@@ -507,15 +528,15 @@ Berikan jawaban AI yang selalu merujuk pada angka-angka di atas.`;
     function appendAITyping() {
       const msgDiv = document.createElement('div');
       msgDiv.id = 'ai-typing';
-      msgDiv.className = 'flex gap-3 max-w-[85%]';
+      msgDiv.className = 'flex gap-3 max-w-[85%] fade-up';
       msgDiv.innerHTML = `
-        <div class="w-6 h-6 rounded-full bg-violet-500/20 flex items-center justify-center flex-shrink-0 mt-1">
-          <i class="fa-solid fa-robot text-violet-400 text-[10px]"></i>
+        <div class="w-8 h-8 rounded-full bg-violet-500/20 flex items-center justify-center flex-shrink-0 mt-1 border border-violet-500/30">
+          <i class="fa-solid fa-robot text-violet-400 text-xs"></i>
         </div>
-        <div class="chat-bubble-ai rounded-2xl px-4 py-3 shadow-sm flex items-center gap-1">
-          <div class="w-1.5 h-1.5 bg-violet-400 rounded-full typing-dot"></div>
-          <div class="w-1.5 h-1.5 bg-violet-400 rounded-full typing-dot"></div>
-          <div class="w-1.5 h-1.5 bg-violet-400 rounded-full typing-dot"></div>
+        <div class="chat-bubble-ai rounded-2xl px-5 py-4 shadow-sm flex items-center gap-1.5">
+          <div class="w-2 h-2 bg-violet-400 rounded-full typing-dot"></div>
+          <div class="w-2 h-2 bg-violet-400 rounded-full typing-dot"></div>
+          <div class="w-2 h-2 bg-violet-400 rounded-full typing-dot"></div>
         </div>
       `;
       chatBox.appendChild(msgDiv);
@@ -528,12 +549,12 @@ Berikan jawaban AI yang selalu merujuk pada angka-angka di atas.`;
       if (typingEl) typingEl.remove();
 
       const msgDiv = document.createElement('div');
-      msgDiv.className = 'flex gap-3 max-w-[85%]';
+      msgDiv.className = 'flex gap-3 max-w-[90%] fade-up';
       msgDiv.innerHTML = `
-        <div class="w-6 h-6 rounded-full bg-violet-500/20 flex items-center justify-center flex-shrink-0 mt-1">
-          <i class="fa-solid fa-robot text-violet-400 text-[10px]"></i>
+        <div class="w-8 h-8 rounded-full bg-violet-500/20 flex items-center justify-center flex-shrink-0 mt-1 border border-violet-500/30">
+          <i class="fa-solid fa-robot text-violet-400 text-xs"></i>
         </div>
-        <div class="chat-bubble-ai rounded-2xl p-3 text-slate-300 leading-relaxed shadow-sm">
+        <div class="chat-bubble-ai rounded-2xl p-4 text-slate-200 leading-relaxed shadow-md text-[14px]">
           ${text}
         </div>
       `;
@@ -541,19 +562,13 @@ Berikan jawaban AI yang selalu merujuk pada angka-angka di atas.`;
       chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    async function simulateAIResponse(userText) {
+    async function simulateAIResponse(promptContext) {
       appendAITyping();
       suggestedPrompts.style.display = 'none';
 
       try {
-        const payloadMessage = `${aiContextString}\n\nPertanyaan User: ${userText}`;
-
-        // ========================================================
-        // LOGIKA URL YANG SUDAH DIOPTIMASI UNTUK VERCEL (ANTI-CORS)
-        // ========================================================
+        const payloadMessage = `${aiContextString}\n\nPermintaan/Pertanyaan: ${promptContext}`;
         const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-
-        // Cukup gunakan relative path jika di Vercel agar otomatis mengikuti domain yang sedang aktif!
         const BACKEND_URL = isLocal ? 'http://localhost:5000/api/ai/chat' : '/api/ai/chat';
 
         const response = await fetch(BACKEND_URL, {
@@ -564,28 +579,20 @@ Berikan jawaban AI yang selalu merujuk pada angka-angka di atas.`;
 
         const data = await response.json();
 
-        if (document.getElementById('ai-typing')) {
-            document.getElementById('ai-typing').remove();
-        }
+        if (document.getElementById('ai-typing')) document.getElementById('ai-typing').remove();
 
         if (data.success) {
-          // Sedikit penyesuaian untuk Parsing Markdown ringan bawaan Llama-3 (Groq)
           let formattedReply = data.reply
-            .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')
+            .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-bold">$1</strong>')
             .replace(/\*(.*?)\*/g, '<em class="text-violet-300">$1</em>')
-            .replace(/\n/g, '<br>'); 
-
+            .replace(/\n/g, '<br><div class="h-1"></div>'); 
           appendAIResponse(formattedReply);
         } else {
-          appendAIResponse("Waduh, koneksi ke otak AI sedang gangguan nih. Coba cek log Vercel kamu ya.");
+          appendAIResponse("🚨 Koneksi ke server Llama 3.3 terputus. Coba ulangi lagi.");
         }
-
       } catch (error) {
-        console.error("Fetch Error:", error);
-        if (document.getElementById('ai-typing')) {
-            document.getElementById('ai-typing').remove();
-        }
-        appendAIResponse("Maaf, terjadi kesalahan jaringan saat menghubungi server backend.");
+        if (document.getElementById('ai-typing')) document.getElementById('ai-typing').remove();
+        appendAIResponse("🚨 Waduh, server lagi gangguan atau overload nih bro. Coba beberapa saat lagi.");
       }
     }
 
@@ -604,6 +611,12 @@ Berikan jawaban AI yang selalu merujuk pada angka-angka di atas.`;
       simulateAIResponse(text);
     }
 
+    function askAIAbout(topic) {
+      switchTab('chat');
+      const prompt = `Tolong jelaskan lebih lanjut mengenai peringatan sistem ini: "${topic}" di portofolio gue. Apa yang harus gue lakukan?`;
+      appendUserMessage(prompt);
+      simulateAIResponse(prompt);
+    }
   </script>
 </body>
 </html>
