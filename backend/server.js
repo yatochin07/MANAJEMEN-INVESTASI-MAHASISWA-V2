@@ -5,8 +5,8 @@ require('dotenv').config();
 // ========================================================
 // FIX FINAL: CARA RESMI YAHOO FINANCE V3
 // ========================================================
-const { YahooFinance } = require('yahoo-finance2');
-const yahooFinance = new YahooFinance();
+// Ini cara yang benar, tanpa menggunakan "new YahooFinance()"
+const yahooFinance = require('yahoo-finance2').default;
 
 // ======================
 // IMPORT ROUTES
