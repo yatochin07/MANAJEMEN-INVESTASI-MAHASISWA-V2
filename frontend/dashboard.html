@@ -132,9 +132,6 @@
         <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout
       </a>
     </nav>
-
-
-
   </aside>
 
   <main class="flex-1 w-full md:ml-64 px-4 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden">
@@ -268,9 +265,11 @@
                 <p class="text-[10px] sm:text-xs text-slate-500 mb-1">Diversifikasi</p>
                 <p id="ai-diversification" class="text-emerald-400 font-display text-base sm:text-lg">—</p>
               </div>
-              <div class="rounded-xl p-2 sm:p-3 text-center" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06);">
-                <p class="text-[10px] sm:text-xs text-slate-500 mb-1">Skor</p>
-                <p id="ai-score" class="text-indigo-400 font-display text-base sm:text-lg">—</p>
+              <div class="rounded-xl p-2 sm:p-3 text-center flex flex-col items-center justify-center" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06);">
+                <p class="text-[10px] sm:text-xs text-slate-500 mb-1">Skor EduVesting AI</p>
+                <div id="ai-score-container" class="w-full flex items-center justify-center">
+                  <p id="ai-score" class="text-indigo-400 font-display text-base sm:text-lg">—</p>
+                </div>
               </div>
             </div>
           </div>
@@ -359,7 +358,7 @@
 
       const user = session.user;
       const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
-      const avatarUrl = user.user_metadata?.avatar_url; // GET AVATAR
+      const avatarUrl = user.user_metadata?.avatar_url; 
 
       document.getElementById('welcome-user').innerText = `Selamat Datang, ${displayName} 👋`;
       document.getElementById('sidebar-user-name').innerText = displayName;
@@ -376,7 +375,6 @@
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
       });
 
-      // ASYNC AWAIT UNTUK MENGAMBIL DATA DARI SUPABASE CLOUD
       await renderDashboard();
       await handleRefreshCrypto(true);
     } catch (err) { console.error("Gagal inisialisasi dashboard:", err); }
@@ -393,15 +391,16 @@
     icon.classList.remove('spin'); btn.disabled = false;
     const note = document.getElementById('last-refresh');
 
-    if ((resultCrypto && resultCrypto.error) || (resultStock && resultStock.error)) {
-      note.innerText = 'Gagal sinkron (cek koneksi)';
-      if (!silent) alert('Gagal mengambil sebagian harga realtime.');
-    } else { note.innerText = 'Sinkron ' + new Date().toLocaleTimeString('id-ID'); }
+    if (note) {
+      if ((resultCrypto && resultCrypto.error) || (resultStock && resultStock.error)) {
+        note.innerText = 'Gagal sinkron (cek koneksi)';
+        if (!silent) alert('Gagal mengambil sebagian harga realtime.');
+      } else { note.innerText = 'Sinkron ' + new Date().toLocaleTimeString('id-ID'); }
+    }
 
     await renderDashboard();
   }
 
-  // DIUBAH MENJADI ASYNC
   async function renderDashboard() {
     if (typeof EduVesting === 'undefined') return;
     const metrics = await EduVesting.computeMetrics();
@@ -417,12 +416,8 @@
     document.getElementById('m-equity').innerText = EduVesting.formatRupiah(m.totalEquity);
     const equityPctEl = document.getElementById('m-equity-pct');
 
-    // PERBAIKAN: Persentase pertumbuhan 'vs modal' sekarang mengambil m.plPercent 
-    // yang murni dihitung dari (Floating P/L / Total Cost), sehingga saldo Kas
-    // tidak lagi mendistorsi/memalsukan persentase performa portofolio.
     const equityPct = m.plPercent || 0; 
-
-    const eqSign = equityPct > 0 ? '+' : ''; // Pakai > 0 agar angka 0 tidak ada + nya jika dirasa perlu, tp >= 0 jg gpp
+    const eqSign = equityPct > 0 ? '+' : ''; 
     equityPctEl.innerHTML = `<i class="fa-solid fa-arrow-trend-${equityPct >= 0 ? 'up' : 'down'} text-xs"></i> ${eqSign}${equityPct.toFixed(1)}%`;
     equityPctEl.className = 'text-sm font-semibold flex items-center gap-1 ' + (equityPct >= 0 ? 'text-emerald-400' : 'text-rose-400');
 
@@ -435,18 +430,13 @@
 
     document.getElementById('m-cash').innerText = EduVesting.formatRupiah(m.cash);
 
-    // FORMAT DESIMAL 2 ANGKA UNTUK RASIO KAS
     document.getElementById('m-cashpct').innerText = m.cashPercent.toFixed(2) + '%';
     document.getElementById('m-cashpct-bar').style.width = Math.min(100, m.cashPercent) + '%';
 
-    // ==========================================================
-    // LOGIKA PERINGATAN KAS & PENILAIAN RASIO (SMART LOGIC)
-    // ==========================================================
     const warnEl = document.getElementById('m-cash-warn');
     const note = document.getElementById('m-cashpct-note');
 
     if (m.cash === 0) {
-      // 1. Kas Kosong
       warnEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-xs"></i> Kas kosong';
       warnEl.className = 'text-xs mt-2 text-rose-500 font-medium flex items-center gap-1';
       warnEl.classList.remove('hidden');
@@ -455,7 +445,6 @@
       note.className = 'text-xs mt-2 text-rose-500 font-medium';
 
     } else if (m.cashPercent < 10 && m.cash < 500000) { 
-      // 2. Persentase Kecil DAN Nominal Kecil
       warnEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-xs"></i> Saldo kas rendah';
       warnEl.className = 'text-xs mt-2 text-rose-400 font-medium flex items-center gap-1';
       warnEl.classList.remove('hidden');
@@ -464,8 +453,7 @@
       note.className = 'text-xs mt-2 text-rose-400 font-medium'; 
 
     } else if (m.cashPercent <= 20) { 
-      // 3. Persentase Rendah-Sedang, TAPI Nominal Gede (Atau emang porsi 10-20%)
-      warnEl.classList.add('hidden'); // Sembunyikan tanda seru di kotak atas
+      warnEl.classList.add('hidden'); 
 
       if (m.cashPercent < 10 && m.cash >= 500000) {
         note.innerText = 'Secara nominal oke sih, tapi dananya agak kecil buat serok menyerok.';
@@ -475,19 +463,16 @@
       note.className = 'text-xs mt-2 text-amber-400 font-medium'; 
 
     } else if (m.cashPercent <= 30) { 
-      // 4. Ideal (21 - 30%)
       warnEl.classList.add('hidden');
       note.innerText = 'Cukup ideal & aman! buying powermu berada di dalam sweetspot, portofolio imbang, batin tenang, tidur nyenyak :v.'; 
       note.className = 'text-xs mt-2 text-emerald-400 font-medium'; 
 
     } else if (m.cashPercent <= 50) { 
-      // 5. Moderat (31 - 50%)
       warnEl.classList.add('hidden');
       note.innerText = 'Moderat. Peluru kamu lumayan banyak nih, siap tempur kalau market lagi merah!'; 
       note.className = 'text-xs mt-2 text-cyan-400 font-medium'; 
 
     } else { 
-      // 6. Terlalu Besar (> 50%)
       warnEl.classList.add('hidden');
       note.innerText = 'Buset, duit nganggurnya kegedean ya bos?. Jangan didiemin aja, mending sebagian diputerin!'; 
       note.className = 'text-xs mt-2 text-indigo-400 font-medium'; 
@@ -543,13 +528,39 @@
     const typeCount = Object.values(m.byType).filter(v => v > 0).length;
     document.getElementById('ai-diversification').innerText = typeCount >= 3 ? 'Baik' : typeCount === 2 ? 'Cukup' : typeCount === 1 ? 'Kurang' : '—';
 
-    let score = 50;
-    if (m.assets.length) { score = 40 + typeCount * 10 + Math.min(20, m.cashPercent) - (volatilePct > 60 ? 15 : 0); score = Math.max(10, Math.min(95, Math.round(score))); }
-    document.getElementById('ai-score').innerText = m.assets.length ? score + '/100' : '—';
+    // ==========================================================
+    // LOGIKA TARIK SKOR DARI CACHE (SINKRON DENGAN AI)
+    // ==========================================================
+    const aiScoreEl = document.getElementById('ai-score');
+    const savedScoreRaw = localStorage.getItem('eduvesting_ai_score');
+    
+    if (!m.assets.length) {
+      aiScoreEl.innerText = '—';
+      aiScoreEl.className = 'text-slate-600 font-display text-base sm:text-lg';
+    } else if (savedScoreRaw) {
+      const parsed = JSON.parse(savedScoreRaw);
+      const now = new Date().getTime();
+      
+      if (now - parsed.timestamp < 3600000) { // Masih kurang dari 1 jam
+        aiScoreEl.innerText = parsed.score + '/100';
+        
+        // Sesuaikan warna dengan tingkatan skor
+        if (parsed.score >= 80) aiScoreEl.className = 'font-display text-base sm:text-lg text-emerald-400';
+        else if (parsed.score >= 60) aiScoreEl.className = 'font-display text-base sm:text-lg text-cyan-400';
+        else aiScoreEl.className = 'font-display text-base sm:text-lg text-rose-400';
+      } else {
+        // Jika kadaluarsa
+        localStorage.removeItem('eduvesting_ai_score');
+        aiScoreEl.innerHTML = '<a href="insights.html" class="text-[11px] font-bold text-violet-400 hover:text-violet-300 uppercase tracking-wide"><i class="fa-solid fa-bolt mr-1"></i> Update Skor</a>';
+        aiScoreEl.className = 'mt-1'; // Memberikan margin agar tombol simetris
+      }
+    } else {
+      // Jika belum pernah generate sama sekali
+      aiScoreEl.innerHTML = '<a href="insights.html" class="text-[11px] font-bold text-violet-400 hover:text-violet-300 uppercase tracking-wide"><i class="fa-solid fa-bolt mr-1"></i> Minta Skor</a>';
+      aiScoreEl.className = 'mt-1';
+    }
 
     const tips = document.getElementById('ai-tips'); 
-
-    // Pastikan ID ai-tips ada di HTML sebelum mengeksekusi ini
     if (!tips) return; 
 
     tips.innerHTML = '';
@@ -568,7 +579,6 @@
     if (!insights.slice(1).length) tips.innerHTML = '<p class="text-xs text-slate-600 text-center py-6">Tidak ada catatan tambahan.</p>';
   }
 
-  // UPDATE RENDER TABLE AGAR SAMA DENGAN PORTFOLIO.HTML
   function renderTable(m) {
     const tbody = document.getElementById('dash-asset-tbody'); 
     const emptyState = document.getElementById('dash-empty-state'); 
