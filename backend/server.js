@@ -2,28 +2,21 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
-// Hapus semua cara import sebelumnya, ganti dengan ini:
-const yahooFinance = require('yahoo-finance2');
-// ======================
-// IMPORT ROUTES
-// ======================
 const portfolioRoutes = require('./routes/portfolioRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
 const goalsRoutes = require('./routes/goalsRoutes');
 const alloRoutes = require('./routes/alloRoutes');
 const calculatorRoutes = require('./routes/calculatorRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
+const aiRoutes = require('./routes/aiRoutes');
 
-// ======================
-// APP & MIDDLEWARE
-// ======================
 const app = express();
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 
-// ======================
-// ROUTES (YAHOO FINANCE)
-// ======================
+// ========================================================
+// API SAHAM MURNI 100% REAL-TIME VIA YAHOO URL (TANPA DUMMY)
+// ========================================================
 app.get('/api/price/saham/:ticker', async (req, res) => {
     try {
         let ticker = req.params.ticker.toUpperCase();
@@ -32,38 +25,40 @@ app.get('/api/price/saham/:ticker', async (req, res) => {
             ticker += '.JK';
         }
 
-        console.log(`[DEBUG] Mencoba tarik dari Yahoo: ${ticker}`);
+        // BUKTI KODINGAN BARU JALAN: Tulisan ini yang harusnya muncul di Vercel nanti
+        console.log(`[DEBUG] Murni URL Fetch: ${ticker}`);
 
-        // ✅ Panggil langsung sebagai fungsi/object, bukan instance
-        const quote = await yahooFinance.quote(ticker);
+        const url = `https://query2.finance.yahoo.com/v8/finance/chart/${ticker}`;
+        const response = await fetch(url, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' 
+            }
+        });
 
-        if (!quote || !quote.regularMarketPrice) {
-            return res.status(404).json({ error: "Harga tidak ditemukan" });
+        if (!response.ok) {
+            console.error(`[ERROR] Ticker ${ticker} tidak ditemukan.`);
+            return res.status(404).json({ error: `Ticker ${ticker} gagal diambil.` });
         }
 
-        res.json({ 
-            ticker: req.params.ticker.toUpperCase(), 
-            price: quote.regularMarketPrice 
-        });
+        const data = await response.json();
+        const livePrice = data.chart.result[0].meta.regularMarketPrice;
+
+        res.json({ ticker: ticker, price: livePrice });
+
     } catch (error) {
-        console.error("ERROR DETAIL YAHOO:", error.message);
-        res.status(500).json({ error: "Gagal: " + error.message });
+        console.error("ERROR TARIK SAHAM:", error.message);
+        res.status(500).json({ error: error.message });
     }
 });
 
-// ======================
-// ROUTES (INTERNAL)
-// ======================
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/goals', goalsRoutes);
 app.use('/api/allocations', alloRoutes);
 app.use('/api/market', calculatorRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/ai', aiRoutes);
 
-// ======================
-// SERVER EXPORT
-// ======================
 const PORT = process.env.PORT || 5000;
 
 if (require.main === module) {
