@@ -201,7 +201,7 @@
             <button id="btn-generate-score" onclick="generateScoreFromAI()" class="w-full py-2.5 rounded-xl text-sm font-semibold bg-violet-600 hover:bg-violet-500 text-white transition shadow-lg shadow-violet-500/20 z-10">
               <i class="fa-solid fa-bolt mr-2"></i> Sinkronisasi AI Baru
             </button>
-            <p id="health-score-desc" class="text-[11px] text-slate-500 mt-3 hidden z-10">Terakhir diperbarui: Data tersimpan di memori lokal.</p>
+            <p id="health-score-desc" class="text-[11px] text-slate-500 mt-3 hidden z-10">Terakhir diperbarui: Data tersimpan di Supabase Cloud.</p>
           </div>
 
           <div class="glass rounded-2xl p-6 lg:col-span-2 flex flex-col">
@@ -321,6 +321,7 @@
     window.supabaseClient = supabaseClient; 
 
     let aiContextString = "Belum ada data portofolio.";
+    let currentUserId = null; // Menambahkan variabel penyimpan ID User
 
     document.addEventListener('DOMContentLoaded', async () => {
       try {
@@ -328,13 +329,14 @@
         if (error || !session) { window.location.href = 'login.html'; return; }
 
         const user = session.user;
+        currentUserId = user.id; // Menangkap ID unik Supabase user
+
         const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
-        const avatarUrl = user.user_metadata?.avatar_url; // GET AVATAR LOGIC ADDED
+        const avatarUrl = user.user_metadata?.avatar_url; 
 
         document.getElementById('sidebar-user-name').innerText = displayName;
         document.getElementById('chat-user-name').innerText = displayName;
 
-        // RENDER AVATAR LOGIC ADDED
         const sbAvatar = document.getElementById('sidebar-user-initial');
         if (avatarUrl) {
           sbAvatar.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover rounded-full">`;
@@ -361,48 +363,43 @@
       const descEl = document.getElementById('health-score-desc');
       const circle = document.getElementById('score-circle');
 
-      // Update Angka 0-10
       valEl.innerText = scoreObj.score;
       valEl.classList.remove('text-slate-500');
       valEl.classList.add('text-white');
 
-      // Update Animasi Lingkaran (Base 10)
       const circumference = 2 * Math.PI * 45; 
       const dashoffset = circumference - (scoreObj.score / 10) * circumference;
       circle.style.strokeDasharray = `${circumference - dashoffset} ${circumference}`;
 
-      // Warna Lingkaran
-      if (scoreObj.score >= 8) circle.style.stroke = "url(#gradient)"; // Sehat
-      else if (scoreObj.score >= 5) circle.style.stroke = "#22d3ee"; // Sedang (Cyan)
-      else circle.style.stroke = "#fb7185"; // Buruk (Rose)
+      if (scoreObj.score >= 8) circle.style.stroke = "url(#gradient)"; 
+      else if (scoreObj.score >= 5) circle.style.stroke = "#22d3ee"; 
+      else circle.style.stroke = "#fb7185"; 
 
-      // Update Label Risiko
       riskEl.innerText = scoreObj.risk;
       if(scoreObj.risk.toLowerCase().includes('tinggi')) riskEl.className = 'text-sm font-bold text-rose-400';
       else if(scoreObj.risk.toLowerCase().includes('sedang')) riskEl.className = 'text-sm font-bold text-amber-400';
       else riskEl.className = 'text-sm font-bold text-emerald-400';
 
-      // Update Label Diversifikasi
       divEl.innerText = scoreObj.div;
       if(scoreObj.div.toLowerCase().includes('kurang')) divEl.className = 'text-sm font-bold text-rose-400';
       else if(scoreObj.div.toLowerCase().includes('sedang')) divEl.className = 'text-sm font-bold text-amber-400';
       else divEl.className = 'text-sm font-bold text-emerald-400';
 
-      descEl.innerText = "Data berhasil disinkronisasi dengan analisis AI terbaru.";
+      descEl.innerText = "Data berhasil disinkronisasi dengan analisis AI terbaru (Tersimpan di Cloud).";
       descEl.classList.remove('hidden');
     }
 
     // ==========================================
-    // MINTA SKOR KE AI (3 DIMENSI)
+    // MINTA SKOR KE AI & SIMPAN KE SUPABASE
     // ==========================================
     async function generateScoreFromAI() {
+      if (!currentUserId) return; // Keamanan agar tidak error
+
       const btn = document.getElementById('btn-generate-score');
-      const originalText = btn.innerHTML;
       btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Sedang Menganalisis...';
       btn.disabled = true;
       btn.classList.add('opacity-70');
 
-      // Prompt Rahasia dengan Aturan Ketat
       const secretPrompt = `${aiContextString}
 TUGAS RAHASIA SISTEM: Evaluasi portofolio dengan 3 parameter.
 1. Skor Keseluruhan (skala 0 sampai 10).
@@ -426,7 +423,6 @@ Contoh Output yang benar: 7|Sedang|Bagus`;
         const data = await response.json();
 
         if (data.success) {
-          // Parse format: 8|Tinggi|Kurang
           const match = data.reply.match(/(\d+)\s*\|\s*([a-zA-Z]+)\s*\|\s*([a-zA-Z]+)/);
           
           let score = 5, risk = 'Sedang', div = 'Sedang';
@@ -434,15 +430,27 @@ Contoh Output yang benar: 7|Sedang|Bagus`;
              score = parseInt(match[1]);
              risk = match[2];
              div = match[3];
-          } else {
-             console.warn("AI format failed, using fallback:", data.reply);
           }
           if (score > 10) score = 10;
 
-          const aiScoreData = { score, risk, div, timestamp: new Date().getTime() };
-          localStorage.setItem('eduvesting_ai_score', JSON.stringify(aiScoreData));
+          // HAPUS LOGIKA LOCALSTORAGE, GANTI DENGAN UPSERT SUPABASE
+          const { error: dbError } = await supabaseClient
+            .from('ai_scores')
+            .upsert({ 
+              user_id: currentUserId, 
+              score: score, 
+              risk: risk, 
+              diversification: div,
+              updated_at: new Date()
+            });
+
+          if (dbError) {
+             console.error("Gagal simpan skor ke cloud:", dbError);
+             throw new Error("Gagal terhubung ke Database Supabase.");
+          }
           
-          updateScoreUI(aiScoreData);
+          // Setelah berhasil tersimpan di Cloud, update UI layar
+          updateScoreUI({ score, risk, div });
 
           setTimeout(() => {
             switchTab('chat');
@@ -462,12 +470,11 @@ Contoh Output yang benar: 7|Sedang|Bagus`;
     }
 
     // ==========================================
-    // RENDER VISUAL DATA
+    // RENDER VISUAL DATA & AMBIL SKOR DARI SUPABASE
     // ==========================================
-    function renderAiDashboard(metrics) {
+    async function renderAiDashboard(metrics) {
       const alokasi = metrics.allocation.map(a => `${a.type.toUpperCase()} (${a.percent.toFixed(1)}%)`).join(', ');
 
-      // INJEKSI TOTAL ASET INDIVIDU AGAR AI PINTAR NILAI DIVERSIFIKASI
       aiContextString = `Data Portofolio Nyata User: 
 - Total Ekuitas/Net Worth: Rp ${metrics.totalEquity.toLocaleString('id-ID')}
 - Total P/L: Rp ${metrics.floatingPL.toLocaleString('id-ID')} (${metrics.plPercent.toFixed(2)}%)
@@ -530,11 +537,18 @@ Contoh Output yang benar: 7|Sedang|Bagus`;
         });
       }
 
-      // --- CEK CACHE SKOR ---
-      const savedScoreRaw = localStorage.getItem('eduvesting_ai_score');
-      if (savedScoreRaw) {
-        const parsed = JSON.parse(savedScoreRaw);
-        updateScoreUI(parsed); // Memori permanen, tombol Generate tidak disembunyikan
+      // --- CEK SKOR DARI SUPABASE CLOUD ---
+      if (currentUserId) {
+        const { data, error } = await supabaseClient
+          .from('ai_scores')
+          .select('*')
+          .eq('user_id', currentUserId)
+          .single();
+          
+        if (data) {
+          // Jika ada skor di database Cloud, langsung tempel ke layar UI
+          updateScoreUI({ score: data.score, risk: data.risk, div: data.diversification });
+        }
       }
     }
 
