@@ -29,12 +29,12 @@
 
 <style>
   * { box-sizing: border-box; }
-  body { font-family:'Inter', sans-serif; background-color:#07090f; color:#e2e8f0; min-height:100vh; overflow-x: hidden; }
+  body { font-family:'Inter', sans-serif; background-color:#07090f; color:#e2e8f0; min-height:100vh; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
   .nav-active { background: linear-gradient(90deg, rgba(99,102,241,0.18) 0%, transparent 100%); border-left: 3px solid #6366f1; }
   .nav-item { border-left: 3px solid transparent; transition: background .2s ease, border-color .2s ease, color .2s ease; }
   .nav-item:hover { background: linear-gradient(90deg, rgba(99,102,241,0.1) 0%, transparent 100%); border-left-color: rgba(99,102,241,0.5); color:#a5b4fc; }
-  .glass { background: rgba(19,25,40,0.85); backdrop-filter: blur(12px); border:1px solid rgba(255,255,255,0.06); }
-  .glass-lighter { background: rgba(30,40,64,0.6); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.07); }
+  .glass { background: rgba(19,25,40,0.85); backdrop-filter: blur(12px); border:1px solid rgba(255,255,255,0.06); transition: all 0.3s ease; }
+  .glass-lighter { background: rgba(30,40,64,0.6); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.07); transition: all 0.3s ease; }
   .mesh-bg { position:fixed; inset:0; pointer-events:none; z-index:0;
     background:
       radial-gradient(ellipse 60% 40% at 15% 10%, rgba(99,102,241,0.08) 0%, transparent 70%),
@@ -65,10 +65,28 @@
   /* Fix untuk native select option biar gelap */
   select#f-type { background-color: rgba(255, 255, 255, 0.04); }
   select#f-type option { background-color: #0f1423; color: #e2e8f0; padding: 12px; }
+
+  /* ==========================================
+     LIGHT MODE STYLES
+  ========================================== */
+  body.light-mode { background-color: #f8fafc; color: #0f1423; }
+  body.light-mode .glass, body.light-mode .glass-lighter { background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+  body.light-mode .text-slate-200, body.light-mode .text-slate-300, body.light-mode .text-slate-100 { color: #1e293b; }
+  body.light-mode .text-slate-400, body.light-mode .text-slate-500 { color: #475569; }
+  body.light-mode .form-input, body.light-mode select#f-type { background: #ffffff !important; border-color: #cbd5e1; color: #0f1423; }
+  body.light-mode select#f-type option { background-color: #ffffff; color: #0f1423; }
+  body.light-mode aside { background: rgba(255, 255, 255, 0.95) !important; border-right: 1px solid rgba(0,0,0,0.08); }
 </style>
 </head>
 
 <body class="relative">
+<script>
+  // Cek memori browser, apakah user sedang pakai Light Mode?
+  if(localStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light-mode');
+  }
+</script>
+
 <div class="mesh-bg" aria-hidden="true"></div>
 
 <div class="relative z-10 flex min-h-screen">
@@ -165,7 +183,7 @@
         <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Total Modal</p>
         <p id="sum-cost" class="font-display text-xl sm:text-2xl text-slate-100 whitespace-nowrap overflow-hidden text-ellipsis">Rp 0</p>
       </div>
-      
+
       <div class="glass rounded-2xl p-4 sm:p-5 metric-card fade-up delay-4">
         <div class="flex items-start justify-between">
           <div class="min-w-0 pr-3">
@@ -190,7 +208,7 @@
 
           <div class="sm:col-span-1 md:col-span-1">
             <label class="text-xs text-slate-500 mb-1 block">Tipe Aset</label>
-            <select id="f-type" class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200 bg-[#0f1423] focus:ring-2 focus:ring-indigo-500/50">
+            <select id="f-type" class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200 focus:ring-2 focus:ring-indigo-500/50">
               <option value="saham">Saham</option>
               <option value="kripto">Kripto</option>
               <option value="emas">Emas</option>
@@ -343,7 +361,9 @@
 
       const user = session.user;
       const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
-      const avatarUrl = user.user_metadata?.avatar_url; 
+      
+      // Update: Mengambil custom_avatar_url prioritas pertama
+      const avatarUrl = user.user_metadata?.custom_avatar_url || user.user_metadata?.avatar_url; 
 
       const sbName = document.getElementById('sidebar-user-name');
       const sbInitial = document.getElementById('sidebar-user-initial');
@@ -565,31 +585,25 @@
       if (typeof EduVesting === 'undefined') return;
       const metrics = await EduVesting.computeMetrics();
 
-      const sumEquityEl = document.getElementById('sum-equity'); 
       const sumValueEl = document.getElementById('sum-value');
       const sumCostEl = document.getElementById('sum-cost');
       const plEl = document.getElementById('sum-pl');
 
-      if (sumEquityEl) sumEquityEl.innerText = EduVesting.formatRupiah(metrics.totalEquity);
       if (sumValueEl) sumValueEl.innerText = EduVesting.formatRupiah(metrics.totalValue);
       if (sumCostEl) sumCostEl.innerText = EduVesting.formatRupiah(metrics.totalCost);
 
-            if (plEl) {
+      if (plEl) {
         const sign = metrics.floatingPL >= 0 ? '+' : '';
         const trend = metrics.floatingPL >= 0 ? 'up' : 'down';
-        
-        // Memecah nominal dan persentase menjadi dua baris (atas dan bawah)
+
         plEl.innerHTML = `
           <div class="whitespace-nowrap overflow-hidden text-ellipsis">${sign}${EduVesting.formatRupiah(metrics.floatingPL)}</div>
           <div class="text-sm font-semibold flex items-center gap-1 mt-1.5 opacity-90">
             <i class="fa-solid fa-arrow-trend-${trend} text-xs"></i> ${sign}${metrics.plPercent.toFixed(2)}%
           </div>
         `;
-        
-        // Hapus efek nowrap dari kotak induknya agar baris kedua bisa turun
         plEl.className = 'font-display text-xl sm:text-2xl ' + (metrics.floatingPL >= 0 ? 'text-emerald-400' : 'text-rose-400');
       }
-
 
       const tbody = document.getElementById('asset-tbody');
       const emptyState = document.getElementById('empty-state');
@@ -616,7 +630,6 @@
 
         const tr = document.createElement('tr');
         tr.className = 'portfolio-row';
-        // FIX: Menambahkan properti whitespace-nowrap ke tag td agar angka tidak turun ke bawah
         tr.innerHTML = `
           <td class="px-5 py-4 whitespace-nowrap">
             <div class="flex items-center gap-3">
