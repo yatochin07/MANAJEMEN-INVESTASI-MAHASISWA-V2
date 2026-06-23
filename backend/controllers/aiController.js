@@ -1,6 +1,6 @@
 // ========================================================
 // AI CHAT CONTROLLER (GEMINI PURE FETCH API)
-// 100% Murni Fetch, Bebas SDK Bug, dan Gratis Selamanya! Cihuy
+// 100% Murni Fetch, Bebas SDK Bug, dan Gratis Selamanya!
 // ========================================================
 
 const chatWithAI = async (req, res) => {
@@ -33,8 +33,8 @@ const chatWithAI = async (req, res) => {
         // 4. Menyusun Persona EduVesting AI
         const systemPrompt = "Kamu adalah EduVesting AI, asisten virtual cerdas yang ahli dalam investasi saham, kripto, reksadana, dan emas. Pengguna kamu adalah mahasiswa Indonesia. Jawablah dengan gaya bahasa yang asyik, relatable, santai tapi tetap profesional layaknya mentor finansial anak muda. Berikan saran yang realistis untuk kantong mahasiswa.";
 
-        // 5. URL Endpoint Resmi Gemini Cloud (Pake model 1.5 Flash yang kencang)
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+        // 5. URL Endpoint Resmi Gemini Cloud (Sudah Fix Pake -latest)
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
 
         // 6. Eksekusi PURE FETCH ke Server Google
         const response = await fetch(url, {
