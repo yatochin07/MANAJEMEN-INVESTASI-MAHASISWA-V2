@@ -246,7 +246,7 @@
           <div id="sector-container" class="space-y-4">
              <p class="text-sm text-slate-500 text-center"><i class="fa-solid fa-circle-notch fa-spin"></i> Menghitung alokasi...</p>
           </div>
-          
+
           <p id="sector-info" class="text-xs text-slate-500 mt-5 border-t border-slate-700/50 pt-3">
             <i class="fa-solid fa-circle-info text-cyan-400 mr-1"></i> Proporsi aset menentukan tingkat risiko Anda.
           </p>
@@ -301,7 +301,7 @@
       </section>
 
       <footer class="text-center pb-8">
-        <p class="text-xs text-slate-700">EduVesting · AI Insights Powered by Gemini</p>
+        <p class="text-xs text-slate-700">EduVesting · AI Insights Powered by Groq</p>
         <p class="text-xs text-slate-700 mt-2">
         Dikembangkan dengan <i class="fa-solid fa-heart text-rose-500/50 mx-0.5"></i> oleh Tim Developer EduVesting
         </p>
@@ -330,7 +330,7 @@
     window.supabaseClient = supabaseClient; 
 
     // ==========================================
-    // DATA GLOBAL UNTUK DISUNTIK KE GEMINI
+    // DATA GLOBAL UNTUK DISUNTIK KE AI
     // ==========================================
     let aiContextString = "Belum ada data portofolio yang disinkronisasi.";
 
@@ -388,7 +388,7 @@ Berikan jawaban AI yang selalu merujuk pada angka-angka di atas.`;
 
       let score = 50; 
       const typesCount = Object.keys(metrics.byType).filter(k => metrics.byType[k] > 0).length;
-      
+
       if (metrics.assets.length > 0) {
         score = 40; 
         score += (typesCount * 10); 
@@ -407,7 +407,7 @@ Berikan jawaban AI yang selalu merujuk pada angka-angka di atas.`;
 
       const labelEl = document.getElementById('health-score-label');
       const descEl = document.getElementById('health-score-desc');
-      
+
       if (score === 0) {
          labelEl.innerText = "Belum Ada Data"; labelEl.className = "text-lg font-display text-slate-400 mb-1";
          descEl.innerText = "Mulai investasi dengan menambahkan aset di menu Portofolio.";
@@ -425,7 +425,7 @@ Berikan jawaban AI yang selalu merujuk pada angka-angka di atas.`;
       const insights = EduVesting.generateInsights(metrics);
       const recomContainer = document.getElementById('recom-container');
       recomContainer.innerHTML = '';
-      
+
       const toneMap = {
         'rose': { bg: 'bg-rose-500/10', border: 'border-rose-500/20', iconBg: 'bg-rose-500/20', text: 'text-rose-400' },
         'amber': { bg: 'bg-amber-500/10', border: 'border-amber-500/20', iconBg: 'bg-amber-500/20', text: 'text-amber-400' },
@@ -465,7 +465,7 @@ Berikan jawaban AI yang selalu merujuk pada angka-angka di atas.`;
           let statusText = 'Normal';
           let statusColor = 'text-emerald-400';
           let barBg = item.gradient[0]; 
-          
+
           if (item.percent > 40) { statusText = 'Overweight'; statusColor = 'text-rose-400'; }
           else if (item.percent < 10) { statusText = 'Rendah'; statusColor = 'text-amber-400'; }
 
@@ -552,7 +552,7 @@ Berikan jawaban AI yang selalu merujuk pada angka-angka di atas.`;
         // LOGIKA URL YANG SUDAH DIOPTIMASI UNTUK VERCEL (ANTI-CORS)
         // ========================================================
         const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        
+
         // Cukup gunakan relative path jika di Vercel agar otomatis mengikuti domain yang sedang aktif!
         const BACKEND_URL = isLocal ? 'http://localhost:5000/api/ai/chat' : '/api/ai/chat';
 
@@ -569,11 +569,12 @@ Berikan jawaban AI yang selalu merujuk pada angka-angka di atas.`;
         }
 
         if (data.success) {
+          // Sedikit penyesuaian untuk Parsing Markdown ringan bawaan Llama-3 (Groq)
           let formattedReply = data.reply
             .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')
             .replace(/\*(.*?)\*/g, '<em class="text-violet-300">$1</em>')
             .replace(/\n/g, '<br>'); 
-          
+
           appendAIResponse(formattedReply);
         } else {
           appendAIResponse("Waduh, koneksi ke otak AI sedang gangguan nih. Coba cek log Vercel kamu ya.");
