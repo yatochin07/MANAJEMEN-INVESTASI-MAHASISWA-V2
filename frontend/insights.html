@@ -34,14 +34,14 @@
 
   <style>
     * { box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; background-color: #07090f; color: #e2e8f0; min-height: 100vh; overflow-x: hidden; }
+    body { font-family: 'Inter', sans-serif; background-color: #07090f; color: #e2e8f0; min-height: 100vh; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
 
     .nav-active { background: linear-gradient(90deg, rgba(124,58,237,0.18) 0%, transparent 100%); border-left: 3px solid #7c3aed; }
     .nav-item { border-left: 3px solid transparent; transition: all 0.2s ease; }
     .nav-item:hover { background: linear-gradient(90deg, rgba(99,102,241,0.1) 0%, transparent 100%); border-left-color: rgba(99,102,241,0.5); color: #a5b4fc; }
 
-    .glass { background: rgba(19, 25, 40, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); }
-    .glass-lighter { background: rgba(30,40,64,0.6); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.07); }
+    .glass { background: rgba(19, 25, 40, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); transition: all 0.3s ease; }
+    .glass-lighter { background: rgba(30,40,64,0.6); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.07); transition: all 0.3s ease; }
 
     .mesh-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0;
       background: radial-gradient(ellipse 60% 40% at 15% 10%, rgba(124,58,237,0.08) 0%, transparent 70%),
@@ -81,10 +81,37 @@
     .tab-active { border-bottom: 2px solid #7c3aed; color: #a5b4fc; background: linear-gradient(0deg, rgba(124,58,237,0.1) 0%, transparent 100%); }
     .tab-inactive { color: #64748b; }
     .tab-inactive:hover { color: #cbd5e1; }
+
+    /* ==========================================
+       LIGHT MODE STYLES (Penyesuaian Khusus Fitur Chat AI)
+    ========================================== */
+    body.light-mode { background-color: #f8fafc; color: #0f1423; }
+    body.light-mode .glass, body.light-mode .glass-lighter { background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    body.light-mode .text-slate-200, body.light-mode .text-slate-300, body.light-mode .text-slate-100 { color: #1e293b; }
+    body.light-mode .text-white { color: #0f1423; } /* Paksa teks chat user jadi gelap di light mode */
+    body.light-mode .text-slate-400, body.light-mode .text-slate-500 { color: #475569; }
+    body.light-mode aside { background: rgba(255, 255, 255, 0.95) !important; border-right: 1px solid rgba(0,0,0,0.08); }
+    
+    /* Khusus untuk area Chat Box */
+    body.light-mode .bg-slate-900\/80, body.light-mode .bg-slate-900\/50, body.light-mode .bg-slate-900 { background-color: #f1f5f9 !important; border-color: #cbd5e1; }
+    body.light-mode .bg-slate-800, body.light-mode .bg-slate-800\/80 { background-color: #e2e8f0 !important; border-color: #cbd5e1; color: #1e293b; }
+    body.light-mode #chat-box { background: rgba(255, 255, 255, 0.6) !important; }
+    body.light-mode .chat-bubble-ai { background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(99,102,241,0.05)); border: 1px solid rgba(124,58,237,0.3); color: #1e293b; }
+    body.light-mode .chat-bubble-user { background: #ffffff; border: 1px solid #cbd5e1; box-shadow: 0 2px 4px rgba(0,0,0,0.05); color: #1e293b; }
+    body.light-mode input#chat-input { background: #ffffff !important; border-color: #cbd5e1; color: #0f1423; }
+    body.light-mode input#chat-input::placeholder { color: #64748b; }
+    body.light-mode .ai-border::before { background: linear-gradient(45deg, transparent, rgba(124,58,237,0.3), rgba(6,182,212,0.3), transparent); }
   </style>
 </head>
 
 <body class="relative">
+
+  <script>
+    // Cek memori browser, apakah user sedang pakai Light Mode?
+    if(localStorage.getItem('theme') === 'light') {
+      document.body.classList.add('light-mode');
+    }
+  </script>
 
   <div class="mesh-bg" aria-hidden="true"></div>
 
@@ -239,7 +266,7 @@
                 <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-slate-900 rounded-full animate-pulse"></span>
               </div>
               <div>
-                <h3 class="text-base font-bold text-white tracking-wide">EduVesting AI Copilot</h3>
+                <h3 class="text-base font-bold text-slate-100 tracking-wide">EduVesting AI Copilot</h3>
                 <p class="text-xs text-emerald-400 font-medium">Tersambung ke Data Portofolio & Keuangan Harianmu</p>
               </div>
             </div>
@@ -250,8 +277,8 @@
               <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 border border-violet-500/30 overflow-hidden">
                 <img src="css/eduvestingAI.jpg" alt="AI" class="w-full h-full object-cover">
               </div>
-              <div class="chat-bubble-ai rounded-2xl p-4 text-slate-200 leading-relaxed shadow-md text-[14px]">
-                Halo <strong id="chat-user-name" class="text-white">Mahasiswa</strong>! Gue EduVesting AI. Gue udah pegang data investasi portofolio dan juga <em class="text-emerald-300">data keuangan arus kas harian</em> lu. Mau minta gue <em class="text-violet-300">roasting</em> isi portonya, evaluasi cashflow, atau lu mau nanya soal saham/kripto spesifik yang lagi lu incer?
+              <div class="chat-bubble-ai rounded-2xl p-4 leading-relaxed shadow-md text-[14px]">
+                Halo <strong id="chat-user-name" class="font-bold">Mahasiswa</strong>! Gue EduVesting AI. Gue udah pegang data investasi portofolio dan juga <em class="text-violet-400 dark:text-emerald-300">data keuangan arus kas harian</em> lu. Mau minta gue <em class="text-violet-500 dark:text-violet-300">roasting</em> isi portonya, evaluasi cashflow, atau lu mau nanya soal saham/kripto spesifik yang lagi lu incer?
               </div>
             </div>
           </div>
@@ -335,8 +362,9 @@
         const user = session.user;
         currentUserId = user.id; 
 
-        const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
-        const avatarUrl = user.user_metadata?.avatar_url; 
+        // PRIORITAS VARIABEL: custom_full_name & custom_avatar_url untuk anti-overwrite Google
+        const displayName = user.user_metadata?.custom_full_name || user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
+        const avatarUrl = user.user_metadata?.custom_avatar_url || user.user_metadata?.avatar_url; 
 
         // SIMPAN KE VARIABEL GLOBAL UNTUK AVATAR CHAT
         currentUserAvatar = avatarUrl;
@@ -373,7 +401,7 @@
 
       valEl.innerText = scoreObj.score;
       valEl.classList.remove('text-slate-500');
-      valEl.classList.add('text-white');
+      valEl.classList.add('text-slate-100'); // Diubah agar adaptif light/dark
 
       const circumference = 2 * Math.PI * 45; 
       const dashoffset = circumference - (scoreObj.score / 10) * circumference;
@@ -610,7 +638,7 @@ Tugas AI: Kolaborasikan analisis portofolio di atas dengan kondisi cashflow hari
         avatarHTML = `<img src="${currentUserAvatar}" alt="User" class="w-full h-full object-cover">`;
         styleContainer = 'background: rgba(99,102,241,0.2);'; 
       } else {
-        // Jika tidak, pakai huruf Inisial persis seperti di Sidebar
+        // Jika tidak, pakai huruf Inisial
         avatarHTML = `<span class="text-xs font-bold text-white">${currentUserNameInitial}</span>`;
         styleContainer = 'background: linear-gradient(135deg,#7c3aed,#6366f1);';
       }
@@ -621,7 +649,7 @@ Tugas AI: Kolaborasikan analisis portofolio di atas dengan kondisi cashflow hari
         <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 border border-indigo-500/30 overflow-hidden" style="${styleContainer}">
           ${avatarHTML}
         </div>
-        <div class="chat-bubble-user rounded-2xl p-4 text-slate-200 leading-relaxed shadow-sm text-[14px]">
+        <div class="chat-bubble-user rounded-2xl p-4 leading-relaxed shadow-sm text-[14px]">
           ${text}
         </div>
       `;
@@ -658,7 +686,7 @@ Tugas AI: Kolaborasikan analisis portofolio di atas dengan kondisi cashflow hari
         <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 border border-violet-500/30 overflow-hidden">
           <img src="css/eduvestingAI.jpg" alt="AI" class="w-full h-full object-cover">
         </div>
-        <div class="chat-bubble-ai rounded-2xl p-4 text-slate-200 leading-relaxed shadow-md text-[14px]">
+        <div class="chat-bubble-ai rounded-2xl p-4 leading-relaxed shadow-md text-[14px]">
           ${text}
         </div>
       `;
@@ -687,8 +715,8 @@ Tugas AI: Kolaborasikan analisis portofolio di atas dengan kondisi cashflow hari
 
         if (data.success) {
           let formattedReply = data.reply
-            .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-bold">$1</strong>')
-            .replace(/\*(.*?)\*/g, '<em class="text-violet-300">$1</em>')
+            .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold">$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em class="text-violet-500 dark:text-violet-300">$1</em>')
             .replace(/\n/g, '<br><div class="h-1"></div>'); 
           appendAIResponse(formattedReply);
         } else {
