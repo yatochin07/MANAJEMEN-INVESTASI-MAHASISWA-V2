@@ -10,6 +10,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -66,6 +68,9 @@
   select#f-type { background-color: rgba(255, 255, 255, 0.04); }
   select#f-type option { background-color: #0f1423; color: #e2e8f0; padding: 12px; }
 
+  /* SweetAlert2 Overrides biar nyesuain UI modern */
+  div:where(.swal2-container) div:where(.swal2-popup) { font-family: 'Inter', sans-serif !important; }
+
   /* ==========================================
      LIGHT MODE STYLES
   ========================================== */
@@ -84,6 +89,50 @@
   // Cek memori browser, apakah user sedang pakai Light Mode?
   if(localStorage.getItem('theme') === 'light') {
     document.body.classList.add('light-mode');
+  }
+
+  // ==========================================
+  // CUSTOM ALERT DENGAN SWEETALERT2
+  // ==========================================
+  function showCustomAlert(type, title, text) {
+    const isLight = document.body.classList.contains('light-mode');
+    Swal.fire({
+      icon: type,
+      title: title,
+      text: text,
+      confirmButtonText: 'Oke, Paham!',
+      confirmButtonColor: '#6366f1',
+      background: isLight ? '#ffffff' : '#1e293b',
+      color: isLight ? '#0f1423' : '#e2e8f0',
+      customClass: {
+        popup: 'rounded-2xl border ' + (isLight ? 'border-slate-200 shadow-xl' : 'border-white/10 shadow-2xl'),
+        title: 'font-display font-bold',
+        confirmButton: 'rounded-xl text-sm font-semibold px-6 py-2.5'
+      }
+    });
+  }
+
+  // Khusus untuk Toast (Notif kecil di pojok yang hilang otomatis)
+  function showToast(icon, title) {
+    const isLight = document.body.classList.contains('light-mode');
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      background: isLight ? '#ffffff' : '#1e293b',
+      color: isLight ? '#0f1423' : '#e2e8f0',
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+      }
+    });
+
+    Toast.fire({
+      icon: icon,
+      title: title
+    });
   }
 </script>
 
@@ -360,7 +409,7 @@
       }
 
       const user = session.user;
-      
+
       // Update: Prioritaskan custom_full_name agar nama tidak terganti Google
       const displayName = user.user_metadata?.custom_full_name || user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
       const avatarUrl = user.user_metadata?.custom_avatar_url || user.user_metadata?.avatar_url; 
@@ -418,7 +467,7 @@
       const editId = editIdInput.value;
 
       if (!ticker || avgPrice <= 0 || qty <= 0) {
-        alert('Mohon isi Ticker, Harga Beli Avg, dan Qty dengan nilai angka yang valid.');
+        showCustomAlert('warning', 'Data Kurang Lengkap!', 'Pastikan Ticker, Harga Beli Avg, dan Qty udah diisi pakai angka yang bener ya.');
         return;
       }
 
@@ -435,10 +484,10 @@
         const existingAsset = existingAssets.find(a => a.id === editId);
         const lastPrice = existingAsset ? existingAsset.lastPrice : avgPrice;
         await EduVesting.updateAsset(editId, { type, ticker, name, avgPrice, qty, lastPrice });
-        alert(`Aset ${ticker} berhasil diperbarui!`);
+        showToast('success', `Aset ${ticker} berhasil diupdate!`);
       } else {
         await EduVesting.addAsset({ type, ticker, name, avgPrice, qty, lastPrice: avgPrice });
-        alert(`Aset ${ticker} berhasil disimpan!`);
+        showToast('success', `Aset ${ticker} berhasil ditambahkan!`);
       }
 
       resetForm();
@@ -455,7 +504,7 @@
 
     } catch (error) {
       console.error("Detail Error:", error);
-      alert(`GAGAL MENYIMPAN!\n\nPenyebab: ${error.message}\n\nPastikan koneksi internet stabil.`);
+      showCustomAlert('error', 'Gagal Menyimpan!', `Waduh, ada error nih: ${error.message}. Coba cek koneksi internetmu ya.`);
       const submitBtn = e.target.querySelector('button[type="submit"]');
       submitBtn.disabled = false;
       submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk mr-1"></i> <span id="submit-label">Simpan</span>';
@@ -497,13 +546,36 @@
   }
 
   async function removeAsset(id) {
-    if (!confirm('Hapus aset ini dari portofolio?')) return;
-    try {
-      await EduVesting.deleteAsset(id);
-      await renderAll();
-    } catch (err) {
-      alert("Gagal menghapus aset. " + err.message);
-    }
+    const isLight = document.body.classList.contains('light-mode');
+    
+    Swal.fire({
+      title: 'Hapus Aset?',
+      text: "Aset ini bakal dihapus permanen dari portofolio kamu. Yakin mau lanjut?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#f43f5e',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: 'Ya, Hapus!',
+      cancelButtonText: 'Batal',
+      background: isLight ? '#ffffff' : '#1e293b',
+      color: isLight ? '#0f1423' : '#e2e8f0',
+      customClass: {
+        popup: 'rounded-2xl border ' + (isLight ? 'border-slate-200 shadow-xl' : 'border-white/10 shadow-2xl'),
+        title: 'font-display font-bold',
+        confirmButton: 'rounded-xl text-sm font-semibold px-5 py-2.5',
+        cancelButton: 'rounded-xl text-sm font-semibold px-5 py-2.5'
+      }
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await EduVesting.deleteAsset(id);
+          await renderAll();
+          showToast('success', 'Sip, aset berhasil dihapus!');
+        } catch (err) {
+          showCustomAlert('error', 'Gagal Menghapus', "Wah, asetnya gagal dihapus nih: " + err.message);
+        }
+      }
+    });
   }
 
   async function saveCash(event) {
@@ -521,10 +593,10 @@
 
     try {
       await EduVesting.saveSettings({ cash });
-      alert('Saldo Kas berhasil diperbarui!');
+      showToast('success', 'Saldo Kas berhasil diupdate!');
       await renderAll();
     } catch (err) {
-      alert('Gagal menyimpan kas: ' + err.message);
+      showCustomAlert('error', 'Gagal Menyimpan Kas', 'Terjadi kesalahan saat nyimpen saldo kas: ' + err.message);
     } finally {
       if(btn) {
         btn.disabled = false;
@@ -564,9 +636,13 @@
       if (typeof EduVesting !== 'undefined') {
         const resCrypto = await EduVesting.refreshCryptoPrices();
         if (resCrypto && resCrypto.error && !silent) {
-            alert('Gagal ambil harga kripto: ' + resCrypto.error);
+            showCustomAlert('error', 'Gagal Sinkron Kripto', 'Wah, gagal ambil harga kripto nih: ' + resCrypto.error);
         }
         await EduVesting.refreshStockPrices();
+        
+        if(!silent) {
+          showToast('success', 'Harga aset berhasil disinkronisasi!');
+        }
       }
     } catch (e) {
       console.error("Gagal sinkron:", e);
