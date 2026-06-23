@@ -3,9 +3,8 @@ const cors = require('cors');
 require('dotenv').config();
 
 // ========================================================
-// FIX FINAL: CARA RESMI YAHOO FINANCE V3
+// IMPORT YAHOO FINANCE (VERSI RESMI & AMAN)
 // ========================================================
-// Ini cara yang benar, tanpa menggunakan "new YahooFinance()"
 const yahooFinance = require('yahoo-finance2').default;
 
 // ======================
@@ -14,10 +13,12 @@ const yahooFinance = require('yahoo-finance2').default;
 const portfolioRoutes = require('./routes/portfolioRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
 const goalsRoutes = require('./routes/goalsRoutes');
-const aiRoutes = require('./routes/aiRoutes');
 const alloRoutes = require('./routes/alloRoutes');
 const calculatorRoutes = require('./routes/calculatorRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
+
+// SEMENTARA KITA MATIKAN ROUTE AI AGAR TIDAK BIKIN SERVER CRASH
+// const aiRoutes = require('./routes/aiRoutes');
 
 // ======================
 // APP & MIDDLEWARE
@@ -33,6 +34,7 @@ app.get('/api/price/saham/:ticker', async (req, res) => {
     try {
         let ticker = req.params.ticker.toUpperCase();
 
+        // Tambahkan akhiran .JK otomatis jika saham Indonesia
         if (!ticker.includes('=') && !ticker.includes('.')) {
             ticker += '.JK';
         }
@@ -47,7 +49,7 @@ app.get('/api/price/saham/:ticker', async (req, res) => {
 
         res.json({ ticker: req.params.ticker.toUpperCase(), price: quote.regularMarketPrice });
     } catch (error) {
-        console.error("ERROR DETAIL:", error);
+        console.error("ERROR DETAIL YAHOO:", error.message);
         res.status(500).json({ error: "Gagal: " + error.message });
     }
 });
@@ -58,10 +60,12 @@ app.get('/api/price/saham/:ticker', async (req, res) => {
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/goals', goalsRoutes);
-app.use('/api/ai', aiRoutes);
 app.use('/api/allocations', alloRoutes);
 app.use('/api/market', calculatorRoutes);
 app.use('/api/settings', settingsRoutes);
+
+// SEMENTARA KITA MATIKAN PENGGUNAAN ROUTE AI
+// app.use('/api/ai', aiRoutes);
 
 // ======================
 // SERVER EXPORT
