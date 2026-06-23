@@ -168,19 +168,35 @@
       <p class="text-slate-500 text-sm">Catat arus kas masuk (pemasukan) dan keluar (pengeluaran) Anda.</p>
     </header>
 
-    <!-- BAGIAN INI YANG DIGANTI: grid-cols-1 md:grid-cols-3 -->
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-6 mb-6 fade-up delay-2">
-      <div class="glass rounded-2xl p-4 sm:p-5 text-center metric-card">
-        <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Pemasukan</p>
-        <p id="sum-income" class="font-display text-sm sm:text-xl text-blue-400 font-semibold truncate">Rp 0</p>
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6 fade-up delay-2">
+      <div class="glass rounded-2xl p-5 sm:p-6 metric-card flex flex-col justify-center">
+        <div class="flex items-start justify-between mb-2">
+          <p class="text-xs text-slate-500 font-semibold uppercase tracking-widest">Pemasukan</p>
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-blue-500/10 text-blue-400">
+            <i class="fa-solid fa-arrow-down text-sm"></i>
+          </div>
+        </div>
+        <p id="sum-income" class="font-display text-2xl sm:text-3xl text-blue-400 font-bold truncate">Rp 0</p>
       </div>
-      <div class="glass rounded-2xl p-4 sm:p-5 text-center metric-card">
-        <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Pengeluaran</p>
-        <p id="sum-expense" class="font-display text-sm sm:text-xl text-rose-400 font-semibold truncate">Rp 0</p>
+
+      <div class="glass rounded-2xl p-5 sm:p-6 metric-card flex flex-col justify-center">
+        <div class="flex items-start justify-between mb-2">
+          <p class="text-xs text-slate-500 font-semibold uppercase tracking-widest">Pengeluaran</p>
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-rose-500/10 text-rose-400">
+            <i class="fa-solid fa-arrow-up text-sm"></i>
+          </div>
+        </div>
+        <p id="sum-expense" class="font-display text-2xl sm:text-3xl text-rose-400 font-bold truncate">Rp 0</p>
       </div>
-      <div class="glass rounded-2xl p-4 sm:p-5 text-center metric-card" style="border-color: rgba(99,102,241,0.2);">
-        <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Total</p>
-        <p id="sum-total" class="font-display text-sm sm:text-xl text-slate-100 font-semibold truncate">Rp 0</p>
+
+      <div class="glass rounded-2xl p-5 sm:p-6 metric-card flex flex-col justify-center" style="border-color: rgba(99,102,241,0.2);">
+        <div class="flex items-start justify-between mb-2">
+          <p class="text-xs text-slate-500 font-semibold uppercase tracking-widest">Total</p>
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-indigo-500/10 text-indigo-400">
+            <i class="fa-solid fa-scale-balanced text-sm"></i>
+          </div>
+        </div>
+        <p id="sum-total" class="font-display text-2xl sm:text-3xl text-slate-100 font-bold truncate">Rp 0</p>
       </div>
     </section>
 
@@ -510,7 +526,9 @@
     document.getElementById('sum-income').innerText = formatRupiahClean(totalIncome);
     document.getElementById('sum-expense').innerText = formatRupiahClean(totalExpense);
     document.getElementById('sum-total').innerText = formatRupiahClean(totalDiff);
-    document.getElementById('sum-total').className = `font-display text-base sm:text-xl font-semibold truncate ${totalDiff < 0 ? 'text-rose-400' : 'text-slate-100'}`;
+    
+    // BAGIAN YANG DIREVISI: Memastikan ukuran teks total tetap konsisten saat data ter-render
+    document.getElementById('sum-total').className = `font-display text-2xl sm:text-3xl font-bold truncate ${totalDiff < 0 ? 'text-rose-400' : 'text-slate-100'}`;
 
     const sortedDates = Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a));
     listContainer.innerHTML = '';
