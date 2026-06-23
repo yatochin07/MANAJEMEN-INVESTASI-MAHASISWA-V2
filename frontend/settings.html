@@ -86,6 +86,7 @@
 
   <script>
     // Cek memori browser, apakah user sedang pakai Light Mode?
+    // Ini berjalan pertama kali saat body dimuat untuk menghindari kedipan (FOUC)
     if(localStorage.getItem('theme') === 'light') {
       document.body.classList.add('light-mode');
     }
@@ -324,10 +325,15 @@
       }
     }
 
-    // Inisialisasi Tema
-    if(localStorage.getItem('theme') === 'light') {
-      toggleTheme();
-    }
+    // Inisialisasi Ikon Tema (Hanya mengubah ikon, tidak memanggil ulang fungsi toggle)
+    document.addEventListener("DOMContentLoaded", function() {
+      const icon = document.getElementById('theme-icon');
+      if(localStorage.getItem('theme') === 'light') {
+        icon.className = "fa-solid fa-sun text-amber-500 text-lg";
+      } else {
+        icon.className = "fa-solid fa-moon text-lg";
+      }
+    });
 
     // ==========================================
     // INISIALISASI SUPABASE CLIENT 
