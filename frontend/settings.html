@@ -84,6 +84,13 @@
 
 <body class="relative">
 
+  <script>
+    // Cek memori browser, apakah user sedang pakai Light Mode?
+    if(localStorage.getItem('theme') === 'light') {
+      document.body.classList.add('light-mode');
+    }
+  </script>
+
   <div class="mesh-bg" aria-hidden="true"></div>
 
   <div class="relative z-10 flex min-h-screen">
@@ -151,7 +158,6 @@
           <p class="text-slate-500 text-sm mt-0.5">Kelola informasi pribadi, keamanan, dan preferensi Anda.</p>
         </div>
         
-        <!-- Toggle Mode Gelap / Terang -->
         <button onclick="toggleTheme()" class="w-11 h-11 rounded-xl glass flex items-center justify-center text-slate-400 hover:text-amber-400 transition-colors shadow-sm flex-shrink-0" title="Ubah Mode Tampilan">
           <i id="theme-icon" class="fa-solid fa-moon text-lg"></i>
         </button>
@@ -159,7 +165,6 @@
 
       <div class="max-w-4xl space-y-6">
 
-        <!-- SECTION: PROFIL PENGGUNA -->
         <section class="glass rounded-2xl p-4 sm:p-6 md:p-8 fade-up delay-1">
           <h2 class="text-base sm:text-lg font-display text-slate-200 mb-6 flex items-center gap-2 border-b border-white/5 pb-4">
             <i class="fa-regular fa-id-badge text-indigo-400"></i> Profil Pengguna
@@ -168,7 +173,6 @@
           <form id="profile-form" onsubmit="saveProfile(event)">
             <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mb-8">
 
-              <!-- FOTO PROFIL UPLOAD -->
               <div class="relative group cursor-pointer flex-shrink-0">
                 <label for="avatar-upload" class="cursor-pointer block relative">
                   <div id="settings-avatar-container" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center text-2xl sm:text-3xl font-bold text-white shadow-lg overflow-hidden transition-transform group-hover:scale-105" style="background: linear-gradient(135deg,#7c3aed,#6366f1);">
@@ -189,7 +193,6 @@
               </div>
             </div>
 
-            <!-- HILANGKAN INPUT UNIVERSITAS & NIM -->
             <div class="grid grid-cols-1 gap-4 sm:gap-5">
               <div>
                 <label class="block text-xs font-medium text-slate-400 mb-1.5">Nama Lengkap / Username</label>
@@ -205,7 +208,6 @@
           </form>
         </section>
 
-        <!-- SECTION: KREDENSIAL AKUN (UBAH EMAIL & PASSWORD) -->
         <section class="glass rounded-2xl p-4 sm:p-6 md:p-8 fade-up delay-2">
           <h2 class="text-base sm:text-lg font-display text-slate-200 mb-6 flex items-center gap-2 border-b border-white/5 pb-4">
             <i class="fa-solid fa-shield-halved text-amber-400"></i> Kredensial & Keamanan
@@ -213,7 +215,6 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             
-            <!-- Ubah Email -->
             <form onsubmit="handleEmailChange(event)" class="bg-slate-800/30 p-5 rounded-2xl border border-slate-700/50">
               <h3 class="text-sm font-semibold text-slate-200 mb-2">Ubah Alamat Email</h3>
               <p class="text-xs text-slate-500 mb-4">Email saat ini: <span id="current-email-display" class="text-indigo-400 font-medium tracking-wide">Memuat...</span></p>
@@ -226,7 +227,6 @@
               </div>
             </form>
 
-            <!-- Ubah Password -->
             <form onsubmit="handlePasswordChange(event)" class="bg-slate-800/30 p-5 rounded-2xl border border-slate-700/50">
               <h3 class="text-sm font-semibold text-slate-200 mb-2">Atur / Ubah Password</h3>
               <p class="text-xs text-slate-500 mb-4">
@@ -244,7 +244,6 @@
           </div>
         </section>
 
-        <!-- SECTION: PREFERENSI INVESTASI (DUMMY UI) -->
         <section class="glass rounded-2xl p-4 sm:p-6 md:p-8 fade-up delay-3">
           <h2 class="text-base sm:text-lg font-display text-slate-200 mb-6 flex items-center gap-2 border-b border-white/5 pb-4">
             <i class="fa-solid fa-sliders text-emerald-400"></i> Preferensi Investasi (Simulasi)
@@ -350,7 +349,9 @@
         }
 
         const user = session.user;
-        const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
+        
+        // PENTING: Panggil custom_full_name dulu untuk mem-bypass overwrite nama dari Google
+        const displayName = user.user_metadata?.custom_full_name || user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
         
         // PENTING: Panggil custom_avatar_url dulu (anti-overwrite google)
         const avatarUrl = user.user_metadata?.custom_avatar_url || user.user_metadata?.avatar_url; 
@@ -439,7 +440,7 @@
     }
 
     // ==========================================
-    // FUNGSI SIMPAN PROFIL USERNAME
+    // FUNGSI SIMPAN PROFIL USERNAME (ANTI-OVERWRITE GOOGLE)
     // ==========================================
     async function saveProfile(e) {
       e.preventDefault();
@@ -452,8 +453,9 @@
         const newName = document.getElementById('setting-name').value.trim();
         if (!newName) { alert('Nama tidak boleh kosong!'); return; }
 
+        // SIMPAN KE "custom_full_name" AGAR TIDAK DITIMPA OLEH GOOGLE NANTINYA
         const { error } = await supabaseClient.auth.updateUser({
-          data: { full_name: newName }
+          data: { custom_full_name: newName, full_name: newName }
         });
 
         if (error) throw error;
