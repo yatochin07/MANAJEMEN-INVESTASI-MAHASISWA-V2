@@ -90,6 +90,7 @@
     .terms-content ul { list-style-type: disc; padding-left: 1.5rem; color: #94a3b8; font-size: 0.95rem; line-height: 1.7; margin-bottom: 1.5rem; transition: color 0.3s ease; }
     .terms-content li { margin-bottom: 0.5rem; }
     .terms-content strong { color: #e2e8f0; font-weight: 600; transition: color 0.3s ease; }
+    .terms-content a { transition: color 0.3s ease; }
 
     /* ==========================================
        LIGHT MODE STYLES
@@ -98,6 +99,12 @@
     body.light-mode .text-slate-100, body.light-mode .text-slate-200 { color: #1e293b; }
     body.light-mode .text-slate-300 { color: #334155; }
     body.light-mode .text-slate-400, body.light-mode .text-slate-500 { color: #475569; }
+    body.light-mode .text-slate-600 { color: #64748b; }
+    
+    /* Penyesuaian Warna Khusus Aksen */
+    body.light-mode .text-indigo-400 { color: #4f46e5; }
+    body.light-mode .terms-content a { color: #4f46e5; }
+    body.light-mode .terms-content a:hover { color: #4338ca; }
     
     /* Glass Navbar & Card */
     body.light-mode .glass-nav { background: rgba(255, 255, 255, 0.85); border-bottom: 1px solid rgba(0,0,0,0.08); }
@@ -122,9 +129,10 @@
 <body class="relative">
 
   <script>
-    // Cek memori browser secara pasif saat halaman dimuat
+    // Cek memori browser secara pasif saat halaman dimuat (Tanpa Tombol Toggle)
     if(localStorage.getItem('theme') === 'light') {
       document.body.classList.add('light-mode');
+      document.documentElement.classList.remove('dark');
     }
   </script>
 
@@ -154,10 +162,10 @@
 
     <!-- Header Section -->
     <header class="mb-10 fade-up">
-      <h1 class="font-display text-3xl sm:text-4xl font-bold text-slate-100 mb-4">
+      <h1 class="font-display text-3xl sm:text-4xl font-bold text-slate-100 mb-4 transition-colors duration-300">
         Syarat & Ketentuan
       </h1>
-      <p class="text-indigo-400 text-sm font-medium">Terakhir Diperbarui: 22 Juni 2026</p>
+      <p class="text-indigo-400 text-sm font-medium transition-colors duration-300">Terakhir Diperbarui: 22 Juni 2026</p>
     </header>
 
     <!-- Terms Content -->
@@ -225,8 +233,8 @@
         Jika Anda memiliki pertanyaan, saran, atau masukan terkait Syarat & Ketentuan ini, jangan ragu untuk menghubungi pengembang melalui:
       </p>
       <ul>
-        <li><strong>Email:</strong> <a href="mailto:eduvesting67@gmail.com" class="text-indigo-400 hover:text-indigo-300">eduvesting67@gmail.com</a></li>
-        <li><strong>Instagram:</strong> <a href="https://instagram.com/yattchn7" target="_blank" class="text-indigo-400 hover:text-indigo-300">@yattchn7</a></li>
+        <li><strong>Email:</strong> <a href="mailto:eduvesting67@gmail.com" class="text-indigo-400">eduvesting67@gmail.com</a></li>
+        <li><strong>Instagram:</strong> <a href="https://instagram.com/yattchn7" target="_blank" class="text-indigo-400">@yattchn7</a></li>
       </ul>
 
     </section>
@@ -234,12 +242,12 @@
   </main>
 
   <!-- Footer -->
-  <footer class="relative z-10 w-full border-t border-white/5 bg-[#0a0d16]/80 backdrop-blur-md pt-8 pb-8 mt-10 text-center">
+  <footer class="relative z-10 w-full border-t border-white/5 bg-[#0a0d16]/80 backdrop-blur-md pt-8 pb-8 mt-10 text-center transition-colors duration-300">
     <div class="max-w-6xl mx-auto px-6">
-      <p class="text-xs text-slate-500 mb-2">
+      <p class="text-xs text-slate-500 mb-2 transition-colors duration-300">
         &copy; 2026 EduVesting Project. Hak Cipta Dilindungi.
       </p>
-      <p class="text-[10px] text-slate-600 max-w-2xl mx-auto">
+      <p class="text-[10px] text-slate-600 max-w-2xl mx-auto transition-colors duration-300">
         <strong>Disclaimer:</strong> EduVesting adalah proyek simulasi untuk tujuan edukasi yang dirancang oleh mahasiswa. Semua aset, kas, dan nilai portofolio bersifat fiktif.
       </p>
     </div>
