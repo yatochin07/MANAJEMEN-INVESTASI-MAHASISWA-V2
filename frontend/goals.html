@@ -109,6 +109,7 @@
 
   <script>
     // Cek memori browser, apakah user sedang pakai Light Mode?
+    // Jika di menu settings diatur menjadi light, halaman ini akan otomatis mengikuti.
     if(localStorage.getItem('theme') === 'light') {
       document.body.classList.add('light-mode');
     }
@@ -470,7 +471,9 @@
 
         // Update sidebar menggunakan nama & avatar dari Supabase
         const user = session.user;
-        const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
+        
+        // PENTING: Panggil custom_full_name sebagai prioritas utama
+        const displayName = user.user_metadata?.custom_full_name || user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
         
         // Panggil custom_avatar_url untuk sinkronisasi avatar
         const avatarUrl = user.user_metadata?.custom_avatar_url || user.user_metadata?.avatar_url;
