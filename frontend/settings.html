@@ -11,6 +11,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
@@ -59,6 +61,9 @@
     .form-input:disabled { opacity: 0.6; cursor: not-allowed; }
     select option { background-color: #0f1423; color: #e2e8f0; padding: 12px; }
 
+    /* SweetAlert2 Overrides biar nyesuain UI modern */
+    div:where(.swal2-container) div:where(.swal2-popup) { font-family: 'Inter', sans-serif !important; }
+
     /* ==========================================
        LIGHT MODE STYLES
        ========================================== */
@@ -89,6 +94,50 @@
     // Ini berjalan pertama kali saat body dimuat untuk menghindari kedipan (FOUC)
     if(localStorage.getItem('theme') === 'light') {
       document.body.classList.add('light-mode');
+    }
+
+    // ==========================================
+    // CUSTOM ALERT DENGAN SWEETALERT2
+    // ==========================================
+    function showCustomAlert(type, title, text) {
+      const isLight = document.body.classList.contains('light-mode');
+      Swal.fire({
+        icon: type,
+        title: title,
+        text: text,
+        confirmButtonText: 'Oke, Paham!',
+        confirmButtonColor: '#6366f1',
+        background: isLight ? '#ffffff' : '#1e293b',
+        color: isLight ? '#0f1423' : '#e2e8f0',
+        customClass: {
+          popup: 'rounded-2xl border ' + (isLight ? 'border-slate-200 shadow-xl' : 'border-white/10 shadow-2xl'),
+          title: 'font-display font-bold',
+          confirmButton: 'rounded-xl text-sm font-semibold px-6 py-2.5'
+        }
+      });
+    }
+
+    // Khusus untuk Toast (Notif kecil di pojok yang hilang otomatis)
+    function showToast(icon, title) {
+      const isLight = document.body.classList.contains('light-mode');
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        background: isLight ? '#ffffff' : '#1e293b',
+        color: isLight ? '#0f1423' : '#e2e8f0',
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      });
+
+      Toast.fire({
+        icon: icon,
+        title: title
+      });
     }
   </script>
 
@@ -158,7 +207,7 @@
           <h1 class="font-display text-2xl sm:text-3xl text-slate-100 font-semibold mb-1">Pengaturan Akun</h1>
           <p class="text-slate-500 text-sm mt-0.5">Kelola informasi pribadi, keamanan, dan preferensi Anda.</p>
         </div>
-        
+
         <button onclick="toggleTheme()" class="w-11 h-11 rounded-xl glass flex items-center justify-center text-slate-400 hover:text-amber-400 transition-colors shadow-sm flex-shrink-0" title="Ubah Mode Tampilan">
           <i id="theme-icon" class="fa-solid fa-moon text-lg"></i>
         </button>
@@ -215,11 +264,11 @@
           </h2>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-            
+
             <form onsubmit="handleEmailChange(event)" class="bg-slate-800/30 p-5 rounded-2xl border border-slate-700/50">
               <h3 class="text-sm font-semibold text-slate-200 mb-2">Ubah Alamat Email</h3>
               <p class="text-xs text-slate-500 mb-4">Email saat ini: <span id="current-email-display" class="text-indigo-400 font-medium tracking-wide">Memuat...</span></p>
-              
+
               <div class="space-y-3">
                 <input type="email" id="new-email" placeholder="Masukkan email baru" class="form-input w-full rounded-xl px-4 py-2.5 text-sm bg-[#0f1423]" required>
                 <button type="submit" id="btn-change-email" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors">
@@ -233,7 +282,7 @@
               <p class="text-xs text-slate-500 mb-4">
                 Jika Anda daftar via Google, mengatur password di sini memungkinkan Anda untuk login secara manual. (Batas Ubah: 3x Sehari).
               </p>
-              
+
               <div class="space-y-3">
                 <input type="password" id="new-password" placeholder="Password baru (Min. 8 karakter)" class="form-input w-full rounded-xl px-4 py-2.5 text-sm bg-[#0f1423]" required minlength="8">
                 <button type="submit" id="btn-change-password" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors">
@@ -313,9 +362,9 @@
     function toggleTheme() {
       const body = document.body;
       const icon = document.getElementById('theme-icon');
-      
+
       body.classList.toggle('light-mode');
-      
+
       if(body.classList.contains('light-mode')) {
         icon.className = "fa-solid fa-sun text-amber-500 text-lg";
         localStorage.setItem('theme', 'light');
@@ -355,10 +404,10 @@
         }
 
         const user = session.user;
-        
+
         // PENTING: Panggil custom_full_name dulu untuk mem-bypass overwrite nama dari Google
         const displayName = user.user_metadata?.custom_full_name || user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
-        
+
         // PENTING: Panggil custom_avatar_url dulu (anti-overwrite google)
         const avatarUrl = user.user_metadata?.custom_avatar_url || user.user_metadata?.avatar_url; 
 
@@ -457,7 +506,10 @@
 
       try {
         const newName = document.getElementById('setting-name').value.trim();
-        if (!newName) { alert('Nama tidak boleh kosong!'); return; }
+        if (!newName) { 
+          showCustomAlert('warning', 'Tunggu Dulu!', 'Nama tidak boleh kosong ya. Coba diisi dulu.');
+          return; 
+        }
 
         // SIMPAN KE "custom_full_name" AGAR TIDAK DITIMPA OLEH GOOGLE NANTINYA
         const { error } = await supabaseClient.auth.updateUser({
@@ -465,15 +517,15 @@
         });
 
         if (error) throw error;
-        
+
         document.getElementById('sidebar-user-name').innerText = newName;
         const settingsText = document.getElementById('settings-avatar-text');
         if(!settingsText.classList.contains('hidden')) {
            updateAvatarUI(null, newName.charAt(0).toUpperCase());
         }
-        alert('Profil berhasil diperbarui!');
+        showToast('success', 'Profil berhasil diperbarui!');
       } catch (error) {
-        alert('Gagal menyimpan profil. Silakan coba lagi.');
+        showCustomAlert('error', 'Gagal Simpan', 'Wah, profilnya gagal disimpan nih. Silakan coba lagi ya.');
       } finally {
         btn.innerText = originalText;
         btn.disabled = false;
@@ -487,20 +539,40 @@
       e.preventDefault();
       const newEmail = document.getElementById('new-email').value.trim();
       const btn = document.getElementById('btn-change-email');
-      
-      if(!confirm(`Anda yakin ingin mengubah email ke: ${newEmail}? Pastikan email tersebut aktif!`)) return;
+
+      const isLight = document.body.classList.contains('light-mode');
+      const confirmResult = await Swal.fire({
+        title: 'Ubah Email?',
+        text: `Yakin mau ubah email ke: ${newEmail}? Pastiin emailnya aktif ya!`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#6366f1',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: 'Ya, Ubah Email',
+        cancelButtonText: 'Batal',
+        background: isLight ? '#ffffff' : '#1e293b',
+        color: isLight ? '#0f1423' : '#e2e8f0',
+        customClass: {
+          popup: 'rounded-2xl border ' + (isLight ? 'border-slate-200 shadow-xl' : 'border-white/10 shadow-2xl'),
+          title: 'font-display font-bold',
+          confirmButton: 'rounded-xl text-sm font-semibold px-5 py-2.5',
+          cancelButton: 'rounded-xl text-sm font-semibold px-5 py-2.5'
+        }
+      });
+
+      if(!confirmResult.isConfirmed) return;
 
       btn.innerText = "Mengirim..."; btn.disabled = true;
-      
+
       const { data, error } = await supabaseClient.auth.updateUser({ email: newEmail });
-      
+
       if(error) {
-        alert("Gagal mengubah email: " + error.message);
+        showCustomAlert('error', 'Gagal Ubah Email', 'Waduh, gagal ngubah email nih: ' + error.message);
       } else {
-        alert("BERHASIL: Link konfirmasi telah dikirim ke email lama dan email baru Anda. Buka email Anda untuk menyetujui perubahan.");
+        showCustomAlert('success', 'Cek Kotak Masuk!', 'Link konfirmasi udah dikirim ke email lama dan email baru kamu. Jangan lupa dicek ya!');
         document.getElementById('new-email').value = "";
       }
-      
+
       btn.innerText = "Ubah Email Saya"; btn.disabled = false;
     }
 
@@ -527,24 +599,44 @@
 
       let limitData = checkPasswordLimit();
       if(limitData.count >= 3) {
-        alert("PERHATIAN: Anda telah mencapai batas maksimal penggantian password (3 kali) untuk hari ini. Silakan coba lagi besok.");
+        showCustomAlert('warning', 'Batas Maksimal Tercapai', 'Kamu udah nyampe batas maksimal ganti password (3x) buat hari ini. Besok coba lagi ya!');
         return;
       }
-      
-      if(!confirm("Anda yakin ingin mengganti password akun Anda? (Bagi pengguna Google Login, ini akan mengaktifkan opsi login manual menggunakan Email dan Password ini).")) return;
+
+      const isLight = document.body.classList.contains('light-mode');
+      const confirmResult = await Swal.fire({
+        title: 'Ganti Password?',
+        text: "Yakin mau ganti password? Kalau daftar via Google, ini bakal ngaktifin login manual pakai Email & Password lho.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#6366f1',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: 'Ya, Ganti Password',
+        cancelButtonText: 'Batal',
+        background: isLight ? '#ffffff' : '#1e293b',
+        color: isLight ? '#0f1423' : '#e2e8f0',
+        customClass: {
+          popup: 'rounded-2xl border ' + (isLight ? 'border-slate-200 shadow-xl' : 'border-white/10 shadow-2xl'),
+          title: 'font-display font-bold',
+          confirmButton: 'rounded-xl text-sm font-semibold px-5 py-2.5',
+          cancelButton: 'rounded-xl text-sm font-semibold px-5 py-2.5'
+        }
+      });
+
+      if(!confirmResult.isConfirmed) return;
 
       btn.innerText = "Menyimpan..."; btn.disabled = true;
 
       const { data, error } = await supabaseClient.auth.updateUser({ password: newPwd });
-      
+
       if(error) {
-        alert("Gagal mengubah password: " + error.message);
+        showCustomAlert('error', 'Gagal Ganti Password', 'Waduh, passwordnya gagal diganti nih: ' + error.message);
       } else {
         incrementPasswordLimit();
-        alert("Password berhasil diubah! Jika Anda menggunakan login Google, kini Anda juga bisa login secara manual menggunakan email dan password ini.");
+        showCustomAlert('success', 'Password Diperbarui!', 'Sip, password berhasil diubah! Sekarang kamu juga bisa login manual pakai password ini.');
         document.getElementById('new-password').value = "";
       }
-      
+
       btn.innerText = "Simpan Password Baru"; btn.disabled = false;
     }
   </script>
