@@ -1,6 +1,6 @@
 // ========================================================
 // AI CHAT CONTROLLER (GEMINI PURE FETCH API)
-// 100% Murni Fetch, Bebas SDK Bug, dan Gratis Selamanya! Cihuyy
+// 100% Murni Fetch, Bebas SDK Bug, dan Gratis Selamanya! 
 // ========================================================
 
 const chatWithAI = async (req, res) => {
