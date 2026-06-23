@@ -78,7 +78,6 @@
 
 <body class="relative">
 <script>
-  // Script untuk mengecek dan menerapkan tema sesegera mungkin agar tidak berkedip
   if(localStorage.getItem('theme') === 'light') {
     document.body.classList.add('light-mode');
   }
@@ -397,7 +396,6 @@
       const user = session.user;
       currentUserId = user.id; 
 
-      // PENTING: Prioritaskan custom_full_name agar anti-overwrite google
       const displayName = user.user_metadata?.custom_full_name || user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
       const avatarUrl = user.user_metadata?.custom_avatar_url || user.user_metadata?.avatar_url; 
 
@@ -615,36 +613,39 @@
     const divEl = document.getElementById('ai-diversification');
     const scoreEl = document.getElementById('ai-score');
 
-    const savedScoreRaw = localStorage.getItem('eduvesting_ai_score');
-
     if (!m.assets.length) {
       riskEl.innerText = '—'; riskEl.className = 'text-slate-600 font-display text-base sm:text-lg';
       divEl.innerText = '—'; divEl.className = 'text-slate-600 font-display text-base sm:text-lg';
       scoreEl.innerText = '—'; scoreEl.className = 'text-slate-600 font-display text-base sm:text-lg';
-    } 
-    else if (savedScoreRaw) {
-      const parsed = JSON.parse(savedScoreRaw);
+    } else {
+      supabaseClient.auth.getSession().then(({ data: { session } }) => {
+        if (session && session.user) {
+          supabaseClient.from('ai_scores').select('*').eq('user_id', session.user.id).single()
+            .then(({ data, error }) => {
+              if (data) {
+                riskEl.innerText = data.risk;
+                if(data.risk.toLowerCase().includes('tinggi')) riskEl.className = 'font-display text-base sm:text-lg text-rose-400';
+                else if(data.risk.toLowerCase().includes('sedang')) riskEl.className = 'font-display text-base sm:text-lg text-amber-400';
+                else riskEl.className = 'font-display text-base sm:text-lg text-emerald-400';
 
-      riskEl.innerText = parsed.risk;
-      if(parsed.risk.toLowerCase().includes('tinggi')) riskEl.className = 'font-display text-base sm:text-lg text-rose-400';
-      else if(parsed.risk.toLowerCase().includes('sedang')) riskEl.className = 'font-display text-base sm:text-lg text-amber-400';
-      else riskEl.className = 'font-display text-base sm:text-lg text-emerald-400';
+                divEl.innerText = data.diversification;
+                if(data.diversification.toLowerCase().includes('kurang')) divEl.className = 'font-display text-base sm:text-lg text-rose-400';
+                else if(data.diversification.toLowerCase().includes('sedang')) divEl.className = 'font-display text-base sm:text-lg text-amber-400';
+                else divEl.className = 'font-display text-base sm:text-lg text-emerald-400';
 
-      divEl.innerText = parsed.div;
-      if(parsed.div.toLowerCase().includes('kurang')) divEl.className = 'font-display text-base sm:text-lg text-rose-400';
-      else if(parsed.div.toLowerCase().includes('sedang')) divEl.className = 'font-display text-base sm:text-lg text-amber-400';
-      else divEl.className = 'font-display text-base sm:text-lg text-emerald-400';
-
-      scoreEl.innerText = parsed.score + '/10';
-      if(parsed.score >= 8) scoreEl.className = 'font-display text-base sm:text-lg text-emerald-400';
-      else if(parsed.score >= 5) scoreEl.className = 'font-display text-base sm:text-lg text-cyan-400';
-      else scoreEl.className = 'font-display text-base sm:text-lg text-rose-400';
-    } 
-    else {
-      riskEl.innerText = '—'; riskEl.className = 'text-slate-600 font-display text-base sm:text-lg mt-1';
-      divEl.innerText = '—'; divEl.className = 'text-slate-600 font-display text-base sm:text-lg mt-1';
-      scoreEl.innerHTML = '<a href="insights.html" class="text-[11px] font-bold text-violet-400 hover:text-violet-300 uppercase tracking-wide"><i class="fa-solid fa-bolt mr-1"></i> Analisis AI</a>';
-      scoreEl.className = 'mt-1';
+                scoreEl.innerText = data.score + '/10';
+                if(data.score >= 8) scoreEl.className = 'font-display text-base sm:text-lg text-emerald-400';
+                else if(data.score >= 5) scoreEl.className = 'font-display text-base sm:text-lg text-cyan-400';
+                else scoreEl.className = 'font-display text-base sm:text-lg text-rose-400';
+              } else {
+                riskEl.innerText = '—'; riskEl.className = 'text-slate-600 font-display text-base sm:text-lg mt-1';
+                divEl.innerText = '—'; divEl.className = 'text-slate-600 font-display text-base sm:text-lg mt-1';
+                scoreEl.innerHTML = '<a href="insights.html" class="text-[11px] font-bold text-violet-400 hover:text-violet-300 uppercase tracking-wide"><i class="fa-solid fa-bolt mr-1"></i> Analisis AI</a>';
+                scoreEl.className = 'mt-1';
+              }
+            });
+        }
+      });
     }
 
     const tips = document.getElementById('ai-tips'); 
