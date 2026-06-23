@@ -70,11 +70,18 @@ const EduVesting = (() => {
     } catch (e) { return { cash: 0 }; }
   }
 
+  // FIX PENTING: Gunakan upsert agar saldo kas Google OAuth bisa tersimpan
   async function saveSettings(settings) {
     const userId = await _getUserId();
     if (!userId) throw new Error("Belum login");
-    // Gunakan upsert agar user baru OAuth tetap bisa menyimpan kas
-    const { error } = await window.supabaseClient.from('users').upsert({ id: userId, cash: Number(settings.cash) || 0 }, { onConflict: 'id' });
+    
+    const { error } = await window.supabaseClient.from('users').upsert({ 
+      id: userId, 
+      cash: Number(settings.cash) || 0 
+    }, { 
+      onConflict: 'id' 
+    });
+    
     if (error) throw error;
   }
 
@@ -112,6 +119,8 @@ const EduVesting = (() => {
       if (!res.ok) throw new Error('CoinGecko Gold HTTP ' + res.status);
       const data = await res.json();
       const paxgIdr = data['pax-gold'].idr;
+
+      // Konversi 1 Troy Ounce ke 1 Gram
       return paxgIdr / 31.1034768;
     } catch (e) {
       console.error('Gagal tarik harga emas via proxy CoinGecko:', e);
@@ -125,9 +134,11 @@ const EduVesting = (() => {
       const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
       const baseUrl = isLocal ? 'http://localhost:5000' : ''; 
       const url = `${baseUrl}/api/price/saham/${safeTicker}`;
+
       const res = await fetch(url);
 
       if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
+
       const data = await res.json();
       return data.price;
     } catch (error) { 
