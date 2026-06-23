@@ -77,8 +77,8 @@
     .glass-card:hover { border-color: rgba(99,102,241,0.25); box-shadow: 0 10px 40px -10px rgba(99,102,241,0.15); }
     
     .logo-text { background: linear-gradient(90deg, #f8fafc, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; transition: all 0.3s ease; }
-    .highlight-text { background: linear-gradient(90deg,#a5b4fc,#67e8f9); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-    
+    .highlight-text { background: linear-gradient(90deg,#a5b4fc,#67e8f9); -webkit-background-clip:text; -webkit-text-fill-color:transparent; transition: all 0.3s ease; }
+
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius: 10px; }
@@ -97,18 +97,18 @@
     body.light-mode .text-slate-100, body.light-mode .text-slate-200 { color: #1e293b; }
     body.light-mode .text-slate-400, body.light-mode .text-slate-500 { color: #475569; }
     body.light-mode .text-slate-300 { color: #334155; }
-    
+
     body.light-mode .glass-nav { background: rgba(255, 255, 255, 0.85); border-bottom: 1px solid rgba(0,0,0,0.08); }
     body.light-mode .glass-card { background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
     body.light-mode .glass-card:hover { border-color: rgba(99,102,241,0.3); box-shadow: 0 10px 30px -10px rgba(99,102,241,0.15); }
-    
+
     body.light-mode .logo-text { background: linear-gradient(90deg, #1e293b, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     body.light-mode .highlight-text { background: linear-gradient(90deg, #4f46e5, #0ea5e9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    
+
     /* Tombol Kembali di Navigasi */
     body.light-mode .bg-white\/5 { background-color: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.1); color: #475569; }
     body.light-mode .hover\:bg-white\/10:hover { background-color: rgba(0,0,0,0.1); color: #1e293b; }
-    
+
     /* Footer */
     body.light-mode footer { background: rgba(248, 250, 252, 0.9); border-top: 1px solid #e2e8f0; }
   </style>
@@ -117,17 +117,20 @@
 
   <script>
     // Cek memori browser: Jika di login/setting diatur menjadi light,
-    // halaman ini akan otomatis menyesuaikan diri (pasif).
+    // halaman ini akan otomatis menyesuaikan diri (pasif) tanpa tombol toggle.
     if(localStorage.getItem('theme') === 'light') {
       document.body.classList.add('light-mode');
+      document.documentElement.classList.remove('dark');
     }
   </script>
 
+  <!-- Background Elements -->
   <div class="orb orb-1" aria-hidden="true"></div>
   <div class="orb orb-2" aria-hidden="true"></div>
   <div class="mesh-layer" aria-hidden="true"></div>
   <div class="dot-grid" aria-hidden="true"></div>
 
+  <!-- Navbar -->
   <nav class="glass-nav sticky top-0 z-50 w-full px-6 py-4">
     <div class="max-w-6xl mx-auto flex items-center justify-between">
       <a href="login.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
@@ -142,8 +145,10 @@
     </div>
   </nav>
 
+  <!-- Main Content -->
   <main class="relative z-10 max-w-4xl mx-auto px-6 py-16 sm:py-24">
     
+    <!-- Header Section -->
     <header class="text-center mb-16 fade-up">
       <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold uppercase tracking-widest mb-6">
         <i class="fa-solid fa-circle-info"></i> Informasi Proyek
@@ -156,6 +161,7 @@
       </h1>
     </header>
 
+    <!-- Section: Pengantar -->
     <section class="glass-card p-6 sm:p-10 mb-8 fade-up delay-1">
       <div class="flex items-center gap-4 mb-4">
         <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:rgba(99,102,241,0.15); color:#a5b4fc; font-size:1.25rem;">
@@ -173,6 +179,7 @@
       </div>
     </section>
 
+    <!-- Section: Latar Belakang & Problem -->
     <section class="glass-card p-6 sm:p-10 mb-8 fade-up delay-2">
       <div class="flex items-center gap-4 mb-4">
         <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:rgba(244,63,94,0.15); color:#fda4af; font-size:1.25rem;">
@@ -194,7 +201,9 @@
       </div>
     </section>
 
+    <!-- Section: Visi & Misi (Grid Layout) -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 fade-up delay-3">
+      <!-- Visi -->
       <section class="glass-card p-6 sm:p-8 flex flex-col">
         <div class="flex items-center gap-3 mb-4">
           <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(16,185,129,0.15); color:#6ee7b7; font-size:1.1rem;">
@@ -207,6 +216,7 @@
         </p>
       </section>
 
+      <!-- Misi -->
       <section class="glass-card p-6 sm:p-8 flex flex-col">
         <div class="flex items-center gap-3 mb-4">
           <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(6,182,212,0.15); color:#67e8f9; font-size:1.1rem;">
@@ -222,7 +232,9 @@
       </section>
     </div>
 
+    <!-- Section: Tujuan & Target (Grid Layout) -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 fade-up delay-4">
+      <!-- Tujuan -->
       <section class="glass-card p-6 sm:p-8 border-t-4" style="border-top-color: #6366f1;">
         <h2 class="font-display text-lg font-semibold text-slate-200 mb-3">Tujuan Proyek</h2>
         <p class="text-slate-400 text-sm leading-relaxed">
@@ -230,6 +242,7 @@
         </p>
       </section>
 
+      <!-- Target Pengguna -->
       <section class="glass-card p-6 sm:p-8 border-t-4" style="border-top-color: #f59e0b;">
         <h2 class="font-display text-lg font-semibold text-slate-200 mb-3">Target Pengguna</h2>
         <p class="text-slate-400 text-sm leading-relaxed">
@@ -240,7 +253,8 @@
 
   </main>
 
-  <footer class="relative z-10 w-full border-t border-white/5 bg-[#0a0d16]/80 backdrop-blur-md pt-8 pb-8 mt-10 text-center">
+  <!-- Footer -->
+  <footer class="relative z-10 w-full border-t border-white/5 bg-[#0a0d16]/80 backdrop-blur-md pt-8 pb-8 mt-10 text-center transition-colors duration-300">
     <div class="max-w-6xl mx-auto px-6">
       <p class="text-xs text-slate-500 mb-2">
         &copy; 2026 EduVesting Project. Hak Cipta Dilindungi.
