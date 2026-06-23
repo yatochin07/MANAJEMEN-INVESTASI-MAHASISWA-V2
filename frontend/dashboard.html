@@ -57,14 +57,11 @@
   .metric-card { transition: transform .2s ease, box-shadow .2s ease; }
   .metric-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px -8px rgba(99,102,241,0.3); }
   .btn-primary { background: linear-gradient(135deg,#6366f1,#3b82f6); transition: opacity .2s ease, transform .15s ease, box-shadow .2s ease; }
-  .btn-primary:hover { opacity:.88; transform: translateY(-1px); box-shadow: 0 6px 20px -4px rgba(99,102,241,0.5); }
-  .btn-primary:active { transform: translateY(0); }
-  .form-input { background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); transition: border-color .2s ease, box-shadow .2s ease; }
-  .form-input:focus { outline:none; border-color: rgba(99,102,241,0.6); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
+  .form-input { background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); transition: border-color .2s ease; }
   .logo-text { background: linear-gradient(90deg,#a5b4fc,#93c5fd); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
   @keyframes fadeUp { from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
   .fade-up { animation: fadeUp .5s ease both; }
-  .delay-1{animation-delay:.07s;} .delay-2{animation-delay:.14s;} .delay-3{animation-delay:.21s;} .delay-4{animation-delay:.28s;} .delay-5{animation-delay:.35s;}
+  .delay-1{animation-delay:.07s;} .delay-2{animation-delay:.14s;} .delay-3{animation-delay:.21s;} .delay-4{animation-delay:.28s;}
   .spin { animation: spin 1s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 </style>
@@ -165,7 +162,6 @@
     </header>
 
     <section aria-labelledby="summary-heading" class="mb-8">
-      <h2 id="summary-heading" class="sr-only">Ringkasan Portofolio</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
         <div class="glass rounded-2xl p-5 metric-card fade-up delay-1" style="border-color: rgba(99,102,241,0.2);">
@@ -232,7 +228,6 @@
         <div id="alloc-stack" class="flex rounded-full overflow-hidden h-4 mb-6 gap-0.5"></div>
         <div id="alloc-legend" class="space-y-3"></div>
       </div>
-
     </section>
 
     <section aria-labelledby="ai-heading" class="mb-8 fade-up delay-3">
@@ -257,20 +252,28 @@
               </div>
             </div>
             <div class="grid grid-cols-3 gap-2 sm:gap-3 mt-5">
+              
               <div class="rounded-xl p-2 sm:p-3 text-center" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06);">
                 <p class="text-[10px] sm:text-xs text-slate-500 mb-1">Risiko</p>
-                <p id="ai-risk" class="text-amber-400 font-display text-base sm:text-lg">—</p>
-              </div>
-              <div class="rounded-xl p-2 sm:p-3 text-center" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06);">
-                <p class="text-[10px] sm:text-xs text-slate-500 mb-1">Diversifikasi</p>
-                <p id="ai-diversification" class="text-emerald-400 font-display text-base sm:text-lg">—</p>
-              </div>
-              <div class="rounded-xl p-2 sm:p-3 text-center flex flex-col items-center justify-center" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06);">
-                <p class="text-[10px] sm:text-xs text-slate-500 mb-1">Skor EduVesting AI</p>
-                <div id="ai-score-container" class="w-full flex items-center justify-center">
-                  <p id="ai-score" class="text-indigo-400 font-display text-base sm:text-lg">—</p>
+                <div id="ai-risk-container">
+                  <p id="ai-risk" class="text-slate-600 font-display text-base sm:text-lg">—</p>
                 </div>
               </div>
+              
+              <div class="rounded-xl p-2 sm:p-3 text-center" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06);">
+                <p class="text-[10px] sm:text-xs text-slate-500 mb-1">Diversifikasi</p>
+                <div id="ai-div-container">
+                  <p id="ai-diversification" class="text-slate-600 font-display text-base sm:text-lg">—</p>
+                </div>
+              </div>
+              
+              <div class="rounded-xl p-2 sm:p-3 text-center flex flex-col items-center justify-center" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06);">
+                <p class="text-[10px] sm:text-xs text-slate-500 mb-1">Skor AI (0-10)</p>
+                <div id="ai-score-container" class="w-full flex flex-col items-center justify-center">
+                  <p id="ai-score" class="text-slate-600 font-display text-base sm:text-lg">—</p>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
@@ -331,7 +334,6 @@
 
 <script src="js/api.js"></script>
 <script>
-  // UI TOGGLE SCRIPT
   function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('sidebar-overlay');
@@ -339,15 +341,11 @@
     overlay.classList.toggle('hidden');
   }
 
-  // SUPABASE CONFIG
   const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  // MENGKONEKSIKAN SUPABASE CLIENT KE GLOBAL WINDOW AGAR TERBACA OLEH API.JS
   window.supabaseClient = supabaseClient;
 
-  // AUTH GUARD
   document.addEventListener('DOMContentLoaded', async () => {
     try {
       const { data: { session }, error } = await supabaseClient.auth.getSession();
@@ -363,7 +361,6 @@
       document.getElementById('welcome-user').innerText = `Selamat Datang, ${displayName} 👋`;
       document.getElementById('sidebar-user-name').innerText = displayName;
 
-      // LOGIKA RENDER AVATAR
       const sbAvatar = document.getElementById('sidebar-user-initial');
       if (avatarUrl) {
         sbAvatar.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover rounded-full">`;
@@ -440,41 +437,33 @@
       warnEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-xs"></i> Kas kosong';
       warnEl.className = 'text-xs mt-2 text-rose-500 font-medium flex items-center gap-1';
       warnEl.classList.remove('hidden');
-
-      note.innerText = 'Kas kosong melompong, yang bener aja bos! Gawat nih kalau market lagi diskon, gak ada peluru buat serok bawah';
+      note.innerText = 'Kas kosong melompong! Gawat nih kalau market lagi diskon, gak ada peluru buat serok bawah';
       note.className = 'text-xs mt-2 text-rose-500 font-medium';
-
     } else if (m.cashPercent < 10 && m.cash < 500000) { 
       warnEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-xs"></i> Saldo kas rendah';
       warnEl.className = 'text-xs mt-2 text-rose-400 font-medium flex items-center gap-1';
       warnEl.classList.remove('hidden');
-
-      note.innerText = 'Terlalu rendah woy! Sayang banget nih kalo lagi ada momentum yang bagus di market tapi dananya kurang'; 
+      note.innerText = 'Terlalu rendah woy! Sayang banget kalo lagi ada momentum bagus di market tapi dananya kurang'; 
       note.className = 'text-xs mt-2 text-rose-400 font-medium'; 
-
     } else if (m.cashPercent <= 20) { 
       warnEl.classList.add('hidden'); 
-
       if (m.cashPercent < 10 && m.cash >= 500000) {
         note.innerText = 'Secara nominal oke sih, tapi dananya agak kecil buat serok menyerok.';
       } else {
-        note.innerText = 'Masih agak rendah. Boleh lah buat nambah porsi dikit kalau ada saham/kripto incaran yang turun'; 
+        note.innerText = 'Masih agak rendah. Boleh lah buat nambah porsi dikit kalau ada aset incaran turun'; 
       }
       note.className = 'text-xs mt-2 text-amber-400 font-medium'; 
-
     } else if (m.cashPercent <= 30) { 
       warnEl.classList.add('hidden');
-      note.innerText = 'Cukup ideal & aman! buying powermu berada di dalam sweetspot, portofolio imbang, batin tenang, tidur nyenyak :v.'; 
+      note.innerText = 'Cukup ideal! buying powermu ada di sweetspot, portofolio imbang, tidur nyenyak.'; 
       note.className = 'text-xs mt-2 text-emerald-400 font-medium'; 
-
     } else if (m.cashPercent <= 50) { 
       warnEl.classList.add('hidden');
       note.innerText = 'Moderat. Peluru kamu lumayan banyak nih, siap tempur kalau market lagi merah!'; 
       note.className = 'text-xs mt-2 text-cyan-400 font-medium'; 
-
     } else { 
       warnEl.classList.add('hidden');
-      note.innerText = 'Buset, duit nganggurnya kegedean ya bos?. Jangan didiemin aja, mending sebagian diputerin!'; 
+      note.innerText = 'Buset, duit nganggurnya kegedean bos! Mending sebagian diputerin!'; 
       note.className = 'text-xs mt-2 text-indigo-400 font-medium'; 
     }
   }
@@ -518,46 +507,49 @@
     document.getElementById('ai-main-icon').className = `fa-solid ${main.icon} text-lg sm:text-xl`;
     document.getElementById('ai-main-icon').style.color = toneColor[main.tone] || '#c4b5fd';
 
-    const volatilePct = m.totalEquity > 0 ? ((m.byType.kripto + m.byType.saham) / m.totalEquity) * 100 : 0;
-    let riskLabel = 'Rendah', riskColor = 'text-emerald-400';
-    if (volatilePct > 60) { riskLabel = 'Tinggi'; riskColor = 'text-rose-400'; } else if (volatilePct > 30) { riskLabel = 'Sedang'; riskColor = 'text-amber-400'; }
-
+    // ==========================================================
+    // LOGIKA TARIK SKOR DARI CACHE LOCALSTORAGE UNTUK DASHBOARD
+    // ==========================================================
     const riskEl = document.getElementById('ai-risk');
-    riskEl.innerText = m.assets.length ? riskLabel : '—'; riskEl.className = 'font-display text-base sm:text-lg ' + riskColor;
-
-    const typeCount = Object.values(m.byType).filter(v => v > 0).length;
-    document.getElementById('ai-diversification').innerText = typeCount >= 3 ? 'Baik' : typeCount === 2 ? 'Cukup' : typeCount === 1 ? 'Kurang' : '—';
-
-    // ==========================================================
-    // LOGIKA TARIK SKOR DARI CACHE (SINKRON DENGAN AI)
-    // ==========================================================
-    const aiScoreEl = document.getElementById('ai-score');
+    const divEl = document.getElementById('ai-diversification');
+    const scoreEl = document.getElementById('ai-score');
+    
     const savedScoreRaw = localStorage.getItem('eduvesting_ai_score');
     
     if (!m.assets.length) {
-      aiScoreEl.innerText = '—';
-      aiScoreEl.className = 'text-slate-600 font-display text-base sm:text-lg';
-    } else if (savedScoreRaw) {
+      // Tampilan jika user belum punya portofolio
+      riskEl.innerText = '—'; riskEl.className = 'text-slate-600 font-display text-base sm:text-lg';
+      divEl.innerText = '—'; divEl.className = 'text-slate-600 font-display text-base sm:text-lg';
+      scoreEl.innerText = '—'; scoreEl.className = 'text-slate-600 font-display text-base sm:text-lg';
+    } 
+    else if (savedScoreRaw) {
+      // Tampilan jika memori cache dari AI ditemukan
       const parsed = JSON.parse(savedScoreRaw);
-      const now = new Date().getTime();
       
-      if (now - parsed.timestamp < 3600000) { // Masih kurang dari 1 jam
-        aiScoreEl.innerText = parsed.score + '/100';
-        
-        // Sesuaikan warna dengan tingkatan skor
-        if (parsed.score >= 80) aiScoreEl.className = 'font-display text-base sm:text-lg text-emerald-400';
-        else if (parsed.score >= 60) aiScoreEl.className = 'font-display text-base sm:text-lg text-cyan-400';
-        else aiScoreEl.className = 'font-display text-base sm:text-lg text-rose-400';
-      } else {
-        // Jika kadaluarsa
-        localStorage.removeItem('eduvesting_ai_score');
-        aiScoreEl.innerHTML = '<a href="insights.html" class="text-[11px] font-bold text-violet-400 hover:text-violet-300 uppercase tracking-wide"><i class="fa-solid fa-bolt mr-1"></i> Update Skor</a>';
-        aiScoreEl.className = 'mt-1'; // Memberikan margin agar tombol simetris
-      }
-    } else {
-      // Jika belum pernah generate sama sekali
-      aiScoreEl.innerHTML = '<a href="insights.html" class="text-[11px] font-bold text-violet-400 hover:text-violet-300 uppercase tracking-wide"><i class="fa-solid fa-bolt mr-1"></i> Minta Skor</a>';
-      aiScoreEl.className = 'mt-1';
+      // Render Risiko
+      riskEl.innerText = parsed.risk;
+      if(parsed.risk.toLowerCase().includes('tinggi')) riskEl.className = 'font-display text-base sm:text-lg text-rose-400';
+      else if(parsed.risk.toLowerCase().includes('sedang')) riskEl.className = 'font-display text-base sm:text-lg text-amber-400';
+      else riskEl.className = 'font-display text-base sm:text-lg text-emerald-400';
+
+      // Render Diversifikasi
+      divEl.innerText = parsed.div;
+      if(parsed.div.toLowerCase().includes('kurang')) divEl.className = 'font-display text-base sm:text-lg text-rose-400';
+      else if(parsed.div.toLowerCase().includes('sedang')) divEl.className = 'font-display text-base sm:text-lg text-amber-400';
+      else divEl.className = 'font-display text-base sm:text-lg text-emerald-400';
+
+      // Render Skor 0-10
+      scoreEl.innerText = parsed.score + '/10';
+      if(parsed.score >= 8) scoreEl.className = 'font-display text-base sm:text-lg text-emerald-400';
+      else if(parsed.score >= 5) scoreEl.className = 'font-display text-base sm:text-lg text-cyan-400';
+      else scoreEl.className = 'font-display text-base sm:text-lg text-rose-400';
+    } 
+    else {
+      // Tampilan jika punya portofolio TAPI user belum memencet tombol Generate sama sekali
+      riskEl.innerText = '—'; riskEl.className = 'text-slate-600 font-display text-base sm:text-lg mt-1';
+      divEl.innerText = '—'; divEl.className = 'text-slate-600 font-display text-base sm:text-lg mt-1';
+      scoreEl.innerHTML = '<a href="insights.html" class="text-[11px] font-bold text-violet-400 hover:text-violet-300 uppercase tracking-wide"><i class="fa-solid fa-bolt mr-1"></i> Analisis AI</a>';
+      scoreEl.className = 'mt-1';
     }
 
     const tips = document.getElementById('ai-tips'); 
