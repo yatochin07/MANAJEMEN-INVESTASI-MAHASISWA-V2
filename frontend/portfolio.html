@@ -158,26 +158,48 @@
     </header>
 
     <section class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
-
-      <div class="glass rounded-2xl p-5 sm:p-6 metric-card fade-up delay-2 flex flex-col justify-center min-h-[110px]">
-        <p class="text-[10px] sm:text-xs text-slate-500 font-bold uppercase tracking-widest mb-1.5">Total Nilai Aset</p>
-        <p id="sum-value" class="font-display text-2xl lg:text-[1.65rem] xl:text-3xl font-bold tracking-tight text-slate-100 truncate mt-1">Rp 0</p>
+      
+      <div class="glass rounded-2xl p-5 sm:p-6 metric-card fade-up delay-2 relative overflow-hidden" style="border-color: rgba(99,102,241,0.2);">
+        <div class="flex items-start justify-between gap-4">
+          <div class="min-w-0 flex-1">
+            <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Total Nilai Aset</p>
+            <p id="sum-value" class="font-display text-2xl sm:text-3xl font-bold text-slate-100 truncate">Rp 0</p>
+          </div>
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background: rgba(99,102,241,0.15);">
+            <i class="fa-solid fa-briefcase text-xl text-indigo-400"></i>
+          </div>
+        </div>
       </div>
 
-      <div class="glass rounded-2xl p-5 sm:p-6 metric-card fade-up delay-3 flex flex-col justify-center min-h-[110px]">
-        <p class="text-[10px] sm:text-xs text-slate-500 font-bold uppercase tracking-widest mb-1.5">Total Modal</p>
-        <p id="sum-cost" class="font-display text-2xl lg:text-[1.65rem] xl:text-3xl font-bold tracking-tight text-slate-100 truncate mt-1">Rp 0</p>
+      <div class="glass rounded-2xl p-5 sm:p-6 metric-card fade-up delay-3 relative overflow-hidden">
+        <div class="flex items-start justify-between gap-4">
+          <div class="min-w-0 flex-1">
+            <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Total Modal</p>
+            <p id="sum-cost" class="font-display text-2xl sm:text-3xl font-bold text-slate-100 truncate">Rp 0</p>
+          </div>
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background: rgba(16,185,129,0.15);">
+            <i class="fa-solid fa-vault text-xl text-emerald-400"></i>
+          </div>
+        </div>
       </div>
 
-      <div class="glass rounded-2xl p-5 sm:p-6 metric-card fade-up delay-4 flex flex-col justify-center min-h-[110px]">
-        <p class="text-[10px] sm:text-xs text-slate-500 font-bold uppercase tracking-widest mb-1.5">Floating P/L</p>
-        <p id="sum-pl" class="font-display text-2xl lg:text-[1.65rem] xl:text-3xl font-bold tracking-tight truncate mt-1">Rp 0</p>
+      <div class="glass rounded-2xl p-5 sm:p-6 metric-card fade-up delay-4 relative overflow-hidden">
+        <div class="flex items-start justify-between gap-4">
+          <div class="min-w-0 flex-1">
+            <p class="text-[10px] sm:text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Floating P/L</p>
+            <p id="sum-pl" class="font-display text-2xl sm:text-3xl font-bold truncate">Rp 0</p>
+          </div>
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background: rgba(245,158,11,0.15);">
+            <i class="fa-solid fa-chart-line text-xl text-amber-400"></i>
+          </div>
+        </div>
       </div>
+
     </section>
 
     <section class="mb-8 fade-up delay-2">
-      <div class="glass rounded-2xl p-5 sm:p-6">
-        <h2 class="font-display text-base text-slate-300 mb-5 flex items-center gap-2">
+      <div class="glass rounded-2xl p-4 sm:p-6">
+        <h2 class="font-display text-base text-slate-300 mb-4 flex items-center gap-2">
           <i class="fa-solid fa-plus text-indigo-400 text-sm"></i> <span id="form-title">Tambah Aset Baru</span>
         </h2>
 
@@ -185,8 +207,8 @@
           <input type="hidden" id="edit-id" value="" />
 
           <div class="sm:col-span-1 md:col-span-1">
-            <label class="text-xs text-slate-500 mb-1.5 block font-medium">Tipe Aset</label>
-            <select id="f-type" class="form-input w-full rounded-xl px-4 py-3 text-sm text-slate-200 bg-[#0f1423] focus:ring-2 focus:ring-indigo-500/50">
+            <label class="text-xs text-slate-500 mb-1 block">Tipe Aset</label>
+            <select id="f-type" class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200 bg-[#0f1423] focus:ring-2 focus:ring-indigo-500/50">
               <option value="saham">Saham</option>
               <option value="kripto">Kripto</option>
               <option value="emas">Emas</option>
@@ -195,29 +217,29 @@
           </div>
 
           <div class="sm:col-span-1 md:col-span-1">
-            <label class="text-xs text-slate-500 mb-1.5 block font-medium">Ticker / Kode</label>
+            <label class="text-xs text-slate-500 mb-1 block">Ticker / Kode</label>
             <input id="f-ticker" type="text" placeholder="BBCA / BTC" required
-                   class="form-input w-full rounded-xl px-4 py-3 text-sm text-slate-200 uppercase" />
+                   class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200 uppercase" />
           </div>
 
           <div class="sm:col-span-1 md:col-span-1">
-            <label class="text-xs text-slate-500 mb-1.5 block font-medium">Harga Beli Avg (Rp)</label>
+            <label class="text-xs text-slate-500 mb-1 block">Harga Beli Avg (Rp)</label>
             <input id="f-avg" type="text" inputmode="decimal" placeholder="Contoh: 1.500.000,5" required
-                   class="form-input w-full rounded-xl px-4 py-3 text-sm text-slate-200" />
+                   class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200" />
           </div>
 
           <div class="sm:col-span-1 md:col-span-1">
-            <label class="text-xs text-slate-500 mb-1.5 block font-medium">Jumlah / Qty</label>
+            <label class="text-xs text-slate-500 mb-1 block">Jumlah / Qty</label>
             <input id="f-qty" type="text" inputmode="decimal" placeholder="Contoh: 0,000009" required
-                   class="form-input w-full rounded-xl px-4 py-3 text-sm text-slate-200" />
+                   class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200" />
           </div>
 
-          <div class="sm:col-span-2 md:col-span-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 mt-3 sm:border-t sm:border-white/5 sm:pt-5">
-            <button type="button" id="cancel-edit" onclick="resetForm()" class="hidden text-sm font-medium text-slate-400 hover:text-slate-200 py-3 px-5 text-center transition-colors">
+          <div class="sm:col-span-2 md:col-span-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 mt-2 sm:border-t sm:border-white/5 sm:pt-4">
+            <button type="button" id="cancel-edit" onclick="resetForm()" class="hidden text-sm text-slate-400 hover:text-slate-200 py-2.5 px-4 text-center">
               Batal Edit
             </button>
-            <button type="submit" class="btn-primary w-full sm:w-auto px-8 py-3 rounded-xl text-sm font-bold text-white shadow-lg shadow-indigo-500/20">
-              <i class="fa-solid fa-floppy-disk mr-1.5"></i> <span id="submit-label">Simpan Aset</span>
+            <button type="submit" class="btn-primary w-full sm:w-auto px-8 py-2.5 rounded-xl text-sm font-semibold text-white">
+              <i class="fa-solid fa-floppy-disk mr-1"></i> <span id="submit-label">Simpan</span>
             </button>
           </div>
         </form>
@@ -225,20 +247,16 @@
     </section>
 
     <section class="mb-8 fade-up delay-3">
-      <div class="glass rounded-2xl p-5 sm:p-6 flex flex-col md:flex-row md:items-start gap-4 justify-between">
-        <div class="flex-1 max-w-2xl">
-          <label class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-2 block flex items-center gap-2">
-            <i class="fa-solid fa-wallet text-indigo-400"></i> Manajemen Kas
-          </label>
+      <div class="glass rounded-2xl p-4 sm:p-6 flex flex-col md:flex-row md:items-end gap-4">
+        <div class="flex-1">
+          <label class="text-xs text-slate-500 mb-1 block">Kas / Buying Power saat ini (Rp)</label>
           <input id="cash-input" type="number" min="0" step="any" placeholder="0"
-                 class="form-input w-full rounded-xl px-4 py-3.5 text-lg font-semibold text-slate-100 mb-2" />
-          <p class="text-xs text-slate-500 leading-relaxed">Masukkan dana tunai (Buying Power) yang belum Anda investasikan. Nominal ini akan dihitung sebagai bagian dari Total Ekuitas & Skor Kesehatan Portofolio Anda.</p>
+                 class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200" />
+          <p class="text-xs text-slate-600 mt-1.5">Dana tunai yang belum diinvestasikan. Ikut dihitung sebagai bagian dari Total Ekuitas di Dashboard.</p>
         </div>
-        <div class="md:mt-7 w-full md:w-auto">
-          <button onclick="saveCash(event)" class="btn-primary w-full md:w-auto py-3.5 px-8 rounded-xl text-sm font-bold text-white whitespace-nowrap shadow-lg shadow-indigo-500/20">
-            <i class="fa-solid fa-vault mr-1.5"></i> Simpan Kas
-          </button>
-        </div>
+        <button onclick="saveCash(event)" class="btn-primary w-full md:w-auto py-2.5 px-6 rounded-xl text-sm font-semibold text-white whitespace-nowrap">
+          Simpan Kas
+        </button>
       </div>
     </section>
 
@@ -250,30 +268,30 @@
         <div class="overflow-x-auto w-full">
           <table class="w-full text-sm min-w-[950px]">
             <thead>
-              <tr style="border-bottom:1px solid rgba(255,255,255,0.06); background: rgba(0,0,0,0.2);">
-                <th class="px-5 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Aset</th>
-                <th class="px-4 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Tipe</th>
-                <th class="px-4 py-4 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Harga Beli Avg</th>
-                <th class="px-4 py-4 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Harga Terakhir</th>
-                <th class="px-4 py-4 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Qty</th>
-                <th class="px-4 py-4 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Harga</th> 
-                <th class="px-4 py-4 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Floating P/L</th>
-                <th class="px-5 py-4 text-right text-xs font-semibold text-slate-400 uppercase tracking-wider">Aksi</th>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
+                <th class="px-5 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Aset</th>
+                <th class="px-4 py-3.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Tipe</th>
+                <th class="px-4 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Harga Beli Avg</th>
+                <th class="px-4 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Harga Terakhir</th>
+                <th class="px-4 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Qty</th>
+                <th class="px-4 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Harga</th> 
+                <th class="px-4 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Floating P/L</th>
+                <th class="px-5 py-3.5 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Aksi</th>
               </tr>
             </thead>
             <tbody id="asset-tbody"></tbody>
           </table>
         </div>
-        <div id="empty-state" class="px-5 py-12 text-center hidden">
-          <i class="fa-solid fa-inbox text-4xl text-slate-700 mb-4"></i>
-          <p class="text-slate-400 text-sm">Belum ada aset terdaftar. Tambahkan aset pertama Anda di atas.</p>
+        <div id="empty-state" class="px-5 py-10 text-center hidden">
+          <i class="fa-solid fa-inbox text-3xl text-slate-700 mb-3"></i>
+          <p class="text-slate-500 text-sm">Belum ada aset. Tambahkan aset pertama Anda menggunakan form di atas.</p>
         </div>
       </div>
     </section>
 
-    <footer class="text-center pb-8 border-t border-white/5 pt-6">
-      <p class="text-xs text-slate-600 mb-1">EduVesting · Simulasi Portofolio untuk Mahasiswa</p>
-      <p class="text-xs text-slate-700">
+    <footer class="text-center pb-8">
+      <p class="text-xs text-slate-700">EduVesting · Simulasi Portofolio untuk Mahasiswa</p>
+      <p class="text-xs text-slate-700 mt-2">
         Dikembangkan dengan <i class="fa-solid fa-heart text-rose-500/50 mx-0.5"></i> oleh Tim Developer EduVesting
       </p>
     </footer>
@@ -445,14 +463,14 @@
       }
 
       submitBtn.disabled = false;
-      submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk mr-1.5"></i> <span id="submit-label">Simpan Aset</span>';
+      submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk mr-1"></i> <span id="submit-label">Simpan</span>';
 
     } catch (error) {
       console.error("Detail Error:", error);
       alert(`GAGAL MENYIMPAN!\n\nPenyebab: ${error.message}\n\nPastikan koneksi internet stabil.`);
       const submitBtn = e.target.querySelector('button[type="submit"]');
       submitBtn.disabled = false;
-      submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk mr-1.5"></i> <span id="submit-label">Simpan Aset</span>';
+      submitBtn.innerHTML = '<i class="fa-solid fa-floppy-disk mr-1"></i> <span id="submit-label">Simpan</span>';
     }
   }
 
@@ -467,7 +485,7 @@
 
     if (editId) editId.value = '';
     if (formTitle) formTitle.innerText = 'Tambah Aset Baru';
-    if (submitLabel) submitLabel.innerText = 'Simpan Aset';
+    if (submitLabel) submitLabel.innerText = 'Simpan';
     if (cancelEdit) cancelEdit.classList.add('hidden');
   }
 
@@ -485,7 +503,7 @@
     document.getElementById('f-qty').value = asset.qty.toLocaleString('id-ID', { useGrouping: false, maximumFractionDigits: 10 });
 
     document.getElementById('form-title').innerText = 'Edit Aset: ' + asset.ticker;
-    document.getElementById('submit-label').innerText = 'Update Aset';
+    document.getElementById('submit-label').innerText = 'Update';
     document.getElementById('cancel-edit').classList.remove('hidden');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -506,11 +524,11 @@
     const cash = parseFloat(cashInput.value) || 0;
 
     const btn = event ? event.target : document.querySelector('button[onclick="saveCash(event)"]');
-    let originalText = '<i class="fa-solid fa-vault mr-1.5"></i> Simpan Kas';
+    let originalText = 'Simpan Kas';
     if(btn) {
-      originalText = btn.innerHTML;
+      originalText = btn.innerText;
       btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner spin mr-1.5"></i> Menyimpan...';
+      btn.innerText = 'Menyimpan...';
     }
 
     try {
@@ -522,7 +540,7 @@
     } finally {
       if(btn) {
         btn.disabled = false;
-        btn.innerHTML = originalText;
+        btn.innerText = originalText;
       }
     }
   }
@@ -535,6 +553,7 @@
       let finalPrice = null;
 
       if (type === 'emas' && ['XAU', 'XAUUSD', 'GC=F'].includes(ticker.toUpperCase())) {
+        // Tarik harga langsung dari proxy CoinGecko
         finalPrice = await EduVesting.fetchGoldPriceIDR();
       } else {
         finalPrice = await EduVesting.fetchStockPriceIDR(ticker);
@@ -582,23 +601,18 @@
       if (typeof EduVesting === 'undefined') return;
       const metrics = await EduVesting.computeMetrics();
 
-      const sumEquityEl = document.getElementById('sum-equity'); 
-      const sumValueEl = document.getElementById('sum-value');
+      const sumEquityEl = document.getElementById('sum-value'); 
       const sumCostEl = document.getElementById('sum-cost');
       const plEl = document.getElementById('sum-pl');
 
-      if (sumEquityEl) sumEquityEl.innerText = EduVesting.formatRupiah(metrics.totalEquity);
-      
-      // Update the 3 main cards
-      if (sumValueEl) sumValueEl.innerText = EduVesting.formatRupiah(metrics.totalValue);
+      if (sumEquityEl) sumEquityEl.innerText = EduVesting.formatRupiah(metrics.totalValue);
       if (sumCostEl) sumCostEl.innerText = EduVesting.formatRupiah(metrics.totalCost);
 
       if (plEl) {
         const sign = metrics.floatingPL >= 0 ? '+' : '';
-        // Membungkus persentase ke dalam span yang sedikit diredupkan agar elegan dan rapi kalau turun baris
-        plEl.innerHTML = `${sign}${EduVesting.formatRupiah(metrics.floatingPL)} <span class="text-sm md:text-base opacity-75 font-medium ml-1 block xl:inline">(${sign}${metrics.plPercent.toFixed(1)}%)</span>`;
-        // Timpa class dengan settingan font responsif yang baru agar tidak kebesaran
-        plEl.className = 'font-display text-2xl lg:text-[1.65rem] xl:text-3xl font-bold tracking-tight truncate mt-1 ' + (metrics.floatingPL >= 0 ? 'text-emerald-400' : 'text-rose-400');
+        plEl.innerText = sign + EduVesting.formatRupiah(metrics.floatingPL) + ` (${sign}${metrics.plPercent.toFixed(1)}%)`;
+        // Penyesuaian class di JS agar design layout tidak hancur saat dirender ulang (truncate + min-w-0)
+        plEl.className = 'font-display text-2xl sm:text-3xl font-bold truncate ' + (metrics.floatingPL >= 0 ? 'text-emerald-400' : 'text-rose-400');
       }
 
       const tbody = document.getElementById('asset-tbody');
@@ -675,8 +689,8 @@
           </td>
           
           <td class="px-5 py-4 text-right whitespace-nowrap">
-            <button onclick="editAsset('${a.id}')" class="text-indigo-400 hover:text-indigo-300 text-xs mr-4 transition-colors"><i class="fa-solid fa-pen"></i></button>
-            <button onclick="removeAsset('${a.id}')" class="text-rose-400 hover:text-rose-300 text-xs transition-colors"><i class="fa-solid fa-trash"></i></button>
+            <button onclick="editAsset('${a.id}')" class="text-indigo-400 hover:text-indigo-300 text-xs mr-3"><i class="fa-solid fa-pen"></i></button>
+            <button onclick="removeAsset('${a.id}')" class="text-rose-400 hover:text-rose-300 text-xs"><i class="fa-solid fa-trash"></i></button>
           </td>
         `;
         tbody.appendChild(tr);
