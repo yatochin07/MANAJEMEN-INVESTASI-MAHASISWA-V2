@@ -1,6 +1,6 @@
 // ========================================================
-// AI CHAT CONTROLLER (OPENAI PURE FETCH API)
-// Tidak butuh require library SDK tambahan!
+// AI CHAT CONTROLLER (GEMINI PURE FETCH API)
+// 100% Murni Fetch, Bebas SDK Bug, dan Gratis Selamanya!
 // ========================================================
 
 const chatWithAI = async (req, res) => {
@@ -12,57 +12,65 @@ const chatWithAI = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Message wajib diisi' });
         }
 
-        // 2. Ambil API Key OpenAI dari Vercel
-        const apiKey = process.env.OPENAI_API_KEY;
+        // 2. Ambil API Key Gemini dari Vercel
+        const apiKey = process.env.GEMINI_API_KEY;
 
         // ========================================================
         // INDIKATOR DEBUG: Cek tulisan ini di Vercel Logs kamu nanti!
         // ========================================================
-        console.log("=== [DEBUG EDUVESTING AI] ===");
-        console.log("Status API Key OpenAI di Server Vercel:", apiKey ? "✅ TERBACA / DITEMUKAN!" : "❌ KOSONG / UNDEFINED!");
-        console.log("=============================");
+        console.log("=== [DEBUG EDUVESTING AI - GEMINI FETCH] ===");
+        console.log("Status API Key Gemini di Server Vercel:", apiKey ? "✅ TERBACA / DITEMUKAN!" : "❌ KOSONG / UNDEFINED!");
+        console.log("============================================");
 
         // 3. Proteksi jika Environment Variable belum masuk
         if (!apiKey) {
             return res.status(200).json({ 
                 success: true, 
-                reply: "⚠️ **System Alert:** Vercel gagal membaca `OPENAI_API_KEY`. Pastikan Environment Variable sudah diisi, dicentang semua environment-nya, dan di-Redeploy!" 
+                reply: "⚠️ **System Alert:** Vercel gagal membaca `GEMINI_API_KEY`. Pastikan kamu sudah memasukkan kembali kunci Gemini di Vercel Settings, dicentang semua environment-nya, dan di-Redeploy!" 
             });
         }
 
         // 4. Menyusun Persona EduVesting AI
         const systemPrompt = "Kamu adalah EduVesting AI, asisten virtual cerdas yang ahli dalam investasi saham, kripto, reksadana, dan emas. Pengguna kamu adalah mahasiswa Indonesia. Jawablah dengan gaya bahasa yang asyik, relatable, santai tapi tetap profesional layaknya mentor finansial anak muda. Berikan saran yang realistis untuk kantong mahasiswa.";
 
-        // 5. Eksekusi PURE FETCH ke Server OpenAI
-        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        // 5. URL Endpoint Resmi Gemini Cloud (Pake model 1.5 Flash yang kencang)
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
+        // 6. Eksekusi PURE FETCH ke Server Google
+        const response = await fetch(url, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${apiKey}`
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                model: "gpt-4o-mini", // Model OpenAI yang paling cepat, pinter, dan hemat cost
-                messages: [
-                    { role: "system", content: systemPrompt },
-                    { role: "user", content: message }
+                contents: [
+                    {
+                        role: "user",
+                        parts: [{ text: message }]
+                    }
                 ],
-                temperature: 0.7 // Tingkat kreativitas AI (0 = kaku, 1 = kreatif)
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+                generationConfig: {
+                    temperature: 0.7 // Tingkat kreativitas AI
+                }
             })
         });
 
         const data = await response.json();
 
-        // 6. Tangani jika OpenAI Menolak (Misal Saldo Habis / Key Salah)
+        // 7. Tangani jika Google Menolak (Misal API Key salah)
         if (!response.ok) {
-            console.error("OpenAI Error Detail:", data);
+            console.error("Gemini Fetch Error Detail:", data);
             return res.status(200).json({ 
                 success: true, 
-                reply: `🚨 **Error OpenAI:** *${data.error?.message || 'Gagal menghubungi server API OpenAI'}*`
+                reply: `🚨 **Error Gemini API:** *${data.error?.message || 'Gagal menghubungi server Gemini Cloud'}*`
             });
         }
 
-        // 7. Tarik balasan AI dan kirim ke Frontend
-        const aiResponse = data.choices[0].message.content;
+        // 8. Tarik balasan teks dari struktur JSON asli Google Gemini dan kirim ke Frontend
+        const aiResponse = data.candidates[0].content.parts[0].text;
         res.status(200).json({ success: true, reply: aiResponse });
 
     } catch (error) {
