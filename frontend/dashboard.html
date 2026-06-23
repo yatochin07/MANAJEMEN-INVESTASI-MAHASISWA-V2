@@ -541,20 +541,20 @@
       if (m.cashPercent < 10 && m.cash >= 500000) {
         note.innerText = 'Secara nominal oke sih, tapi dananya agak kecil buat serok menyerok.';
       } else {
-        note.innerText = 'Masih agak rendah. Boleh lah buat nambah porsi dikit kalau ada aset incaran turun'; 
+        note.innerText = 'Cukup ideal. Boleh lah buat nambah porsi dikit kalau ada aset incaran turun'; 
       }
       note.className = 'text-xs mt-2 text-amber-400 font-medium'; 
     } else if (m.cashPercent <= 30) { 
       warnEl.classList.add('hidden');
-      note.innerText = 'Cukup ideal! buying powermu ada di sweetspot, portofolio imbang, tidur nyenyak.'; 
+      note.innerText = 'Moderat. buying powermu ada di sweetspot, portofolio imbang, tidur nyenyak.'; 
       note.className = 'text-xs mt-2 text-emerald-400 font-medium'; 
     } else if (m.cashPercent <= 50) { 
       warnEl.classList.add('hidden');
-      note.innerText = 'Moderat. Peluru kamu lumayan banyak nih, siap tempur kalau market lagi merah!'; 
+      note.innerText = 'Gokil. Peluru kamu lumayan banyak nih, siap tempur kalau market lagi merah!'; 
       note.className = 'text-xs mt-2 text-cyan-400 font-medium'; 
     } else { 
       warnEl.classList.add('hidden');
-      note.innerText = 'Buset, duit nganggurnya kegedean bos! Mending sebagian diputerin!'; 
+      note.innerText = 'Buset. Duit nganggurnya lagi kegedean ya bos? Mending langsung diputerin aja! '; 
       note.className = 'text-xs mt-2 text-indigo-400 font-medium'; 
     }
   }
