@@ -1,7 +1,3 @@
-Adjust full code nya tanpa merusak kodingan nya
-
-Saya ingin foto profil user di chatbot nya sesuai dengan yang dia pakai di website
-
 <!DOCTYPE html>
 <html lang="id" class="dark">
 <head>
@@ -237,7 +233,6 @@ Saya ingin foto profil user di chatbot nya sesuai dengan yang dia pakai di websi
           <div class="p-4 border-b border-white/10 bg-slate-900/80 flex items-center justify-between backdrop-blur-md">
             <div class="flex items-center gap-3">
               <div class="relative">
-                <!-- AVATAR HEADER DIUBAH DI SINI -->
                 <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-violet-500/30 overflow-hidden border border-violet-500/40">
                   <img src="css/eduvestingAI.jpg" alt="EduVesting AI" class="w-full h-full object-cover">
                 </div>
@@ -252,7 +247,6 @@ Saya ingin foto profil user di chatbot nya sesuai dengan yang dia pakai di websi
 
           <div id="chat-box" class="flex-1 p-5 overflow-y-auto space-y-5 text-sm flex flex-col" style="background: rgba(15, 20, 35, 0.4);">
             <div class="flex gap-3 max-w-[85%]">
-              <!-- AVATAR PESAN PEMBUKA DIUBAH DI SINI -->
               <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 border border-violet-500/30 overflow-hidden">
                 <img src="css/eduvestingAI.jpg" alt="AI" class="w-full h-full object-cover">
               </div>
@@ -327,8 +321,11 @@ Saya ingin foto profil user di chatbot nya sesuai dengan yang dia pakai di websi
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     window.supabaseClient = supabaseClient; 
 
+    // --- VARIABEL GLOBAL BARU ---
     let aiContextString = "Belum ada data portofolio.";
     let currentUserId = null; 
+    let currentUserAvatar = null;
+    let currentUserNameInitial = 'U';
 
     document.addEventListener('DOMContentLoaded', async () => {
       try {
@@ -341,6 +338,10 @@ Saya ingin foto profil user di chatbot nya sesuai dengan yang dia pakai di websi
         const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
         const avatarUrl = user.user_metadata?.avatar_url; 
 
+        // SIMPAN KE VARIABEL GLOBAL UNTUK AVATAR CHAT
+        currentUserAvatar = avatarUrl;
+        currentUserNameInitial = displayName.charAt(0).toUpperCase();
+
         document.getElementById('sidebar-user-name').innerText = displayName;
         document.getElementById('chat-user-name').innerText = displayName;
 
@@ -348,7 +349,7 @@ Saya ingin foto profil user di chatbot nya sesuai dengan yang dia pakai di websi
         if (avatarUrl) {
           sbAvatar.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover rounded-full">`;
         } else {
-          sbAvatar.innerText = displayName.charAt(0).toUpperCase();
+          sbAvatar.innerText = currentUserNameInitial;
         }
 
         if (typeof EduVesting !== 'undefined') {
@@ -599,12 +600,26 @@ Tugas AI: Kolaborasikan analisis portofolio di atas dengan kondisi cashflow hari
     const chatInput = document.getElementById('chat-input');
     const suggestedPrompts = document.getElementById('suggested-prompts');
 
+    // --- FUNGSI APPEND USER MESSAGE YANG DI-ADJUST ---
     function appendUserMessage(text) {
+      let avatarHTML = '';
+      let styleContainer = '';
+
+      if (currentUserAvatar) {
+        // Jika user punya foto Google, pakai foto tersebut
+        avatarHTML = `<img src="${currentUserAvatar}" alt="User" class="w-full h-full object-cover">`;
+        styleContainer = 'background: rgba(99,102,241,0.2);'; 
+      } else {
+        // Jika tidak, pakai huruf Inisial persis seperti di Sidebar
+        avatarHTML = `<span class="text-xs font-bold text-white">${currentUserNameInitial}</span>`;
+        styleContainer = 'background: linear-gradient(135deg,#7c3aed,#6366f1);';
+      }
+
       const msgDiv = document.createElement('div');
       msgDiv.className = 'flex gap-3 max-w-[85%] self-end flex-row-reverse fade-up';
       msgDiv.innerHTML = `
-        <div class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center flex-shrink-0 mt-1 border border-indigo-500/30">
-          <i class="fa-solid fa-user text-indigo-400 text-xs"></i>
+        <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 border border-indigo-500/30 overflow-hidden" style="${styleContainer}">
+          ${avatarHTML}
         </div>
         <div class="chat-bubble-user rounded-2xl p-4 text-slate-200 leading-relaxed shadow-sm text-[14px]">
           ${text}
@@ -619,7 +634,6 @@ Tugas AI: Kolaborasikan analisis portofolio di atas dengan kondisi cashflow hari
       msgDiv.id = 'ai-typing';
       msgDiv.className = 'flex gap-3 max-w-[85%] fade-up';
       msgDiv.innerHTML = `
-        <!-- AVATAR SAAT AI SEDANG MENGETIK DIUBAH DI SINI -->
         <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 border border-violet-500/30 overflow-hidden">
           <img src="css/eduvestingAI.jpg" alt="AI" class="w-full h-full object-cover">
         </div>
@@ -641,7 +655,6 @@ Tugas AI: Kolaborasikan analisis portofolio di atas dengan kondisi cashflow hari
       const msgDiv = document.createElement('div');
       msgDiv.className = 'flex gap-3 max-w-[90%] fade-up';
       msgDiv.innerHTML = `
-        <!-- AVATAR BALASAN AI DIUBAH DI SINI -->
         <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 border border-violet-500/30 overflow-hidden">
           <img src="css/eduvestingAI.jpg" alt="AI" class="w-full h-full object-cover">
         </div>
