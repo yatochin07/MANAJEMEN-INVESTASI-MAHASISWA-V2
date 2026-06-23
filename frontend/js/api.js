@@ -70,18 +70,11 @@ const EduVesting = (() => {
     } catch (e) { return { cash: 0 }; }
   }
 
-  // FIX PENTING: Gunakan upsert agar saldo kas Google OAuth bisa tersimpan
+  // FIX KAS: Menggunakan upsert agar Google OAuth tetap bisa menyimpan
   async function saveSettings(settings) {
     const userId = await _getUserId();
     if (!userId) throw new Error("Belum login");
-    
-    const { error } = await window.supabaseClient.from('users').upsert({ 
-      id: userId, 
-      cash: Number(settings.cash) || 0 
-    }, { 
-      onConflict: 'id' 
-    });
-    
+    const { error } = await window.supabaseClient.from('users').upsert({ id: userId, cash: Number(settings.cash) || 0 }, { onConflict: 'id' });
     if (error) throw error;
   }
 
@@ -119,8 +112,6 @@ const EduVesting = (() => {
       if (!res.ok) throw new Error('CoinGecko Gold HTTP ' + res.status);
       const data = await res.json();
       const paxgIdr = data['pax-gold'].idr;
-
-      // Konversi 1 Troy Ounce ke 1 Gram
       return paxgIdr / 31.1034768;
     } catch (e) {
       console.error('Gagal tarik harga emas via proxy CoinGecko:', e);
@@ -134,11 +125,9 @@ const EduVesting = (() => {
       const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
       const baseUrl = isLocal ? 'http://localhost:5000' : ''; 
       const url = `${baseUrl}/api/price/saham/${safeTicker}`;
-
       const res = await fetch(url);
 
       if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
-
       const data = await res.json();
       return data.price;
     } catch (error) { 
@@ -157,18 +146,14 @@ const EduVesting = (() => {
 
     for (let a of targetAssets) {
       let livePrice = null;
-
       if (a.type === 'emas') {
         if (['XAU', 'XAUUSD', 'GC=F'].includes(a.ticker.toUpperCase())) {
-            if (!cachedGoldPrice) {
-                cachedGoldPrice = await fetchGoldPriceIDR();
-            }
+            if (!cachedGoldPrice) cachedGoldPrice = await fetchGoldPriceIDR();
             livePrice = cachedGoldPrice;
         }
       } else {
         livePrice = await fetchStockPriceIDR(a.ticker);
       }
-
       if (livePrice && livePrice > 0) { 
         await _setPriceOnly(a.id, livePrice); 
         updated++; 
@@ -199,11 +184,7 @@ const EduVesting = (() => {
 
     const allocation = Object.entries(byType)
       .filter(([, v]) => v > 0)
-      .map(([type, value]) => ({
-        type, value,
-        percent: totalEquity > 0 ? (value / totalEquity) * 100 : 0,
-        ...ASSET_TYPES[type],
-      }));
+      .map(([type, value]) => ({ type, value, percent: totalEquity > 0 ? (value / totalEquity) * 100 : 0, ...ASSET_TYPES[type] }));
     const cashPercent = totalEquity > 0 ? (cash / totalEquity) * 100 : 0;
 
     return { assets, settings, totalValue, totalCost, totalEquity, floatingPL, plPercent, byType, allocation, cash, cashPercent };
@@ -213,21 +194,13 @@ const EduVesting = (() => {
     const insights = [];
     const { assets, totalEquity, byType, floatingPL, cashPercent } = metrics;
     if (!assets.length) return [{ icon: 'fa-circle-info', tone: 'indigo', title: 'Belum Ada Data Portofolio', text: 'Tambahkan aset pertama Anda.' }];
-
     const cryptoPct = totalEquity > 0 ? (byType.kripto / totalEquity) * 100 : 0;
     if (cryptoPct > 35) insights.push({ icon: 'fa-triangle-exclamation', tone: 'rose', title: 'Eksposur Kripto Tinggi', text: `Porsi kripto mencapai ${cryptoPct.toFixed(0)}%. Pertimbangkan manajemen risiko.` });
-
     const losers = assets.filter(a => a.lastPrice < a.avgPrice);
     if (losers.length) insights.push({ icon: 'fa-arrow-trend-down', tone: 'rose', title: 'Ada Posisi Merah', text: `${losers.length} aset sedang minus.` });
-
     if (floatingPL > 0 && metrics.plPercent > 10) insights.push({ icon: 'fa-arrow-trend-up', tone: 'emerald', title: 'Profit Mengambang Solid', text: `Floating P/L +${metrics.plPercent.toFixed(1)}%. Pertimbangkan take-profit parsial.` });
-
-    if (metrics.cash === 0) {
-        insights.push({ icon: 'fa-piggy-bank', tone: 'rose', title: 'Kas Kosong Total', text: `Anda tidak punya kas darurat sama sekali untuk menyerok saham/kripto.` });
-    } else if (cashPercent < 10 && metrics.cash < 500000) { 
-        insights.push({ icon: 'fa-piggy-bank', tone: 'amber', title: 'Buffer Kas Tipis', text: `Kas Anda sangat minim. Siapkan dana darurat tambahan.` }); 
-    }
-
+    if (metrics.cash === 0) insights.push({ icon: 'fa-piggy-bank', tone: 'rose', title: 'Kas Kosong Total', text: `Anda tidak punya kas darurat sama sekali untuk menyerok saham/kripto.` });
+    else if (cashPercent < 10 && metrics.cash < 500000) insights.push({ icon: 'fa-piggy-bank', tone: 'amber', title: 'Buffer Kas Tipis', text: `Kas Anda sangat minim. Siapkan dana darurat tambahan.` }); 
     if (!insights.length) insights.push({ icon: 'fa-circle-check', tone: 'emerald', title: 'Portofolio Seimbang', text: 'Portofolio Anda relatif terdiversifikasi dengan baik.' });
     return insights;
   }
@@ -240,8 +213,7 @@ const EduVesting = (() => {
     getAssets, addAsset, updateAsset, deleteAsset,
     getSettings, saveSettings,
     fetchCryptoPricesIDR, refreshCryptoPrices,
-    fetchGoldPriceIDR, 
-    fetchStockPriceIDR, refreshStockPrices,
+    fetchGoldPriceIDR, fetchStockPriceIDR, refreshStockPrices,
     computeMetrics, generateInsights,
     formatRupiah, formatNumber,
   };
