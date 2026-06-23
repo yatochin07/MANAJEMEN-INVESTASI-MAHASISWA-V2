@@ -1,6 +1,6 @@
 // ========================================================
 // AI CHAT CONTROLLER (GROQ PURE FETCH API)
-// 100% Murni Fetch, Super Cepat, dan Bebas SDK Bug! Cihuyy
+// 100% Murni Fetch, Super Cepat, dan Bebas SDK Bug! 
 // ========================================================
 
 const chatWithAI = async (req, res) => {
@@ -44,7 +44,7 @@ const chatWithAI = async (req, res) => {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                model: "llama3-70b-8192", // Pilihan model ngebut dari Groq
+                model: "llama-3.3-70b-versatile", // <--- SUDAH DISESUAIKAN DENGAN SCREENSHOT
                 messages: [
                     { role: "system", content: systemPrompt },
                     { role: "user", content: message }
