@@ -85,7 +85,7 @@
     .delay-1 { animation-delay: 0.07s; }
 
     .logo-text { background: linear-gradient(90deg,#a5b4fc,#93c5fd); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-    
+
     /* Tab System Styles */
     .tab-btn { border-bottom: 2px solid transparent; transition: all 0.3s ease; }
     .tab-active { border-bottom: 2px solid #7c3aed; color: #a5b4fc; background: linear-gradient(0deg, rgba(124,58,237,0.1) 0%, transparent 100%); }
@@ -180,8 +180,8 @@
       <!-- ========================================== -->
       <div id="view-analytics" class="fade-up delay-1 space-y-6">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
-          <!-- KOTAK SKOR KESEHATAN (SEKARANG DINAMIS BY AI) -->
+
+          <!-- KOTAK SKOR KESEHATAN (SEKARANG DINAMIS BY AI & DI-CACHE LOKAL) -->
           <div class="glass ai-border rounded-2xl p-6 flex flex-col items-center justify-center text-center relative overflow-hidden">
             <h2 class="text-sm font-semibold text-slate-300 w-full text-left mb-6 relative z-10">Skor Kesehatan AI</h2>
 
@@ -204,7 +204,7 @@
             </div>
 
             <p id="health-score-label" class="text-lg font-display text-slate-400 mb-2 z-10">Belum Dianalisis</p>
-            
+
             <button id="btn-generate-score" onclick="generateScoreFromAI()" class="mt-2 w-full py-2.5 rounded-xl text-sm font-semibold bg-violet-600 hover:bg-violet-500 text-white transition shadow-lg shadow-violet-500/20 z-10">
               <i class="fa-solid fa-bolt mr-2"></i> Minta AI Analisis Skor
             </button>
@@ -241,7 +241,7 @@
       <!-- ========================================== -->
       <div id="view-chat" class="hidden flex-1 flex flex-col mb-4">
         <div class="glass ai-border rounded-2xl flex flex-col flex-1 min-h-[600px] overflow-hidden">
-          
+
           <div class="p-4 border-b border-white/10 bg-slate-900/80 flex items-center justify-between backdrop-blur-md">
             <div class="flex items-center gap-3">
               <div class="relative">
@@ -312,7 +312,7 @@
         viewAnalytics.classList.add('hidden');
         viewChat.classList.remove('hidden');
         viewChat.classList.add('flex');
-        
+
         // Auto focus input when opening chat biar gk halu
         setTimeout(() => document.getElementById('chat-input').focus(), 100);
       }
@@ -342,7 +342,7 @@
 
         const user = session.user;
         const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
-        
+
         document.getElementById('sidebar-user-name').innerText = displayName;
         document.getElementById('chat-user-name').innerText = displayName;
 
@@ -356,11 +356,107 @@
     });
 
     // ==========================================
-    // RENDER VISUAL DATA (NON-SKOR)
+    // UPDATE UI SKOR (FUNGSI REUSABLE)
+    // ==========================================
+    function updateScoreUI(score, isFromCache = false) {
+      const btn = document.getElementById('btn-generate-score');
+      const valEl = document.getElementById('health-score-val');
+      const labelEl = document.getElementById('health-score-label');
+      const descEl = document.getElementById('health-score-desc');
+      const circle = document.getElementById('score-circle');
+
+      valEl.innerText = score;
+      valEl.classList.remove('text-slate-500');
+      valEl.classList.add('text-white');
+
+      const circumference = 2 * Math.PI * 45; 
+      const dashoffset = circumference - (score / 100) * circumference;
+      circle.style.strokeDasharray = `${circumference - dashoffset} ${circumference}`;
+
+      if (score >= 80) {
+         labelEl.innerText = "Sangat Sehat"; labelEl.className = "text-lg font-display font-bold text-emerald-400 mb-2 z-10";
+      } else if (score >= 60) {
+         labelEl.innerText = "Cukup Baik"; labelEl.className = "text-lg font-display font-bold text-cyan-400 mb-2 z-10";
+      } else {
+         labelEl.innerText = "Risiko Tinggi / Bahaya"; labelEl.className = "text-lg font-display font-bold text-rose-400 mb-2 z-10";
+      }
+
+      btn.style.display = 'none';
+      
+      if (isFromCache) {
+          descEl.innerText = "Skor ini tersimpan di memori lokal dari sesi sebelumnya (Aktif selama 1 jam).";
+      } else {
+          descEl.innerText = "Skor berhasil dievaluasi oleh AI. Cek Tab Copilot Chat untuk melihat alasan dan roasting detailnya.";
+      }
+      descEl.classList.remove('hidden');
+    }
+
+    // ==========================================
+    // LOGIKA SKORING DINAMIS OLEH AI & CACHING
+    // ==========================================
+    async function generateScoreFromAI() {
+      const btn = document.getElementById('btn-generate-score');
+      btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Sedang Menghitung...';
+      btn.disabled = true;
+      btn.classList.add('opacity-70');
+
+      // Prompt rahasia ke backend khusus minta 1 angka
+      const secretPrompt = `${aiContextString}\n\nTUGAS RAHASIA SISTEM: Berdasarkan data portofolio di atas, berikan evaluasi skor kesehatan dari 0 sampai 100. 
+ATURAN MUTLAK: OUTPUT HARUS HANYA 1 ANGKA BULAT. DILARANG MENULIS HURUF, KATA, ATAU KALIMAT APAPUN. Contoh output yang benar: 45`;
+
+      try {
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const BACKEND_URL = isLocal ? 'http://localhost:5000/api/ai/chat' : '/api/ai/chat';
+
+        const response = await fetch(BACKEND_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: secretPrompt })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Ekstrak angka dari jawaban AI (mengantisipasi jika AI bandel nulis teks)
+          let match = data.reply.match(/\d+/);
+          let score = match ? parseInt(match[0]) : 50;
+          if (score > 100) score = 100;
+
+          // --- LOGIKA PENYIMPANAN LOCALSTORAGE 1 JAM ---
+          const aiScoreData = {
+            score: score,
+            timestamp: new Date().getTime() // Stempel waktu detik ini
+          };
+          localStorage.setItem('eduvesting_ai_score', JSON.stringify(aiScoreData));
+          
+          // Update visual UI
+          updateScoreUI(score, false);
+
+          // Otomatis kirim prompt ke chat untuk minta penjelasan
+          setTimeout(() => {
+            switchTab('chat');
+            appendUserMessage(`Tolong jelaskan secara detail dan blak-blakan, kenapa lu ngasih skor portofolio gue ${score}/100?`);
+            simulateAIResponse(`Tolong jelaskan secara blak-blakan dan tajam, kenapa portofolio gue dapet skor ${score}/100 berdasarkan data yang lu pegang tadi. Apa yang salah atau apa yang udah bener?`);
+          }, 1500);
+
+        } else {
+          throw new Error("Gagal parsing dari Groq");
+        }
+
+      } catch (error) {
+        console.error("Score Gen Error:", error);
+        btn.innerHTML = '<i class="fa-solid fa-rotate-right mr-2"></i> Gagal. Coba Lagi';
+        btn.disabled = false;
+        btn.classList.remove('opacity-70');
+      }
+    }
+
+    // ==========================================
+    // RENDER VISUAL DATA (NON-SKOR) + CEK CACHE
     // ==========================================
     function renderAiDashboard(metrics) {
       const alokasi = metrics.allocation.map(a => `${a.type.toUpperCase()} (${a.percent.toFixed(1)}%)`).join(', ');
-      
+
       aiContextString = `Data Portofolio Nyata User: 
 - Total Ekuitas/Net Worth: Rp ${metrics.totalEquity.toLocaleString('id-ID')}
 - Total P/L: Rp ${metrics.floatingPL.toLocaleString('id-ID')} (${metrics.plPercent.toFixed(2)}%)
@@ -372,7 +468,7 @@ Ingat: Evaluasi data ini dengan brutal dan objektif.`;
       const insights = EduVesting.generateInsights(metrics);
       const recomContainer = document.getElementById('recom-container');
       recomContainer.innerHTML = '';
-      
+
       const toneMap = {
         'rose': { bg: 'bg-rose-500/10', border: 'border-rose-500/20', text: 'text-rose-400' },
         'amber': { bg: 'bg-amber-500/10', border: 'border-amber-500/20', text: 'text-amber-400' },
@@ -424,82 +520,20 @@ Ingat: Evaluasi data ini dengan brutal dan objektif.`;
           sectorContainer.appendChild(div);
         });
       }
-    }
 
-    // ==========================================
-    // LOGIKA SKORING DINAMIS OLEH AI
-    // ==========================================
-    async function generateScoreFromAI() {
-      const btn = document.getElementById('btn-generate-score');
-      const valEl = document.getElementById('health-score-val');
-      const labelEl = document.getElementById('health-score-label');
-      const descEl = document.getElementById('health-score-desc');
-      const circle = document.getElementById('score-circle');
-
-      btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Sedang Menghitung...';
-      btn.disabled = true;
-      btn.classList.add('opacity-70');
-
-      // Prompt rahasia ke backend khusus minta 1 angka
-      const secretPrompt = `${aiContextString}\n\nTUGAS RAHASIA SISTEM: Berdasarkan data portofolio di atas, berikan evaluasi skor kesehatan dari 0 sampai 100. 
-ATURAN MUTLAK: OUTPUT HARUS HANYA 1 ANGKA BULAT. DILARANG MENULIS HURUF, KATA, ATAU KALIMAT APAPUN. Contoh output yang benar: 45`;
-
-      try {
-        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        const BACKEND_URL = isLocal ? 'http://localhost:5000/api/ai/chat' : '/api/ai/chat';
-
-        const response = await fetch(BACKEND_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: secretPrompt })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-          // Ekstrak angka dari jawaban AI (mengantisipasi jika AI bandel nulis teks)
-          let match = data.reply.match(/\d+/);
-          let score = match ? parseInt(match[0]) : 50;
-          if (score > 100) score = 100;
-
-          // Update UI Lingkaran Animasi
-          valEl.innerText = score;
-          valEl.classList.remove('text-slate-500');
-          valEl.classList.add('text-white');
-          
-          const circumference = 2 * Math.PI * 45; 
-          const dashoffset = circumference - (score / 100) * circumference;
-          circle.style.strokeDasharray = `${circumference - dashoffset} ${circumference}`;
-
-          if (score >= 80) {
-             labelEl.innerText = "Sangat Sehat"; labelEl.className = "text-lg font-display font-bold text-emerald-400 mb-2 z-10";
-             circle.style.stroke = "url(#gradient)"; // Keep gradient
-          } else if (score >= 60) {
-             labelEl.innerText = "Cukup Baik"; labelEl.className = "text-lg font-display font-bold text-cyan-400 mb-2 z-10";
-          } else {
-             labelEl.innerText = "Risiko Tinggi / Bahaya"; labelEl.className = "text-lg font-display font-bold text-rose-400 mb-2 z-10";
-          }
-
-          btn.style.display = 'none';
-          descEl.innerText = "Skor berhasil dievaluasi oleh AI. Cek Tab Copilot Chat untuk melihat alasan dan roasting detailnya.";
-          descEl.classList.remove('hidden');
-
-          // Otomatis kirim prompt ke chat untuk minta penjelasan
-          setTimeout(() => {
-            switchTab('chat');
-            appendUserMessage(`Tolong jelaskan secara detail dan blak-blakan, kenapa lu ngasih skor portofolio gue ${score}/100?`);
-            simulateAIResponse(`Tolong jelaskan secara blak-blakan dan tajam, kenapa portofolio gue dapet skor ${score}/100 berdasarkan data yang lu pegang tadi. Apa yang salah atau apa yang udah bener?`);
-          }, 1500);
-
+      // --- CEK CACHE SKOR AI DARI LOCALSTORAGE ---
+      const savedScoreRaw = localStorage.getItem('eduvesting_ai_score');
+      if (savedScoreRaw) {
+        const parsed = JSON.parse(savedScoreRaw);
+        const now = new Date().getTime();
+        // 1 Jam = 3.600.000 milidetik
+        if (now - parsed.timestamp < 3600000) {
+          // Jika waktu masih berlaku, render skornya langsung tanpa tembak AI
+          updateScoreUI(parsed.score, true);
         } else {
-          throw new Error("Gagal parsing dari Groq");
+          // Jika sudah kedaluwarsa (> 1 jam), hapus memori usang
+          localStorage.removeItem('eduvesting_ai_score');
         }
-
-      } catch (error) {
-        console.error("Score Gen Error:", error);
-        btn.innerHTML = '<i class="fa-solid fa-rotate-right mr-2"></i> Gagal. Coba Lagi';
-        btn.disabled = false;
-        btn.classList.remove('opacity-70');
       }
     }
 
