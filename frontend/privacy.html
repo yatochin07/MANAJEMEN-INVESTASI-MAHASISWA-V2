@@ -38,6 +38,7 @@
       color: #e2e8f0;
       overflow-x: hidden;
       scroll-behavior: smooth;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     /* ===========================
@@ -71,10 +72,10 @@
     /* ===========================
        UI COMPONENTS
     =========================== */
-    .glass-nav { background: rgba(10, 14, 24, 0.7); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,255,255,0.05); }
-    .glass-card { background: rgba(15, 20, 35, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); border-radius: 1.5rem; }
+    .glass-nav { background: rgba(10, 14, 24, 0.7); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,255,255,0.05); transition: all 0.3s ease; }
+    .glass-card { background: rgba(15, 20, 35, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); border-radius: 1.5rem; transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; }
     
-    .logo-text { background: linear-gradient(90deg, #f8fafc, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .logo-text { background: linear-gradient(90deg, #f8fafc, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; transition: all 0.3s ease; }
     
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -84,22 +85,54 @@
     .fade-up { animation: fadeUp 0.6s ease both; }
     
     /* Typography Styles for Policy */
-    .policy-content h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.25rem; font-weight: 600; color: #f8fafc; margin-top: 2rem; margin-bottom: 1rem; }
-    .policy-content p { color: #94a3b8; font-size: 0.95rem; line-height: 1.7; margin-bottom: 1rem; }
-    .policy-content ul { list-style-type: disc; padding-left: 1.5rem; color: #94a3b8; font-size: 0.95rem; line-height: 1.7; margin-bottom: 1.5rem; }
+    .policy-content h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.25rem; font-weight: 600; color: #f8fafc; margin-top: 2rem; margin-bottom: 1rem; transition: color 0.3s ease; }
+    .policy-content p { color: #94a3b8; font-size: 0.95rem; line-height: 1.7; margin-bottom: 1rem; transition: color 0.3s ease; }
+    .policy-content ul { list-style-type: disc; padding-left: 1.5rem; color: #94a3b8; font-size: 0.95rem; line-height: 1.7; margin-bottom: 1.5rem; transition: color 0.3s ease; }
     .policy-content li { margin-bottom: 0.5rem; }
-    .policy-content strong { color: #e2e8f0; font-weight: 600; }
+    .policy-content strong { color: #e2e8f0; font-weight: 600; transition: color 0.3s ease; }
+
+    /* ==========================================
+       LIGHT MODE STYLES
+       ========================================== */
+    body.light-mode { background-color: #f8fafc; color: #0f1423; }
+    body.light-mode .text-slate-100, body.light-mode .text-slate-200 { color: #1e293b; }
+    body.light-mode .text-slate-300 { color: #334155; }
+    body.light-mode .text-slate-400, body.light-mode .text-slate-500 { color: #475569; }
+    
+    /* Glass Navbar & Card */
+    body.light-mode .glass-nav { background: rgba(255, 255, 255, 0.85); border-bottom: 1px solid rgba(0,0,0,0.08); }
+    body.light-mode .glass-card { background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    
+    /* Logo */
+    body.light-mode .logo-text { background: linear-gradient(90deg, #1e293b, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    
+    /* Tombol Kembali (Back Button) */
+    body.light-mode .bg-white\/5 { background-color: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.1); color: #475569; }
+    body.light-mode .hover\:bg-white\/10:hover { background-color: rgba(0,0,0,0.1); color: #1e293b; }
+    
+    /* Typography Overrides untuk Konten Kebijakan */
+    body.light-mode .policy-content h2 { color: #1e293b; }
+    body.light-mode .policy-content p, body.light-mode .policy-content ul { color: #475569; }
+    body.light-mode .policy-content strong { color: #0f1423; }
+    
+    /* Footer */
+    body.light-mode footer { background: rgba(248, 250, 252, 0.9); border-top: 1px solid #e2e8f0; }
   </style>
 </head>
 <body class="relative">
 
-  <!-- Background Elements -->
+  <script>
+    // Cek memori browser secara pasif saat halaman dimuat
+    if(localStorage.getItem('theme') === 'light') {
+      document.body.classList.add('light-mode');
+    }
+  </script>
+
   <div class="orb orb-1" aria-hidden="true"></div>
   <div class="orb orb-2" aria-hidden="true"></div>
   <div class="mesh-layer" aria-hidden="true"></div>
   <div class="dot-grid" aria-hidden="true"></div>
 
-  <!-- Navbar -->
   <nav class="glass-nav sticky top-0 z-50 w-full px-6 py-4">
     <div class="max-w-4xl mx-auto flex items-center justify-between">
       <a href="login.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
@@ -114,10 +147,8 @@
     </div>
   </nav>
 
-  <!-- Main Content -->
   <main class="relative z-10 max-w-3xl mx-auto px-6 py-12 sm:py-16">
     
-    <!-- Header Section -->
     <header class="mb-10 fade-up">
       <h1 class="font-display text-3xl sm:text-4xl font-bold text-slate-100 mb-4">
         Kebijakan Privasi
@@ -125,7 +156,6 @@
       <p class="text-indigo-400 text-sm font-medium">Terakhir Diperbarui: 22 Juni 2026</p>
     </header>
 
-    <!-- Policy Content -->
     <section class="glass-card p-6 sm:p-10 fade-up policy-content">
       
       <p>
@@ -201,7 +231,6 @@
 
   </main>
 
-  <!-- Footer -->
   <footer class="relative z-10 w-full border-t border-white/5 bg-[#0a0d16]/80 backdrop-blur-md pt-8 pb-8 mt-10 text-center">
     <div class="max-w-6xl mx-auto px-6">
       <p class="text-xs text-slate-500 mb-2">
