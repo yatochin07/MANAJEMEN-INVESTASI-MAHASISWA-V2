@@ -1,3 +1,7 @@
+Adjust full code nya tanpa merusak kodingan nya
+
+Saya ingin foto profil user di chatbot nya sesuai dengan yang dia pakai di website
+
 <!DOCTYPE html>
 <html lang="id" class="dark">
 <head>
@@ -427,7 +431,7 @@ Contoh Output yang benar: 7|Sedang|Bagus`;
 
         if (data.success) {
           const match = data.reply.match(/(\d+)\s*\|\s*([a-zA-Z]+)\s*\|\s*([a-zA-Z]+)/);
-          
+
           let score = 5, risk = 'Sedang', div = 'Sedang';
           if (match) {
              score = parseInt(match[1]);
@@ -450,7 +454,7 @@ Contoh Output yang benar: 7|Sedang|Bagus`;
              console.error("Gagal simpan skor ke cloud:", dbError);
              throw new Error("Gagal terhubung ke Database Supabase.");
           }
-          
+
           updateScoreUI({ score, risk, div });
 
           setTimeout(() => {
@@ -522,7 +526,7 @@ Tugas AI: Kolaborasikan analisis portofolio di atas dengan kondisi cashflow hari
       const insights = EduVesting.generateInsights(metrics);
       const recomContainer = document.getElementById('recom-container');
       recomContainer.innerHTML = '';
-      
+
       const toneMap = {
         'rose': { bg: 'bg-rose-500/10', border: 'border-rose-500/20', text: 'text-rose-400' },
         'amber': { bg: 'bg-amber-500/10', border: 'border-amber-500/20', text: 'text-amber-400' },
@@ -581,7 +585,7 @@ Tugas AI: Kolaborasikan analisis portofolio di atas dengan kondisi cashflow hari
           .select('*')
           .eq('user_id', currentUserId)
           .single();
-          
+
         if (data) {
           updateScoreUI({ score: data.score, risk: data.risk, div: data.diversification });
         }
