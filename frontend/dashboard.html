@@ -163,43 +163,44 @@
 
     <section aria-labelledby="summary-heading" class="mb-8">
       <h2 id="summary-heading" class="sr-only">Ringkasan Portofolio</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-5 sm:gap-6">
 
-        <div class="glass rounded-2xl p-5 metric-card fade-up delay-1" style="border-color: rgba(99,102,241,0.2);">
+        <div class="glass rounded-2xl p-5 sm:p-6 metric-card fade-up delay-1 lg:col-span-3" style="border-color: rgba(99,102,241,0.2);">
           <div class="flex items-start justify-between">
             <div>
               <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Net Worth</p>
-              <p id="m-equity" class="font-display text-2xl text-slate-100">Rp 0</p>
+              <p id="m-equity" class="font-display text-2xl lg:text-3xl text-slate-100 font-bold">Rp 0</p>
               <div class="flex items-center gap-1.5 mt-2">
                 <span id="m-equity-pct" class="text-sm font-semibold flex items-center gap-1"></span>
                 <span class="text-slate-600 text-xs">vs modal</span>
               </div>
             </div>
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: rgba(99,102,241,0.15);">
-              <i class="fa-solid fa-wallet text-indigo-400"></i>
+            <div class="w-10 h-10 lg:w-12 lg:h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background: rgba(99,102,241,0.15);">
+              <i class="fa-solid fa-wallet text-indigo-400 lg:text-lg"></i>
             </div>
           </div>
         </div>
 
-        <div class="glass rounded-2xl p-5 metric-card fade-up delay-2">
+        <div class="glass rounded-2xl p-5 sm:p-6 metric-card fade-up delay-2 lg:col-span-3">
           <div class="flex items-start justify-between">
             <div class="min-w-0 pr-3">
               <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Floating P/L</p>
-              <p id="m-pl" class="font-display text-2xl whitespace-nowrap overflow-hidden text-ellipsis">Rp 0</p>
+              <p id="m-pl" class="font-display text-2xl lg:text-3xl font-bold whitespace-nowrap overflow-hidden text-ellipsis">Rp 0</p>
             </div>
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: rgba(16, 185, 129, 0.15);">
-              <i class="fa-solid fa-money-bill-trend-up text-emerald-400"></i>
+            <div class="w-10 h-10 lg:w-12 lg:h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background: rgba(16, 185, 129, 0.15);">
+              <i class="fa-solid fa-money-bill-trend-up text-emerald-400 lg:text-lg"></i>
             </div>
           </div>
           <p class="text-slate-500 text-xs mt-2">Belum direalisasikan</p>
           <div class="progress-bar mt-3"><div id="m-pl-bar" class="progress-fill" style="width:0%; background: linear-gradient(90deg, #10b981, #34d399);"></div></div>
         </div>
 
-        <div class="glass rounded-2xl p-5 metric-card fade-up delay-3">
+        <div class="glass rounded-2xl p-5 sm:p-6 metric-card fade-up delay-3 lg:col-span-2">
           <div class="flex items-start justify-between">
             <div>
               <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Kas / Buying Power</p>
-              <p id="m-cash" class="font-display text-2xl text-slate-100">Rp 0</p>
+              <p id="m-cash" class="font-display text-2xl lg:text-3xl text-slate-100 font-bold">Rp 0</p>
               <p id="m-cash-warn" class="text-xs text-amber-400 mt-2 flex items-center gap-1 hidden">
                 <i class="fa-solid fa-triangle-exclamation text-xs"></i> Saldo kas rendah
               </p>
@@ -210,21 +211,21 @@
           </div>
         </div>
 
-        <div class="glass rounded-2xl p-5 metric-card fade-up delay-4">
+        <div class="glass rounded-2xl p-5 sm:p-6 metric-card fade-up delay-4 lg:col-span-2">
           <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Rasio Kas</p>
           <div class="flex items-end gap-2">
-            <p id="m-cashpct" class="font-display text-2xl text-slate-100">0%</p>
-            <p class="text-slate-500 text-xs mb-1">dari total aset</p>
+            <p id="m-cashpct" class="font-display text-2xl lg:text-3xl text-slate-100 font-bold">0%</p>
+            <p class="text-slate-500 text-xs mb-1.5">dari aset</p>
           </div>
           <div class="progress-bar mt-3"><div id="m-cashpct-bar" class="progress-fill" style="width:0%; background: linear-gradient(90deg, #06b6d4, #22d3ee);"></div></div>
           <p id="m-cashpct-note" class="text-xs mt-2 text-slate-600"></p>
         </div>
 
-        <div class="glass rounded-2xl p-5 metric-card fade-up delay-4" style="border-color: rgba(6, 182, 212, 0.15);">
+        <div class="glass rounded-2xl p-5 sm:p-6 metric-card fade-up delay-4 md:col-span-2 lg:col-span-2" style="border-color: rgba(6, 182, 212, 0.15);">
           <div class="flex items-start justify-between">
             <div>
               <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Dana Darurat</p>
-              <p id="m-emergency" class="font-display text-2xl text-slate-100">Rp 0</p>
+              <p id="m-emergency" class="font-display text-2xl lg:text-3xl text-slate-100 font-bold">Rp 0</p>
             </div>
             <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: rgba(6, 182, 212, 0.15);">
               <i class="fa-solid fa-piggy-bank text-cyan-400"></i>
@@ -367,7 +368,6 @@
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   window.supabaseClient = supabaseClient;
   
-  // Variabel global baru untuk menampung ID User
   let currentUserId = null;
 
   document.addEventListener('DOMContentLoaded', async () => {
@@ -379,7 +379,7 @@
       }
 
       const user = session.user;
-      currentUserId = user.id; // Simpan ID user untuk ditarik datanya nanti
+      currentUserId = user.id; 
 
       const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
       const avatarUrl = user.user_metadata?.avatar_url; 
@@ -432,11 +432,10 @@
     renderAllocation(metrics); 
     renderInsights(metrics); 
     renderTable(metrics); 
-    await renderEmergencyFund(); // Eksekusi fungsi Dana Darurat
+    await renderEmergencyFund();
     animateBars();
   }
 
-  // FUNGSI BARU UNTUK DANA DARURAT
   async function renderEmergencyFund() {
     const emergencyEl = document.getElementById('m-emergency');
     const emergencyNoteEl = document.getElementById('m-emergency-note');
@@ -458,20 +457,16 @@
       let income = 0;
       let expense = 0;
 
-      // Hitung total pemasukan dan pengeluaran
       (data || []).forEach(r => {
         if (r.type === 'income') income += r.amount;
         if (r.type === 'expense') expense += r.amount;
       });
 
       let total = income - expense;
-      
-      // Aturan: Jika minus, kembalikan 0
       let danaDarurat = total > 0 ? total : 0;
 
       emergencyEl.innerText = EduVesting.formatRupiah(danaDarurat);
 
-      // Logika Caption
       if (danaDarurat > 0) {
         emergencyNoteEl.innerHTML = 'Wuih mantap, ada dana darurat nih, pertahankan ya! <i class="fa-solid fa-fire text-amber-400 ml-1"></i>';
         emergencyNoteEl.className = 'text-xs mt-3 text-emerald-400 font-medium';
@@ -502,7 +497,7 @@
     const plEl = document.getElementById('m-pl');
     const plSign = m.floatingPL >= 0 ? '+' : '';
     plEl.innerText = plSign + EduVesting.formatRupiah(m.floatingPL);
-    plEl.className = 'font-display text-2xl whitespace-nowrap overflow-hidden text-ellipsis ' + (m.floatingPL >= 0 ? 'text-emerald-400' : 'text-rose-400');
+    plEl.className = 'font-display text-2xl lg:text-3xl font-bold whitespace-nowrap overflow-hidden text-ellipsis ' + (m.floatingPL >= 0 ? 'text-emerald-400' : 'text-rose-400');
     document.getElementById('m-pl-bar').style.width = Math.min(100, Math.abs(m.plPercent)) + '%';
     document.getElementById('m-pl-bar').style.background = m.floatingPL >= 0 ? 'linear-gradient(90deg, #10b981, #34d399)' : 'linear-gradient(90deg, #f43f5e, #fb7185)';
 
