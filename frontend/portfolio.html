@@ -576,11 +576,22 @@
       if (sumValueEl) sumValueEl.innerText = EduVesting.formatRupiah(metrics.totalValue);
       if (sumCostEl) sumCostEl.innerText = EduVesting.formatRupiah(metrics.totalCost);
 
-      if (plEl) {
+            if (plEl) {
         const sign = metrics.floatingPL >= 0 ? '+' : '';
-        plEl.innerText = sign + EduVesting.formatRupiah(metrics.floatingPL) + ` (${sign}${metrics.plPercent.toFixed(1)}%)`;
-        plEl.className = 'font-display text-xl sm:text-2xl whitespace-nowrap overflow-hidden text-ellipsis ' + (metrics.floatingPL >= 0 ? 'text-emerald-400' : 'text-rose-400');
+        const trend = metrics.floatingPL >= 0 ? 'up' : 'down';
+        
+        // Memecah nominal dan persentase menjadi dua baris (atas dan bawah)
+        plEl.innerHTML = `
+          <div class="whitespace-nowrap overflow-hidden text-ellipsis">${sign}${EduVesting.formatRupiah(metrics.floatingPL)}</div>
+          <div class="text-sm font-semibold flex items-center gap-1 mt-1.5 opacity-90">
+            <i class="fa-solid fa-arrow-trend-${trend} text-xs"></i> ${sign}${metrics.plPercent.toFixed(2)}%
+          </div>
+        `;
+        
+        // Hapus efek nowrap dari kotak induknya agar baris kedua bisa turun
+        plEl.className = 'font-display text-xl sm:text-2xl ' + (metrics.floatingPL >= 0 ? 'text-emerald-400' : 'text-rose-400');
       }
+
 
       const tbody = document.getElementById('asset-tbody');
       const emptyState = document.getElementById('empty-state');
