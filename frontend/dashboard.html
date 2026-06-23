@@ -133,15 +133,7 @@
       </a>
     </nav>
 
-    <div class="px-4 pb-5 pt-3">
-      <div class="rounded-xl p-3 text-xs" style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.15);">
-        <div class="flex items-center gap-2 mb-1">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span class="text-emerald-400 font-semibold">Harga Kripto: Live</span>
-        </div>
-        <p id="last-refresh" class="text-slate-500">Belum disinkronkan</p>
-      </div>
-    </div>
+
 
   </aside>
 
@@ -221,7 +213,7 @@
           <p class="text-xs text-slate-500 font-medium uppercase tracking-widest mb-1.5">Rasio Kas</p>
           <div class="flex items-end gap-2">
             <p id="m-cashpct" class="font-display text-2xl text-slate-100">0%</p>
-            <p class="text-slate-500 text-xs mb-1">dari total ekuitas</p>
+            <p class="text-slate-500 text-xs mb-1">dari total aset</p>
           </div>
           <div class="progress-bar mt-3"><div id="m-cashpct-bar" class="progress-fill" style="width:0%; background: linear-gradient(90deg, #06b6d4, #22d3ee);"></div></div>
           <p id="m-cashpct-note" class="text-xs mt-2 text-slate-600"></p>
@@ -424,8 +416,13 @@
   function renderSummary(m) {
     document.getElementById('m-equity').innerText = EduVesting.formatRupiah(m.totalEquity);
     const equityPctEl = document.getElementById('m-equity-pct');
-    const equityPct = m.totalCost > 0 ? ((m.totalEquity - m.totalCost) / m.totalCost) * 100 : 0;
-    const eqSign = equityPct >= 0 ? '+' : '';
+
+    // PERBAIKAN: Persentase pertumbuhan 'vs modal' sekarang mengambil m.plPercent 
+    // yang murni dihitung dari (Floating P/L / Total Cost), sehingga saldo Kas
+    // tidak lagi mendistorsi/memalsukan persentase performa portofolio.
+    const equityPct = m.plPercent || 0; 
+
+    const eqSign = equityPct > 0 ? '+' : ''; // Pakai > 0 agar angka 0 tidak ada + nya jika dirasa perlu, tp >= 0 jg gpp
     equityPctEl.innerHTML = `<i class="fa-solid fa-arrow-trend-${equityPct >= 0 ? 'up' : 'down'} text-xs"></i> ${eqSign}${equityPct.toFixed(1)}%`;
     equityPctEl.className = 'text-sm font-semibold flex items-center gap-1 ' + (equityPct >= 0 ? 'text-emerald-400' : 'text-rose-400');
 
@@ -454,7 +451,7 @@
       warnEl.className = 'text-xs mt-2 text-rose-500 font-medium flex items-center gap-1';
       warnEl.classList.remove('hidden');
 
-      note.innerText = 'Kas kosong melompong! Bahaya nih kalau market lagi diskon, gak ada peluru buat serok bawah.';
+      note.innerText = 'Kas kosong melompong, yang bener aja bos! Gawat nih kalau market lagi diskon, gak ada peluru buat serok bawah';
       note.className = 'text-xs mt-2 text-rose-500 font-medium';
 
     } else if (m.cashPercent < 10 && m.cash < 500000) { 
@@ -463,7 +460,7 @@
       warnEl.className = 'text-xs mt-2 text-rose-400 font-medium flex items-center gap-1';
       warnEl.classList.remove('hidden');
 
-      note.innerText = 'Terlalu rendah woy! Rawan banget kalau tiba-tiba butuh dana darurat (UKT/kosan).'; 
+      note.innerText = 'Terlalu rendah woy! Sayang banget nih kalo lagi ada momentum yang bagus di market tapi dananya kurang'; 
       note.className = 'text-xs mt-2 text-rose-400 font-medium'; 
 
     } else if (m.cashPercent <= 20) { 
@@ -471,28 +468,28 @@
       warnEl.classList.add('hidden'); // Sembunyikan tanda seru di kotak atas
 
       if (m.cashPercent < 10 && m.cash >= 500000) {
-        note.innerText = 'Secara nominal aman buat darurat, tapi porsi kas di portofolio agak kecil buat serok saham bawah.';
+        note.innerText = 'Secara nominal oke sih, tapi dananya agak kecil buat serok menyerok.';
       } else {
-        note.innerText = 'Masih agak rendah. Boleh lah buat nambah porsi dikit kalau ada saham incaran yang turun.'; 
+        note.innerText = 'Masih agak rendah. Boleh lah buat nambah porsi dikit kalau ada saham/kripto incaran yang turun'; 
       }
       note.className = 'text-xs mt-2 text-amber-400 font-medium'; 
 
     } else if (m.cashPercent <= 30) { 
       // 4. Ideal (21 - 30%)
       warnEl.classList.add('hidden');
-      note.innerText = 'Cukup ideal & aman! Portofolio imbang, batin tenang, tidur nyenyak.'; 
+      note.innerText = 'Cukup ideal & aman! buying powermu berada di dalam sweetspot, portofolio imbang, batin tenang, tidur nyenyak :v.'; 
       note.className = 'text-xs mt-2 text-emerald-400 font-medium'; 
 
     } else if (m.cashPercent <= 50) { 
       // 5. Moderat (31 - 50%)
       warnEl.classList.add('hidden');
-      note.innerText = 'Moderat. Peluru kas kamu lumayan banyak nih, siap tempur kalau market lagi merah.'; 
+      note.innerText = 'Moderat. Peluru kamu lumayan banyak nih, siap tempur kalau market lagi merah!'; 
       note.className = 'text-xs mt-2 text-cyan-400 font-medium'; 
 
     } else { 
       // 6. Terlalu Besar (> 50%)
       warnEl.classList.add('hidden');
-      note.innerText = 'Kas nganggur kegedean bos. Duitnya jangan didiemin aja, mending sebagian diputerin!'; 
+      note.innerText = 'Buset, duit nganggurnya kegedean ya bos?. Jangan didiemin aja, mending sebagian diputerin!'; 
       note.className = 'text-xs mt-2 text-indigo-400 font-medium'; 
     }
   }
@@ -551,10 +548,10 @@
     document.getElementById('ai-score').innerText = m.assets.length ? score + '/100' : '—';
 
     const tips = document.getElementById('ai-tips'); 
-    
+
     // Pastikan ID ai-tips ada di HTML sebelum mengeksekusi ini
     if (!tips) return; 
-    
+
     tips.innerHTML = '';
     insights.slice(1, 4).forEach(tip => {
       const div = document.createElement('div'); div.className = 'glass rounded-xl p-4 flex items-start gap-3 transition-all cursor-default';
@@ -576,15 +573,15 @@
     const tbody = document.getElementById('dash-asset-tbody'); 
     const emptyState = document.getElementById('dash-empty-state'); 
     const footer = document.getElementById('dash-table-footer');
-    
+
     tbody.innerHTML = '';
-    
+
     if (!m.assets.length) { 
       emptyState.classList.remove('hidden'); 
       footer.classList.add('hidden'); 
       return; 
     }
-    
+
     emptyState.classList.add('hidden'); 
     footer.classList.remove('hidden');
     document.getElementById('dash-count-text').innerText = `Menampilkan ${m.assets.length} posisi aktif`;
