@@ -36,31 +36,25 @@
     * { box-sizing: border-box; }
     body { font-family: 'Inter', sans-serif; background-color: #07090f; color: #e2e8f0; min-height: 100vh; overflow-x: hidden; }
 
-    /* Sidebar active glow */
     .nav-active { background: linear-gradient(90deg, rgba(124,58,237,0.18) 0%, transparent 100%); border-left: 3px solid #7c3aed; }
     .nav-item { border-left: 3px solid transparent; transition: all 0.2s ease; }
     .nav-item:hover { background: linear-gradient(90deg, rgba(99,102,241,0.1) 0%, transparent 100%); border-left-color: rgba(99,102,241,0.5); color: #a5b4fc; }
 
-    /* Glass Elements */
     .glass { background: rgba(19, 25, 40, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); }
     .glass-lighter { background: rgba(30,40,64,0.6); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.07); }
 
-    /* Mesh Background */
     .mesh-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0;
       background: radial-gradient(ellipse 60% 40% at 15% 10%, rgba(124,58,237,0.08) 0%, transparent 70%),
                   radial-gradient(ellipse 50% 50% at 85% 80%, rgba(6,182,212,0.07) 0%, transparent 60%);
     }
 
-    /* Scrollbar */
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.3); border-radius: 9px; }
 
-    /* Progress Bar */
     .progress-bar { height: 8px; border-radius: 99px; background: rgba(255,255,255,0.07); overflow: hidden; position: relative; }
     .progress-fill { height: 100%; border-radius: 99px; transition: width 1s cubic-bezier(0.22,1,0.36,1); position: relative; }
 
-    /* AI Specific Styles */
     .ai-border { position: relative; }
     .ai-border::before {
       content: ''; position: absolute; inset: -1px; border-radius: inherit; padding: 1px;
@@ -69,24 +63,20 @@
       -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
     }
 
-    /* Chat Bubbles */
     .chat-bubble-ai { background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(99,102,241,0.1)); border: 1px solid rgba(124,58,237,0.2); border-bottom-left-radius: 4px; }
     .chat-bubble-user { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-bottom-right-radius: 4px; }
 
-    /* Typing Animation */
     .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
     .typing-dot:nth-child(1) { animation-delay: -0.32s; }
     .typing-dot:nth-child(2) { animation-delay: -0.16s; }
     @keyframes typing { 0%, 80%, 100% { transform: scale(0); opacity: 0.5; } 40% { transform: scale(1); opacity: 1; } }
 
-    /* Fade-in */
     @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
     .fade-up { animation: fadeUp 0.5s ease both; }
     .delay-1 { animation-delay: 0.07s; }
 
     .logo-text { background: linear-gradient(90deg,#a5b4fc,#93c5fd); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
 
-    /* Tab System Styles */
     .tab-btn { border-bottom: 2px solid transparent; transition: all 0.3s ease; }
     .tab-active { border-bottom: 2px solid #7c3aed; color: #a5b4fc; background: linear-gradient(0deg, rgba(124,58,237,0.1) 0%, transparent 100%); }
     .tab-inactive { color: #64748b; }
@@ -177,9 +167,9 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
           <div class="glass ai-border rounded-2xl p-6 flex flex-col items-center justify-center text-center relative overflow-hidden">
-            <h2 class="text-sm font-semibold text-slate-300 w-full text-left mb-6 relative z-10">Skor Kesehatan AI</h2>
+            <h2 class="text-sm font-semibold text-slate-300 w-full text-left mb-4 relative z-10">Metrik AI Keseluruhan</h2>
 
-            <div class="relative w-40 h-40 flex items-center justify-center mb-4 z-10">
+            <div class="relative w-36 h-36 flex items-center justify-center mb-4 z-10">
               <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8" />
                 <circle id="score-circle" cx="50" cy="50" r="45" fill="none" stroke="url(#gradient)" stroke-width="8" stroke-dasharray="283 283" stroke-linecap="round" class="transition-all duration-1500 ease-out" />
@@ -193,16 +183,25 @@
               </svg>
               <div class="flex flex-col items-center">
                 <span id="health-score-val" class="font-display text-4xl font-bold text-slate-500">?</span>
-                <span class="text-xs text-slate-500 mt-1">/ 100</span>
+                <span class="text-xs text-slate-500 mt-1">/ 10</span>
               </div>
             </div>
 
-            <p id="health-score-label" class="text-lg font-display text-slate-400 mb-2 z-10">Belum Dianalisis</p>
+            <div class="flex gap-4 w-full mb-5 z-10">
+              <div class="flex-1 bg-slate-900/50 rounded-lg p-2 border border-white/5">
+                <p class="text-[10px] text-slate-500 uppercase tracking-wider mb-0.5">Risiko</p>
+                <p id="health-risk-label" class="text-sm font-bold text-slate-400">—</p>
+              </div>
+              <div class="flex-1 bg-slate-900/50 rounded-lg p-2 border border-white/5">
+                <p class="text-[10px] text-slate-500 uppercase tracking-wider mb-0.5">Diversifikasi</p>
+                <p id="health-div-label" class="text-sm font-bold text-slate-400">—</p>
+              </div>
+            </div>
 
-            <button id="btn-generate-score" onclick="generateScoreFromAI()" class="mt-2 w-full py-2.5 rounded-xl text-sm font-semibold bg-violet-600 hover:bg-violet-500 text-white transition shadow-lg shadow-violet-500/20 z-10">
-              <i class="fa-solid fa-bolt mr-2"></i> Minta AI Analisis Skor
+            <button id="btn-generate-score" onclick="generateScoreFromAI()" class="w-full py-2.5 rounded-xl text-sm font-semibold bg-violet-600 hover:bg-violet-500 text-white transition shadow-lg shadow-violet-500/20 z-10">
+              <i class="fa-solid fa-bolt mr-2"></i> Sinkronisasi AI Baru
             </button>
-            <p id="health-score-desc" class="text-xs text-slate-500 mt-3 hidden z-10">Menarik data dari AI Copilot...</p>
+            <p id="health-score-desc" class="text-[11px] text-slate-500 mt-3 hidden z-10">Terakhir diperbarui: Data tersimpan di memori lokal.</p>
           </div>
 
           <div class="glass rounded-2xl p-6 lg:col-span-2 flex flex-col">
@@ -281,9 +280,6 @@
   <script src="js/api.js"></script>
 
   <script>
-    // ==========================================
-    // UI TAB LOGIC
-    // ==========================================
     function switchTab(tabId) {
       const btnAnalytics = document.getElementById('tab-analytics');
       const btnChat = document.getElementById('tab-chat');
@@ -301,7 +297,6 @@
         viewAnalytics.classList.add('hidden');
         viewChat.classList.remove('hidden');
         viewChat.classList.add('flex');
-
         setTimeout(() => document.getElementById('chat-input').focus(), 100);
       }
     }
@@ -313,9 +308,6 @@
       overlay.classList.toggle('hidden');
     }
 
-    // ==========================================
-    // SUPABASE CONFIG & INIT
-    // ==========================================
     const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -344,56 +336,66 @@
     });
 
     // ==========================================
-    // UPDATE UI SKOR (FUNGSI REUSABLE)
+    // UPDATE UI SKOR
     // ==========================================
-    function updateScoreUI(score, isFromCache = false) {
-      const btn = document.getElementById('btn-generate-score');
+    function updateScoreUI(scoreObj) {
       const valEl = document.getElementById('health-score-val');
-      const labelEl = document.getElementById('health-score-label');
+      const riskEl = document.getElementById('health-risk-label');
+      const divEl = document.getElementById('health-div-label');
       const descEl = document.getElementById('health-score-desc');
       const circle = document.getElementById('score-circle');
 
-      valEl.innerText = score;
+      // Update Angka 0-10
+      valEl.innerText = scoreObj.score;
       valEl.classList.remove('text-slate-500');
       valEl.classList.add('text-white');
 
+      // Update Animasi Lingkaran (Base 10)
       const circumference = 2 * Math.PI * 45; 
-      const dashoffset = circumference - (score / 100) * circumference;
+      const dashoffset = circumference - (scoreObj.score / 10) * circumference;
       circle.style.strokeDasharray = `${circumference - dashoffset} ${circumference}`;
 
-      if (score >= 80) {
-         labelEl.innerText = "Sangat Sehat"; labelEl.className = "text-lg font-display font-bold text-emerald-400 mb-2 z-10";
-      } else if (score >= 60) {
-         labelEl.innerText = "Cukup Baik"; labelEl.className = "text-lg font-display font-bold text-cyan-400 mb-2 z-10";
-      } else {
-         labelEl.innerText = "Risiko Tinggi / Bahaya"; labelEl.className = "text-lg font-display font-bold text-rose-400 mb-2 z-10";
-      }
+      // Warna Lingkaran
+      if (scoreObj.score >= 8) circle.style.stroke = "url(#gradient)"; // Sehat
+      else if (scoreObj.score >= 5) circle.style.stroke = "#22d3ee"; // Sedang (Cyan)
+      else circle.style.stroke = "#fb7185"; // Buruk (Rose)
 
-      // --- PERBAIKAN: TOMBOL TIDAK DIHILANGKAN, TAPI BERUBAH JADI "PERBARUI" ---
-      btn.style.display = 'block';
-      btn.innerHTML = '<i class="fa-solid fa-rotate mr-2"></i> Perbarui Skor AI';
-      btn.disabled = false;
-      btn.classList.remove('opacity-70');
-      
-      if (isFromCache) {
-          descEl.innerText = "Skor ini tersimpan di memori lokal dari sesi sebelumnya (Aktif selama 1 jam).";
-      } else {
-          descEl.innerText = "Skor berhasil dievaluasi. Cek Tab Copilot Chat untuk melihat alasan dan roasting detailnya.";
-      }
+      // Update Label Risiko
+      riskEl.innerText = scoreObj.risk;
+      if(scoreObj.risk.toLowerCase().includes('tinggi')) riskEl.className = 'text-sm font-bold text-rose-400';
+      else if(scoreObj.risk.toLowerCase().includes('sedang')) riskEl.className = 'text-sm font-bold text-amber-400';
+      else riskEl.className = 'text-sm font-bold text-emerald-400';
+
+      // Update Label Diversifikasi
+      divEl.innerText = scoreObj.div;
+      if(scoreObj.div.toLowerCase().includes('kurang')) divEl.className = 'text-sm font-bold text-rose-400';
+      else if(scoreObj.div.toLowerCase().includes('sedang')) divEl.className = 'text-sm font-bold text-amber-400';
+      else divEl.className = 'text-sm font-bold text-emerald-400';
+
+      descEl.innerText = "Data berhasil disinkronisasi dengan analisis AI terbaru.";
       descEl.classList.remove('hidden');
     }
 
     // ==========================================
-    // LOGIKA SKORING DINAMIS OLEH AI & CACHING
+    // MINTA SKOR KE AI (3 DIMENSI)
     // ==========================================
     async function generateScoreFromAI() {
       const btn = document.getElementById('btn-generate-score');
-      btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Sedang Menghitung...';
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Sedang Menganalisis...';
       btn.disabled = true;
       btn.classList.add('opacity-70');
 
-      const secretPrompt = `${aiContextString}\n\nTUGAS RAHASIA SISTEM: Berdasarkan data portofolio di atas, berikan evaluasi skor kesehatan dari 0 sampai 100. 
-ATURAN MUTLAK: OUTPUT HARUS HANYA 1 ANGKA BULAT. DILARANG MENULIS HURUF, KATA, ATAU KALIMAT APAPUN. Contoh output yang benar: 45`;
+      // Prompt Rahasia dengan Aturan Ketat
+      const secretPrompt = `${aiContextString}
+TUGAS RAHASIA SISTEM: Evaluasi portofolio dengan 3 parameter.
+1. Skor Keseluruhan (skala 0 sampai 10).
+2. Tingkat Risiko (Pilih salah satu: Tinggi / Sedang / Rendah).
+3. Tingkat Diversifikasi (Pilih salah satu: Bagus / Sedang / Kurang). Catatan: Diversifikasi dinilai dari TOTAL JUMLAH aset individu di portofolio (jumlah emiten/koin), bukan kategorinya. Semakin banyak aset yang dimiliki, semakin bagus.
+
+ATURAN MUTLAK: Jawab HANYA dengan format text baris tunggal seperti di bawah ini tanpa basa-basi:
+SKOR_ANGKA|RISIKO|DIVERSIFIKASI
+Contoh Output yang benar: 7|Sedang|Bagus`;
 
       try {
         const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
@@ -408,54 +410,59 @@ ATURAN MUTLAK: OUTPUT HARUS HANYA 1 ANGKA BULAT. DILARANG MENULIS HURUF, KATA, A
         const data = await response.json();
 
         if (data.success) {
-          let match = data.reply.match(/\d+/);
-          let score = match ? parseInt(match[0]) : 50;
-          if (score > 100) score = 100;
+          // Parse format: 8|Tinggi|Kurang
+          const match = data.reply.match(/(\d+)\s*\|\s*([a-zA-Z]+)\s*\|\s*([a-zA-Z]+)/);
+          
+          let score = 5, risk = 'Sedang', div = 'Sedang';
+          if (match) {
+             score = parseInt(match[1]);
+             risk = match[2];
+             div = match[3];
+          } else {
+             console.warn("AI format failed, using fallback:", data.reply);
+          }
+          if (score > 10) score = 10;
 
-          // Simpan ke Cache
-          const aiScoreData = {
-            score: score,
-            timestamp: new Date().getTime() 
-          };
+          const aiScoreData = { score, risk, div, timestamp: new Date().getTime() };
           localStorage.setItem('eduvesting_ai_score', JSON.stringify(aiScoreData));
           
-          updateScoreUI(score, false);
+          updateScoreUI(aiScoreData);
 
           setTimeout(() => {
             switchTab('chat');
-            appendUserMessage(`Tolong jelaskan secara detail dan blak-blakan, kenapa lu ngasih skor portofolio gue ${score}/100?`);
-            simulateAIResponse(`Tolong jelaskan secara blak-blakan dan tajam, kenapa portofolio gue dapet skor ${score}/100 berdasarkan data yang lu pegang tadi. Apa yang salah atau apa yang udah bener?`);
+            appendUserMessage(`Kenapa portofolio gue dapet Skor ${score}/10, Risiko ${risk}, dan Diversifikasi ${div}?`);
+            simulateAIResponse(`Jelaskan secara brutal dan analitis kenapa portofolio gue dapet Skor: ${score}/10, Risiko: ${risk}, dan Diversifikasi: ${div}. Bahas dari segi alokasi kas dan jumlah aset.`);
           }, 1500);
 
-        } else {
-          throw new Error("Gagal parsing dari Groq");
-        }
+        } else { throw new Error("Gagal parsing dari Groq"); }
 
       } catch (error) {
         console.error("Score Gen Error:", error);
-        btn.innerHTML = '<i class="fa-solid fa-rotate-right mr-2"></i> Gagal. Coba Lagi';
+      } finally {
+        btn.innerHTML = '<i class="fa-solid fa-rotate-right mr-2"></i> Update Analisis Ulang';
         btn.disabled = false;
         btn.classList.remove('opacity-70');
       }
     }
 
     // ==========================================
-    // RENDER VISUAL DATA (NON-SKOR) + CEK CACHE
+    // RENDER VISUAL DATA
     // ==========================================
     function renderAiDashboard(metrics) {
       const alokasi = metrics.allocation.map(a => `${a.type.toUpperCase()} (${a.percent.toFixed(1)}%)`).join(', ');
 
+      // INJEKSI TOTAL ASET INDIVIDU AGAR AI PINTAR NILAI DIVERSIFIKASI
       aiContextString = `Data Portofolio Nyata User: 
 - Total Ekuitas/Net Worth: Rp ${metrics.totalEquity.toLocaleString('id-ID')}
 - Total P/L: Rp ${metrics.floatingPL.toLocaleString('id-ID')} (${metrics.plPercent.toFixed(2)}%)
-- Saldo Kas Tersisa: Rp ${metrics.cash.toLocaleString('id-ID')} (${metrics.cashPercent.toFixed(2)}% dari total aset)
-- Rincian Alokasi: ${alokasi || 'Kosong'}. 
-Ingat: Evaluasi data ini dengan brutal dan objektif.`;
+- Saldo Kas: Rp ${metrics.cash.toLocaleString('id-ID')} (${metrics.cashPercent.toFixed(2)}% dari aset)
+- Total Aset Individu (Jumlah emiten/koin berbeda): ${metrics.assets.length} aset
+- Rincian Kategori: ${alokasi || 'Kosong'}.`;
 
       const insights = EduVesting.generateInsights(metrics);
       const recomContainer = document.getElementById('recom-container');
       recomContainer.innerHTML = '';
-
+      
       const toneMap = {
         'rose': { bg: 'bg-rose-500/10', border: 'border-rose-500/20', text: 'text-rose-400' },
         'amber': { bg: 'bg-amber-500/10', border: 'border-amber-500/20', text: 'text-amber-400' },
@@ -463,7 +470,7 @@ Ingat: Evaluasi data ini dengan brutal dan objektif.`;
       };
 
       if(insights.length === 0) {
-          recomContainer.innerHTML = '<p class="text-sm text-slate-500 py-4">Belum ada peringatan mendesak. Data aman.</p>';
+          recomContainer.innerHTML = '<p class="text-sm text-slate-500 py-4">Data portofolio aman.</p>';
       } else {
           insights.forEach(insight => {
             const t = toneMap[insight.tone] || toneMap['emerald'];
@@ -487,7 +494,7 @@ Ingat: Evaluasi data ini dengan brutal dan objektif.`;
       if (metrics.cash > 0) allItems.push({ label: 'Kas Tunai', percent: metrics.cashPercent, gradient: ['#94a3b8'], badgeColor: '#94a3b8' });
 
       if (allItems.length === 0) {
-        sectorContainer.innerHTML = '<p class="text-sm text-slate-500">Tidak ada data aset untuk ditampilkan.</p>';
+        sectorContainer.innerHTML = '<p class="text-sm text-slate-500">Tidak ada aset.</p>';
       } else {
         allItems.forEach(item => {
           let statusText = 'Normal'; let statusColor = 'text-emerald-400';
@@ -507,16 +514,11 @@ Ingat: Evaluasi data ini dengan brutal dan objektif.`;
         });
       }
 
-      // --- CEK CACHE SKOR AI DARI LOCALSTORAGE ---
+      // --- CEK CACHE SKOR ---
       const savedScoreRaw = localStorage.getItem('eduvesting_ai_score');
       if (savedScoreRaw) {
         const parsed = JSON.parse(savedScoreRaw);
-        const now = new Date().getTime();
-        if (now - parsed.timestamp < 3600000) {
-          updateScoreUI(parsed.score, true);
-        } else {
-          localStorage.removeItem('eduvesting_ai_score');
-        }
+        updateScoreUI(parsed); // Memori permanen, tombol Generate tidak disembunyikan
       }
     }
 
@@ -605,7 +607,7 @@ Ingat: Evaluasi data ini dengan brutal dan objektif.`;
             .replace(/\n/g, '<br><div class="h-1"></div>'); 
           appendAIResponse(formattedReply);
         } else {
-          appendAIResponse("🚨 Koneksi ke server Llama 3.3 terputus. Coba ulangi lagi.");
+          appendAIResponse("🚨 Koneksi ke server terputus. Coba ulangi lagi.");
         }
       } catch (error) {
         if (document.getElementById('ai-typing')) document.getElementById('ai-typing').remove();
@@ -617,7 +619,6 @@ Ingat: Evaluasi data ini dengan brutal dan objektif.`;
       e.preventDefault();
       const text = chatInput.value.trim();
       if (!text) return;
-
       appendUserMessage(text);
       chatInput.value = '';
       simulateAIResponse(text); 
