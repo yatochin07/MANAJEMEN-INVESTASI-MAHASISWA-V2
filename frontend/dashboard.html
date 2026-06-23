@@ -397,7 +397,8 @@
       const user = session.user;
       currentUserId = user.id; 
 
-      const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
+      // PENTING: Prioritaskan custom_full_name agar anti-overwrite google
+      const displayName = user.user_metadata?.custom_full_name || user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
       const avatarUrl = user.user_metadata?.custom_avatar_url || user.user_metadata?.avatar_url; 
 
       document.getElementById('welcome-user').innerText = `Selamat Datang, ${displayName} 👋`;
