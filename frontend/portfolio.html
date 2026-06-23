@@ -360,9 +360,9 @@
       }
 
       const user = session.user;
-      const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
       
-      // Update: Mengambil custom_avatar_url prioritas pertama
+      // Update: Prioritaskan custom_full_name agar nama tidak terganti Google
+      const displayName = user.user_metadata?.custom_full_name || user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
       const avatarUrl = user.user_metadata?.custom_avatar_url || user.user_metadata?.avatar_url; 
 
       const sbName = document.getElementById('sidebar-user-name');
