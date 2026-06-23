@@ -13,6 +13,8 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
@@ -227,6 +229,11 @@
     body.light-mode .faq-item { border-bottom: 1px solid #e2e8f0; }
     body.light-mode footer { background: rgba(248, 250, 252, 0.9); border-top: 1px solid #e2e8f0; }
     body.light-mode footer .border-t { border-color: #e2e8f0; }
+
+    /* SweetAlert2 Overrides buat transisi tema yang smooth */
+    div:where(.swal2-container) div:where(.swal2-popup) {
+      font-family: 'Inter', sans-serif !important;
+    }
   </style>
 </head>
 
@@ -236,6 +243,7 @@
     // Inisialisasi Tema saat halaman dimuat
     if(localStorage.getItem('theme') === 'light') {
       document.body.classList.add('light-mode');
+      document.documentElement.classList.remove('dark');
     }
   </script>
 
@@ -735,6 +743,27 @@
 
   <script>
     // ==========================================
+    // CUSTOM ALERT DENGAN SWEETALERT2
+    // ==========================================
+    function showCustomAlert(type, title, text) {
+      const isLight = document.body.classList.contains('light-mode');
+      Swal.fire({
+        icon: type,
+        title: title,
+        text: text,
+        confirmButtonText: 'Oke, Paham!',
+        confirmButtonColor: '#6366f1',
+        background: isLight ? '#ffffff' : '#1e293b',
+        color: isLight ? '#0f1423' : '#e2e8f0',
+        customClass: {
+          popup: 'rounded-2xl border ' + (isLight ? 'border-slate-200 shadow-xl' : 'border-white/10 shadow-2xl'),
+          title: 'font-display font-bold',
+          confirmButton: 'rounded-xl text-sm font-semibold px-6 py-2.5'
+        }
+      });
+    }
+
+    // ==========================================
     // THEME TOGGLE SCRIPT
     // ==========================================
     function toggleTheme() {
@@ -898,11 +927,13 @@
           redirectTo: window.location.origin + '/dashboard.html'
         }
       });
-      if (error) alert("Gagal login dengan Google: " + error.message);
+      if (error) {
+        showCustomAlert('error', 'Waduh, Gagal Masuk!', 'Login pakai Google-nya belum berhasil nih. Coba lagi ya! (' + error.message + ')');
+      }
     }
 
     // ==========================================
-    // LOGIN EMAIL MANUAL (ADJUSTED UNTUK VERIFIKASI)
+    // LOGIN EMAIL MANUAL
     // ==========================================
     async function handleLogin() {
       const emailInput = document.getElementById('login-email');
@@ -950,7 +981,7 @@
           errEmail.innerText = "⚠️ Akun belum diverifikasi! Cek kotak masuk/folder spam di Gmail Anda.";
           errEmail.classList.add('show');
         } else {
-          alert('Login Gagal: ' + error.message);
+          showCustomAlert('error', 'Gagal Masuk', 'Pastikan email dan passwordnya udah bener ya. (' + error.message + ')');
         }
       } else {
         showSuccess('Masuk', 'Mengalihkan ke dashboard Anda…', true);
@@ -960,12 +991,12 @@
     function isValidEmailData(email) {
       const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!regexEmail.test(email)) {
-        return { valid: false, msg: "Format email tidak valid. Pastikan memakai @ dan domain yang benar." };
+        return { valid: false, msg: "Format emailnya sepertinya kurang pas nih. Cek lagi ya, pastikan pakai @ dan domain yang benar." };
       }
       const domain = email.split('@')[1].toLowerCase();
       const disposableDomains = ['mailinator.com', '10minutemail.com', 'tempmail.com', 'temp-mail.org', 'guerrillamail.com', 'yopmail.com', 'throwawaymail.com', 'tempmail.net', 'fakemail.net', 'trashmail.com', 'getnada.com', 'tempmail.ninja', 'disposablemail.com'];
       if (disposableDomains.includes(domain)) {
-        return { valid: false, msg: "Penggunaan email sementara (temp mail) tidak diizinkan." };
+        return { valid: false, msg: "Maaf banget, email sementara (temp mail) nggak bisa dipakai di sini. Gunakan email kampus atau pribadimu ya!" };
       }
       return { valid: true, msg: "" };
     }
@@ -976,7 +1007,7 @@
     }
 
     // ==========================================
-    // REGISTER MANUAL (ADJUSTED DENGAN INTERFEIS VERIFIKASI)
+    // REGISTER MANUAL
     // ==========================================
     async function handleRegister() {
       const nameInput = document.getElementById('reg-name');
@@ -987,16 +1018,19 @@
       const btn = document.getElementById('btn-register');
 
       if (!nameInput.value || !emailInput.value || !passwordInput.value) {
-        return alert("Harap isi Nama, Email, dan Password.");
+        showCustomAlert('warning', 'Data Belum Lengkap!', 'Eits, jangan ada yang kosong ya. Pastiin Nama, Email, dan Password udah diisi semua.');
+        return;
       }
 
       const emailValidation = isValidEmailData(emailInput.value);
       if (!emailValidation.valid) {
-        return alert(emailValidation.msg);
+        showCustomAlert('warning', 'Email Kurang Tepat', emailValidation.msg);
+        return;
       }
 
       if (!termsCheck) {
-        return alert("Anda harus menyetujui Syarat & Ketentuan.");
+        showCustomAlert('info', 'Hampir Selesai!', 'Jangan lupa centang persetujuan Syarat & Ketentuan dulu ya sebelum lanjut.');
+        return;
       }
 
       btn.disabled = true;
@@ -1013,7 +1047,7 @@
       if (error) {
         btn.disabled = false;
         btn.innerHTML = 'Buat Akun Gratis';
-        alert('Gagal Mendaftar: ' + error.message);
+        showCustomAlert('error', 'Gagal Mendaftar', 'Yah, pendaftarannya gagal nih. Coba cek lagi: ' + error.message);
       } else {
         // RESET FORM PENDAFTARAN BIAR BERSIH
         nameInput.value = '';
