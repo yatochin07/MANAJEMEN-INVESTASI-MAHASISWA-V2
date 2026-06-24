@@ -377,6 +377,24 @@
       }
     }
 
+    // Mengubah warna saat memilih card (Pengaturan)
+    document.querySelectorAll('input[name="risk"]').forEach(function(input) {
+      input.addEventListener('change', function() {
+        document.querySelectorAll('label:has(input[name="risk"])').forEach(function(label) {
+          var radio = label.querySelector('input[name="risk"]');
+          var teks  = label.querySelector('p:first-child');
+
+          if (radio.checked) {
+            label.className = 'flex items-center gap-3 p-3 rounded-xl border border-emerald-500/50 bg-emerald-500/10 cursor-pointer';
+            teks.className  = 'text-sm font-medium text-emerald-400';
+          } else {
+            label.className = 'flex items-center gap-3 p-3 rounded-xl border border-slate-700 bg-slate-800/50 cursor-pointer hover:border-slate-500 transition-colors';
+            teks.className  = 'text-sm font-medium text-slate-200';
+          }
+        });
+      });
+    });
+
     // Inisialisasi Ikon Tema (Hanya mengubah ikon, tidak memanggil ulang fungsi toggle)
     document.addEventListener("DOMContentLoaded", function() {
       const icon = document.getElementById('theme-icon');
