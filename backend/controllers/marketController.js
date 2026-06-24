@@ -22,8 +22,8 @@ exports.getStockPrice = async (req, res) => {
     let finalPrice = quote.regularMarketPrice;
     let prevClose = quote.regularMarketPreviousClose || finalPrice;
     let changePct = ((finalPrice - prevClose) / prevClose) * 100;
-    
-    if (yahooTicker === 'GC=F') finalPrice = finalPrice * 16000; // Konversi kasar Emas
+
+    if (yahooTicker === 'GC=F') finalPrice = finalPrice * 16000;
 
     res.status(200).json({ 
         sukses: true, 
