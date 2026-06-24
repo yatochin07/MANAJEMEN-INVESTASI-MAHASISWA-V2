@@ -64,6 +64,11 @@
   .spin { animation: spin 1s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
+  /* Fix untuk native select option biar gelap */
+  select#f-type { background-color: rgba(255, 255, 255, 0.04); }
+  select#f-type option { background-color: #0f1423; color: #e2e8f0; padding: 12px; }
+
+  /* SweetAlert2 Overrides biar nyesuain UI modern */
   div:where(.swal2-container) div:where(.swal2-popup) { font-family: 'Inter', sans-serif !important; }
 
   /* ==========================================
@@ -73,17 +78,22 @@
   body.light-mode .glass, body.light-mode .glass-lighter { background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
   body.light-mode .text-slate-200, body.light-mode .text-slate-300, body.light-mode .text-slate-100 { color: #1e293b; }
   body.light-mode .text-slate-400, body.light-mode .text-slate-500 { color: #475569; }
-  body.light-mode .form-input { background: #ffffff !important; border-color: #cbd5e1; color: #0f1423; }
+  body.light-mode .form-input, body.light-mode select#f-type { background: #ffffff !important; border-color: #cbd5e1; color: #0f1423; }
+  body.light-mode select#f-type option { background-color: #ffffff; color: #0f1423; }
   body.light-mode aside { background: rgba(255, 255, 255, 0.95) !important; border-right: 1px solid rgba(0,0,0,0.08); }
 </style>
 </head>
 
 <body class="relative">
 <script>
+  // Cek memori browser, apakah user sedang pakai Light Mode?
   if(localStorage.getItem('theme') === 'light') {
     document.body.classList.add('light-mode');
   }
 
+  // ==========================================
+  // CUSTOM ALERT DENGAN SWEETALERT2
+  // ==========================================
   function showCustomAlert(type, title, text) {
     const isLight = document.body.classList.contains('light-mode');
     Swal.fire({
@@ -102,6 +112,7 @@
     });
   }
 
+  // Khusus untuk Toast (Notif kecil di pojok yang hilang otomatis)
   function showToast(icon, title) {
     const isLight = document.body.classList.contains('light-mode');
     const Toast = Swal.mixin({
@@ -235,7 +246,8 @@
       </div>
     </section>
 
-    <section class="mb-8 fade-up delay-2">
+    <!-- FIX: Ditambahkan relative dan z-30 pada section agar dropdown tidak tertutup elemen di bawahnya -->
+    <section class="mb-8 fade-up delay-2 relative z-30">
       <div class="glass rounded-2xl p-4 sm:p-6">
         <h2 class="font-display text-base text-slate-300 mb-4 flex items-center gap-2">
           <i class="fa-solid fa-plus text-indigo-400 text-sm"></i> <span id="form-title">Tambah Aset Baru</span>
@@ -247,7 +259,8 @@
           <!-- ===================================== -->
           <!-- CUSTOM DROPDOWN MENGGANTIKAN <SELECT> -->
           <!-- ===================================== -->
-          <div class="sm:col-span-1 md:col-span-1 relative">
+          <!-- FIX: z-50 ditambahkan pada wrapper input dropdown -->
+          <div class="sm:col-span-1 md:col-span-1 relative z-50">
             <label class="text-xs text-slate-500 mb-1 block">Tipe Aset</label>
             <input type="hidden" id="f-type" value="saham" />
             
@@ -257,7 +270,7 @@
             </button>
 
             <!-- Menu Dropdown -->
-            <div id="custom-select-menu" class="absolute z-50 w-full mt-2 rounded-xl glass shadow-xl shadow-black/40 opacity-0 invisible transform -translate-y-2 transition-all duration-200 overflow-hidden">
+            <div id="custom-select-menu" class="absolute z-[100] w-full mt-2 rounded-xl glass shadow-xl shadow-black/40 opacity-0 invisible transform -translate-y-2 transition-all duration-200 overflow-hidden">
               <ul class="py-1">
                 <li><button type="button" onclick="selectCustomOption('saham', 'Saham')" class="w-full text-left px-4 py-2.5 text-sm text-slate-200 hover:bg-indigo-500/20 hover:text-indigo-400 transition-colors">Saham</button></li>
                 <li><button type="button" onclick="selectCustomOption('kripto', 'Kripto')" class="w-full text-left px-4 py-2.5 text-sm text-slate-200 hover:bg-indigo-500/20 hover:text-indigo-400 transition-colors">Kripto</button></li>
