@@ -212,9 +212,8 @@
         <h2 class="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2"><i class="fa-solid fa-list-check text-emerald-400"></i> My Live Watchlist</h2>
         <div class="glass rounded-2xl flex flex-col flex-1 p-4 h-[450px]">
 
-          <!-- Input Ticker Bebas. Apa saja bisa masuk! -->
           <form id="watchlist-form" class="flex gap-2 mb-4">
-            <input type="text" id="wl-ticker" placeholder="Cari Aset (AAPL / GOTO / SOL)" class="form-input flex-1 rounded-xl px-3 py-2 text-sm uppercase" autocomplete="off" required>
+            <input type="text" id="wl-ticker" placeholder="Cari Aset (AAPL / BBCA / BTC)" class="form-input flex-1 rounded-xl px-3 py-2 text-sm uppercase" autocomplete="off" required>
             <button type="button" onclick="searchOnly()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 sm:px-4 rounded-xl text-sm font-bold transition-colors" title="Lihat Grafik"><i class="fa-solid fa-search"></i></button>
             <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 sm:px-4 rounded-xl text-sm font-bold transition-colors" title="Tambah ke Watchlist"><i class="fa-solid fa-plus"></i></button>
           </form>
@@ -226,20 +225,64 @@
 
     </section>
 
-    <!-- BAGIAN SCREENER DIPERBARUI MENGGUNAKAN TRADINGVIEW WIDGET (BEBAS VERCEL CORS) -->
+    <!-- FIX: SCREENER SEKARANG DITANAM PERMANEN DI HTML & BISA DI TAB. DIJAMIN TIDAK KOSONG! -->
     <section class="mb-8 fade-up delay-3">
        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-3 gap-4">
           <h2 class="text-sm font-semibold text-slate-300 flex items-center gap-2"><i class="fa-solid fa-fire-flame-curved text-amber-400"></i> Market Screener (Semua Aset Dunia)</h2>
           <div class="flex overflow-x-auto no-scrollbar gap-2 w-full lg:w-auto pb-2 lg:pb-0">
-             <button onclick="injectScreener('indonesia', 'top_gainers', 'tab-gainer_saham')" id="tab-gainer_saham" class="scr-tab tab-active px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800/50 border border-slate-700">Gainers Saham</button>
-             <button onclick="injectScreener('crypto', 'top_gainers', 'tab-gainer_kripto')" id="tab-gainer_kripto" class="scr-tab tab-inactive px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800/50 border border-slate-700">Gainers Kripto</button>
-             <button onclick="injectScreener('indonesia', 'top_losers', 'tab-loser_saham')" id="tab-loser_saham" class="scr-tab tab-inactive px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800/50 border border-slate-700">Losers Saham</button>
-             <button onclick="injectScreener('crypto', 'top_losers', 'tab-loser_kripto')" id="tab-loser_kripto" class="scr-tab tab-inactive px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800/50 border border-slate-700">Losers Kripto</button>
+             <button onclick="switchScreenerTab('tab-gainer_saham', 'scr-gainer_saham')" id="tab-gainer_saham" class="scr-tab tab-active px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800/50 border border-slate-700">Gainers Saham</button>
+             <button onclick="switchScreenerTab('tab-gainer_kripto', 'scr-gainer_kripto')" id="tab-gainer_kripto" class="scr-tab tab-inactive px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800/50 border border-slate-700">Gainers Kripto</button>
+             <button onclick="switchScreenerTab('tab-loser_saham', 'scr-loser_saham')" id="tab-loser_saham" class="scr-tab tab-inactive px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800/50 border border-slate-700">Losers Saham</button>
+             <button onclick="switchScreenerTab('tab-loser_kripto', 'scr-loser_kripto')" id="tab-loser_kripto" class="scr-tab tab-inactive px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800/50 border border-slate-700">Losers Kripto</button>
           </div>
        </div>
 
-       <div class="glass rounded-2xl w-full overflow-hidden p-2 h-[450px]" id="tv-screener-container">
-          <!-- Widget Screener TradingView akan di-inject ke sini -->
+       <div class="glass rounded-2xl w-full overflow-hidden p-2 h-[500px]" id="tv-screener-container">
+          
+          <div id="scr-gainer_saham" class="screener-content h-full w-full block">
+            <script>
+              (function(){
+                var theme = localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
+                document.write('<div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-screener.js" async>' + JSON.stringify({
+                  "width": "100%", "height": "100%", "defaultColumn": "overview", "defaultScreen": "top_gainers", "market": "indonesia", "showToolbar": true, "colorTheme": theme, "locale": "id", "isTransparent": true
+                }) + '<\/script></div>');
+              })();
+            </script>
+          </div>
+
+          <div id="scr-gainer_kripto" class="screener-content h-full w-full hidden">
+            <script>
+              (function(){
+                var theme = localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
+                document.write('<div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-screener.js" async>' + JSON.stringify({
+                  "width": "100%", "height": "100%", "defaultColumn": "overview", "defaultScreen": "top_gainers", "market": "crypto", "showToolbar": true, "colorTheme": theme, "locale": "id", "isTransparent": true
+                }) + '<\/script></div>');
+              })();
+            </script>
+          </div>
+
+          <div id="scr-loser_saham" class="screener-content h-full w-full hidden">
+            <script>
+              (function(){
+                var theme = localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
+                document.write('<div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-screener.js" async>' + JSON.stringify({
+                  "width": "100%", "height": "100%", "defaultColumn": "overview", "defaultScreen": "top_losers", "market": "indonesia", "showToolbar": true, "colorTheme": theme, "locale": "id", "isTransparent": true
+                }) + '<\/script></div>');
+              })();
+            </script>
+          </div>
+
+          <div id="scr-loser_kripto" class="screener-content h-full w-full hidden">
+            <script>
+              (function(){
+                var theme = localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
+                document.write('<div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-screener.js" async>' + JSON.stringify({
+                  "width": "100%", "height": "100%", "defaultColumn": "overview", "defaultScreen": "top_losers", "market": "crypto", "showToolbar": true, "colorTheme": theme, "locale": "id", "isTransparent": true
+                }) + '<\/script></div>');
+              })();
+            </script>
+          </div>
+
        </div>
     </section>
 
@@ -281,6 +324,11 @@
   const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+  // Daftar Saham US Populer (Bisa ditambah)
+  const usStocksList = ['AAPL', 'MSFT', 'NVDA', 'TSLA', 'AMZN', 'META', 'GOOGL', 'NFLX', 'AMD', 'INTC'];
+  const cryptoKeys = ['BTC', 'ETH', 'BNB', 'SOL', 'XRP', 'ADA', 'DOGE', 'USDT'];
+  const dictCrypto = {'BTC':'bitcoin','ETH':'ethereum','BNB':'binancecoin','SOL':'solana','XRP':'ripple','ADA':'cardano','DOGE':'dogecoin','USDT':'tether'};
+
   document.addEventListener('DOMContentLoaded', async () => {
     try {
       const { data: { session }, error } = await supabaseClient.auth.getSession();
@@ -300,10 +348,42 @@
 
       loadAdvancedChart('IDX:COMPOSITE');
       renderWatchlist();
-      injectScreener('indonesia', 'top_gainers', 'tab-gainer_saham');
 
     } catch (err) { console.error("Gagal auth:", err); }
   });
+
+  // FUNGSI GANTI TAB SCREENER MENGGUNAKAN CSS DISPLAY
+  function switchScreenerTab(tabId, contentId) {
+      document.querySelectorAll('.scr-tab').forEach(el => {
+         el.classList.remove('tab-active', 'text-indigo-300');
+         el.classList.add('tab-inactive');
+      });
+      document.getElementById(tabId).classList.remove('tab-inactive');
+      document.getElementById(tabId).classList.add('tab-active', 'text-indigo-300');
+
+      document.querySelectorAll('.screener-content').forEach(el => {
+         el.classList.remove('block');
+         el.classList.add('hidden');
+      });
+      document.getElementById(contentId).classList.remove('hidden');
+      document.getElementById(contentId).classList.add('block');
+  }
+
+  // FIX: MEMAKSA TRADINGVIEW UNTUK FOKUS KE SAHAM INDONESIA JIKA KATA KUNCI = 4 HURUF 
+  function formatSymbolForTV(input) {
+      const up = input.toUpperCase();
+      if(cryptoKeys.includes(up) || up.endsWith('USDT')) {
+         return `BINANCE:${up}${up.includes('USDT') ? '' : 'USDT'}`;
+      }
+      if (up === 'EMAS' || up === 'GOLD' || up === 'XAU') return 'TVC:GOLD';
+      if (up === 'IHSG' || up === 'COMPOSITE') return 'IDX:COMPOSITE';
+      if (usStocksList.includes(up)) return `NASDAQ:${up}`;
+      
+      // Jika input persis 4 huruf dan bukan dari list US, otomatis anggap Saham IDX! (Agar tidak lari ke JP Morgan)
+      if (/^[A-Z]{4}$/.test(up)) return `IDX:${up}`;
+      
+      return up;
+  }
 
   function loadAdvancedChart(symbolToLoad) {
     const isLight = document.body.classList.contains('light-mode');
@@ -318,58 +398,57 @@
     });
   }
 
-  /* =========================================================================================
-     FIX 1: SCREENER WIDGET DINAMIS TRADINGVIEW (DIJAMIN TIDAK ERROR DI VERCEL)
-     Tidak ada fetch data manual, semua full dikendalikan oleh iframe TradingView.
-     Menampilkan SEMUA saham di database, tidak dibatasi cuma beberapa.
-     ========================================================================================= */
-  function injectScreener(marketType, screenType, tabId) {
-      // Atur warna Tab
-      document.querySelectorAll('.scr-tab').forEach(el => {
-         el.classList.remove('tab-active', 'text-indigo-300');
-         el.classList.add('tab-inactive');
-      });
-      document.getElementById(tabId).classList.remove('tab-inactive');
-      document.getElementById(tabId).classList.add('tab-active', 'text-indigo-300');
-
-      const isLight = document.body.classList.contains('light-mode');
-      const container = document.getElementById('tv-screener-container');
-      container.innerHTML = ''; 
-
-      const widgetDiv = document.createElement('div');
-      widgetDiv.className = "tradingview-widget-container__widget h-full w-full";
-      container.appendChild(widgetDiv);
-
-      const script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-screener.js';
-      script.async = true;
-      script.innerHTML = JSON.stringify({
-          "width": "100%",
-          "height": "100%",
-          "defaultColumn": "overview",
-          "defaultScreen": screenType,
-          "market": marketType,
-          "showToolbar": true,
-          "colorTheme": isLight ? "light" : "dark",
-          "locale": "id",
-          "isTransparent": true
-      });
-      container.appendChild(script);
+  // Helper untuk formatting ke API Yahoo Finance 
+  function formatSymbolForYahoo(input) {
+      const up = input.toUpperCase();
+      if (up === 'EMAS' || up === 'GOLD' || up === 'XAU') return 'GC=F';
+      if (up === 'IHSG' || up === 'COMPOSITE') return '^JKSE';
+      if (usStocksList.includes(up)) return up;
+      
+      // Jika 4 huruf, otomatis tambah .JK (BBCA -> BBCA.JK) agar terbaca API Yahoo
+      if (/^[A-Z]{4}$/.test(up)) return `${up}.JK`;
+      
+      if (up.includes('.')) return up;
+      return `${up}.JK`;
   }
 
-  /* =========================================================================================
-     FIX 2: WATCHLIST "UNIVERSAL SMART FETCH"
-     Tidak ada lagi limitasi array. Ticker apapun yang dimasukkan user akan dicari secara berurutan.
-     ========================================================================================= */
-  let watchlist = JSON.parse(localStorage.getItem('eduvesting_wl_final_v2')) || [];
-
-  // Konversi cerdas untuk grafik TradingView
-  function formatSymbolForTV(input) {
-      if (input === 'EMAS' || input === 'GOLD') return 'TVC:GOLD';
-      if (input === 'IHSG' || input === 'COMPOSITE') return 'IDX:COMPOSITE';
-      return input; // TradingView sangat pintar, jika kita kasih "GOTO" atau "AAPL" dia otomatis akan cari sendiri
+  function isCryptoTicker(t) {
+      const up = t.toUpperCase();
+      return cryptoKeys.includes(up) || up.includes('USDT');
   }
+
+  // FIX: TARIK SEMUA HARGA SAHAM DALAM 1X FETCH MASSAL. SUPER CEPAT & TIDAK LEMOT.
+  async function fetchStockBulk(tickers) {
+      if(tickers.length === 0) return {};
+      const yfSymbols = tickers.map(formatSymbolForYahoo);
+      const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${yfSymbols.join(',')}`;
+      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&disableCache=true`;
+
+      try {
+          const res = await fetch(proxyUrl);
+          const json = await res.json();
+          const data = JSON.parse(json.contents);
+          let results = {};
+          if(data && data.quoteResponse && data.quoteResponse.result) {
+              data.quoteResponse.result.forEach(quote => {
+                  // Mencari siapa nama Ticker aslinya sebelum dikirim (Contoh: BBRI.JK kembali jadi BBRI)
+                  const original = tickers.find(t => formatSymbolForYahoo(t) === quote.symbol);
+                  if(original) {
+                      results[original] = {
+                          price: quote.regularMarketPrice,
+                          currency: quote.currency === 'USD' ? 'USD ' : 'Rp '
+                      };
+                  }
+              });
+          }
+          return results;
+      } catch(e) {
+          console.error("Gagal memuat bulk saham:", e);
+          return {};
+      }
+  }
+
+  let watchlist = JSON.parse(localStorage.getItem('eduvesting_wl_final_v3')) || [];
 
   function searchOnly() {
       const input = document.getElementById('wl-ticker').value.trim().toUpperCase();
@@ -384,7 +463,7 @@
 
     if(!watchlist.includes(input)) {
        watchlist.push(input);
-       localStorage.setItem('eduvesting_wl_final_v2', JSON.stringify(watchlist));
+       localStorage.setItem('eduvesting_wl_final_v3', JSON.stringify(watchlist));
        renderWatchlist();
     }
 
@@ -394,64 +473,11 @@
 
   function removeWatchlist(ticker) {
     watchlist = watchlist.filter(t => t !== ticker);
-    localStorage.setItem('eduvesting_wl_final_v2', JSON.stringify(watchlist));
+    localStorage.setItem('eduvesting_wl_final_v3', JSON.stringify(watchlist));
     renderWatchlist();
   }
 
-  // Fungsi mesin pencari cerdas (Bypass Vercel CORS menggunakan Proxy yang diizinkan untuk metode GET)
-  async function findPriceUniversal(ticker) {
-      // 1. Apakah ini Kripto? (Gunakan CoinGecko Search API)
-      try {
-          const cgSearch = await fetch(`https://api.coingecko.com/api/v3/search?query=${ticker}`);
-          const cgData = await cgSearch.json();
-          // Jika hasilnya akurat (simbol sama persis)
-          if(cgData.coins && cgData.coins.length > 0 && cgData.coins[0].symbol.toUpperCase() === ticker) {
-              const id = cgData.coins[0].id;
-              const priceRes = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=idr`);
-              const priceData = await priceRes.json();
-              if(priceData[id]) return { price: priceData[id].idr, currency: 'Rp ', type: 'Crypto Spot' };
-          }
-      } catch(e) {}
-
-      // Helper Proxy untuk Yahoo Finance GET Request
-      const fetchYahoo = async (queryTicker) => {
-          const urls = [
-              `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${queryTicker}?interval=1d`)}`,
-              `https://corsproxy.io/?${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${queryTicker}?interval=1d`)}`
-          ];
-          for (let url of urls) {
-              try {
-                  const res = await fetch(url);
-                  if(!res.ok) continue;
-                  const data = await res.json();
-                  const meta = data.chart?.result?.[0]?.meta;
-                  if (meta && meta.regularMarketPrice) return meta;
-              } catch(e) {}
-          }
-          return null;
-      };
-
-      // 2. Jika bukan Kripto, Coba cari sebagai Saham Indonesia (tambah akhiran .JK)
-      let yfData = await fetchYahoo(`${ticker}.JK`);
-      if (yfData) return { price: yfData.regularMarketPrice, currency: 'Rp ', type: 'Saham Indonesia' };
-
-      // 3. Jika bukan Saham Indo, pasti Saham Global/US (tanpa .JK)
-      // Khusus untuk Index/Emas kita mapping agar tidak bingung
-      let globalTicker = ticker;
-      if (ticker === 'EMAS' || ticker === 'GOLD') globalTicker = 'GC=F';
-      if (ticker === 'IHSG') globalTicker = '^JKSE';
-
-      yfData = await fetchYahoo(globalTicker);
-      if (yfData) {
-          let price = yfData.regularMarketPrice;
-          let curr = yfData.currency === 'USD' ? 'USD ' : 'Rp ';
-          if (globalTicker === 'GC=F') { price = price * 16000; curr = 'Rp '; }
-          return { price: price, currency: curr, type: 'Saham Global' };
-      }
-
-      return null; // Aset tidak ditemukan di bursa mana pun
-  }
-
+  // FUNGSI RENDER WATCHLIST (CUMA HITUNGAN MILIDETIK)
   async function renderWatchlist() {
     const container = document.getElementById('watchlist-container');
 
@@ -465,40 +491,68 @@
        return;
     }
 
-    container.innerHTML = '<p class="text-center text-xs text-slate-500 my-4"><i class="fa-solid fa-spinner fa-spin"></i> Memindai seluruh bursa dunia...</p>';
+    container.innerHTML = '<p class="text-center text-xs text-slate-500 my-4"><i class="fa-solid fa-spinner fa-spin"></i> Memperbarui data seketika...</p>';
+
+    let cryptos = [];
+    let stocks = [];
+    
+    // Pisahkan mana yang Kripto, mana yang Saham
+    watchlist.forEach(t => {
+        if (isCryptoTicker(t)) cryptos.push(t);
+        else stocks.push(t);
+    });
+
+    let cryptoData = {};
+    let stockData = {};
+
+    // 1. Tarik Data Kripto
+    if (cryptos.length > 0) {
+        try {
+            const ids = cryptos.map(t => dictCrypto[t] || t.toLowerCase()).join(',');
+            const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=idr`);
+            cryptoData = await res.json();
+        } catch(e) { console.error("Kripto error", e); }
+    }
+
+    // 2. Tarik Data Saham (Lewat 1 Link Bulk Saja)
+    if (stocks.length > 0) {
+        stockData = await fetchStockBulk(stocks);
+    }
 
     let htmlHTML = '';
 
-    // Eksekusi pancarian Universal secara paralel agar cepat
-    const fetchPromises = watchlist.map(async (ticker) => {
-        const result = await findPriceUniversal(ticker);
-        return { ticker, result };
-    });
+    // 3. Render HTML
+    watchlist.forEach(ticker => {
+        let price = null;
+        let currency = 'Rp ';
+        let isCrypto = isCryptoTicker(ticker);
 
-    const results = await Promise.all(fetchPromises);
-
-    results.forEach(item => {
-        const { ticker, result } = item;
-        let displayPrice = 'Tidak Ditemukan';
-        let typeBadge = 'Aset Tidak Valid';
-        let isCrypto = false;
-
-        if (result) {
-            displayPrice = result.currency === 'USD ' ? `USD ${result.price.toLocaleString('en-US', {maximumFractionDigits: 2})}` : `Rp ${result.price.toLocaleString('id-ID')}`;
-            typeBadge = result.type;
-            isCrypto = result.type === 'Crypto Spot';
+        if (isCrypto) {
+            const cId = dictCrypto[ticker] || ticker.toLowerCase();
+            if (cryptoData[cId] && cryptoData[cId].idr) price = cryptoData[cId].idr;
+        } else {
+            if (stockData[ticker]) {
+                price = stockData[ticker].price;
+                currency = stockData[ticker].currency;
+                if (ticker === 'EMAS' || ticker === 'GOLD') price = price * 16000;
+            }
         }
 
+        const displayPrice = price !== null 
+            ? (currency === 'USD ' ? `USD ${price.toLocaleString('en-US', {maximumFractionDigits: 2})}` : `Rp ${price.toLocaleString('id-ID')}`) 
+            : 'Tidak Ditemukan';
+
         const badgeCol = isCrypto ? 'bg-amber-500/10 text-amber-400' : 'bg-blue-500/10 text-blue-400';
-        const errorText = !result ? 'text-rose-400' : 'text-slate-300';
+        const errorText = price === null ? 'text-rose-400' : 'text-slate-300';
+        const tvSymbol = formatSymbolForTV(ticker);
 
         htmlHTML += `
-          <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/40 border border-white/5 hover:bg-slate-700/50 transition-colors group cursor-pointer" onclick="loadAdvancedChart('${formatSymbolForTV(ticker)}')">
+          <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/40 border border-white/5 hover:bg-slate-700/50 transition-colors group cursor-pointer" onclick="loadAdvancedChart('${tvSymbol}')">
             <div class="flex items-center gap-3">
                <div class="w-8 h-8 rounded text-[10px] font-bold flex items-center justify-center ${badgeCol}">${ticker.slice(0,3)}</div>
                <div>
                   <p class="text-sm font-bold text-slate-200">${ticker}</p>
-                  <p class="text-[10px] text-slate-500">${typeBadge}</p>
+                  <p class="text-[10px] text-slate-500">${isCrypto ? 'Crypto Spot' : 'Saham / Index'}</p>
                </div>
             </div>
             <div class="text-right">
