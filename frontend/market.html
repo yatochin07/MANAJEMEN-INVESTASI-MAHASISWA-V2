@@ -147,7 +147,7 @@
             "symbols": [
               { "proName": "IDX:COMPOSITE", "title": "IHSG" },
               { "proName": "FX_IDC:USDIDR", "title": "USD/IDR" },
-              { "proName": "OANDA:SPX500USD", "title": "S&P 500" }, /* FIX: Menggunakan OANDA untuk Ticker Tape S&P 500 */
+              { "proName": "OANDA:SPX500USD", "title": "S&P 500" },
               { "proName": "TVC:GOLD", "title": "Gold" },
               { "proName": "BINANCE:BTCUSDT", "title": "Bitcoin" }
             ],
@@ -274,13 +274,10 @@
       </div>
     </section>
 
-     <footer class="text-center pb-8 mt-10">
-        <p class="text-xs text-slate-700">EduVesting · Analisa Pasar Realtime</p>
-        <p class="text-xs text-slate-700 mt-2">
-        Dikembangkan dengan <i class="fa-solid fa-heart text-rose-500/50 mx-0.5"></i> oleh Tim Developer EduVesting
-        </p>
-      </footer>
-
+    <footer class="text-center pb-8 pt-8 mt-auto">
+      <p class="text-xs text-slate-700">EduVesting · Analisis Pasar Realtime Terintegrasi</p>
+      <p class="text-xs text-slate-700 mt-2">Data disediakan secara *real-time* oleh TradingView & CoinGecko.</p>
+    </footer>
   </main>
 </div>
 
@@ -298,9 +295,7 @@
   const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  let screenerData = {
-      gainer_saham: [], loser_saham: [], gainer_kripto: [], loser_kripto: []
-  };
+  let screenerData = { gainer_saham: [], loser_saham: [], gainer_kripto: [], loser_kripto: [] };
 
   document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -331,59 +326,69 @@
     const theme = isLight ? "light" : "dark";
 
     document.getElementById('tv-advanced-chart').innerHTML = '';
-
     new TradingView.widget({
-        "autosize": true,
-        "symbol": symbolToLoad,
-        "interval": "D",
-        "timezone": "Asia/Jakarta",
-        "theme": theme,
-        "style": "1",
-        "locale": "id",
-        "enable_publishing": false,
-        "backgroundColor": isLight ? '#ffffff' : '#0f1423',
-        "gridColor": isLight ? '#f1f5f9' : '#1e293b',
-        "hide_top_toolbar": false,
-        "hide_legend": false,
-        "save_image": false,
-        "container_id": "tv-advanced-chart"
+        "autosize": true, "symbol": symbolToLoad, "interval": "D", "timezone": "Asia/Jakarta",
+        "theme": theme, "style": "1", "locale": "id", "enable_publishing": false,
+        "backgroundColor": isLight ? '#ffffff' : '#0f1423', "gridColor": isLight ? '#f1f5f9' : '#1e293b',
+        "hide_top_toolbar": false, "hide_legend": false, "save_image": false, "container_id": "tv-advanced-chart"
     });
   }
 
-  // FIX UTAMA: Fungsi baru untuk menarik seluruh data saham SEKALIGUS (Bulk Fetch). 
-  // Ini 100% mencegah error limit dari server dan langsung mengatasi watchlist hilang & screener kosong.
-  async function fetchYahooBulk(tickersArray) {
-      if (!tickersArray || tickersArray.length === 0) return {};
+  /* =========================================================================================
+     FIX TOTAL: TINGGALKAN YAHOO FINANCE, GUNAKAN TRADINGVIEW SCANNER API (SUPER CEPAT & BEBAS BLOKIR)
+     ========================================================================================= */
+  async function fetchTradingViewStocks(tvSymbolsArray) {
+      const indoTickers = tvSymbolsArray.filter(t => t.startsWith('IDX:'));
+      const usTickers = tvSymbolsArray.filter(t => t.startsWith('NASDAQ:') || t.startsWith('NYSE:'));
+      
+      let dict = {};
+
+      const fetchRegion = async (region, list) => {
+          if(list.length === 0) return;
+          try {
+              const res = await fetch(`https://scanner.tradingview.com/${region}/scan`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                      symbols: { tickers: list },
+                      columns: ["description", "close", "change"]
+                  })
+              });
+              const data = await res.json();
+              if(data && data.data) {
+                  data.data.forEach(item => {
+                      dict[item.s] = {
+                          name: item.d[0],
+                          price: item.d[1],
+                          changePct: item.d[2],
+                          currency: region === 'indonesia' ? 'Rp ' : 'USD '
+                      };
+                  });
+              }
+          } catch(e) { console.error("TV Scanner gagal memuat data region", region, e); }
+      };
+
+      await Promise.all([ fetchRegion('indonesia', indoTickers), fetchRegion('america', usTickers) ]);
+      return dict;
+  }
+
+  // Fungsi fallback khusus jika ada Index / Emas di watchlist yang tidak tertangkap TradingView Scanner
+  async function fallbackProxyFetch(tickerYF) {
       try {
-          const symbolsJoined = tickersArray.join(',');
-          const targetUrl = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbolsJoined}`;
-          const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}&disableCache=true&rnd=${new Date().getTime()}`;
-          
+          const proxyUrl = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${tickerYF}?interval=1d`)}`;
           const res = await fetch(proxyUrl);
           const data = await res.json();
-          const parsed = JSON.parse(data.contents);
-          
-          let dict = {};
-          if (parsed && parsed.quoteResponse && parsed.quoteResponse.result) {
-              parsed.quoteResponse.result.forEach(quote => {
-                  dict[quote.symbol] = {
-                      price: quote.regularMarketPrice,
-                      prevClose: quote.regularMarketPreviousClose || quote.regularMarketPrice, 
-                      currency: quote.currency || 'IDR',
-                      name: quote.shortName || quote.longName || quote.symbol
-                  };
-              });
-          }
-          return dict;
-      } catch (e) {
-          console.error("Bulk fetch error:", e);
-          return {};
-      }
+          const meta = data.chart.result[0].meta;
+          return {
+              price: meta.regularMarketPrice,
+              currency: meta.currency === 'USD' ? 'USD ' : 'Rp '
+          };
+      } catch(e) { return null; }
   }
 
   async function fetchMarketScreenerData() {
       try {
-          // 1. Fetch Kripto Realtime
+          // 1. Fetch Kripto (CoinGecko aman, tidak dirubah)
           try {
               const cgRes = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=idr&order=volume_desc&per_page=50&page=1');
               const cgData = await cgRes.json();
@@ -391,40 +396,29 @@
               let cryptoList = cgData.map(c => ({
                   symbol: c.symbol.toUpperCase(), name: c.name, price: c.current_price, changePct: c.price_change_percentage_24h || 0, currency: 'Rp '
               }));
-
               screenerData.gainer_kripto = cryptoList.filter(c => c.changePct > 0).sort((a,b) => b.changePct - a.changePct).slice(0,5);
               screenerData.loser_kripto = cryptoList.filter(c => c.changePct < 0).sort((a,b) => a.changePct - b.changePct).slice(0,5);
           } catch(e) { console.error("Gagal Kripto:", e); }
 
-          // 2. Fetch Saham IDX & US (Sekarang Menggunakan 1 Tarikan Data Massal / Bulk)
+          // 2. Fetch Saham langsung ke TradingView Scanner 
           const idStocks = [
-              'BBCA.JK', 'BBRI.JK', 'BMRI.JK', 'BBNI.JK', 'TLKM.JK', 'ASII.JK', 'AMMN.JK', 'GOTO.JK', 'BREN.JK', 'CUAN.JK', 
-              'PGEO.JK', 'BRPT.JK', 'ADRO.JK', 'UNTR.JK', 'ICBP.JK', 'INDF.JK', 'KLBF.JK', 'SMDR.JK', 'ANTM.JK', 'PTBA.JK',
-              'AAPL', 'MSFT', 'NVDA', 'TSLA', 'GOOGL', 'AMZN', 'META', 'NFLX', 'AMD', 'INTC'
+              'IDX:BBCA', 'IDX:BBRI', 'IDX:BMRI', 'IDX:BBNI', 'IDX:TLKM', 'IDX:ASII', 'IDX:AMMN', 'IDX:GOTO', 'IDX:BREN', 'IDX:CUAN', 
+              'IDX:PGEO', 'IDX:BRPT', 'IDX:ADRO', 'IDX:UNTR', 'IDX:ICBP', 'IDX:INDF', 'IDX:KLBF', 'IDX:SMDR', 'IDX:ANTM', 'IDX:PTBA',
+              'NASDAQ:AAPL', 'NASDAQ:MSFT', 'NASDAQ:NVDA', 'NASDAQ:TSLA', 'NASDAQ:GOOGL', 'NASDAQ:AMZN', 'NASDAQ:META', 'NASDAQ:NFLX', 'NASDAQ:AMD', 'NASDAQ:INTC'
           ];
           
-          const stockNames = {
-              'BBCA.JK':'Bank Central Asia', 'BBRI.JK':'Bank Rakyat Indonesia', 'BMRI.JK':'Bank Mandiri', 'BBNI.JK':'Bank Negara Indonesia',
-              'TLKM.JK':'Telkom Indonesia', 'ASII.JK':'Astra International', 'AMMN.JK':'Amman Mineral', 'GOTO.JK': 'GoTo Gojek Tokopedia',
-              'BREN.JK': 'Barito Renewables', 'SMDR.JK': 'Samudera Indonesia',
-              'AAPL':'Apple Inc.', 'MSFT':'Microsoft Corp.', 'NVDA':'NVIDIA Corp.', 'TSLA':'Tesla Inc.', 'GOOGL':'Alphabet (Google)'
-          };
-
-          // Proses Tarik Data Secara Bulk
-          const bulkData = await fetchYahooBulk(idStocks);
+          const tvData = await fetchTradingViewStocks(idStocks);
           let stockList = [];
 
           idStocks.forEach(sym => {
-              if (bulkData[sym] && typeof bulkData[sym].price === 'number') {
-                  const sd = bulkData[sym];
-                  const changePct = sd.prevClose > 0 ? ((sd.price - sd.prevClose) / sd.prevClose) * 100 : 0;
-                  
+              if (tvData[sym] && typeof tvData[sym].price === 'number') {
+                  const sd = tvData[sym];
                   stockList.push({
-                      symbol: sym.replace('.JK', ''),
-                      name: stockNames[sym] || sd.name,
+                      symbol: sym.split(':')[1], // Hapus tulisan "IDX:" atau "NASDAQ:" di layar tabel
+                      name: sd.name,
                       price: sd.price,
-                      changePct: changePct,
-                      currency: sd.currency === 'USD' ? 'USD ' : 'Rp '
+                      changePct: sd.changePct,
+                      currency: sd.currency
                   });
               }
           });
@@ -533,7 +527,6 @@
     renderWatchlist();
   }
 
-  // FIX: Tarik data Watchlist menggunakan metode Massal (Bulk) juga agar tidak diblokir
   async function renderWatchlist() {
     const container = document.getElementById('watchlist-container');
 
@@ -559,13 +552,11 @@
         if (isCrypto) {
             cryptoTickers.push(ticker);
         } else {
-            let symbol = ticker === 'EMAS' || ticker === 'GOLD' || ticker === 'XAU' ? 'GC=F' : 
-                         (usStocksList.includes(ticker) ? ticker : (ticker.includes('.') ? ticker : ticker + '.JK'));
-            stockTickers.push({ original: ticker, sym: symbol });
+            stockTickers.push({ original: ticker, tvSym: formatSymbolForTV(ticker) });
         }
     });
 
-    // 2. Fetch Massal Kripto
+    // 2. Fetch Kripto
     let cryptoData = {};
     if (cryptoTickers.length > 0) {
         try {
@@ -575,17 +566,17 @@
         } catch(e) { console.error(e); }
     }
 
-    // 3. Fetch Massal Saham
+    // 3. Fetch Saham (Scanner TradingView)
     let stockData = {};
     if (stockTickers.length > 0) {
-        const querySymbols = stockTickers.map(t => t.sym);
-        stockData = await fetchYahooBulk(querySymbols);
+        const querySymbols = stockTickers.map(t => t.tvSym).filter(s => s !== 'TVC:GOLD' && s !== 'IDX:COMPOSITE');
+        stockData = await fetchTradingViewStocks(querySymbols);
     }
 
     let htmlHTML = '';
 
-    // 4. Render ke Layar
-    watchlist.forEach(ticker => {
+    // 4. Proses Eksekusi Harga
+    for (let ticker of watchlist) {
         let price = 'Error';
         let currency = 'Rp ';
         let isCrypto = ['BTC','ETH','BNB','SOL','XRP','ADA','DOGE'].includes(ticker);
@@ -596,11 +587,21 @@
             if (cryptoData[cId]) price = cryptoData[cId].idr;
         } else {
             const sObj = stockTickers.find(t => t.original === ticker);
-            if (sObj && stockData[sObj.sym]) {
-                const sd = stockData[sObj.sym];
+            if (sObj && stockData[sObj.tvSym]) {
+                const sd = stockData[sObj.tvSym];
                 price = sd.price;
-                if (sd.currency === 'USD' && sObj.sym !== 'GC=F') currency = 'USD ';
-                if (sObj.sym === 'GC=F') price = price * 16000;
+                currency = sd.currency;
+            } else {
+                // Fallback Khusus jika Index (IHSG) atau EMAS (Gold) ditambahkan ke Watchlist
+                let symbolYF = ticker === 'EMAS' || ticker === 'GOLD' || ticker === 'XAU' ? 'GC=F' : 
+                             (ticker === 'IHSG' || ticker === 'COMPOSITE' ? '^JKSE' : 
+                             (usStocksList.includes(ticker) ? ticker : (ticker.includes('.') ? ticker : ticker + '.JK')));
+                
+                const fallbackData = await fallbackProxyFetch(symbolYF);
+                if(fallbackData) {
+                    price = symbolYF === 'GC=F' ? fallbackData.price * 16000 : fallbackData.price;
+                    currency = fallbackData.currency;
+                }
             }
         }
 
@@ -625,7 +626,7 @@
             </div>
           </div>
         `;
-    });
+    }
 
     container.innerHTML = htmlHTML;
   }
