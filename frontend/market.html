@@ -276,7 +276,9 @@
 
    <footer class="text-center pb-8 pt-4 border-t border-white/5 mt-10">
       <p class="text-xs text-slate-600 mb-1">EduVesting · Analisa Pasar Realtime</p>
-      <p class="text-xs text-slate-700 mt-2">Data disediakan secara aman oleh internal server EduVesting via TradingView Scanner.</p>
+      <p class="text-xs text-slate-700 mt-2">
+        Dikembangkan dengan <i class="fa-solid fa-heart text-rose-500/50 mx-0.5"></i> oleh Tim Developer EduVesting
+      </p>
     </footer>
   </main>
 </div>
@@ -335,18 +337,113 @@
     });
   }
 
-  // Ambil data Screener terpusat dari Backend lokal web kamu (Anti CORS & Sangat Stabil)
+  /* =========================================================================================
+     SISTEM "DOUBLE PROXY" (100% FRONTEND & ANTI-CORS UNTUK WEB YANG SUDAH DEPLOY)
+     ========================================================================================= */
+  
+  function getYahooSymbol(ticker) {
+      if (ticker === 'EMAS' || ticker === 'GOLD' || ticker === 'XAU') return 'GC=F';
+      if (ticker === 'IHSG' || ticker === 'COMPOSITE') return '^JKSE';
+      if (usStocksList.includes(ticker)) return ticker;
+      return ticker.includes('.') ? ticker : ticker + '.JK';
+  }
+
+  // Tarikan Data Multi-Lapis. Jika jalur 1 diblokir, otomatis pindah ke jalur 2.
+  async function fetchYahooDoubleProxy(tickersArray) {
+      if (!tickersArray || tickersArray.length === 0) return {};
+      const symbolsJoined = tickersArray.join(',');
+      const targetUrl = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbolsJoined}`;
+      
+      let dict = {};
+      const extractData = (resultArray) => {
+          if(!resultArray) return;
+          resultArray.forEach(quote => {
+              dict[quote.symbol] = {
+                  price: quote.regularMarketPrice,
+                  prevClose: quote.regularMarketPreviousClose || quote.regularMarketPrice,
+                  currency: quote.currency || 'IDR',
+                  name: quote.shortName || quote.longName || quote.symbol
+              };
+          });
+      };
+
+      try {
+          // PROXY 1: Corsproxy.io (Sangat cepat untuk static web)
+          const res1 = await fetch(`https://corsproxy.io/?${encodeURIComponent(targetUrl)}`);
+          if (!res1.ok) throw new Error('Proxy 1 gagal');
+          const data1 = await res1.json();
+          extractData(data1.quoteResponse.result);
+          return dict;
+      } catch (err1) {
+          try {
+              // PROXY 2: AllOrigins Backup (Jika corsproxy limit/down)
+              const res2 = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}&disableCache=true`);
+              const data2 = await res2.json();
+              const parsed = JSON.parse(data2.contents);
+              extractData(parsed.quoteResponse.result);
+              return dict;
+          } catch (err2) {
+              console.error("Semua jalur proxy terblokir:", err2);
+              return dict;
+          }
+      }
+  }
+
   async function fetchMarketScreenerData() {
       try {
-          const res = await fetch('/api/market/screener');
-          const result = await res.json();
-          if (result.sukses) {
-              screenerData = result.screener;
-              renderScreener('gainer_saham');
+          // 1. Fetch Kripto (Murni Frontend, sangat stabil)
+          try {
+              const cgRes = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=idr&order=volume_desc&per_page=50&page=1');
+              const cgData = await cgRes.json();
+
+              let cryptoList = cgData.map(c => ({
+                  symbol: c.symbol.toUpperCase(), name: c.name, price: c.current_price, changePct: c.price_change_percentage_24h || 0, currency: 'Rp '
+              }));
+              screenerData.gainer_kripto = cryptoList.filter(c => c.changePct > 0).sort((a,b) => b.changePct - a.changePct).slice(0,5);
+              screenerData.loser_kripto = cryptoList.filter(c => c.changePct < 0).sort((a,b) => a.changePct - b.changePct).slice(0,5);
+          } catch(e) { console.error("Gagal Kripto:", e); }
+
+          // 2. Fetch Saham Massal
+          const idStocks = [
+              'BBCA.JK', 'BBRI.JK', 'BMRI.JK', 'BBNI.JK', 'TLKM.JK', 'ASII.JK', 'AMMN.JK', 'GOTO.JK', 'BREN.JK', 'CUAN.JK', 
+              'PGEO.JK', 'BRPT.JK', 'ADRO.JK', 'UNTR.JK', 'ICBP.JK', 'INDF.JK', 'KLBF.JK', 'SMDR.JK', 'ANTM.JK', 'PTBA.JK',
+              'AAPL', 'MSFT', 'NVDA', 'TSLA', 'GOOGL', 'AMZN', 'META', 'NFLX', 'AMD', 'INTC'
+          ];
+
+          const stockNames = {
+              'BBCA.JK':'Bank Central Asia', 'BBRI.JK':'Bank Rakyat Indonesia', 'BMRI.JK':'Bank Mandiri', 'BBNI.JK':'Bank Negara Indonesia',
+              'TLKM.JK':'Telkom Indonesia', 'ASII.JK':'Astra International', 'AMMN.JK':'Amman Mineral', 'GOTO.JK': 'GoTo Gojek Tokopedia',
+              'BREN.JK': 'Barito Renewables', 'SMDR.JK': 'Samudera Indonesia',
+              'AAPL':'Apple Inc.', 'MSFT':'Microsoft Corp.', 'NVDA':'NVIDIA Corp.', 'TSLA':'Tesla Inc.', 'GOOGL':'Alphabet (Google)'
+          };
+
+          const stockData = await fetchYahooDoubleProxy(idStocks);
+          let stockList = [];
+
+          idStocks.forEach(sym => {
+              if (stockData[sym] && typeof stockData[sym].price === 'number') {
+                  const sd = stockData[sym];
+                  const changePct = sd.prevClose > 0 ? ((sd.price - sd.prevClose) / sd.prevClose) * 100 : 0;
+                  stockList.push({
+                      symbol: sym.replace('.JK', ''),
+                      name: stockNames[sym] || sd.name,
+                      price: sd.price,
+                      changePct: changePct,
+                      currency: sd.currency === 'USD' ? 'USD ' : 'Rp '
+                  });
+              }
+          });
+
+          if(stockList.length > 0) {
+              screenerData.gainer_saham = stockList.filter(s => s.changePct > 0).sort((a,b) => b.changePct - a.changePct).slice(0,5);
+              screenerData.loser_saham = stockList.filter(s => s.changePct < 0).sort((a,b) => a.changePct - b.changePct).slice(0,5);
           }
+
+          renderScreener('gainer_saham');
+
       } catch (error) {
           console.error("Gagal Tarik Screener Utama:", error);
-          document.getElementById('screener-tbody').innerHTML = `<tr><td colspan="4" class="px-5 py-6 text-center text-rose-400">Gagal memuat data dari server lokal.</td></tr>`;
+          document.getElementById('screener-tbody').innerHTML = `<tr><td colspan="4" class="px-5 py-6 text-center text-rose-400">Terjadi kesalahan jaringan. Coba refresh halaman.</td></tr>`;
       }
   }
 
@@ -365,7 +462,7 @@
       const dataToRender = screenerData[tabKey] || [];
 
       if(dataToRender.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="4" class="px-5 py-10 text-center text-slate-500">Belum ada data pergerakan realtime atau pasar libur.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="4" class="px-5 py-10 text-center text-slate-500">Belum ada pergerakan signifikan atau pasar tutup.</td></tr>`;
           return;
       }
 
@@ -395,7 +492,7 @@
   }
 
   let watchlist = JSON.parse(localStorage.getItem('eduvesting_wl_final_v1')) || [];
-  
+
   function formatSymbolForTV(input) {
       const cryptoKeys = ['BTC', 'ETH', 'BNB', 'SOL', 'XRP', 'ADA', 'DOGE', 'USDT'];
       if(cryptoKeys.includes(input) || input.includes('USDT')) {
@@ -440,7 +537,6 @@
     renderWatchlist();
   }
 
-  // Load data Watchlist massal via rute backend lokal (100% Bebas CORS limit browser)
   async function renderWatchlist() {
     const container = document.getElementById('watchlist-container');
 
@@ -456,47 +552,86 @@
 
     container.innerHTML = '<p class="text-center text-xs text-slate-500 my-4"><i class="fa-solid fa-spinner fa-spin"></i> Menarik harga realtime...</p>';
 
-    try {
-        const res = await fetch(`/api/market/watchlist?tickers=${watchlist.join(',')}`);
-        const result = await res.json();
-        
-        if (result.sukses && result.data) {
-            let htmlHTML = '';
-            
-            watchlist.forEach(ticker => {
-                const item = result.data[ticker];
-                const price = item ? item.price : 'Error';
-                const currency = item ? item.currency : 'Rp ';
-                const isCrypto = item ? item.isCrypto : ['BTC','ETH','BNB','SOL','XRP','ADA','DOGE'].includes(ticker);
-                const tvSymbol = formatSymbolForTV(ticker);
+    let cryptoTickers = [];
+    let stockTickers = [];
+    const dictCrypto = {'BTC':'bitcoin','ETH':'ethereum','BNB':'binancecoin','SOL':'solana','XRP':'ripple','ADA':'cardano','DOGE':'dogecoin'};
 
-                const displayPrice = typeof price === 'number' 
-                    ? (currency === 'USD ' ? `USD ${price.toLocaleString('en-US', {maximumFractionDigits: 2})}` : `Rp ${price.toLocaleString('id-ID')}`) 
-                    : 'Rp -';
-
-                const badgeCol = isCrypto ? 'bg-amber-500/10 text-amber-400' : 'bg-blue-500/10 text-blue-400';
-
-                htmlHTML += `
-                  <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/40 border border-white/5 hover:bg-slate-700/50 transition-colors group cursor-pointer" onclick="loadAdvancedChart('${tvSymbol}')">
-                    <div class="flex items-center gap-3">
-                       <div class="w-8 h-8 rounded text-[10px] font-bold flex items-center justify-center ${badgeCol}">${ticker.slice(0,3)}</div>
-                       <div>
-                          <p class="text-sm font-bold text-slate-200">${ticker}</p>
-                          <p class="text-[10px] text-slate-500">${isCrypto ? 'Crypto Spot' : 'Saham / Index'}</p>
-                       </div>
-                    </div>
-                    <div class="text-right">
-                       <p class="text-sm font-semibold text-slate-300 tabular-nums">${displayPrice}</p>
-                       <button onclick="event.stopPropagation(); removeWatchlist('${ticker}')" class="text-[10px] text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity mt-0.5"><i class="fa-solid fa-trash-can"></i> Hapus</button>
-                    </div>
-                  </div>
-                `;
-            });
-            container.innerHTML = htmlHTML;
+    // 1. Kelompokkan
+    watchlist.forEach(ticker => {
+        let isCrypto = ['BTC','ETH','BNB','SOL','XRP','ADA','DOGE'].includes(ticker);
+        if (isCrypto) {
+            cryptoTickers.push(ticker);
+        } else {
+            stockTickers.push({ original: ticker, yfSym: getYahooSymbol(ticker) });
         }
+    });
+
+    try {
+        // 2. Fetch Kripto Langsung ke API
+        let cryptoData = {};
+        if (cryptoTickers.length > 0) {
+            const ids = cryptoTickers.map(t => dictCrypto[t]).join(',');
+            const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=idr`);
+            cryptoData = await res.json();
+        }
+
+        // 3. Fetch Saham Via Double Proxy System
+        let stockData = {};
+        if (stockTickers.length > 0) {
+            const querySymbols = stockTickers.map(t => t.yfSym);
+            stockData = await fetchYahooDoubleProxy(querySymbols);
+        }
+
+        let htmlHTML = '';
+
+        // 4. Render Layar
+        for (let ticker of watchlist) {
+            let price = 'Error';
+            let currency = 'Rp ';
+            let isCrypto = ['BTC','ETH','BNB','SOL','XRP','ADA','DOGE'].includes(ticker);
+            const tvSymbol = formatSymbolForTV(ticker);
+
+            if (isCrypto) {
+                const cId = dictCrypto[ticker];
+                if (cryptoData[cId]) price = cryptoData[cId].idr;
+            } else {
+                const sObj = stockTickers.find(t => t.original === ticker);
+                if (sObj && stockData[sObj.yfSym]) {
+                    const sd = stockData[sObj.yfSym];
+                    price = sd.price;
+                    currency = sd.currency === 'USD' ? 'USD ' : 'Rp ';
+                    if (sObj.yfSym === 'GC=F') price = price * 16000;
+                }
+            }
+
+            const displayPrice = typeof price === 'number' 
+                ? (currency === 'USD ' ? `USD ${price.toLocaleString('en-US', {maximumFractionDigits: 2})}` : `Rp ${price.toLocaleString('id-ID')}`) 
+                : 'Rp -';
+
+            const badgeCol = isCrypto ? 'bg-amber-500/10 text-amber-400' : 'bg-blue-500/10 text-blue-400';
+
+            htmlHTML += `
+              <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/40 border border-white/5 hover:bg-slate-700/50 transition-colors group cursor-pointer" onclick="loadAdvancedChart('${tvSymbol}')">
+                <div class="flex items-center gap-3">
+                   <div class="w-8 h-8 rounded text-[10px] font-bold flex items-center justify-center ${badgeCol}">${ticker.slice(0,3)}</div>
+                   <div>
+                      <p class="text-sm font-bold text-slate-200">${ticker}</p>
+                      <p class="text-[10px] text-slate-500">${isCrypto ? 'Crypto Spot' : 'Saham / Index'}</p>
+                   </div>
+                </div>
+                <div class="text-right">
+                   <p class="text-sm font-semibold text-slate-300 tabular-nums">${displayPrice}</p>
+                   <button onclick="event.stopPropagation(); removeWatchlist('${ticker}')" class="text-[10px] text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity mt-0.5"><i class="fa-solid fa-trash-can"></i> Hapus</button>
+                </div>
+              </div>
+            `;
+        }
+
+        container.innerHTML = htmlHTML;
+
     } catch (e) {
-        console.error("Gagal load watchlist:", e);
-        container.innerHTML = `<p class="text-center text-xs text-rose-400 my-4">Gagal memuat interaksi data.</p>`;
+        console.error("Gagal load data keseluruhan:", e);
+        container.innerHTML = `<p class="text-center text-xs text-rose-400 my-4">Koneksi ke pasar terputus. Coba lagi.</p>`;
     }
   }
 </script>
