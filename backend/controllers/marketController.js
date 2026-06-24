@@ -15,15 +15,23 @@ exports.getCryptoPrices = async (req, res) => {
 exports.getStockPrice = async (req, res) => {
   try {
     let ticker = req.params.ticker.toUpperCase();
-    let yahooTicker = (ticker === 'EMAS' || ticker === 'GC=F') ? 'GC=F' : 
+    let yahooTicker = (ticker === 'EMAS' || ticker === 'GC=F' || ticker === 'GOLD') ? 'GC=F' : 
                       (ticker.includes('.') ? ticker : `${ticker}.JK`);
 
     const quote = await yahooFinance.quote(yahooTicker);
     let finalPrice = quote.regularMarketPrice;
+    let prevClose = quote.regularMarketPreviousClose || finalPrice;
+    let changePct = ((finalPrice - prevClose) / prevClose) * 100;
     
-    if (yahooTicker === 'GC=F') finalPrice = finalPrice * 16000;
+    if (yahooTicker === 'GC=F') finalPrice = finalPrice * 16000; // Konversi kasar Emas
 
-    res.status(200).json({ sukses: true, price: finalPrice });
+    res.status(200).json({ 
+        sukses: true, 
+        price: finalPrice,
+        changePct: changePct,
+        name: quote.shortName || ticker,
+        currency: quote.currency || 'IDR'
+    });
   } catch (error) {
     res.status(500).json({ sukses: false, error: error.message });
   }
