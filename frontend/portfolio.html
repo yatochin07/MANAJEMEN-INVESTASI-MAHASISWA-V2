@@ -64,11 +64,6 @@
   .spin { animation: spin 1s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* Fix untuk native select option biar gelap */
-  select#f-type { background-color: rgba(255, 255, 255, 0.04); }
-  select#f-type option { background-color: #0f1423; color: #e2e8f0; padding: 12px; }
-
-  /* SweetAlert2 Overrides biar nyesuain UI modern */
   div:where(.swal2-container) div:where(.swal2-popup) { font-family: 'Inter', sans-serif !important; }
 
   /* ==========================================
@@ -78,22 +73,17 @@
   body.light-mode .glass, body.light-mode .glass-lighter { background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
   body.light-mode .text-slate-200, body.light-mode .text-slate-300, body.light-mode .text-slate-100 { color: #1e293b; }
   body.light-mode .text-slate-400, body.light-mode .text-slate-500 { color: #475569; }
-  body.light-mode .form-input, body.light-mode select#f-type { background: #ffffff !important; border-color: #cbd5e1; color: #0f1423; }
-  body.light-mode select#f-type option { background-color: #ffffff; color: #0f1423; }
+  body.light-mode .form-input { background: #ffffff !important; border-color: #cbd5e1; color: #0f1423; }
   body.light-mode aside { background: rgba(255, 255, 255, 0.95) !important; border-right: 1px solid rgba(0,0,0,0.08); }
 </style>
 </head>
 
 <body class="relative">
 <script>
-  // Cek memori browser, apakah user sedang pakai Light Mode?
   if(localStorage.getItem('theme') === 'light') {
     document.body.classList.add('light-mode');
   }
 
-  // ==========================================
-  // CUSTOM ALERT DENGAN SWEETALERT2
-  // ==========================================
   function showCustomAlert(type, title, text) {
     const isLight = document.body.classList.contains('light-mode');
     Swal.fire({
@@ -112,7 +102,6 @@
     });
   }
 
-  // Khusus untuk Toast (Notif kecil di pojok yang hilang otomatis)
   function showToast(icon, title) {
     const isLight = document.body.classList.contains('light-mode');
     const Toast = Swal.mixin({
@@ -255,14 +244,27 @@
         <form id="asset-form" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           <input type="hidden" id="edit-id" value="" />
 
-          <div class="sm:col-span-1 md:col-span-1">
+          <!-- ===================================== -->
+          <!-- CUSTOM DROPDOWN MENGGANTIKAN <SELECT> -->
+          <!-- ===================================== -->
+          <div class="sm:col-span-1 md:col-span-1 relative">
             <label class="text-xs text-slate-500 mb-1 block">Tipe Aset</label>
-            <select id="f-type" class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200 focus:ring-2 focus:ring-indigo-500/50">
-              <option value="saham">Saham</option>
-              <option value="kripto">Kripto</option>
-              <option value="emas">Emas</option>
-              <option value="reksadana">Reksadana</option>
-            </select>
+            <input type="hidden" id="f-type" value="saham" />
+            
+            <button type="button" id="custom-select-btn" onclick="toggleCustomSelect()" class="form-input w-full rounded-xl px-3 py-2.5 text-sm text-slate-200 flex items-center justify-between focus:ring-2 focus:ring-indigo-500/50 bg-[rgba(255,255,255,0.04)] text-left">
+              <span id="custom-select-text">Saham</span>
+              <i id="custom-select-icon" class="fa-solid fa-chevron-down text-slate-500 text-xs transition-transform duration-200"></i>
+            </button>
+
+            <!-- Menu Dropdown -->
+            <div id="custom-select-menu" class="absolute z-50 w-full mt-2 rounded-xl glass shadow-xl shadow-black/40 opacity-0 invisible transform -translate-y-2 transition-all duration-200 overflow-hidden">
+              <ul class="py-1">
+                <li><button type="button" onclick="selectCustomOption('saham', 'Saham')" class="w-full text-left px-4 py-2.5 text-sm text-slate-200 hover:bg-indigo-500/20 hover:text-indigo-400 transition-colors">Saham</button></li>
+                <li><button type="button" onclick="selectCustomOption('kripto', 'Kripto')" class="w-full text-left px-4 py-2.5 text-sm text-slate-200 hover:bg-indigo-500/20 hover:text-indigo-400 transition-colors">Kripto</button></li>
+                <li><button type="button" onclick="selectCustomOption('emas', 'Emas')" class="w-full text-left px-4 py-2.5 text-sm text-slate-200 hover:bg-indigo-500/20 hover:text-indigo-400 transition-colors">Emas</button></li>
+                <li><button type="button" onclick="selectCustomOption('reksadana', 'Reksadana')" class="w-full text-left px-4 py-2.5 text-sm text-slate-200 hover:bg-indigo-500/20 hover:text-indigo-400 transition-colors">Reksadana</button></li>
+              </ul>
+            </div>
           </div>
 
           <div class="sm:col-span-1 md:col-span-1">
@@ -358,6 +360,47 @@
     overlay.classList.toggle('hidden');
   }
 
+  // ==========================================
+  // CUSTOM DROPDOWN SCRIPT
+  // ==========================================
+  function toggleCustomSelect() {
+    const menu = document.getElementById('custom-select-menu');
+    const icon = document.getElementById('custom-select-icon');
+    if (menu.classList.contains('invisible')) {
+      menu.classList.remove('invisible', 'opacity-0', '-translate-y-2');
+      menu.classList.add('opacity-100', 'translate-y-0');
+      icon.classList.add('rotate-180');
+    } else {
+      closeCustomSelect();
+    }
+  }
+
+  function closeCustomSelect() {
+    const menu = document.getElementById('custom-select-menu');
+    const icon = document.getElementById('custom-select-icon');
+    if(menu && !menu.classList.contains('invisible')){
+        menu.classList.add('invisible', 'opacity-0', '-translate-y-2');
+        menu.classList.remove('opacity-100', 'translate-y-0');
+        icon.classList.remove('rotate-180');
+    }
+  }
+
+  function selectCustomOption(val, label) {
+    document.getElementById('f-type').value = val;
+    document.getElementById('custom-select-text').innerText = label;
+    closeCustomSelect();
+  }
+
+  // Tutup dropdown jika klik di luar elemen
+  document.addEventListener('click', function(event) {
+    const btn = document.getElementById('custom-select-btn');
+    const menu = document.getElementById('custom-select-menu');
+    if (btn && menu && !btn.contains(event.target) && !menu.contains(event.target)) {
+      closeCustomSelect();
+    }
+  });
+
+
   const ASSET_DICTIONARY = {
     'BBCA': 'Bank Central Asia Tbk',
     'BBRI': 'Bank Rakyat Indonesia Tbk',
@@ -410,7 +453,6 @@
 
       const user = session.user;
 
-      // Update: Prioritaskan custom_full_name agar nama tidak terganti Google
       const displayName = user.user_metadata?.custom_full_name || user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
       const avatarUrl = user.user_metadata?.custom_avatar_url || user.user_metadata?.avatar_url; 
 
@@ -521,6 +563,13 @@
     const cancelEdit = document.getElementById('cancel-edit');
 
     if (editId) editId.value = '';
+    
+    // Reset custom dropdown state
+    const fType = document.getElementById('f-type');
+    if (fType) fType.value = 'saham';
+    const selectText = document.getElementById('custom-select-text');
+    if (selectText) selectText.innerText = 'Saham';
+
     if (formTitle) formTitle.innerText = 'Tambah Aset Baru';
     if (submitLabel) submitLabel.innerText = 'Simpan';
     if (cancelEdit) cancelEdit.classList.add('hidden');
@@ -534,8 +583,13 @@
 
     document.getElementById('edit-id').value = id;
     document.getElementById('f-type').value = asset.type;
-    document.getElementById('f-ticker').value = asset.ticker;
+    
+    // Update custom dropdown label text
+    const typeLabels = { 'saham': 'Saham', 'kripto': 'Kripto', 'emas': 'Emas', 'reksadana': 'Reksadana' };
+    const selectText = document.getElementById('custom-select-text');
+    if (selectText) selectText.innerText = typeLabels[asset.type] || 'Saham';
 
+    document.getElementById('f-ticker').value = asset.ticker;
     document.getElementById('f-avg').value = asset.avgPrice.toLocaleString('id-ID', { useGrouping: false, maximumFractionDigits: 10 });
     document.getElementById('f-qty').value = asset.qty.toLocaleString('id-ID', { useGrouping: false, maximumFractionDigits: 10 });
 
@@ -547,7 +601,7 @@
 
   async function removeAsset(id) {
     const isLight = document.body.classList.contains('light-mode');
-    
+
     Swal.fire({
       title: 'Hapus Aset?',
       text: "Aset ini bakal dihapus permanen dari portofolio kamu. Yakin mau lanjut?",
@@ -639,7 +693,7 @@
             showCustomAlert('error', 'Gagal Sinkron Kripto', 'Wah, gagal ambil harga kripto nih: ' + resCrypto.error);
         }
         await EduVesting.refreshStockPrices();
-        
+
         if(!silent) {
           showToast('success', 'Harga aset berhasil disinkronisasi!');
         }
