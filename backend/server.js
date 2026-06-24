@@ -9,7 +9,7 @@ const alloRoutes = require('./routes/alloRoutes');
 const calculatorRoutes = require('./routes/calculatorRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 const aiRoutes = require('./routes/aiRoutes');
-const aiRoutes = require('./routes/marketRoutes');
+const marketRoutes = require('./routes/marketRoutes');
 
 const app = express();
 app.use(cors({ origin: '*' }));
