@@ -33,12 +33,10 @@
   * { box-sizing: border-box; }
   body { font-family:'Inter', sans-serif; background-color:#07090f; color:#e2e8f0; min-height:100vh; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
 
-  /* Sidebar active glow */
   .nav-active { background: linear-gradient(90deg, rgba(99,102,241,0.18) 0%, transparent 100%); border-left: 3px solid #6366f1; color: #a5b4fc !important; font-weight: 600; }
   .nav-item { border-left: 3px solid transparent; transition: background .2s ease, border-color .2s ease, color .2s ease; }
   .nav-item:hover { background: linear-gradient(90deg, rgba(99,102,241,0.1) 0%, transparent 100%); border-left-color: rgba(99,102,241,0.5); color:#a5b4fc; }
 
-  /* Glass Elements */
   .glass { background: rgba(19,25,40,0.85); backdrop-filter: blur(12px); border:1px solid rgba(255,255,255,0.06); transition: all 0.3s ease; }
   .glass-lighter { background: rgba(30,40,64,0.6); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.07); transition: all 0.3s ease; }
 
@@ -54,13 +52,11 @@
 
   .logo-text { background: linear-gradient(90deg,#a5b4fc,#93c5fd); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
 
-  /* Sub-menu Tabs */
   .guide-tab { transition: all 0.3s ease; border-bottom: 2px solid transparent; }
   .tab-active { border-bottom-color: #6366f1; background: linear-gradient(0deg, rgba(99,102,241,0.1) 0%, transparent 100%); color: #a5b4fc; }
   .tab-inactive { color: #64748b; }
   .tab-inactive:hover { color: #cbd5e1; }
 
-  /* Article Content Styles */
   .article-content h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.45rem; font-weight: 700; color: #f8fafc; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; }
   .article-content h4 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.15rem; font-weight: 600; color: #cbd5e1; margin-top: 1.75rem; margin-bottom: 0.5rem; }
   .article-content p { color: #94a3b8; font-size: 0.95rem; line-height: 1.8; margin-bottom: 1.25rem; }
@@ -73,17 +69,20 @@
   .article-content strong { color: #cbd5e1; font-weight: 600; }
   .article-img { width: 100%; height: 350px; object-fit: cover; border-radius: 1rem; margin-bottom: 2rem; border: 1px solid rgba(255,255,255,0.1); }
 
-  /* Box Styles */
-  .info-box { background: rgba(59,130,246,0.08); border-left: 4px solid #3b82f6; padding: 1.25rem 1.5rem; border-radius: 0.5rem; margin-top: 1.5rem; margin-bottom: 1.5rem; border: right: 1px solid rgba(59,130,246,0.1); border-top: 1px solid rgba(59,130,246,0.1); border-bottom: 1px solid rgba(59,130,246,0.1); }
-  .warning-box { background: rgba(244,63,94,0.08); border-left: 4px solid #f43f5e; padding: 1.25rem 1.5rem; border-radius: 0.5rem; margin-top: 1.5rem; margin-bottom: 1.5rem; border: right: 1px solid rgba(244,63,94,0.1); border-top: 1px solid rgba(244,63,94,0.1); border-bottom: 1px solid rgba(244,63,94,0.1); }
-  .success-box { background: rgba(16,185,129,0.08); border-left: 4px solid #10b981; padding: 1.25rem 1.5rem; border-radius: 0.5rem; margin-top: 1.5rem; margin-bottom: 1.5rem; border: right: 1px solid rgba(16,185,129,0.1); border-top: 1px solid rgba(16,185,129,0.1); border-bottom: 1px solid rgba(16,185,129,0.1); }
+  .info-box { background: rgba(59,130,246,0.08); border-left: 4px solid #3b82f6; padding: 1.25rem 1.5rem; border-radius: 0.5rem; margin-top: 1.5rem; margin-bottom: 1.5rem; border-right: 1px solid rgba(59,130,246,0.1); border-top: 1px solid rgba(59,130,246,0.1); border-bottom: 1px solid rgba(59,130,246,0.1); }
+  .warning-box { background: rgba(244,63,94,0.08); border-left: 4px solid #f43f5e; padding: 1.25rem 1.5rem; border-radius: 0.5rem; margin-top: 1.5rem; margin-bottom: 1.5rem; border-right: 1px solid rgba(244,63,94,0.1); border-top: 1px solid rgba(244,63,94,0.1); border-bottom: 1px solid rgba(244,63,94,0.1); }
+  .success-box { background: rgba(16,185,129,0.08); border-left: 4px solid #10b981; padding: 1.25rem 1.5rem; border-radius: 0.5rem; margin-top: 1.5rem; margin-bottom: 1.5rem; border-right: 1px solid rgba(16,185,129,0.1); border-top: 1px solid rgba(16,185,129,0.1); border-bottom: 1px solid rgba(16,185,129,0.1); }
+  .amber-box { background: rgba(245,158,11,0.08); border-left: 4px solid #f59e0b; padding: 1.25rem 1.5rem; border-radius: 0.5rem; margin-top: 1.5rem; margin-bottom: 1.5rem; border-right: 1px solid rgba(245,158,11,0.1); border-top: 1px solid rgba(245,158,11,0.1); border-bottom: 1px solid rgba(245,158,11,0.1); }
+  .violet-box { background: rgba(124,58,237,0.08); border-left: 4px solid #7c3aed; padding: 1.25rem 1.5rem; border-radius: 0.5rem; margin-top: 1.5rem; margin-bottom: 1.5rem; border-right: 1px solid rgba(124,58,237,0.1); border-top: 1px solid rgba(124,58,237,0.1); border-bottom: 1px solid rgba(124,58,237,0.1); }
   .math-formula { text-align: center; font-size: 1.2rem; font-weight: 600; font-family: monospace; color: #a5b4fc; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 0.5rem; margin: 1rem 0; letter-spacing: 0.05em; border: 1px solid rgba(255,255,255,0.05); }
+
+  .badge-new { display: inline-block; background: linear-gradient(90deg, #6366f1, #7c3aed); color: white; font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 999px; margin-left: 0.4rem; vertical-align: middle; letter-spacing: 0.05em; text-transform: uppercase; }
 
   @keyframes fadeUp { from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
   .fade-up { animation: fadeUp .5s ease both; }
   .delay-1{animation-delay:.07s;} .delay-2{animation-delay:.14s;} .delay-3{animation-delay:.21s;}
 
-  /* LIGHT MODE STYLES */
+  /* LIGHT MODE */
   body.light-mode { background-color: #f8fafc; color: #0f1423; }
   body.light-mode .glass, body.light-mode .glass-lighter { background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
   body.light-mode .text-slate-200, body.light-mode .text-slate-300, body.light-mode .text-slate-100 { color: #1e293b; }
@@ -97,6 +96,8 @@
   body.light-mode .info-box { background: rgba(59,130,246,0.05); border-left-color: #2563eb; }
   body.light-mode .warning-box { background: rgba(225,29,72,0.05); border-left-color: #e11d48; }
   body.light-mode .success-box { background: rgba(5,150,105,0.05); border-left-color: #059669; }
+  body.light-mode .amber-box { background: rgba(217,119,6,0.05); border-left-color: #d97706; }
+  body.light-mode .violet-box { background: rgba(109,40,217,0.05); border-left-color: #6d28d9; }
   body.light-mode .math-formula { background: rgba(0,0,0,0.03); color: #4f46e5; border-color: rgba(0,0,0,0.05); }
 </style>
 </head>
@@ -180,17 +181,17 @@
         <h1 class="font-display text-2xl sm:text-3xl text-slate-100 font-semibold mb-1 flex items-center gap-2">
           <i class="fa-solid fa-graduation-cap text-indigo-400"></i> Akademi EduVesting
         </h1>
-        <p class="text-slate-500 text-sm">Pusat ilmu dasar keuangan dan panduan instrumen investasi tingkat *advance* namun disajikan ramah untuk pemula.</p>
+        <p class="text-slate-500 text-sm">Pusat ilmu keuangan dan panduan instrumen investasi tingkat advance, disajikan ramah untuk pemula.</p>
       </div>
     </header>
 
     <section class="mb-6 fade-up delay-2">
       <div class="flex overflow-x-auto no-scrollbar gap-2 w-full pb-2 border-b border-white/10">
         <button onclick="switchGuideTab('tab-dasar', 'content-dasar')" id="tab-dasar" class="guide-tab tab-active px-4 py-2.5 rounded-t-lg text-sm font-semibold whitespace-nowrap">Dasar Keuangan</button>
-        <button onclick="switchGuideTab('tab-saham', 'content-saham')" id="tab-saham" class="guide-tab tab-inactive px-4 py-2.5 rounded-t-lg text-sm font-semibold whitespace-nowrap">Saham (IDX & US)</button>
+        <button onclick="switchGuideTab('tab-saham', 'content-saham')" id="tab-saham" class="guide-tab tab-inactive px-4 py-2.5 rounded-t-lg text-sm font-semibold whitespace-nowrap">Saham (IDX &amp; US)</button>
         <button onclick="switchGuideTab('tab-kripto', 'content-kripto')" id="tab-kripto" class="guide-tab tab-inactive px-4 py-2.5 rounded-t-lg text-sm font-semibold whitespace-nowrap">Kripto Spot</button>
-        <button onclick="switchGuideTab('tab-emas', 'content-emas')" id="tab-emas" class="guide-tab tab-inactive px-4 py-2.5 rounded-t-lg text-sm font-semibold whitespace-nowrap">Emas & Makro</button>
-        <button onclick="switchGuideTab('tab-reksa', 'content-reksa')" id="tab-reksa" class="guide-tab tab-inactive px-4 py-2.5 rounded-t-lg text-sm font-semibold whitespace-nowrap">Reksadana & ETF</button>
+        <button onclick="switchGuideTab('tab-emas', 'content-emas')" id="tab-emas" class="guide-tab tab-inactive px-4 py-2.5 rounded-t-lg text-sm font-semibold whitespace-nowrap">Emas &amp; Makro</button>
+        <button onclick="switchGuideTab('tab-reksa', 'content-reksa')" id="tab-reksa" class="guide-tab tab-inactive px-4 py-2.5 rounded-t-lg text-sm font-semibold whitespace-nowrap">Reksadana &amp; ETF</button>
       </div>
     </section>
 
@@ -200,268 +201,397 @@
         <i class="fa-regular fa-bookmark"></i>
       </button>
 
+      <!-- ============================================================ -->
+      <!-- TAB 1: DASAR KEUANGAN -->
+      <!-- ============================================================ -->
       <div id="content-dasar" class="guide-content block article-content">
         <img src="https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&w=1200&q=80" alt="Finance Basic" class="article-img">
         <h2 class="font-display text-3xl font-bold text-slate-100 mb-2">Back to Basics: Fundamental Keuangan Ala Profesional</h2>
 
-        <p>Hai! Sebelum kamu terjun ngebakar uang di pasar saham atau pusing ngeliat grafik kripto yang naik-turun kayak *roller coaster*, kamu wajib banget paham dasar pergerakan uang. Banyak pemula hancur bukan karena mereka bodoh, tapi karena pondasi keuangannya rapuh. Mari kita bedah bareng-bareng secara mendalam, tapi tetap asyik!</p>
+        <p>Hai! Sebelum kamu terjun ngebakar uang di pasar saham atau pusing ngeliat grafik kripto yang naik-turun kayak <em>roller coaster</em>, kamu wajib banget paham dasar pergerakan uang. Banyak pemula hancur bukan karena mereka bodoh, tapi karena pondasi keuangannya rapuh. Mari kita bedah bareng-bareng!</p>
 
         <h3>1. Inflasi: Sang Pencuri Tak Kasat Mata</h3>
-        <p>Pernah sadar nggak kenapa harga es teh di kantin zaman kamu SD jauh lebih murah dibanding sekarang? Itulah ulah <strong>Inflasi</strong>. Secara sederhana, inflasi adalah penurunan daya beli mata uang seiring berjalannya waktu. Uang Rp100 juta yang kamu diemin di bawah kasur hari ini, daya belinya (kemampuan buat beli barang) bakal menyusut parah 10 tahun lagi.</p>
-        <p>Makanya, sekadar menabung di bank konvensional itu <strong>tidak cukup dan sama aja bohong</strong>. Bunga tabungan bank biasa (sekitar 0.5% - 1% per tahun) jelas kalah telak ditinju oleh angka inflasi yang rata-rata 3% hingga 5% per tahun di Indonesia. Bayangin, kamu nabung tapi aslinya uangmu malah "minus" secara nilai. Kamu butuh investasi sebagai *kendaraan* agar uangmu berlari lebih cepat dari inflasi.</p>
+        <p>Pernah sadar nggak kenapa harga mie instan atau bensin zaman kamu kecil jauh lebih murah dibanding sekarang? Itulah ulah <strong>Inflasi</strong>. Secara sederhana, inflasi adalah penurunan daya beli mata uang seiring berjalannya waktu. Uang Rp100 juta di bawah kasurmu hari ini, nilainya (kemampuan buat beli barang) akan menyusut parah 10 tahun lagi.</p>
+        <p>Makanya, sekadar menabung di bank itu <strong>tidak cukup</strong>. Bunga tabungan bank biasa (sekitar 0.5% - 1% per tahun) jelas kalah telak ditinju oleh angka inflasi yang rata-rata 3% hingga 5% per tahun di Indonesia. Kamu butuh investasi sebagai <em>kendaraan</em> agar uangmu berlari lebih cepat dari inflasi.</p>
 
-        <h3>2. Keajaiban *Compounding Interest* (Bunga Majemuk)</h3>
-        <p>Albert Einstein konon menyebut *Compounding Interest* sebagai keajaiban dunia ke-8. Konsepnya sesederhana ini: Keuntungan (bunga/return) yang kamu dapat, nggak kamu tarik buat jajan, tapi <strong>diinvestasikan kembali ke modal awal</strong>. Sehingga, "bunga" tersebut akan ikut menghasilkan "bunga" lagi di tahun depannya. Semakin lama kamu menahan asetmu (*time horizon*), semakin eksponensial pertumbuhannya bak bola salju yang menggelinding dari atas gunung.</p>
+        <h3>2. Keajaiban Compounding Interest (Bunga Majemuk)</h3>
+        <p>Albert Einstein menyebut <em>Compounding Interest</em> sebagai keajaiban dunia ke-8. Konsepnya sesederhana ini: Keuntungan yang kamu dapat, diinvestasikan kembali, sehingga "bunga" tersebut akan menghasilkan "bunga" lagi di tahun depan. Semakin lama kamu menahan asetmu, semakin eksponensial pertumbuhannya bak bola salju.</p>
 
         <div class="info-box">
           <p class="text-sm font-semibold mb-2 flex items-center"><i class="fa-solid fa-square-root-variable mr-2"></i> Rumus Profesional: Bunga Majemuk</p>
-          <p class="text-sm mb-3">Biar nggak pusing lihat kode aneh, ini format rumus yang gampang kamu baca buat hitung-hitungan *financial freedom* kamu:</p>
-
-          <div class="math-formula">
-            A = P &times; (1 + r/n)<sup>nt</sup>
-          </div>
-
+          <p class="text-sm mb-3">Biar nggak pusing lihat kode aneh, ini format rumus yang gampang kamu baca buat hitung-hitungan di kalkulator:</p>
+          <div class="math-formula">A = P &times; (1 + r/n)<sup>nt</sup></div>
           <ul class="text-sm mt-3 mb-0 space-y-2">
-            <li><strong>A</strong> = Nilai akhir investasimu (*Future Value*). Ini angka sultan yang kita tuju.</li>
-            <li><strong>P</strong> = Modal awal yang kamu setor di awal (*Principal*).</li>
+            <li><strong>A</strong> = Nilai akhir investasimu (<em>Future Value</em>).</li>
+            <li><strong>P</strong> = Modal awal yang kamu setor di awal (<em>Principal</em>).</li>
             <li><strong>r</strong> = Persentase bunga atau return per tahun (misal 10% ditulis 0.10).</li>
-            <li><strong>n</strong> = Berapa kali bunga itu dibayarkan/di-compound dalam setahun.</li>
-            <li><strong>t</strong> = <strong>Waktu!</strong> Berapa lama kamu nabung (dalam tahun). Kunci rahasia dari jadi kaya raya itu ada di huruf <i>t</i> ini, makanya makin awal investasi hasilnya makin gila.</li>
+            <li><strong>n</strong> = Berapa kali bunga itu dibayarkan dalam setahun.</li>
+            <li><strong>t</strong> = <strong>Waktu!</strong> Berapa lama kamu nabung (dalam tahun). Kunci rahasianya ada di huruf <em>t</em> ini, makanya makin awal investasi makin gila hasilnya.</li>
           </ul>
         </div>
 
         <div class="success-box">
           <p class="text-sm font-semibold mb-2 flex items-center"><i class="fa-solid fa-bolt mr-2"></i> Cheat Sheet: The Rule of 72</p>
-          <p class="text-sm mb-0">Males pakai rumus kuadrat yang panjang di atas? Santai, pakai trik *Rule of 72*. Ini cara kilat ala pialang Wall Street buat tahu kapan uangmu bakal <strong>lipat ganda (jadi 2x lipat)</strong> secara ajaib.<br><br>
-          <strong>Rumusnya:</strong> 72 dibagi persen Return investasimu per tahun. <br><br>
-          <strong>Contoh:</strong> Kalau kamu investasi di reksadana saham dengan rata-rata return 12% per tahun. Cukup bagi <strong>72 / 12 = 6</strong>. Boom! Artinya, tanpa perlu dihitung rumit pakai excel, uang kamu bakal genap jadi dua kali lipat dalam waktu tepat 6 tahun. Gampang banget kan?</p>
+          <p class="text-sm mb-0">Males pakai rumus panjang di atas? Pakai trik <em>Rule of 72</em>. Ini cara kilat buat tahu kapan uangmu bakal <strong>lipat ganda (jadi 2x lipat)</strong>.<br><br>
+          <strong>Rumusnya:</strong> 72 dibagi persen Return per tahun.<br><br>
+          <strong>Contoh:</strong> Kalau kamu investasi di reksadana saham dengan rata-rata return 12% per tahun. Cukup bagi <strong>72 / 12 = 6</strong>. Boom! Artinya, uang kamu bakal jadi dua kali lipat dalam waktu tepat 6 tahun.</p>
         </div>
 
-        <h3>3. Siapa Penguasa Pasar? (Smart Money vs Dumb Money)</h3>
-        <p>Kamu harus tahu kalau di market itu ada dua kubu besar yang sering banget bentrok:</p>
+        <h3>3. Hierarki Uang &amp; Emergency Fund</h3>
+        <p>Sebelum agresif berinvestasi ke saham atau kripto, amankan dulu "nyawa" kamu dengan <strong>Dana Darurat (<em>Emergency Fund</em>)</strong>. Ini adalah <em>cash</em> tunai atau aset super likuid (kayak Reksadana Pasar Uang) yang cuma boleh disentuh saat kiamat kecil terjadi di hidupmu: PHK dadakan, sakit keras, atau atap rumah rubuh.</p>
         <ul>
-          <li><strong>Smart Money:</strong> Ini adalah institusi raksasa. Bayangin bank investasi global (kayak JP Morgan, Goldman Sachs), *hedge funds*, dan *whales* (bandar bermodal triliunan rupiah). Mereka disebut *smart* karena mereka punya data paling cepat, tim analis kelas wahid, dan algoritma *trading* super canggih. Merekalah yang sebenernya "nyetir" arah market.</li>
-          <li><strong>Dumb Money:</strong> Ya, ini kita. Ritel-ritel kecil bermodal pas-pasan. Disebut *dumb* bukan karena kita bodoh, tapi karena kita sering telat info dan cuma gerak berdasarkan emosi (FOMO) setelah harga udah dipompa habis-habisan sama si *Smart Money*. Rahasia biar selamat? Jangan lawan *Smart Money*, tapi "ikutin jejak kaki" mereka (*Follow the trend*).</li>
+          <li><strong>Bujangan/Mahasiswa:</strong> Siapkan 3 hingga 6 bulan dari total pengeluaran bulanan rutin.</li>
+          <li><strong>Menikah (Punya Anak):</strong> Minimal 9 hingga 12 bulan pengeluaran rutin. Kenapa? Karena kamu punya tanggungan hidup yang nggak bisa di-<em>pause</em> cicilannya kalau kamu kehilangan pekerjaan.</li>
         </ul>
 
-        <h3>4. Utang Jahat vs Utang Baik (*Bad Debt vs Good Debt*)</h3>
-        <p>Nggak semua utang itu dosa finansial lho. Orang-orang super kaya (*Ultra High Net Worth*) justru sering pakai utang untuk nambah aset mereka, teknik ini disebut <i>Leverage</i>. Gimana bedainnya?</p>
+        <h3>4. Utang Jahat vs Utang Baik (Good Debt vs Bad Debt)</h3>
+        <p>Nggak semua utang itu dosa finansial. Orang kaya justru sering pakai utang untuk tambah kaya, ini disebut <em>Leverage</em>. Gimana bedainnya?</p>
         <ul>
-          <li><strong>Bad Debt (Utang Jahat):</strong> Utang untuk beli barang yang nilainya bakal turun (depresiasi) atau barang murni konsumtif. Contoh: Pakai pinjol/Paylater buat beli iPhone 15 Pro Max padahal HP lamamu masih lancar, atau gesek kartu kredit buat *flexing* liburan mewah ke Bali demi *story* IG. Ini fix bikin miskin.</li>
-          <li><strong>Good Debt (Utang Baik):</strong> Utang untuk beli aset yang berpotensi naik nilainya seiring waktu atau menghasilkan *cashflow* (uang masuk) bulanan. Contoh: KPR untuk beli kos-kosan di dekat kampus yang tiap bulan ngasih duit sewa, atau pinjaman modal usaha dengan bunga rendah banget (KUR) untuk ekspansi bisnis kamu yang udah jelas laku keras.</li>
+          <li><strong>Bad Debt (Utang Jahat):</strong> Utang untuk beli barang yang nilainya turun (depresiasi) atau barang konsumtif. Contoh: Pakai pinjol/Paylater buat beli gadget terbaru padahal yang lama masih oke, atau gesek kartu kredit buat liburan mewah.</li>
+          <li><strong>Good Debt (Utang Baik):</strong> Utang untuk beli aset yang berpotensi naik nilainya atau menghasilkan <em>cashflow</em> bulanan. Contoh: KPR untuk beli rumah/kos-kosan yang disewakan, atau pinjaman modal usaha dengan bunga rendah untuk ekspansi bisnis yang <em>proven</em>.</li>
         </ul>
 
-        <h3>5. Psikologi Keuangan (*Behavioral Finance*)</h3>
-        <p>Bro/Sis, dengerin ya. Kamu bisa jago baca grafik atau ngitung *P/E Ratio* sambil merem, tapi kalau emosi kamu berantakan, market bakal nelen uangmu mentah-mentah. Kenali dua iblis terbesar dalam psikologi investasi:</p>
+        <h3>5. Smart Money: Cara Berpikir Investor Institusional</h3>
+        <p>Di dunia pasar modal, ada dua jenis pemain besar: <strong>Retail (kamu)</strong> dan <strong>Smart Money (institusi)</strong>. Smart Money adalah istilah untuk dana-dana raksasa milik hedge fund, bank investasi, manajer aset, dan investor institusional yang punya modal miliaran dolar, tim analis ratusan orang, dan akses informasi jauh lebih cepat dari kamu.</p>
+        <p>Pola pikir yang bikin mereka berbeda dari ritel biasa:</p>
         <ul>
-          <li><strong>FOMO (*Fear of Missing Out*):</strong> Rasa panik dan takut ketinggalan *cuan*. Biasanya muncul pas ngeliat koin kripto/saham di grup Telegram udah terbang naik 500% dan temen-temenmu pamer profit. Kamu akhirnya nekat pencet tombol "Beli" di harga pucuk (paling tinggi), lalu besoknya... BAM! Harga anjlok ke dasar jurang.</li>
-          <li><strong>FUD (*Fear, Uncertainty, Doubt*):</strong> Ketakutan berlebih karena dibom sama berita negatif (misal: "Wah, The Fed naikin suku bunga ekstrem, Amerika mau resesi, kiamat ekonomi!"). Akibatnya, mentalmu ciut dan kamu ngejual rugi (*cut loss* panik) semua aset saham bagusmu pas harga lagi murah-murahnya. Padahal, saat orang panik (FUD) itulah waktu terbaik buat *Smart Money* nyerok barang murah. Warren Buffett bilang: <i>"Be greedy when others are fearful."</i></li>
+          <li><strong>Akumulasi diam-diam (Accumulation Phase):</strong> Smart Money tidak pernah beli dalam jumlah besar di satu waktu karena bisa menggerakkan harga pasar. Mereka "mengumpulkan" secara bertahap saat market sepi dan tidak ada yang peduli. Itulah kenapa sering ada koin atau saham yang volumenya tiba-tiba naik diam-diam sebelum harganya meledak.</li>
+          <li><strong>Distribution (Jual ke Ritel):</strong> Setelah harga naik dan media mulai ramai mengabarkan "saham/koin ini naik 500%!", Smart Money perlahan melepas asetnya ke para ritel yang FOMO. Saat semua orang gembira dan nyaman, justru Smart Money sedang kabur dari posisi.</li>
+          <li><strong>Contrarian Thinking:</strong> Ketika pasar panik dan semua orang jual (Bear Market), Smart Money justru diam-diam memborong. "Be fearful when others are greedy, and greedy when others are fearful" — Warren Buffett. Ini bukan klise, ini strategi nyata Smart Money.</li>
         </ul>
 
-        <p class="text-sm mt-8 border-t border-white/10 pt-4">🔗 <strong>Materi Lanjutan (*Advanced Study*):</strong> <a href="https://www.investopedia.com/articles/personal-finance/112015/these-10-habits-will-help-you-reach-financial-freedom.asp" target="_blank">Investopedia: Habits for Financial Freedom</a></p>
+        <div class="violet-box">
+          <p class="text-sm font-semibold mb-2 flex items-center"><i class="fa-solid fa-eye mr-2"></i> Cara Melacak Smart Money (Gratis!)</p>
+          <p class="text-sm mb-2">Kamu bisa ikuti jejak Smart Money tanpa harus jadi analis Wall Street:</p>
+          <ul class="text-sm mb-0 mt-2 space-y-2">
+            <li><strong>Laporan 13F (US):</strong> Setiap kuartal, hedge fund besar di Amerika wajib lapor ke SEC aset apa yang mereka pegang. Kamu bisa lihat Buffett, Soros, atau Dalio lagi numpuk saham apa lewat situs <em>sec.gov</em>.</li>
+            <li><strong>Volume Anomali:</strong> Kalau volume perdagangan saham/koin tiba-tiba naik 3-5x lipat tanpa ada berita yang jelas, itu sinyal kuat Smart Money sedang bergerak. Pantau di bursa IDX atau <em>TradingView</em>.</li>
+            <li><strong>Open Interest (Derivatif):</strong> Di pasar futures/opsi, lonjakan <em>Open Interest</em> menunjukkan posisi besar sedang diambil institusi. Tools gratis: <em>Barchart</em> untuk US, <em>CMC Markets</em> untuk global.</li>
+          </ul>
+        </div>
+
+        <h3>6. Psikologi Keuangan (Behavioral Finance)</h3>
+        <p>Kamu bisa jago hitung matematika, tapi kalau emosi kamu berantakan, pasar bakal ngabisin uangmu. Kenali musuh-musuh terbesar psikologimu:</p>
+        <ul>
+          <li><strong>FOMO (Fear of Missing Out):</strong> Rasa takut ketinggalan untung. Biasanya muncul pas ngeliat koin kripto teman udah naik 500%. Kamu akhirnya nekat beli di harga pucuk (tertinggi), lalu besoknya harga anjlok.</li>
+          <li><strong>FUD (Fear, Uncertainty, Doubt):</strong> Ketakutan berlebih karena baca berita negatif. Akibatnya, kamu panik dan ngejual rugi (<em>cut loss</em>) semua saham bagusmu di harga paling bawah.</li>
+          <li><strong>Anchoring Bias:</strong> Ini jebakan pikiran yang lebih halus. Kamu beli saham di harga Rp 5.000, lalu harganya turun jadi Rp 3.000. Kamu "mengunci" pikiranmu bahwa harga "wajar"-nya adalah Rp 5.000 dan menolak cut loss karena "nunggu balik ke harga beli". Padahal, pasar tidak peduli sama harga belimu. Belajar lepas dari <em>anchor</em> ini!</li>
+          <li><strong>Loss Aversion:</strong> Secara psikologis, rasa sakit kehilangan Rp 1 Juta itu dua kali lebih kuat dari kesenangan mendapatkan Rp 1 Juta. Inilah kenapa investor ritel sering <em>hold</em> aset yang rugi terlalu lama (menghindari rasa sakit "mengakui rugi") tapi justru buru-buru jual aset yang untung kecil (takut untungnya hilang).</li>
+          <li><strong>Overconfidence Bias:</strong> Setelah beberapa kali untung berturut-turut, investor pemula sering merasa dirinya sudah jenius dan mulai berani masuk dengan modal lebih besar tanpa riset yang cukup. Pasar biasanya akan menghukum overconfidence ini dengan keras.</li>
+        </ul>
+
+        <p class="text-sm mt-8 border-t border-white/10 pt-4">🔗 <strong>Referensi Lanjutan:</strong> <a href="https://www.investopedia.com/articles/personal-finance/112015/these-10-habits-will-help-you-reach-financial-freedom.asp" target="_blank">Investopedia: Habits for Financial Freedom</a></p>
       </div>
 
+      <!-- ============================================================ -->
+      <!-- TAB 2: SAHAM IDX & US -->
+      <!-- ============================================================ -->
       <div id="content-saham" class="guide-content hidden article-content">
         <img src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=1200&q=80" alt="Stock Market" class="article-img">
         <h2 class="font-display text-3xl font-bold text-slate-100 mb-2">Saham (Equities): Menjadi Pemilik Bisnis Raksasa</h2>
 
-        <p>Beli saham itu bukan main judi nebak angka ya, bro/sis. Saat kamu beli saham BBCA, secara harfiah kamu sedang membeli porsi kepemilikan bisnis Bank BCA. Kamu adalah "bos"-nya (walau porsimu mungkin cuma 0.000001%). Tapi awas, masuk bursa tanpa ilmu itu ibarat nyebrang jalan tol pakai tutup mata. Ayo kita bongkar rahasia pasar saham dari A sampai Z.</p>
+        <p>Saham adalah instrumen paling legendaris untuk membangun kekayaan. Saat kamu beli saham BBCA, kamu secara harfiah sedang membeli porsi kepemilikan Bank BCA. Tapi awas, masuk pasar saham tanpa ilmu ibarat nyebrang jalan tol pakai tutup mata. Mari kita bongkar anatominya.</p>
 
         <h3>1. Dari Mana Profit Saham Berasal?</h3>
         <ul>
-          <li><strong>Capital Gain:</strong> Selisih positif saat kamu membeli di harga murah dan menjual di harga mahal. Sesimpel itu. Harga saham bergerak tiap detik murni karena hukum *Supply & Demand* (Permintaan dan Penawaran) dari jutaan orang di bursa. Banyak yang mau beli, harga naik. Banyak yang mau jual, harga rontok.</li>
-          <li><strong>Dividen (*Dividend*):</strong> Ini *passive income* sesungguhnya! Bagi hasil keuntungan operasional perusahaan yang ditransfer langsung *cash* ke rekening dana nasabah (RDN) kamu (biasanya setahun 1-2 kali). Selama perusahaannya rajin cetak laba, kamu bakal terus kecipratan uang jajan gratis.</li>
+          <li><strong>Capital Gain:</strong> Selisih positif saat kamu membeli di harga murah dan menjual di harga mahal. Harga saham bergerak tiap detik karena hukum <em>Supply &amp; Demand</em> di bursa.</li>
+          <li><strong>Dividen (<em>Dividend</em>):</strong> Bagi hasil keuntungan operasional perusahaan yang ditransfer langsung tunai ke rekeningmu (biasanya setahun 1-2 kali).</li>
         </ul>
 
         <div class="warning-box">
           <p class="text-sm font-semibold mb-1 flex items-center"><i class="fa-solid fa-skull-crossbones mr-2"></i> Hati-Hati Dividend Trap!</p>
-          <p class="text-sm mb-0">Banyak *newbie* terjebak beli saham jelek cuma karena tergoda *headline* berita "Perusahaan X Bagi Dividen 20%!". Ingat, di pasar saham ada tanggal sakti yang disebut <strong>Ex-Date</strong>. Biasanya, persis sehari setelah pembagian hak dividen (*Ex-Date*), harga sahamnya akan otomatis *dibanting* turun (anjlok) seukuran persentase dividen yang dibagikan. Kalau kamu baru beli sehari sebelumnya cuma demi ngejar dividen recehnya, ujung-ujungnya kamu kena <i>Dividend Trap</i> (jebakan betmen) karena rugi *capital loss* jauh lebih besar dari dividen yang didapat.</p>
+          <p class="text-sm mb-0">Di pasar saham ada tanggal sakti bernama <strong>Ex-Date</strong>. Biasanya, sehari setelah pembagian dividen, harga sahamnya akan otomatis anjlok seukuran dividen yang dibagikan. Kalau kamu beli tepat sehari sebelumnya cuma demi ngejar dividen, ujung-ujungnya kamu kena <em>Dividend Trap</em> dan nyangkut rugi besar.</p>
         </div>
 
-        <h3>2. Memahami *Market Cap* (Jangan Tertipu Harga Lembaran)</h3>
-        <p>Banyak pemula yang mikir gini: "Wah, saham BCA (BBCA) harganya Rp10.000 per lembar, kemahalan! Mending aku beli saham perusahaan Bakrie (BUMI) yang cuma Rp150 perak, murah banget cuy!". <strong>Ini adalah sesat pikir paling parah!</strong></p>
-        <p>Harga per lembar sama sekali nggak nentuin murah atau mahalnya nilai sebuah perusahaan. Kamu WAJIB melihat <strong>Market Capitalization (Kapitalisasi Pasar)</strong>. Ini adalah "harga total" kalau seandainya kamu mau ngeborong seluruh perusahaannya 100% jadi milik pribadi.</p>
-
-        <div class="math-formula">
-          Market Cap = Harga Saham Saat Ini &times; Total Lembar Saham Beredar
-        </div>
-
-        <p>Berdasarkan *Market Cap* ini, kasta saham dibagi jadi 3 ras utama:</p>
-        <ul>
-          <li><strong>Bluechip / Big Cap (Lapis 1):</strong> Perusahaan raksasa (biasanya *Market Cap* di atas Rp 50 Triliun sampai ratusan Triliun). Fundamentalnya ibarat benteng beton, nggak gampang bangkrut, dan rajin bagi dividen. Contoh: BBCA, BBRI, BMRI, TLKM. Pergerakan harganya lambat tapi sangat aman buat nabung jangka panjang.</li>
-          <li><strong>Second Liner / Mid Cap (Lapis 2):</strong> Perusahaan menengah. Masih punya ruang pertumbuhan bisnis yang sangat gesit, jadi bisa ngasih return modal lebih tinggi dengan cepat, walau risikonya tentu sedikit lebih nyut-nyutan dari *Bluechip*.</li>
-          <li><strong>Third Liner / Small Cap (Saham Gorengan):</strong> Kapitalisasi sangat kecil, sering disebut *Penny Stocks*. Harganya super gampang dimanipulasi sama <strong>Bandar (Market Maker)</strong>. Hari ini bisa digoreng naik (ARA) 34%, besoknya bisa dibanting berturut-turut sampai nyangkut. Buat kamu yang mentalnya tempe dan masih belajar: <strong>JAUHI KASTA INI JAUH-JAUH!</strong></li>
-        </ul>
-
-        <h3>3. Jargon Fundamental: P/E Ratio, PBV, dan Konsensus Analis</h3>
-        <p>Gimana caranya tahu suatu saham itu statusnya lagi "Diskon" atau "Kemahalan parah"? Analis pro selalu melihat rasio valuasi dan data rilis laporan keuangan (*Earning Reports*). Ini senjatanya:</p>
-        <ul>
-          <li><strong>P/E Ratio (*Price to Earnings Ratio*):</strong> Mengukur seberapa lama balik modal investasimu kalau perusahaan nyetak laba (*earnings*) segitu-gitu aja tiap tahun. Misalnya P/E Ratio = 10x. Artinya, butuh 10 tahun buat balik modal. Semakin kecil angka P/E, biasanya saham itu semakin dihargai murah (*undervalued*). Tapi kalau P/E-nya nyentuh 500x atau 1000x? Berarti harganya udah kemahalan karena *hype* berlebihan (seperti saham tech bubble).</li>
-          <li><strong>PBV (*Price to Book Value*):</strong> Membandingkan harga saham dengan nilai buku/aset bersih perusahaannya di atas kertas. Kalau PBV di bawah 1 (misal 0.6x), ibarat kamu beli ruko seharga Rp 600 juta, padahal nilai asli tanah dan bangunannya Rp 1 Miliar. Saham ini jelas didiskon besar oleh pasar!</li>
-          <li><strong>Konsensus Pasar (*Analyst Consensus*):</strong> Pernah bingung kenapa perusahaan laporin untung Rp 1 Triliun tapi besoknya harga sahamnya malah anjlok? Itu karena <strong>Konsensus</strong>. Konsensus adalah ekspektasi rata-rata dari puluhan analis Wall Street/Global sebelum laporan dirilis. Kalau konsensusnya nebak untung Rp 1.5 Triliun, tapi realitanya cuma Rp 1 Triliun, market akan menganggap itu sebagai sebuah <i>kegagalan</i> (*Earnings Miss*), dan *Smart Money* bakal buang barang saat itu juga.</li>
-        </ul>
-
-        <h3>4. Pesta Perusahaan: IPO & Aksi Korporasi</h3>
-        <p>Pas nyebur ke bursa saham, kamu pasti bakal sering banget dibombardir sama istilah-istilah aksi ini:</p>
-        <ul>
-          <li><strong>IPO (*Initial Public Offering*):</strong> Ini adalah hajatan besar saat sebuah perusahaan swasta (misal: GoTo atau Bukalapak) untuk pertama kalinya melantai di bursa saham dan nawarin sahamnya ke publik. Beli pas IPO itu peluang emas atau malah jebakan? Jawabannya: Tergantung *Underwriter* (Penjamin Emisi) dan tujuan perusahaannya. Kadang harganya sengaja dipompa mahal pas IPO cuma biar *founder*-nya bisa *exit* (cairin duit). Hati-hati FOMO!</li>
-          <li><strong>Stock Split:</strong> Pemecahan nilai lembaran saham. Kalau harga saham BBCA dirasa kemahalan buat ritel (misal nyentuh Rp 35.000/lembar), perusahaan bisa "membelahnya" jadi rasio 1:5. Harganya turun jadi Rp 7.000/lembar, TAPI jumlah lembar saham yang kamu pegang otomatis dikali 5. Nilai total uangmu nggak berubah sepeserpun, ini murni trik psikologis biar sahamnya terkesan "murah lagi" dan orang-orang mau beli.</li>
-          <li><strong>Right Issue (HMETD):</strong> Perusahaan butuh tambahan modal seger untuk bayar utang atau ekspansi, jadi mereka nyetak saham baru. Sebagai investor lama, kamu dikasih "Hak Khusus" buat nebus saham baru itu dengan harga diskon. Kalau kamu milih nggak mau beli (*tebus*), persentase kepemilikanmu di perusahaan itu otomatis bakal menyusut (dilusi). Porsimu keiris sama investor baru.</li>
-        </ul>
-
-        <h3>5. Bursa Lokal (IDX) vs Wall Street (S&P 500)</h3>
-        <p>Bosan main di kolam kecil dan mau ngerasain ganasnya samudra investasi global? Kenali dulu bedanya pasar Indonesia dan Amerika:</p>
-        <ul>
-          <li><strong>Batas Atas/Bawah (ARA & ARB):</strong> Di bursa Indonesia ada "sabuk pengaman". Kalau saham terbang naik banget (ARA) atau jatuh nyungsep (ARB) belasan sampai puluhan persen dalam sehari, perdagangan bakal langsung dikunci/dibekukan sementara oleh bursa. Di US Market? Nggak ada rem blong, bebas sebebasnya kapitalisme! Kalau sebuah perusahaan ketahuan nipu laporan keuangan, sahamnya di Wall Street bisa terjun bebas -80% dalam itungan menit tanpa ada yang nolongin.</li>
-          <li><strong>Lot vs Fractional:</strong> Di bursa kita, kamu wajib banget beli saham dalam kelipatan 1 Lot (100 lembar). Kalau harga saham Rp 10.000, minimal modal masuknya harus Rp 1 Juta. Di bursa Amerika, teknologinya ngizinin kamu beli <strong>Fractional Shares (Saham Pecahan)</strong>. Kamu bisa gaya-gayaan beli saham raksasa Apple, Google, atau NVIDIA cuma dengan modal $1 (Rp 15 ribuan) doang!</li>
-          <li><strong>Indeks Pengukur Suhu:</strong> Kalau mau ngecek apakah pasar saham Indonesia lagi untung atau rugi berjamaah, kita melihat grafik <strong>IHSG</strong> (Indeks Harga Saham Gabungan). Sedangkan di bursa global/Amerika, kompas utamanya adalah <strong>S&P 500</strong> (Kumpulan 500 perusahaan monster dengan kinerja terbaik di Amerika). S&P 500 ini sering dianggap sebagai refleksi kekuatan ekonomi dunia.</li>
-        </ul>
-
-        <p class="text-sm mt-8 border-t border-white/10 pt-4">🔗 <strong>Referensi Lanjutan (*Advanced Study*):</strong> <a href="https://seekingalpha.com/education" target="_blank">Seeking Alpha Education Center (Bedah Saham Fundamental)</a></p>
-      </div>
-
-      <div id="content-kripto" class="guide-content hidden article-content">
-        <img src="https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&w=1200&q=80" alt="Cryptocurrency" class="article-img">
-        <h2 class="font-display text-3xl font-bold text-slate-100 mb-2">Kripto (Crypto): Vahalla-nya Aset Berisiko Tinggi</h2>
-
-        <p>Selamat datang di *wild west*-nya dunia finansial abad 21. Pasar Kripto itu gila; beroperasi 24 jam sehari, 7 hari seminggu. Nggak kenal namanya libur lebaran, nggak kenal *weekend*, dan nggak ada jam tutup bursa. Volatilitasnya (*naik-turunnya*) sangat brutal, tapi jujur aja, pasar ini nawarin potensi cuan eksponensial (ratusan hingga ribuan persen) yang belum pernah terjadi sepanjang sejarah manusia. Masuk ke arena ini murni tanpa ilmu itu sama aja setor nyawa.</p>
-
-        <h3>1. *Blockchain* dan Konsep Desentralisasi</h3>
-        <p>Mustahil kamu main Kripto kalau nggak ngerti apa itu <strong>Blockchain</strong>. Kalau kamu transfer uang fiat (Rupiah/Dolar) pakai M-Banking, pihak bank itu posisinya sebagai "bos sentral" yang punya kuasa penuh buat nyatet, ngubah, bahkan memblokir rekeningmu semena-mena kalau mereka mau.</p>
-        <p>Di dunia Blockchain, <strong>tidak ada bos sentral sama sekali</strong>. Blockchain adalah buku besar (database) digital yang didesentralisasi (di-copy dan disebar luas) ke ribuan komputer penjaga di seluruh dunia. Kalau satu komputer mati atau di-hack, data kamu tetap utuh dan sah di jutaan jaringan lainnya. Sifat revolusionernya: *Trustless* (nggak perlu notaris/bank buat percaya transaksi), *Immutable* (nggak bisa dihapus atau dipalsukan), dan 100% transparan buat dilacak siapa aja.</p>
-
-        <h3>2. Ekologi Koin: Raja, Pangeran, dan Badut Pasar</h3>
-        <p>Nggak semua koin diciptakan setara. Ada kasta mutlak di sini:</p>
-        <ul>
-          <li><strong>Bitcoin (BTC):</strong> Sang raja koin kripto absolut, si *Digital Gold*. Dirancang anonim oleh *Satoshi Nakamoto* sebagai sistem mata uang elektronik yang mustahil disensor pemerintah mana pun. Yang bikin BTC sangat bernilai harganya adalah sifat <strong>Kelangkaan Mutlak (Absolute Scarcity)</strong>. *Code*-nya mengunci suplai maksimal BTC HANYA 21 Juta keping selamanya sampai kiamat. Nggak akan ada bank sentral mana pun yang bisa nge-print koin baru sesuka hati buat bikin inflasi.</li>
-          <li><strong>Ethereum (ETH) & Smart Contracts:</strong> Jika Bitcoin itu emas batangan untuk nyimpen nilai, Ethereum adalah pondasi superkomputer dunia. ETH mengenalkan inovasi <strong>Smart Contract</strong> (kode kontrak pintar digital yang bisa tereksekusi otomatis secara mutlak jika syarat teknisnya terpenuhi tanpa perlu perantara manusia). Dari jaringan ETH inilah lahir aplikasi desentralisasi (dApps) dan industri raksasa bernama <strong>DeFi</strong> (*Decentralized Finance*).</li>
-          <li><strong>Altcoins & Shitcoins:</strong> *Altcoins* (Alternative Coins) adalah sebutan untuk semua koin di luar Bitcoin. Mulai dari *project* serius layer-1 (Infrastruktur) seperti Solana (SOL) & Cardano (ADA), sampai yang kasta terendah <i>Meme Coin / Shitcoin</i> (seperti Dogecoin, Pepe, Shiba Inu) yang murni gerak harganya murni bergantung sama *hype* komunitas, pom-pom artis/Elon Musk, tanpa teknologi nyata di baliknya. Cuan bisa 1000x, tapi risiko ruginya juga 99% lenyap. Main koin *meme* = Main Kasino!</li>
-        </ul>
+        <h3>2. IPO Saham: Saat Perusahaan "Go Public"</h3>
+        <p><strong>IPO (Initial Public Offering)</strong> atau Penawaran Umum Perdana adalah momen bersejarah ketika sebuah perusahaan swasta untuk pertama kalinya menjual sebagian sahamnya ke publik umum melalui bursa efek. Ini adalah cara perusahaan menggalang dana segar dalam jumlah masif dari masyarakat untuk ekspansi bisnis.</p>
+        <p>Prosesnya panjang dan berjenjang. Di Indonesia (IDX), perusahaan harus melewati proses audit ketat dari <strong>OJK (Otoritas Jasa Keuangan)</strong>, menunjuk <em>Underwriter</em> (bank investasi penjamin), lalu menerbitkan dokumen tebal bernama <strong>Prospektus</strong> yang berisi semua rahasia keuangan perusahaan mulai dari utang sampai proyeksi pendapatan.</p>
 
         <div class="info-box">
-          <p class="text-sm font-semibold mb-2 flex items-center"><i class="fa-solid fa-book-journal-whills mr-2"></i> Kitab Suci Kripto: Whitepaper</p>
-          <p class="text-sm mb-2">Jangan gampang dibodohin *influencer* TikTok yang nyuruh beli koin baru. Investor cerdas selalu baca <strong>Whitepaper</strong>-nya dulu sebelum naruh duit sepeserpun. Whitepaper adalah dokumen teknis "kitab suci" yang dirilis oleh *developer* koin saat mereka baru bikin proyek. Isinya ngebahas tuntas:</p>
-          <ul class="text-sm mb-0 mt-2 space-y-2">
-            <li>Masalah nyata apa yang mau dipecahkan sama teknologi koin ini?</li>
-            <li>Gimana arsitektur teknis algoritmanya berjalan?</li>
-            <li>Siapa aja orang-orang pinter (Tim) di balik layarnya? (Hati-hati tim yang pake nama samaran atau akun *fake*!)</li>
-          </ul>
+          <p class="text-sm font-semibold mb-2 flex items-center"><i class="fa-solid fa-rocket mr-2"></i> Cara Ikut IPO Saham di Indonesia (Step by Step)</p>
+          <ol class="text-sm mb-0 mt-2 space-y-2">
+            <li><strong>Fase Book Building:</strong> Perusahaan mengumumkan rentang harga IPO (misal Rp 800 - Rp 1.000 per lembar). Investor institusional besar dulu yang "memesan" lewat Underwriter untuk menentukan harga final.</li>
+            <li><strong>Fase Penawaran Umum (Masa Pemesanan):</strong> Ritel seperti kamu bisa pesan saham IPO lewat aplikasi sekuritas (Stockbit, Ajaib, BNI Sekuritas, dll). Kamu isi formulir, setor uang ke rekening dana nasabah (RDN), dan mengajukan pesanan.</li>
+            <li><strong>Penjatahan (<em>Allotment</em>):</strong> Karena peminat biasanya jauh lebih banyak dari saham yang tersedia, tidak semua pesanan terpenuhi. Ada <em>allotment</em> (pengundian/penjatahan). Kalau kamu kena jatah, uang terpotong. Kalau nggak kebagian, uang dikembalikan.</li>
+            <li><strong>Listing Day (Hari Pertama Diperdagangkan):</strong> Hari paling tegang! Saham mulai diperdagangkan di bursa. Banyak saham IPO yang langsung naik (populer disebut <em>"nyangkut di ARA"</em> — Auto Reject Atas) di hari pertama, tapi banyak juga yang langsung nyungsep ke bawah harga IPO.</li>
+          </ol>
         </div>
 
-        <h3>3. Cara Mesin Bekerja: *Mining* (PoW) vs *Staking* (PoS)</h3>
-        <p>Karena di kripto itu nggak ada bank sentral, terus siapa yang bertugas ngevalidasi kalau transferan kamu itu asli dan bukan uang palsu (*double spending*)? Tugas itu diurus oleh komunitas dengan dua metode konsensus paling populer:</p>
+        <div class="warning-box">
+          <p class="text-sm font-semibold mb-2 flex items-center"><i class="fa-solid fa-triangle-exclamation mr-2"></i> Jebakan IPO yang Wajib Kamu Waspadai</p>
+          <p class="text-sm mb-0">Tidak semua IPO adalah peluang emas. <strong>Wajib baca Prospektus-nya</strong> sebelum pesan, terutama bagian "Faktor Risiko" dan "Penggunaan Dana IPO". Tanda bahaya: Dana IPO lebih banyak dipakai untuk bayar utang pemegang saham lama dibanding ekspansi bisnis nyata. Ini sinyal pemegang saham lama cuma mau <em>exit</em> dan buang risiko ke investor publik baru (termasuk kamu).</p>
+        </div>
+
+        <h3>3. Memahami Market Cap (Bukan Asal Harga Murah)</h3>
+        <p>Harga per lembar sama sekali nggak nentuin murah mahalnya sebuah perusahaan. Kamu harus melihat <strong>Market Capitalization (Kapitalisasi Pasar)</strong>.</p>
+        <div class="math-formula">Market Cap = Harga Saham Saat Ini &times; Total Lembar Saham Beredar</div>
+        <p>Berdasarkan <em>Market Cap</em>, saham dibagi 3 kasta utama:</p>
         <ul>
-          <li><strong>Proof of Work (PoW) / Penambangan (Mining):</strong> Ini adalah sistem klasik yang dipakai Bitcoin (BTC) dan Dogecoin (DOGE). Pernah denger temen ngeborong borong VGA/PC mahal cuma buat "nambang" kripto? Nah itu PoW. Komputer super canggih (*ASIC Miner*) milik mereka dipaksa berlomba memecahkan teka-teki kriptografi matematika super rumit dari sistem. Komputer yang berhasil nebak duluan, bakal dapet hadiah koin BTC baru. Sistem ini super duper aman, tapi dikritik karena makan listrik/energi yang amit-amit borosnya.</li>
-          <li><strong>Proof of Stake (PoS):</strong> Ini versi modern yang ramah lingkungan (dipakai oleh Ethereum, Solana, Cardano). Nggak butuh PC mahal atau tagihan listrik jebol. Di sistem ini, para "penjaga" jaringan (*Validator*) dipilih berdasarkan jumlah koin yang mereka <strong>Kunci/Gadai (Stake)</strong> di dalam jaringan. Kalau mereka ketahuan nipu jaringan, koin yang mereka *stake* tadi bakal hangus/dihukum (*slashed*).</li>
+          <li><strong>Bluechip / Big Cap (Lapis 1):</strong> Perusahaan raksasa. Fundamentalnya beton, nggak gampang bangkrut. Contoh: BBCA, BMRI, TLKM. Pergerakannya stabil dan aman buat nabung jangka panjang.</li>
+          <li><strong>Second Liner / Mid Cap (Lapis 2):</strong> Perusahaan menengah. Masih punya ruang pertumbuhan yang gesit, walau risikonya sedikit lebih besar dari Bluechip.</li>
+          <li><strong>Third Liner / Small Cap (Saham Gorengan):</strong> Kapitalisasi sangat kecil. Harganya gampang banget dimanipulasi sama <strong>Bandar</strong>. Buat pemula: <strong>JAUHI KASTA INI!</strong></li>
         </ul>
 
-        <h3>4. Panggung Eksekusi: CEX vs DEX dan Fenomena *Listing*</h3>
-        <p>Tempat kamu beli koin itu menentukan "umur" dan keamanan uangmu:</p>
+        <h3>4. Bandarmologi &amp; Smart Money di Saham IDX</h3>
+        <p>Di bursa Indonesia, istilah <strong>Bandarmologi</strong> merujuk pada seni membaca pergerakan "Bandar" — pihak bermodal besar (bisa institusi, manajer investasi, atau individu super kaya) yang punya kemampuan menggerakkan harga saham berkapitalisasi kecil. Ini bukan hal ilegal selama tidak ada manipulasi pasar yang terbukti, tapi faktanya terjadi nyata di <em>Small Cap</em>.</p>
+        <p>Cara membaca jejak Bandar (tersedia gratis di IDX &amp; Stockbit):</p>
         <ul>
-          <li><strong>CEX (Centralized Exchange):</strong> Aplikasi bursa yang dikelola perusahaan resmi (Contoh: Binance, Indodax, Tokocrypto, Coinbase). Gampang dipakai pemula karena ada *Customer Service* dan bisa setor rupiah via transfer bank. TAPI bahayanya: uangmu dipegang sama perusahaannya. Pernah denger "Not Your Keys, Not Your Coins"? Kalau aplikasi CEX ini di-hack atau CEO-nya korupsi bawa lari uang nasabah (Kayak tragedi FTX runtuh), ya koinmu ikutan hangus.</li>
-          <li><strong>DEX (Decentralized Exchange):</strong> Bursa pertukaran koin yang 100% jalan pakai mesin algoritma *Smart Contract* tanpa ada campur tangan perusahaan sama sekali (Contoh: Uniswap, PancakeSwap). Kamu nyambungin *dompet pribadi* (MetaMask) ke websitenya, lalu barter koin antar-user (*Peer to Peer*). Uangmu selalu ada di dompet pribadimu sendiri. Lebih aman dari kebangkrutan bursa, tapi rawan kepencet *link phising/scam* kalau kamu ceroboh.</li>
+          <li><strong>Broker Flow (Aliran Broker):</strong> Kamu bisa lihat broker mana yang net buy (beli besar) atau net sell (jual besar) di suatu saham hari itu. Kalau broker sekuritas besar terus-menerus net buy secara konsisten selama berminggu-minggu, kemungkinan ada akumulasi Bandar.</li>
+          <li><strong>Foreign Flow (Aliran Asing):</strong> Khusus saham Bluechip, pergerakan investor asing sangat mempengaruhi harga. Kalau <em>Foreign Net Buy</em> (asing beli bersih) besar-besaran di saham tertentu, biasanya harganya akan naik mengikuti.</li>
+          <li><strong>Tape Reading (Order Book):</strong> Seni membaca antrian bid-offer di order book secara real-time. Kalau ada "tembok bid" besar di bawah harga pasar, itu bisa jadi sinyal support kuat yang dipasang Bandar.</li>
+        </ul>
+
+        <h3>5. Konsensus Analis: Suara Kolektif Profesional</h3>
+        <p>Ketika kamu buka aplikasi seperti Bloomberg, Reuters, atau Stockbit dan lihat ada tulisan "Konsensus: BUY, Target Price: Rp 12.000", itu artinya kamu sedang membaca <strong>Konsensus Analis</strong> — hasil rata-rata rekomendasi dari puluhan analis saham profesional berbayar yang risetnya sangat mendalam.</p>
+        <p>Bagaimana konsensus terbentuk dan cara membacanya:</p>
+        <ul>
+          <li><strong>Rekomendasi:</strong> Biasanya berupa <em>Strong Buy, Buy, Hold, Sell,</em> atau <em>Strong Sell</em>. Semakin banyak analis yang rekomen "Buy", semakin kuat konsensusnya.</li>
+          <li><strong>Target Price (TP):</strong> Angka ini adalah estimasi harga wajar saham dalam 12 bulan ke depan menurut model valuasi sang analis. Kalau harga sekarang Rp 8.000 dan TP konsensus Rp 12.000, artinya ada potensi upside sekitar 50%.</li>
+          <li><strong>Earnings Per Share (EPS) Forecast:</strong> Para analis juga memperkirakan berapa laba per saham yang akan dihasilkan perusahaan di kuartal/tahun berikutnya. Ketika hasil laporan keuangan nyata berbeda jauh dari perkiraan ini (disebut <em>Earnings Surprise</em>), harga saham bisa langsung melonjak atau anjlok drastis dalam satu hari.</li>
+        </ul>
+
+        <div class="amber-box">
+          <p class="text-sm font-semibold mb-2 flex items-center"><i class="fa-solid fa-lightbulb mr-2"></i> Jangan Buta Percaya Konsensus!</p>
+          <p class="text-sm mb-0">Konsensus analis bukanlah <em>crystal ball</em>. Mereka bisa salah besar, terutama saat ada kejadian tak terduga (pandemi, perang, skandal korporasi). Lebih berbahaya lagi, beberapa analis yang bekerja di bank yang sama dengan <em>Underwriter</em> IPO-nya bisa punya <em>conflict of interest</em> (konflik kepentingan), cenderung bias memberikan rekomendasi positif. Pakai konsensus sebagai salah satu data input, bukan satu-satunya pegangan.</p>
+        </div>
+
+        <h3>6. Jargon Fundamental: P/E Ratio, PBV, dan ROE</h3>
+        <p>Gimana caranya tahu suatu saham itu "Murah" atau "Kemahalan"? Analis profesional pakai rasio valuasi:</p>
+        <ul>
+          <li><strong>P/E Ratio (Price to Earnings Ratio):</strong> Mengukur berapa lama balik modal kamu kalau perusahaan labanya segitu-gitu aja. Semakin kecil angkanya, biasanya saham itu semakin <em>undervalued</em>.</li>
+          <li><strong>PBV (Price to Book Value):</strong> Membandingkan harga saham dengan nilai buku/aset bersih perusahaannya. Kalau PBV di bawah 1, ibarat kamu beli ruko seharga Rp 500 juta, padahal nilai aslinya Rp 1 Miliar.</li>
+          <li><strong>ROE (Return on Equity):</strong> Ini ukuran efisiensi perusahaan dalam menghasilkan laba dari modal yang ditanam pemegang saham. ROE di atas 15% secara konsisten adalah tanda perusahaan dikelola dengan sangat baik. Saham dengan P/E wajar tapi ROE tinggi adalah kombinasi impian yang dicari Warren Buffett.</li>
+        </ul>
+
+        <h3>7. Corporate Action: Right Issue &amp; Stock Split</h3>
+        <ul>
+          <li><strong>Stock Split:</strong> Pemecahan nilai saham. Kalau harga saham BBCA dirasa kemahalan (Rp 30.000/lembar), perusahaan bisa "membelahnya" 1:5. Harganya jadi Rp 6.000/lembar, tapi jumlah lembar saham kamu dikali 5. Nilai uangmu tetap sama.</li>
+          <li><strong>Right Issue (HMETD):</strong> Perusahaan butuh modal tambahan, jadi mereka cetak saham baru. Sebagai investor lama, kamu dapet "Hak" beli saham baru itu dengan harga diskon. Kalau kamu nggak beli, persentase kepemilikanmu akan menyusut (dilusi).</li>
+        </ul>
+
+        <h3>8. Saham Indonesia (IDX) vs Wall Street (S&amp;P 500)</h3>
+        <ul>
+          <li><strong>Batas Atas/Bawah (ARA/ARB):</strong> Di bursa Indonesia ada pengaman. Di US Market tidak ada rem blong — saham bisa terjun -80% dalam sehari tanpa henti.</li>
+          <li><strong>Lot vs Fractional:</strong> Di Indonesia, wajib beli kelipatan 1 Lot (100 lembar). Di bursa Amerika, kamu bisa beli <em>Fractional Shares</em> cuma dengan modal $1 doang!</li>
+          <li><strong>Indeks Pengukur:</strong> Kondisi pasar Indonesia lihat <strong>IHSG</strong>. Di Amerika patokan utama dunia adalah <strong>S&amp;P 500</strong>.</li>
+        </ul>
+
+        <p class="text-sm mt-8 border-t border-white/10 pt-4">🔗 <strong>Referensi Lanjutan:</strong> <a href="https://seekingalpha.com/education" target="_blank">Seeking Alpha Education Center</a></p>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- TAB 3: KRIPTO SPOT -->
+      <!-- ============================================================ -->
+      <div id="content-kripto" class="guide-content hidden article-content">
+        <img src="https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&w=1200&q=80" alt="Cryptocurrency" class="article-img">
+        <h2 class="font-display text-3xl font-bold text-slate-100 mb-2">Kripto (Crypto): Valhalla-nya Aset Berisiko Tinggi</h2>
+
+        <p>Selamat datang di <em>wild west</em>-nya dunia finansial modern. Pasar Kripto beroperasi 24 jam sehari, 7 hari seminggu. Tidak ada libur lebaran, tidak ada jam tutup bursa. Volatilitasnya brutal, tapi menawarkan ruang cuan eksponensial yang belum pernah ada dalam sejarah investasi manusia. Masuk ke sini tanpa ilmu adalah tiket ekspres menuju kebangkrutan.</p>
+
+        <h3>1. Apa itu Blockchain? Inti dari Semua Ini</h3>
+        <p>Kamu nggak bisa ngomongin Kripto tanpa paham <strong>Blockchain</strong>. Di bank konvensional, pihak bank adalah "bos sentral" yang nyatat dan melegalkan transaksi kamu. Di Blockchain, <strong>tidak ada bos</strong>. Ini adalah buku besar digital yang didesentralisasi, diamankan secara kriptografi oleh ribuan komputer di seluruh dunia. Sifat utamanya: <em>Trustless</em> (nggak perlu saling percaya), <em>Immutable</em> (nggak bisa dihapus/diubah), dan transparan.</p>
+
+        <h3>2. Whitepaper: Akta Kelahiran Sebuah Koin</h3>
+        <p>Sebelum kamu beli koin kripto manapun, ada <strong>satu dokumen wajib baca</strong> yang sering diabaikan pemula: <strong>Whitepaper</strong>. Whitepaper adalah dokumen teknis resmi yang diterbitkan oleh tim pengembang sebuah proyek blockchain/kripto. Isinya adalah penjelasan mendetail tentang:</p>
+        <ul>
+          <li><strong>Problem yang ingin dipecahkan:</strong> Masalah dunia nyata apa yang coba diselesaikan proyek ini? Apakah masalahnya cukup besar dan nyata, atau hanya dibuat-buat?</li>
+          <li><strong>Solusi Teknisnya:</strong> Bagaimana teknologi blockchain mereka bekerja? Apa inovasinya dibanding koin yang sudah ada?</li>
+          <li><strong>Tokenomics (Ekonomi Token):</strong> Total suplai berapa? Siapa yang pegang berapa persen? Bagaimana distribusi ke tim, investor awal, dan publik?</li>
+          <li><strong>Roadmap:</strong> Apa target pengembangan ke depan dan dalam jangka waktu berapa lama?</li>
+          <li><strong>Tim Developer:</strong> Siapa orangnya? Apakah nama dan rekam jejak mereka bisa diverifikasi di LinkedIn?</li>
         </ul>
 
         <div class="warning-box">
-          <p class="text-sm font-semibold mb-2 flex items-center"><i class="fa-solid fa-rocket mr-2"></i> Peringatan: Jebakan "Listing Pump"</p>
-          <p class="text-sm mb-0"><strong>Listing Koin</strong> adalah momen hari pertama koin baru terdaftar di bursa CEX raksasa kayak Binance. Biasanya, beberapa detik pertama pas koinnya bisa dibeli, harganya bakal loncat terbang ratusan persen (*Listing Pump*). Pemula yang FOMO bakal buru-buru beli di detik itu juga. Hasilnya? Setengah jam kemudian harga koin bakal dibanting anjlok -80% sama bandar yang *take profit*. Ingat: Jangan pernah beli koin receh di menit-menit pertama dia *listing* di *exchange* kalau kamu sayang uangmu!</p>
+          <p class="text-sm font-semibold mb-2 flex items-center"><i class="fa-solid fa-skull-crossbones mr-2"></i> Red Flag Whitepaper Proyek Scam</p>
+          <p class="text-sm mb-0">Waspada! Ciri-ciri whitepaper proyek tipu-tipu: <strong>(1)</strong> Tidak ada whitepaper sama sekali — langsung kabur! <strong>(2)</strong> Whitepaper berisi banyak kata-kata bombastis dan "revolusioner" tapi minim detail teknis konkret. <strong>(3)</strong> Tim anonim tanpa nama asli yang bisa diverifikasi. <strong>(4)</strong> Tokenomics di mana 40-50%+ supply dipegang tim pendiri dan investor awal — tanda merah besar bahwa mereka bisa <em>dump</em> ke pasar kapan saja. Ini disebut <strong>Rug Pull</strong> dan akan menghancurkan nilaimu mendekati nol.</p>
         </div>
 
-        <h3>5. Siklus Magis: *Bitcoin Halving*</h3>
-        <p>Kenapa pasar Kripto selalu punya ritme 4 tahunan yang *magic* banget? Rahasianya ada di kode genetiknya Bitcoin, yaitu peristiwa <strong>Halving</strong>. Secara teknis, setiap 210.000 blok transaksi selesai diproses (kira-kira persis 4 tahun sekali), hadiah (koin baru) yang didapatkan oleh para penambang (*miners*) otomatis <strong>dipotong setengah (50%)</strong> oleh sistem.</p>
-        <p>Dalam ilmu ekonomi klasik: Jika permintaan (*Demand*) dari investor stabil atau terus naik, TAPI suplai koin baru yang dicetak dan dilempar ke pasar (*Supply*) tiba-tiba dipangkas drastis 50%, harganya <strong>PASTI MELONJAK NAIK</strong>. Secara historis dari masa lalu, siklus paska-Halving ini selalu sukses memicu <strong>Bull Market</strong> (pasar euforia banteng hijau) selama kurang lebih setahun ke depan, dan ditutup dengan <strong>Bear Market</strong> (kehancuran/koreksi beruang merah) berdarah-darah ketika institusi besar mencairkan *profit* mereka secara sadis.</p>
+        <h3>3. Mining Kripto: Cara Kerja "Pencetak Uang Digital"</h3>
+        <p><strong>Mining (Penambangan)</strong> adalah proses di mana komputer-komputer di seluruh dunia berkompetisi memecahkan teka-teki matematika yang sangat rumit untuk memvalidasi dan mencatat transaksi baru ke dalam blockchain. Komputer pertama yang berhasil memecahkan teka-teki tersebut mendapatkan hadiah berupa koin kripto baru yang baru saja "dicetak" — inilah asal-usul istilah "mining".</p>
 
-        <p class="text-sm mt-8 border-t border-white/10 pt-4">🔗 <strong>Materi Lanjutan (*Advanced Study*):</strong> <a href="https://academy.binance.com/en" target="_blank">Binance Academy: Pusat Pengetahuan Web3 Terlengkap</a></p>
+        <div class="info-box">
+          <p class="text-sm font-semibold mb-2 flex items-center"><i class="fa-solid fa-microchip mr-2"></i> Dua Mekanisme Konsensus Utama: PoW vs PoS</p>
+          <p class="text-sm mb-2">Bagaimana jaringan blockchain mencapai "kesepakatan" tentang transaksi mana yang sah? Ada dua metode utama:</p>
+          <ul class="text-sm mt-2 mb-2 space-y-3">
+            <li>
+              <strong>Proof of Work (PoW) — Dipakai Bitcoin:</strong><br>
+              Komputer harus membuktikan mereka sudah "bekerja keras" (memecahkan teka-teki kriptografis sulit). Makin kuat komputermu (<em>hashrate</em>), makin besar peluangmu dapat hadiah. Kelemahan besarnya: <strong>Boros Energi Luar Biasa!</strong> Bitcoin mining saat ini mengonsumsi listrik setara konsumsi negara-negara kecil. Kelebihannya: Jaringan ini sudah terbukti aman dan <em>battle-tested</em> lebih dari 15 tahun — tidak ada yang pernah berhasil meretas blockchain Bitcoin.
+            </li>
+            <li>
+              <strong>Proof of Stake (PoS) — Dipakai Ethereum, Solana, Cardano:</strong><br>
+              Tidak ada kompetisi hitung-hitungan. Para <em>Validator</em> (bukan Miner) dipilih secara acak berbasis seberapa banyak koin yang mereka "kunci/pertaruhkan" (<em>stake</em>) sebagai jaminan. Kalau validator berbuat curang, koin jaminannya disita (<em>slashing</em>). Keunggulan utama: <strong>Efisiensi energinya luar biasa!</strong> Ethereum setelah migrasi ke PoS (disebut "The Merge" 2022) berhasil memangkas konsumsi energinya hingga <strong>99.95%</strong>! Inilah masa depan blockchain ramah lingkungan.
+            </li>
+          </ul>
+          <div class="math-formula" style="font-size:0.85rem;">PoW: Hashrate Lebih Tinggi = Peluang Dapat Reward Lebih Besar &nbsp;|&nbsp; PoS: Stake Lebih Banyak = Peluang Jadi Validator Lebih Besar</div>
+        </div>
+
+        <h3>4. Proses Listing Koin: Dari Lahir ke Bursa</h3>
+        <p>Gimana caranya sebuah koin kripto baru bisa diperdagangkan dan kamu beli? Prosesnya melewati beberapa "pintu gerbang":</p>
+        <ul>
+          <li><strong>IDO/ICO (Initial DEX/Coin Offering):</strong> Ini fase paling awal. Tim proyek pertama kali menjual koin mereka langsung ke investor awal (biasanya dengan harga sangat murah). Mirip seperti IPO saham tapi lebih liar dan tanpa regulasi ketat. Risikonya paling besar, tapi potensi keuntungannya juga paling gila. Banyak yang berakhir <em>rug pull</em>.</li>
+          <li><strong>Listing di DEX (Decentralized Exchange):</strong> Setelah IDO, koin biasanya pertama kali bisa diperdagangkan di bursa terdesentralisasi seperti Uniswap (Ethereum) atau Raydium (Solana). Di DEX tidak ada perantara — transaksi langsung <em>peer-to-peer</em> dieksekusi oleh <em>Smart Contract</em>. Risikonya: sangat mudah dimanipulasi dengan trik bernama <em>Pump and Dump</em> atau <em>Honeypot</em> (kamu bisa beli tapi nggak bisa jual!).</li>
+          <li><strong>Listing di CEX (Centralized Exchange):</strong> Ini adalah "naik kelas" yang paling prestisius. Ketika koin berhasil terdaftar di bursa besar terpusat seperti Binance, Coinbase, atau Bybit, harganya biasanya langsung meledak (disebut <em>"Listing Pump"</em>) karena akses ke jutaan pengguna baru. Bursa-bursa besar ini punya proses seleksi dan audit ketat (tapi tidak sempurna) sehingga proyek yang masuk relatif lebih terpercaya. Di Indonesia: Indodax dan Tokocrypto adalah CEX terbesar berlisensi Bappebti.</li>
+        </ul>
+
+        <div class="success-box">
+          <p class="text-sm font-semibold mb-2 flex items-center"><i class="fa-solid fa-chart-bar mr-2"></i> On-Chain Analysis: Baca Data Blockchain Mentahnya Langsung</p>
+          <p class="text-sm mb-0">Karena blockchain transparan, semua transaksi bisa kamu lacak secara publik. <strong>On-Chain Analysis</strong> adalah ilmu membaca data mentah blockchain untuk memahami pergerakan "uang besar". Tools gratis yang bisa kamu pakai: <strong>Glassnode</strong> atau <strong>CryptoQuant</strong>. Metrik penting: <em>Exchange Inflow</em> (BTC masuk ke bursa dalam jumlah besar = sinyal akan dijual = harga mungkin turun), <em>Exchange Outflow</em> (BTC keluar ke wallet pribadi = HODL = sinyal bullish), dan <em>Whale Transactions</em> (transaksi di atas $1 Juta — pantau pergerakan dompet milik "paus besar").</p>
+        </div>
+
+        <h3>5. Ekologi Koin: Bitcoin, Altcoins, dan Token</h3>
+        <ul>
+          <li><strong>Bitcoin (BTC):</strong> Sang raja koin, <em>Digital Gold</em>. Suplai maksimal dikunci 21 Juta keping selamanya.</li>
+          <li><strong>Ethereum (ETH) &amp; Smart Contracts:</strong> Jika Bitcoin itu emas batangan, Ethereum adalah jalan tol inovasinya. ETH mengenalkan <em>Smart Contract</em> — kontrak digital yang berjalan otomatis tanpa perlu notaris. Dari sinilah lahir DeFi, NFT, dan seluruh ekosistem Web3.</li>
+          <li><strong>Altcoins:</strong> Semua koin di luar Bitcoin. Mulai dari proyek raksasa Layer-1 seperti Solana (SOL) &amp; Cardano (ADA), sampai <em>Meme Coin</em> receh yang murni gerak karena <em>hype</em> komunitas tanpa teknologi jelas.</li>
+        </ul>
+
+        <div class="info-box">
+          <p class="text-sm font-semibold mb-2 flex items-center"><i class="fa-solid fa-gears mr-2"></i> Wajib Tahu: Tokenomics (Anatomi Suplai)</p>
+          <p class="text-sm mb-2">Jangan pernah terkecoh sama koin yang harganya kelihatannya "murah" misal cuma Rp1 perak. Kamu wajib ngecek <em>Tokenomics</em>-nya di CoinMarketCap atau CoinGecko:</p>
+          <ul class="text-sm mb-0 mt-2 space-y-2">
+            <li><strong>Circulating Supply:</strong> Jumlah koin yang saat ini udah beredar di pasar.</li>
+            <li><strong>Max / Total Supply:</strong> Total mentok koin yang bisa diciptakan di masa depan.</li>
+          </ul>
+          <p class="text-sm mt-2 mb-0"><strong>Ilmu Penting:</strong> Kalau <em>Circulating</em>-nya baru 10% tapi <em>Max Supply</em>-nya 100 Miliar koin, siap-siap aja uangmu hancur kena <strong>Dilusi / Inflasi Token</strong>.</p>
+        </div>
+
+        <h3>6. Siklus Pasar &amp; Bitcoin Halving</h3>
+        <p>Setiap 210.000 blok terbentuk (kira-kira 4 tahun sekali), hadiah koin baru yang didapatkan oleh para penambang akan "dipotong setengah". Efeknya? Pasokan baru BTC yang masuk ke pasar langsung drop 50%. Secara historis, siklus paska-Halving selalu memicu <strong>Bull Market</strong> selama setahun ke depan, lalu diikuti <strong>Bear Market</strong> ketika semua orang merealisasikan profitnya.</p>
+
+        <h3>7. Hot Wallet vs Cold Wallet</h3>
+        <p>Hafalkan mantra suci Kripto ini: <strong>"Not Your Keys, Not Your Coins"</strong>.</p>
+        <ul>
+          <li><strong>Hot Wallet (Bursa/Exchange):</strong> Koinmu disimpan di brankas mereka. Kalau aplikasinya di-<em>hack</em> atau CEO-nya kabur bawa duit (kayak kasus bursa FTX), duitmu lenyap.</li>
+          <li><strong>Cold Wallet (Hardware Wallet):</strong> Alat fisik mirip <em>flashdisk</em> (contoh: Ledger, Trezor). Kamu pegang penuh <strong>Seed Phrase</strong> (12-24 kata sandi rahasia). Solusi wajib kalau portofoliomu sudah di atas Rp 20 jutaan.</li>
+        </ul>
+
+        <div class="success-box">
+          <p class="text-sm font-semibold mb-2 flex items-center"><i class="fa-solid fa-piggy-bank mr-2"></i> Staking &amp; DeFi (Dapat Bunga di Kripto)</p>
+          <p class="text-sm mb-0">Kalau kamu punya koin jaringan PoS (seperti ETH, SOL, ADA), kamu bisa melakukan <strong>Staking</strong> — mengunci koinmu di jaringan untuk bantu ngamanin blockchain dan mendapat imbalan koin tambahan secara rutin (seperti dapat bunga deposito, tapi dibayar pakai kripto).</p>
+        </div>
+
+        <p class="text-sm mt-8 border-t border-white/10 pt-4">🔗 <strong>Referensi Lanjutan:</strong> <a href="https://academy.binance.com/en" target="_blank">Binance Academy: Pusat Pembelajaran Web3 &amp; Kripto Global</a></p>
       </div>
 
+      <!-- ============================================================ -->
+      <!-- TAB 4: EMAS & MAKRO -->
+      <!-- ============================================================ -->
       <div id="content-emas" class="guide-content hidden article-content">
         <img src="https://images.unsplash.com/photo-1610375461246-83df859d849d?auto=format&fit=crop&w=1200&q=80" alt="Gold Investment" class="article-img">
-        <h2 class="font-display text-3xl font-bold text-slate-100 mb-2">Emas & Makroekonomi: Sang Penjaga Benteng Terakhir</h2>
+        <h2 class="font-display text-3xl font-bold text-slate-100 mb-2">Emas &amp; Makroekonomi: Jangkar Pelindung Kekayaan</h2>
 
-        <p>Kalau Kripto itu kita anggap ibarat mobil *hypercar* F1 yang ngebut tanpa rem, Emas itu adalah tank baja tempur klasik. Pergerakannya mungkin sangat lambat bikin ngantuk, tapi dia nyaris nggak bisa dihancurkan. Institusi besar, triliuner, dan bank-bank sentral negara seluruh dunia itu nyimpen emas batangan BUKAN dengan niat buat *trading* harian atau biar uangnya lipat ganda dalam semalam, tapi niat aslinya murni untuk <strong>Preservasi Kekayaan</strong> (*Wealth Preservation*). Di titik krisis terparah, Emas adalah asuransi terakhir peradaban manusia.</p>
+        <p>Kalau Kripto ibarat <em>sports car</em> yang ngebut tanpa rem, Emas adalah tank baja tempur klasik yang sangat lambat tapi nggak bisa dihancurkan. Institusi besar dan bank sentral dunia menyimpan emas bukan untuk lipat ganda dalam semalam, tapi demi <strong>Preservasi Kekayaan</strong> (<em>Wealth Preservation</em>).</p>
 
-        <h3>1. Uang Fiat (Kertas) vs Uang Komoditas (Emas)</h3>
-        <p>Mungkin kamu mikir: "Uang kan udah jelas kertas selembar bergambar pahlawan yang kita pegang, ngapain mikirin emas?".</p>
-        <p>Masalahnya, uang kertas zaman sekarang yang di-klaim negara (Dolar, Rupiah, dll) itu disebut <strong>Uang Fiat</strong>. Uang fiat ini TIDAK di- *backup* (dijamin) oleh cadangan emas sama sekali. Uang fiat berharga HANYA karena pemerintah bilang itu sah buat alat bayar. Artinya? Bank sentral dan pemerintah punya kuasa mutlak buat "nge-print" triliunan uang baru dari mesin cetak kapan pun mereka mau (biasanya kalau negara lagi defisit/krisis). Semakin banyak uang kertas diprint, nilai uang yang ada di dompet kamu makin turun (*hyperinflasi*). Itulah kenapa kamu nggak bisa kaya cuma dari numpuk duit kertas. Uangnya secara sistematis makin letoy nilainya.</p>
-        <p>Di sisi lain, <strong>Emas itu kebal mesin cetak!</strong> Jumlah emas di planet bumi ini terbatas secara geologis. Nggak ada pemerintah atau presiden mana pun yang bisa ngetik kode di komputer lalu "membuat emas baru". Satu-satunya cara bikin emas ya harus capek-capek gali tanah *mining* (nambang) yang biayanya luar biasa mahal. Kelangkaan absolut yang butuh *effort* fisik ini yang ngejaga *value* emas dari ribuan tahun zaman Firaun sampai detik ini tetep stabil dan sakti.</p>
+        <h3>1. Kenapa Emas Disebut Safe Haven?</h3>
+        <p>Saat krisis parah terjadi (perang, hiperinflasi, kolaps mata uang), dana-dana raksasa dari investor global akan kabur menyelamatkan diri ke "tempat berlindung" yang punya <em>value</em> intrinsik yang sudah diakui selama ribuan tahun peradaban manusia: Emas fisik. Harga emas akan meroket saat dunia sedang tidak baik-baik saja.</p>
 
-        <h3>2. Kenapa Emas Disebut *Safe Haven*?</h3>
-        <p>Apa yang kira-kira bakal terjadi di pasar kalau besok pagi tiba-tiba ada berita rudal diluncurkan antar-negara (*Perang Dunia 3*), atau pandemi misterius muncul lagi yang bikin *lockdown* global, atau tiba-tiba inflasi negara kuat lepas kendali 100%?</p>
-        <p>Pasti bursa pasar saham bakal rontok berdarah-darah berjamaah karena panik, dan nilai mata uang kertas (fiat) akan terjun bebas jadi seharga sampah. Di saat krisis gila-gilaan (*macro chaos*) seperti itulah, dana-dana raksasa dari korporat/investor global akan buru-buru menyelamatkan diri (kabur) dengan memindahkan uang mereka ke "tempat berlindung" paling netral dan nggak bergantung sama kinerja perusahaan apa pun: <strong>Emas Fisik</strong>. Makanya, harga emas global justru biasanya akan meroket nembus langit di saat dunia sedang hancur-hancurnya.</p>
-
-        <h3>3. Rahasia Makro: Membaca Siklus The Fed (*Dovish vs Hawkish*)</h3>
-        <p>Sebagai *advanced investor*, kamu nggak bisa sekadar *feeling* nebak-nebak arah harga Emas Global (Kode pasar: XAU/USD). Musuh bebuyutan alami paling utama dari harga emas adalah **Suku Bunga Bank Sentral Amerika (The Fed)** dan indeks kekuatan **Dolar Amerika (DXY)**. Korelasinya sering kali bagaikan jungkat-jungkit (berlawanan secara persis).</p>
-
+        <h3>2. Membaca Data Makroekonomi Seperti Pro</h3>
+        <p>Sebagai investor yang <em>advanced</em>, kamu harus paham "bahasa" yang dipakai para bank sentral dan pemerintah untuk menggambarkan kondisi ekonomi. Data makro ini sangat mempengaruhi pergerakan emas, saham, dan semua kelas aset sekaligus:</p>
         <ul>
-          <li><strong>Quantitative Tightening (QT) & Mode HAWKISH:</strong> Kalau Amerika lagi inflasi tinggi (barang pada mahal), The Fed (Bank Sentral) terpaksa harus **Menaikkan Suku Bunga** buat ngerem ekonomi. Suku bunga tinggi bikin nilai Dolar tiba-tiba menguat pesat, dan imbal hasil Obligasi/Surat Utang Negara Amerika (*Treasury Yields*) ikut meroket. Akibatnya? Institusi raksasa mikir: *"Ngapain pegang emas yang nggak ngasih bagi hasil sama sekali, mending pindahin duit triliunannya ke surat utang negara yang bunganya lagi tinggi dan fix-aman!"*. Akibatnya, emas akan ditinggalkan dan harganya <strong>TURUN TERTEKAN</strong>.</li>
-          <li><strong>Quantitative Easing (QE) & Mode DOVISH:</strong> Kalau ekonomi lagi lesu atau resesi, The Fed bakal nyalain "mesin cetak uang" dan **Menurunkan Suku Bunga** sedekat mungkin ke angka 0% supaya orang gampang minjem duit ke bank dan bisnis jalan lagi. Uang jadi murah dan banjir di pasaran, Dolar melemah, dan bunga obligasi nyungsep ke dasar. Institusi bakal panik liat uang kertasnya kena inflasi. Maka, mereka akan memborong emas gila-gilaan buat melindungi aset dari devaluasi fiat. Akibatnya? Harga emas akan <strong>TERBANG TINGGI NEMBUS REKOR (All Time High)</strong>.</li>
+          <li><strong>CPI (Consumer Price Index — Indeks Harga Konsumen):</strong> Ini adalah angka inflasi yang "resmi". CPI mengukur perubahan harga rata-rata dari keranjang barang dan jasa yang dibeli konsumen biasa tiap bulannya (belanjaan, bensin, sewa rumah, dll). Kalau angka CPI yang dirilis lebih tinggi dari ekspektasi pasar (misal 4% padahal market expect 3%), saham dan emas biasanya langsung bergejolak karena pasar mengantisipasi The Fed akan naikkan suku bunga lebih agresif.</li>
+          <li><strong>GDP (Gross Domestic Product — PDB):</strong> Ukuran total nilai semua barang dan jasa yang diproduksi suatu negara dalam setahun. GDP yang tumbuh kuat = ekonomi sehat = bagus buat saham. GDP yang negatif dua kuartal berturut-turut = definisi resmi <strong>Resesi</strong>. Saat resesi, investor panik dan lari ke Safe Haven: Emas &amp; Obligasi Pemerintah.</li>
+          <li><strong>PMI (Purchasing Managers' Index):</strong> Survei bulanan ke para manajer pembelian di perusahaan-perusahaan. PMI di atas 50 = ekonomi ekspansi. PMI di bawah 50 = kontraksi. Ini adalah "termometer" kondisi bisnis yang sangat diandalkan investor.</li>
+          <li><strong>NFP (Non-Farm Payrolls — Data Tenaga Kerja AS):</strong> Dirilis setiap Jumat pertama bulan, data ini menunjukkan berapa banyak pekerjaan baru yang tercipta di Amerika (kecuali sektor pertanian). Pasar finansial global bisa goyang hebat dalam hitungan menit setelah data NFP dirilis. Kenapa? Karena data ini menjadi sinyal utama apakah The Fed akan naikkan atau turunkan suku bunga.</li>
+        </ul>
+
+        <div class="info-box">
+          <p class="text-sm font-semibold mb-2 flex items-center"><i class="fa-solid fa-calendar-days mr-2"></i> Economic Calendar: Jadwal Senjata Investor</p>
+          <p class="text-sm mb-0">Semua data makro penting ini dirilis pada tanggal dan jam yang sudah dijadwalkan jauh-jauh hari. Tandai kalender kamu! Gunakan <strong>Investing.com Economic Calendar</strong> (gratis) untuk tahu kapan rilis CPI, FOMC Meeting (keputusan suku bunga The Fed), NFP, dan data penting lainnya. Di jam-jam kritis itu, jangan buka posisi baru kalau kamu belum berpengalaman — volatilitasnya sangat ekstrem dalam hitungan detik.</p>
+        </div>
+
+        <h3>3. Rahasia Membaca Arah Emas dari The Fed &amp; DXY</h3>
+        <p>Musuh bebuyutan utama harga emas global (Kode: XAU/USD) adalah <strong>Suku Bunga The Fed</strong> dan kekuatan <strong>Indeks Dolar (DXY)</strong>. Korelasinya sering kali terbalik (negatif).</p>
+        <ul>
+          <li><strong>Suku Bunga Naik (Mode HAWKISH):</strong> Dolar menguat, imbal hasil Obligasi US naik. Institusi lebih pilih obligasi yang kasih bunga pasti. Emas ditinggalkan → Harga emas <strong>TURUN</strong>.</li>
+          <li><strong>Suku Bunga Turun (Mode DOVISH):</strong> Dolar melemah, bunga obligasi anjlok. Institusi memborong emas → Harga emas <strong>NAIK</strong>.</li>
         </ul>
 
         <div class="warning-box">
           <p class="text-sm font-semibold mb-2 flex items-center"><i class="fa-solid fa-scale-unbalanced mr-2"></i> Pahami Jebakan "Spread" Beli Emas Fisik</p>
-          <p class="text-sm mb-2">Kamu hobi beli kepingan emas batangan Antam/Galeri24 ke mall tiap bulan buat nabung tipis-tipis? Hati-hati. Di instrumen emas fisik konvensional, ada selisih yang luar biasa jahat antara <strong>Harga Jual Butik (Harga kamu beli barangnya)</strong> dan <strong>Harga Buyback (Harga toko kalau kamu mau ngejual balik emasmu ke mereka)</strong>. Selisih kejam ini namanya <i>Spread</i>. Gap-nya bisa nembus 10% sampai 15% dari nilai aslinya!</p>
-          <p class="text-sm mb-0">Artinya secara sadis: Kalau kamu beli emas jam 9 pagi Rp 10 Juta, terus jam 3 sorenya kamu tiba-tiba butuh darurat uang tunai dan ngejual balik emas itu ke butiknya, uang yang kamu terima cuma sekitar Rp 8.5 Juta! <strong>Uang kamu otomatis menguap/hangus 15% di hari yang sama gara-gara spread</strong>. Kesimpulan mutlaknya: Investasi emas fisik itu didesain HANYA untuk "Ditelan dan Dilupakan" alias disimpan jangka super panjang (minimal banget 3 sampai 5 tahun ke atas). Hanya dengan *hold* jangka waktu selama itu, potensi kenaikan harga emas global baru bisa benar-benar menutupi dan membalikkan tebalnya selisih kerugian *spread* di awal tadi.</p>
+          <p class="text-sm mb-0">Di emas fisik ada selisih besar antara harga beli (dari butik) dan harga buyback (jual balik). Selisih ini disebut <em>Spread</em> dan bisa 10% sampai 15%! Kalau kamu beli emas pagi dan sorenya dijual balik, uang kamu otomatis hangus 15%. Emas fisik didesain HANYA untuk ditahan minimal 3 sampai 5 tahun ke atas.</p>
         </div>
 
-        <p class="text-sm mt-8 border-t border-white/10 pt-4">🔗 <strong>Materi Makro Lanjutan (*Advanced Study*):</strong> <a href="https://www.gold.org/goldhub/research" target="_blank">World Gold Council: Riset Makro Data Terpusat Global</a></p>
+        <h3>4. Empat Cara Investasi Emas di Era Modern</h3>
+        <ol>
+          <li><strong>Emas Fisik (Antam/UBS/Galeri24):</strong> Barangnya ada di tanganmu, kebal peretasan. Kekurangan: pusing mikirin brankas, ada ongkos cetak, dan spread sangat lebar.</li>
+          <li><strong>Emas Digital (Commodity Exchange):</strong> Beli nilainya lewat aplikasi berlisensi Bappebti/OJK (contoh: Pluang, Pegadaian Digital, Bareksa). Sangat likuid, bisa dicicil dari Rp10.000, dan spread jauh lebih sempit.</li>
+          <li><strong>Saham Perusahaan Tambang Emas:</strong> Beli saham perusahaan yang ngeruk emasnya. Contoh di IDX: MDKA. Harganya sejalan harga emas global, plus bisa dapat <em>Capital Gain</em> dan Dividen.</li>
+          <li><strong>XAU/USD (Forex / Derivatif Emas):</strong> Ini <strong>BUKAN</strong> instrumen investasi, melainkan <em>trading</em> spekulatif jangka pendek dengan leverage. Sangat berbahaya buat pemula!</li>
+        </ol>
+
+        <p class="text-sm mt-8 border-t border-white/10 pt-4">🔗 <strong>Referensi Lanjutan:</strong> <a href="https://www.gold.org/goldhub/research" target="_blank">World Gold Council: Riset Makro Data Terpusat</a></p>
       </div>
 
+      <!-- ============================================================ -->
+      <!-- TAB 5: REKSADANA & ETF -->
+      <!-- ============================================================ -->
       <div id="content-reksa" class="guide-content hidden article-content">
         <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1200&q=80" alt="Mutual Funds" class="article-img">
-        <h2 class="font-display text-3xl font-bold text-slate-100 mb-2">Reksadana & ETF: Delegasi Pintar Ala "Terima Beres"</h2>
+        <h2 class="font-display text-3xl font-bold text-slate-100 mb-2">Reksadana &amp; ETF: Delegasi Pintar Ala "Terima Beres"</h2>
 
-        <p>Nggak punya kemewahan waktu 8 jam sehari buat mantengin pergerakan grafik *candlestick* saham yang bikin jantungan? Nggak ngerti pusingnya nge-bedah laporan keuangan neraca saldo (*Balance Sheet*) perusahaan? Kalau iya, *Say hello* ke sistem Reksadana (*Mutual Funds*) dan ETF. Ini adalah kasta tertinggi dari instrumen investasi berbasis "Pendelegasian". Intinya: Kamu nyetor uang, dan ngebayar orang-orang super pintar yang gajinya miliaran untuk mikirin dan bekerja *full-time* mengembangkan uangmu di pasar modal.</p>
+        <p>Nggak punya waktu 8 jam sehari buat melototin <em>candlestick</em> saham? Nggak ngerti baca neraca keuangan perusahaan yang ribet minta ampun? <em>Say hello</em> ke Reksadana (<em>Mutual Funds</em>) dan ETF. Ini adalah instrumen pendelegasian tertinggi: kamu bayar orang pintar untuk mikirin uangmu biar berkembang.</p>
 
-        <h3>1. Anatomi Reksadana: Trus, Uang Aku Dipegang Siapa?</h3>
-        <p>Banyak *newbie* (pemula) yang ketakutan dan males berinvestasi di reksadana karena paranoid: "Wah, nanti kalau aplikasinya bodong terus CEO-nya kabur bawa lari tabunganku gimana?". Padahal, ekosistem reksadana itu di Indonesia adalah produk legal dengan perlindungan benteng berlapis dari OJK dan KSEI. Coba kita bedah anatomi siapa pemegang kendalinya:</p>
+        <h3>1. Anatomi Reksadana: Siapa Pegang Uangmu?</h3>
         <ul>
-          <li><strong>Manajer Investasi (MI):</strong> Ini adalah "Otak Besar" dari produk reksadana. MI (contoh perusahaannya: Schroder, BNI Asset Management, Sucorinvest) adalah sebuah perusahaan tempat berkumpulnya analis dan ahli keuangan level dewa. Kerja mereka tiap hari cuma satu: Mikirin dan meramu formulasi terbaik, uang miliaran yang terkumpul dari nasabah ini enaknya mau dibelikan saham bank apa, dikeruk di obligasi mana, atau diamankan ke deposito bank apa supaya *cuan* (profit) yang diraih bisa se-optimal mungkin.</li>
-          <li><strong>Bank Kustodian (Brankas Aman Absolut):</strong> Nah ini poin paling krusial yang bikin kamu bisa tidur nyenyak! <strong>Perusahaan Manajer Investasi (MI) itu TIDAK PERNAH sekalipun menyentuh atau memegang uang fisikmu!</strong> Uang yang kamu setorkan lewat aplikasi manapun, akan otomatis diteruskan dan dikunci ke sebuah entitas brankas raksasa independen yang disebut Bank Kustodian (seperti BCA Kustodian, Standard Chartered, CIMB, dll). Jadi, kalaupun (amit-amit) perusahaan Manajer Investasinya bangkrut gulung tikar besok pagi atau manajernya korupsi, uangmu dan seluruh aset sahamnya tetep 100% aman sentosa tak tersentuh di dalam brankas Bank Kustodian, dan bisa ditarik kapan saja. Terbukti aman kan?</li>
-          <li><strong>NAB/UP (Nilai Aktiva Bersih per Unit Penyertaan):</strong> Berbeda dengan saham yang satuannya "Lembar/Lot", reksadana itu menggunakan satuan <strong>Unit Penyertaan</strong> dan harganya disebut NAB. Misal hari ini NAB-nya Rp 1.000 per unit, lalu kamu nyetor Rp 1 Juta, artinya kamu akan punya 1.000 unit. Kalau besoknya kinerja tim Manajer Investasi jago milih saham yang lagi pada naik semua, nilai NAB ini otomatis merangkak naik tiap hari jadi Rp 1.050, Rp 1.100, dst. </li>
+          <li><strong>Manajer Investasi (MI):</strong> Otak dari operasionalnya. Sekumpulan analis keuangan yang kerja mereka cuma satu: mengelola dana yang terkumpul mau dibelikan aset apa biar cuan maksimal.</li>
+          <li><strong>Bank Kustodian (Brankas Aman):</strong> <strong>Manajer Investasi TIDAK PERNAH memegang uangmu.</strong> Uang yang kamu setor dititipkan ke Bank Kustodian independen. Kalaupun MI-nya bangkrut atau korupsi, uangmu aman di sini.</li>
+          <li><strong>NAB/UP (Nilai Aktiva Bersih per Unit Penyertaan):</strong> Satuan "harga" dari reksadana. Kamu setor Rp 1 Juta, kamu dapat beberapa "Unit". Kalau aset yang dikelola MI untung, harga per Unit ini bakal naik terus.</li>
         </ul>
 
-        <h3>2. Tingkatan Kasta Reksadana (Risiko & Tujuannya)</h3>
-        <p>Jangan pernah ngasal beli reksadana cuma gara-gara ngelihat grafik persentase *return* masa lalunya yang lagi tinggi. Beda tujuan uangnya dipakai kapan, beda juga "mobil" reksadana yang harus kamu kendarai:</p>
+        <h3>2. Tingkatan Kasta Reksadana (Risiko &amp; Return)</h3>
         <ol>
-          <li><strong>Reksadana Pasar Uang (RDPU):</strong> Kasta paling kalem, paling anti huru-hara sejagat raya. Hampir 100% uangmu akan dikelola MI dan dikunci ke deposito perbankan atau obligasi pemerintah dengan *expired* sangat pendek (kurang dari 1 tahun). Grafiknya nyaris lurus mulus menanjak nan landai tanpa pernah mengalami masa minus/turun (*Zero Drawdown*). Imbal hasilnya? Masuk akal, sekitar 4% - 6% bersih setahun (sudah potong pajak). <strong>Fungsi Strategis: Sangat cocok sebagai "Tempat Parkir" uang darurat (*Emergency Fund*) dan tabungan sisa yang mau kamu cairin kurang dari setahun ke depan.</strong></li>
-          <li><strong>Reksadana Pendapatan Tetap (RDPT):</strong> Mode menengah (*Medium Risk*). Minimal 80% duit kumpulan nasabah akan diborongkan Surat Utang Obligasi milik Negara (SBN) atau obligasi korporasi swasta gede. Imbal hasil berani lebih agresif (bisa ngejar 6% - 8% setahun). TAPI, harganya sesekali bisa turun tipis atau merah kalau lagi ada sentimen kenaikan suku bunga Bank Sentral (The Fed). <strong>Fungsi Strategis: Kendaraan untuk tabungan menengah yang bakal kamu eksekusi 1 sampai 3 tahun ke depan (Misal: DP buat KPR Rumah impian).</strong></li>
-          <li><strong>Reksadana Saham (RDS):</strong> Mode *Sport* ugal-ugalan! Minimal 80% peluru dana kamu akan digelontorkan murni untuk dibelikan saham-saham volatil di lantai bursa efek. Potensi *return* sungguh menggiurkan (bisa nembus 10% - 20%++ per tahun di saat ekonomi makro sedang mode *Bullish* banteng). TAPI konsekuensinya nyata, kalau negara lagi diguncang krisis besar atau ada pandemi tiba-tiba, uangmu di portofolio aplikasi bisa langsung minus -40% terjun payung dalam hitungan minggu. <strong>Fungsi Strategis: Kendaraan wajib untuk tujuan investasi super panjang di masa depan (Tahan banting di atas 5 - 10 tahun). Contoh: Dana numpuk buat pensiun sejahtera atau nyiapin dana sekolah kuliah S1 buat anak.</strong></li>
+          <li><strong>Reksadana Pasar Uang (RDPU):</strong> Paling aman. 100% uangnya masuk ke deposito bank dan obligasi jangka pendek. Grafiknya nyaris lurus mulus naik tiap hari. Imbal hasilnya 4% - 6% setahun. <strong>Fungsi terbaik: Parkir Dana Darurat.</strong></li>
+          <li><strong>Reksadana Pendapatan Tetap (RDPT):</strong> Minimal 80% duitmu dibelikan Surat Utang/Obligasi Negara (SBN). Imbal hasil lebih tinggi (6% - 8%), bisa turun tipis saat suku bunga naik. <strong>Fungsi terbaik: Tabungan 1-3 tahun ke depan (misal DP Rumah).</strong></li>
+          <li><strong>Reksadana Campuran:</strong> Campuran saham dan obligasi dalam proporsi yang fleksibel (biasanya 40-60%). Profil risiko menengah. <strong>Fungsi terbaik: Tabungan 3-5 tahun.</strong></li>
+          <li><strong>Reksadana Saham (RDS):</strong> Minimal 80% dana digelontorkan ke saham-saham pilihan di bursa. Bisa kasih return 10% - 20% setahun saat ekonomi bagus, TAPI bisa -40% saat krisis. <strong>Fungsi terbaik: Tujuan jangka super panjang (di atas 5-10 tahun) seperti dana pensiun.</strong></li>
         </ol>
 
         <div class="info-box">
-          <p class="text-sm font-semibold mb-2 flex items-center"><i class="fa-solid fa-magnifying-glass-chart mr-2"></i> Bedah Dokumen Pro: AUM, Drawdown, Expense Ratio</p>
-          <p class="text-sm mb-2">Saat memilih produk Reksadana, buang jauh-jauh kebiasaan cuma ngelihat "nama aplikasinya keren". Kamu itu *advanced investor*, jadi wajib hukumnya *download* dokumen PDF sakti bernama <strong>Fund Fact Sheet</strong> (Laporan Ringkasan Kinerja) dan pelototi 3 metrik dewa ini sebelum *checkout* duit:</p>
-          <ul class="text-sm mb-0 mt-2 space-y-2">
-            <li><strong>AUM (*Asset Under Management* / Total Dana Kelolaan):</strong> Ini total ukuran duit seluruh umat dan institusi yang dipertaruhkan dan dipercayakan pada produk reksadana tersebut. Trik gampang: Cari reksadana yang AUM-nya super *gendut* (berkisar di angka minimal ratusan miliar sampai di atas Rp 1 Triliun). Logikanya: Makin jumbo AUM-nya, berarti makin tinggi juga kepercayaan pasar terhadap racikan Manajer Investasi-nya. Reksadana AUM triliunan juga punya kekuatan *likuiditas super lancar*, jadi kapan pun nominal besar mau kamu uangkan/cairkan kembali (*redemption*), dananya dijamin langsung mendarat di rekening tanpa seret/ngadat.</li>
-            <li><strong>Max Drawdown (Puncak Penderitaan):</strong> Ini pengukur tingkat depresi/stres kamu sebagai investor. Metrik ini buka-bukaan nunjukin "Seberapa dalam dan seberapa parah persentase reksadana ini pernah terjun/nyungsep dari harga tertinggi (*All Time High*) yang pernah diraih di masa lalu?". Misal nih, ada Reksadana Saham "Harapan Bangsa" yang nunjukin angka *Max Drawdown* -55%. Pertanyaannya cuma satu: Mental kamu bener-bener siap dan ikhlas nahan ngeliat portofoliomu minus separuh harga kalau krisis terulang kembali? Kalau nggak sanggup, cari reksadana dengan *drawdown* yang jauh lebih landai.</li>
-            <li><strong>Expense Ratio (Pajak Siluman Berkedok Administrasi):</strong> Ini biaya rahasia yang menggerogoti cuan. Perusahaan MI kan juga butuh *cashflow* buat ngegaji manajer ber-jas rapinya sama sewa gedung kantor. Makanya, mereka tanpa sepengetahuanmu akan memotong persentase biaya manajemen secara otomatis langsung dari performa (Aset Kelolaan) harianmu. Aturan mutlaknya: Carilah Reksadana dengan beban <i>Expense Ratio</i> sekecil dan sepelit mungkin. Kalau kamu nemu produk reksadana pasif yang Expense Ratio-nya mencapai lebih dari 5% per tahun? Skip aja bro, itu perampokan berkedok legal yang bakal mengebiri *compound interest* kamu jangka panjang! Standar ideal carilah yang maksimal ngecas di bawah 1.5% atau mentok 2.5% saja.</li>
+          <p class="text-sm font-semibold mb-2 flex items-center"><i class="fa-solid fa-magnifying-glass-chart mr-2"></i> Istilah Pro Wajib Baca Sebelum Beli: AUM, Drawdown, Expense Ratio, Alpha &amp; Sharpe Ratio</p>
+          <p class="text-sm mb-2">Pas milih produk reksadana, kamu wajib download <strong>Fund Fact Sheet</strong> (Ringkasan Kinerja Bulanan) dan cek matriks-matriks ini:</p>
+          <ul class="text-sm mb-0 mt-2 space-y-3">
+            <li><strong>AUM (Asset Under Management):</strong> Total dana semua investor yang dititipkan ke produk itu. Cari yang di atas Rp 500 Miliar atau Rp 1 Triliun. Makin gede AUM-nya, makin terpercaya MI-nya dan makin lancar likuiditas pencairannya.</li>
+            <li><strong>Max Drawdown:</strong> Seberapa dalam reksadana itu pernah "nyungsep" dari harga tertingginya. Ini ukuran tingkat stres. Kalau Max Drawdown-nya -60%, apa mental kamu kuat menghadapi itu?</li>
+            <li><strong>Expense Ratio:</strong> Biaya siluman yang dipotong dari aset. Cari di bawah 2% untuk reksadana saham. Di atas 3%? Itu perampokan halus!</li>
+            <li><strong>Alpha:</strong> Mengukur seberapa besar kinerja reksadana melebihi <em>benchmark</em>-nya (misal melebihi kinerja IHSG). Alpha positif artinya MI-nya memang jago memilih saham, bukan cuma ikut arus pasar. Semakin tinggi Alpha, semakin "nilai tambah" yang diberi sang MI.</li>
+            <li><strong>Sharpe Ratio:</strong> Rasio return dibagi risiko (volatilitas). Ini ukuran "kualitas return" paling komprehensif. Sharpe Ratio 1.0 ke atas dianggap bagus. Dua produk yang sama-sama kasih return 12% setahun, yang punya Sharpe Ratio lebih tinggi artinya jalannya lebih mulus dan lebih sedikit bikin jantung copot.</li>
           </ul>
         </div>
 
-        <h3>4. Teknik Anti Baper: Keajaiban Nabung Rutin (DCA)</h3>
-        <p>Tahukah kamu, banyak *newbie* yang karier investasinya tamat dini karena mereka maksa sok tahu nebak-nebak *timing* pasar. Praktik mematikan ini namanya "Lump Sum All-In". Gambarannya: Si Budi baru aja cairin warisan/bonus jualan Rp 100 Juta, lalu hari itu juga tanpa ba-bi-bu langsung dibeliin reksadana saham Rp 100 Juta *full* di satu titik harga tanpa nyisain *cash*. Sialnya, ternyata besok harinya, pasar saham global dan IHSG remuk diguncang inflasi. Uang Budi yang Rp 100 Juta langsung menyusut jadi Rp 70 Juta dalam sekejap. Emosinya pasti hancur, panik luar biasa, dan nyesel nyebur investasi.</p>
-        <p>Investor *Smart Money* nggak main tebak-tebakan. Mereka murni tunduk pada sistem robotik bernama <strong>DCA (Dollar Cost Averaging)</strong> alias Nabung Berkala. Gimana kalau Rp 100 Juta tadi diubah *mindset*-nya? Budi bagi amunisinya jadi dicicil konsisten Rp 10 Juta per bulan selama 10 bulan berturut-turut. Setiap tanggal gajian, dia tutup mata dan pencet beli, persetan harga market lagi "Bullish" terbang ataupun market lagi "Bearish" ancur lebur pendarahan. <br><br>Keuntungannya luar biasa nyata secara matematika: Saat harga saham anjlok/murah, jatah Rp 10 Juta Budi secara magis akan otomatis "menyerok/membeli" jatah unit Reksadana yang jauh lebih banyak. Saat dihitung di akhir siklus 10 bulan, Budi berhasil mendapatkan <strong>Harga Beli Rata-Rata (Average Price)</strong> yang sangat proporsional. Nggak perlu pusing mikir *timing*, mental tetap rileks layaknya pertapa di pegunungan Himalaya, dan dalam waktu hitungan tahun, metode membosankan ini dijamin selalu *outperform* dan mengalahkan *trader-trader* cerewet harian.</p>
+        <h3>3. Rahasia DCA (Dollar Cost Averaging)</h3>
+        <p>Investor <em>smart</em> pakai teknik <strong>DCA (Dollar Cost Averaging)</strong> alias Nabung Rutin. Alih-alih Lump Sum (beli semua sekaligus yang rawan timing jelek), kamu cicil beli dalam jumlah tetap secara rutin tiap bulan. Secara psikologis pikiranmu tenang, dan secara sistematis kamu akan mendapatkan harga beli rata-rata yang jauh lebih optimal dalam jangka panjang.</p>
 
-        <h3>5. Revolusi ETF (*Exchange Traded Fund*): Membeli "Pasar" Sekaligus</h3>
-        <p>Sistem reksadana konvensional generasi tua itu punya kelemahan nyebelin: Transaksinya lelet. Harganya (NAB) itu dihitung secara rahasia dan *final* cuma terjadi HANYA SATU KALI di penghujung tutup bursa (*End of Day* / EOD). Ibaratnya, kalau kamu panik liat bursa anjlok jam 10 pagi terus pengen jual reksadana saat itu juga buat ngamanin aset, kamu bakal gigit jari! Kenapa? Karena orderan penjualan kamu itu aslinya bakal tetap diproses mengikuti "Harga Diskon/Anjlok" di penutupan pasar jam 4 sore nanti. Kamu "buta" harga di siang hari.</p>
-        <p>Untuk menutupi kelemahan tersebut, Wall Street menemukan sebuah penemuan jenius yang disebut <strong>ETF (*Exchange Traded Fund*)</strong>.</p>
-        
-        <p>ETF pada intinya sama persis bentuknya seperti Reksadana (alias sebuah keranjang parsel yang isinya kompilasi berbagai macam saham bank/tambang terbaik biar diversifikasi terjamin). TAPI bedanya, keranjang unit ETF ini secara legal <strong>didaftarkan (*Listing*) dan diperdagangkan langsung layaknya satu saham individual biasa</strong> di layar antarmuka aplikasi *trading* Bursa Efek (Contoh ETF di Bursa Indonesia: R-LQ45X / XIIT).</p>
-        
-        <p>Keunggulannya bikin reksadana biasa terlihat *obsolete* (usang):</p>
-        <ol>
-          <li><strong>Real-Time Execution:</strong> Karena mainnya di aplikasi bursa langsung, kamu bisa mengeksekusi pembelian atau penjualan ETF saat itu juga (detik per detik), murni dengan harga transparan yang tercetak di papan grafik saat bursa lagi buka *live*. Mau serok cepat saat jam 1 siang harga tiba-tiba ambrol? Bisa banget!</li>
-          <li><strong>Ultra Transparansi:</strong> Manajer Investasi Reksadana aktif sering main "Rahasia Dapur", di mana komposisi saham apa aja yang mereka beli baru di-*update* laporannya buat nasabah sebulan sekali telat. ETF kebalikannya! Kamu bisa ngecek sampai ke akar-akarnya, 100% isi komposisi saham di dalam ETF itu secara *live* setiap hari. Nggak ada saham busuk yang bisa "diselundupin" sama oknum Manajer ke dalam portofoliomu.</li>
-          <li><strong>Gaya *Passive Investing* yang Gila & Murah:</strong> ETF di seluruh dunia (seperti ETF legendaris SPY atau VOO yang melacak S&P 500) mayoritas memakai pendekatan *Passive Investing*. Artinya, ETF ini nggak usah repot nyewa analis/manajer berjas mahal buat "Sok-sokan nebak dan ngalahin bursa". Tugas mereka *pure* dan simpel cuma satu: "Fotokopi dan ikuti pergerakan komposisi saham indeks S&P 500 mentah-mentah secara algoritma". <br><br>Efek dominonya? Karena nggak perlu bayar gaji Manajer Analis aktif, <strong>biaya potongannya (Expense Ratio) menjadi SUPER DUPER KECIL! (Bahkan ada yang nyaris 0.03% doang!).</strong> Ini adalah jurus mematikan instrumen investasi wasiat dari sang Dewa Investasi, Warren Buffett: <i>"Beli dan tahanlah reksadana Indeks S&P 500 dengan biaya termurah secara pasif selamanya, dan percayalah kamu perlahan akan mengalahkan 90% portofolio manajer investasi berdasi paling pintar di Wall Street mana pun."</i></li>
-        </ol>
+        <div class="success-box">
+          <p class="text-sm font-semibold mb-2 flex items-center"><i class="fa-solid fa-magnifying-glass-dollar mr-2"></i> DCA vs Lump Sum: Mana yang Lebih Unggul?</p>
+          <p class="text-sm mb-0">Secara statistik murni, jika pasar selalu naik linear, <em>Lump Sum</em> (beli semua di awal) sebenarnya lebih menguntungkan. Tapi kondisi pasar tidak pernah linear! Di dunia nyata yang penuh volatilitas dan krisis mendadak, <strong>DCA menang secara psikologis dan praktis</strong>. DCA melindungi kamu dari risiko timing jelek, bikin investasi lebih terdisiplin, dan tidak mengharuskan kamu sempurna dalam memprediksi pasar (yang bahkan profesional pun gagal melakukannya secara konsisten).</p>
+        </div>
 
-        <p class="text-sm mt-8 border-t border-white/10 pt-4">🔗 <strong>Pusat Data Lanjutan (*Advanced ETF Study*):</strong> <a href="https://www.morningstar.com/learn" target="_blank">Morningstar Investment Learning Center (Gudang Data Rating & Penilaian Reksadana/ETF Global Terpercaya)</a></p>
+        <h3>4. Masa Depan Bernama ETF (Exchange Traded Fund)</h3>
+        <p>Reksadana konvensional punya kelemahan: harganya (NAB) ditotal cuma sekali di akhir hari. Kalau kamu beli jam 10 pagi, kamu buta tidak tahu dapet harga persisnya berapa sampai malam tiba. Solusinya? <strong>ETF.</strong></p>
+        <p>ETF adalah produk reksadana (sekumpulan aset) TAPI unitnya dilisting langsung ke lantai bursa seperti layaknya saham biasa (contoh di IDX: R-LQ45X untuk 45 saham bluechip terbesar). Keunggulannya: Kamu bisa beli/jual secara <em>real-time</em> detik per detik, sangat transparan, dan karena ETF mayoritas bersifat pasif (memfotokopi pergerakan Indeks), maka <em>Expense Ratio</em>-nya jauh lebih murah dari reksadana aktif.</p>
+
+        <div class="violet-box">
+          <p class="text-sm font-semibold mb-2 flex items-center"><i class="fa-solid fa-layer-group mr-2"></i> Jenis-Jenis ETF yang Wajib Kamu Ketahui</p>
+          <ul class="text-sm mb-0 mt-2 space-y-2">
+            <li><strong>Index ETF:</strong> Paling populer. Secara pasif mengikuti pergerakan sebuah indeks pasar (S&amp;P 500, NASDAQ, IHSG). Contoh global legendaris: <em>SPDR S&amp;P 500 ETF (SPY)</em> — ini adalah ETF terbesar di dunia. Kalau ekonomi Amerika tumbuh, nilai SPY kamu ikut naik.</li>
+            <li><strong>Sector ETF:</strong> Mengikuti satu sektor industri tertentu. Misalnya, kalau kamu yakin sektor teknologi AS akan boom, kamu beli <em>QQQ ETF</em> (NASDAQ 100, penuh saham tech Apple, Microsoft, Nvidia, dll). Kalau kamu bullish di sektor kesehatan, ada <em>XLV (Health Care Select Sector ETF)</em>.</li>
+            <li><strong>Commodity ETF:</strong> Ini cara paling praktis investasi komoditas tanpa perlu pegang fisiknya. Ada <em>GLD ETF</em> untuk emas, <em>USO ETF</em> untuk minyak, dan lain-lain. Harganya mengikuti harga komoditas tersebut di pasar global.</li>
+            <li><strong>Bond ETF:</strong> Koleksi obligasi pemerintah atau korporasi yang dikemas dalam satu ETF. Cocok untuk diversifikasi portofolio dengan aset yang lebih stabil dan kurang volatile dari saham.</li>
+          </ul>
+        </div>
+
+        <h3>5. Strategi Alokasi Portofolio Berdasarkan Usia</h3>
+        <p>Filosofi alokasi aset yang paling klasik dan sudah terbukti selama puluhan tahun adalah <em>"Aturan 100 dikurangi Usiamu"</em>. Hasilnya adalah berapa persen portofoliomu yang ideal diinvestasikan di aset berisiko tinggi (saham/kripto), dan sisanya di aset aman (obligasi/emas/RDPU).</p>
+        <div class="math-formula">% Aset Berisiko = 100 - Usiamu (tahun)</div>
+        <p>Contoh: Kamu berusia 22 tahun sebagai mahasiswa. 100 - 22 = <strong>78%</strong> bisa kamu taruh di aset berisiko tinggi (saham, reksadana saham, ETF). Masuk akal karena kamu masih sangat muda: kalau portofolio kamu turun -50% saat krisis, kamu punya puluhan tahun untuk recovery dan bahkan balik lebih tinggi lagi. Tapi kalau kamu sudah berusia 60 tahun dan mau pensiun, kamu tidak punya waktu banyak untuk recovery — porsi risiko wajib dikurangi drastis.</p>
+
+        <p class="text-sm mt-8 border-t border-white/10 pt-4">🔗 <strong>Referensi Lanjutan:</strong> <a href="https://www.morningstar.com/learn" target="_blank">Morningstar Investment Learning Center (Pusat Data Reksadana Global)</a></p>
       </div>
 
     </section>
 
    <footer class="text-center pb-8 pt-4 border-t border-white/5 mt-10 fade-up delay-3">
-      <p class="text-xs text-slate-600 mb-1">EduVesting · Akademi Edukasi Finansial</p>
+      <p class="text-xs text-slate-600 mb-1">EduVesting &middot; Akademi Edukasi Finansial</p>
       <p class="text-xs text-slate-700 mt-2">
         Dikembangkan dengan <i class="fa-solid fa-heart text-rose-500/50 mx-0.5"></i> oleh Tim Developer EduVesting
       </p>
@@ -482,36 +612,29 @@
   }
 
   // ==========================================
-  // TAB NAVIGATION MATERI (HALUS DAN INSTAN)
+  // TAB NAVIGATION MATERI
   // ==========================================
   function switchGuideTab(tabId, contentId) {
-    // 1. Reset Semua Tombol Tab (Ubah styling jadi tidak aktif)
     document.querySelectorAll('.guide-tab').forEach(el => {
        el.classList.remove('tab-active');
        el.classList.add('tab-inactive');
     });
 
-    // 2. Terapkan Warna Khusus Pada Tab yang Sedang Aktif
     const activeBtn = document.getElementById(tabId);
     activeBtn.classList.remove('tab-inactive');
     activeBtn.classList.add('tab-active');
 
-    // 3. Sembunyikan Semua Blok Tulisan Konten
     document.querySelectorAll('.guide-content').forEach(el => {
        el.classList.remove('block');
        el.classList.add('hidden');
     });
 
-    // 4. Munculkan Secara Halus Konten dari Tab Terpilih Saja
     document.getElementById(contentId).classList.remove('hidden');
     document.getElementById(contentId).classList.add('block');
-    
-    // Auto-scroll pelan ke atas konten biar rapi pas ganti tab
-    window.scrollTo({ top: document.getElementById(contentId).offsetTop - 100, behavior: 'smooth' });
   }
 
   // ==========================================
-  // BOOKMARK TOAST (UX MICRO-INTERACTION)
+  // BOOKMARK TOAST (SWEETALERT)
   // ==========================================
   function bookmarkMateri() {
     const Toast = Swal.mixin({
@@ -519,11 +642,11 @@
       background: document.body.classList.contains('light-mode') ? '#ffffff' : '#1e293b',
       color: document.body.classList.contains('light-mode') ? '#0f1423' : '#e2e8f0',
     });
-    Toast.fire({ icon: 'success', title: 'Materi tingkat advanced ini berhasil dipin ke koleksi favoritmu!' });
+    Toast.fire({ icon: 'success', title: 'Materi tingkat advanced berhasil disimpan ke koleksi!' });
   }
 
   // ==========================================
-  // INISIALISASI SUPABASE CLIENT (User Auth Aman)
+  // INISIALISASI SUPABASE CLIENT (User Auth)
   // ==========================================
   const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
@@ -531,7 +654,6 @@
 
   document.addEventListener('DOMContentLoaded', async () => {
     try {
-      // Pengecekan Kunci Pintu (Hanya user login yang bisa masuk)
       const { data: { session }, error } = await supabaseClient.auth.getSession();
 
       if (error || !session) { 
@@ -541,13 +663,11 @@
 
       const currentUser = session.user;
 
-      // Fitur Anti-Overwrite Google (Sinkronisasi custom nama dari pengaturan)
       const displayName = currentUser.user_metadata?.custom_full_name || currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || currentUser.email.split('@')[0];
       const avatarUrl = currentUser.user_metadata?.custom_avatar_url || currentUser.user_metadata?.avatar_url;
 
       document.getElementById('sidebar-user-name').innerText = displayName;
       const sbAvatar = document.getElementById('sidebar-user-initial');
-      
       if (avatarUrl) {
         sbAvatar.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover rounded-full">`;
       } else {
@@ -555,7 +675,7 @@
       }
 
     } catch (err) { 
-      console.error("Oops! Gagal menarik data keamanan user:", err); 
+      console.error("Gagal menarik data user:", err); 
     }
   });
 </script>
