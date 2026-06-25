@@ -72,6 +72,11 @@
   body.light-mode aside { background: rgba(255, 255, 255, 0.95) !important; border-right: 1px solid rgba(0,0,0,0.08); }
   body.light-mode .form-input { background: #ffffff !important; border-color: #cbd5e1; color: #0f1423; }
   body.light-mode .tab-active { border-bottom-color: #6366f1; background: rgba(99,102,241,0.1); color: #4f46e5; }
+
+  /* SweetAlert2 Overrides buat transisi tema yang smooth */
+  div:where(.swal2-container) div:where(.swal2-popup) {
+    font-family: 'Inter', sans-serif !important;
+  }
 </style>
 </head>
 
@@ -369,6 +374,27 @@
   }
 
   // ==========================================
+  // CUSTOM ALERT DENGAN SWEETALERT2
+  // ==========================================
+  function showCustomAlert(type, title, text) {
+    const isLight = document.body.classList.contains('light-mode');
+    Swal.fire({
+      icon: type,
+      title: title,
+      text: text,
+      confirmButtonText: 'Oke, Paham!',
+      confirmButtonColor: '#6366f1',
+      background: isLight ? '#ffffff' : '#1e293b',
+      color: isLight ? '#0f1423' : '#e2e8f0',
+      customClass: {
+        popup: 'rounded-2xl border ' + (isLight ? 'border-slate-200 shadow-xl' : 'border-white/10 shadow-2xl'),
+        title: 'font-display font-bold',
+        confirmButton: 'rounded-xl text-sm font-semibold px-6 py-2.5'
+      }
+    });
+  }
+
+  // ==========================================
   // CUSTOM DROPDOWN SCRIPT
   // ==========================================
   function toggleMarketSelect() {
@@ -447,7 +473,7 @@
             .order('created_at', { ascending: true });
 
         if (error) throw error;
-        
+
         watchlist = data || [];
         renderWatchlist();
     } catch (err) {
@@ -505,14 +531,20 @@
 
   function searchOnly() {
       const { ticker, market } = getSearchInputs();
-      if(!ticker) { alert("Masukkan nama aset (Ticker) terlebih dahulu."); return; }
+      if(!ticker) { 
+        showCustomAlert('warning', 'Ticker Kosong!', 'Masukkan nama aset (Ticker) terlebih dahulu ya sebelum ngecek grafik.'); 
+        return; 
+      }
       loadAdvancedChart(formatSymbolForTV(ticker, market));
   }
 
   document.getElementById('watchlist-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const { ticker, market } = getSearchInputs();
-    if(!ticker || !currentUser) return;
+    if(!ticker || !currentUser) {
+      if(!ticker) showCustomAlert('warning', 'Ticker Kosong!', 'Masukkan nama aset (Ticker) terlebih dahulu sebelum menambah ke Watchlist.');
+      return;
+    }
 
     const exists = watchlist.find(item => item.ticker === ticker && item.market === market);
     if(!exists) {
@@ -541,7 +573,7 @@
         .from('watchlists')
         .delete()
         .match({ user_id: currentUser.id, ticker: ticker, market: market });
-        
+
     if (error) console.error("Gagal menghapus dari Supabase:", error);
   }
 
@@ -561,7 +593,7 @@
       try {
           const res = await fetch(`${BACKEND_API_URL}?tickers=${tickers}`);
           if (!res.ok) throw new Error("Gagal akses backend");
-          
+
           const json = await res.json();
           return json.sukses ? json.data : {};
       } catch(e) {
