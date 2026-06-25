@@ -1,7 +1,8 @@
 const yahooFinance = require('yahoo-finance2').default;
 
-// Fungsi helper internal untuk menembak TradingView Scanner API dari Server (Bebas CORS & Limit)
+// Fungsi helper internal untuk nembak TradingView dari Server (Bebas CORS!)
 async function fetchFromTradingView(routing, tickers) {
+  if (!tickers || tickers.length === 0) return [];
   try {
     const response = await fetch(`https://scanner.tradingview.com/${routing}/scan`, {
       method: 'POST',
@@ -20,7 +21,6 @@ async function fetchFromTradingView(routing, tickers) {
   }
 }
 
-// 1. ENDPOINT SCREENER (GAINERS & LOSERS REALTIME)
 exports.getMarketScreener = async (req, res) => {
   try {
     const idxTickers = [
@@ -34,11 +34,11 @@ exports.getMarketScreener = async (req, res) => {
       'NASDAQ:AMZN', 'NASDAQ:META', 'NASDAQ:NFLX', 'NASDAQ:AMD', 'NASDAQ:INTC'
     ];
     const cryptoTickers = [
-      'BINANCE:BTCUSDT', 'BINANCE:ETHUSDT', 'BINANCE:BNBUSDT', 'BINANCE:SOLUSDT',
-      'BINANCE:XRPUSDT', 'BINANCE:ADAUSDT', 'BINANCE:DOGEUSDT'
+      'BINANCE:BTCIDR', 'BINANCE:ETHIDR', 'BINANCE:BNBIDR', 'BINANCE:SOLIDR',
+      'BINANCE:XRPIDR', 'BINANCE:ADAIDR', 'BINANCE:DOGEIDR',
+      'BINANCE:BTCUSDT', 'BINANCE:ETHUSDT' // Fallback
     ];
 
-    // Eksekusi paralel di server agar secepat kilat
     const [idxData, usData, cryptoData] = await Promise.all([
       fetchFromTradingView('indonesia', idxTickers),
       fetchFromTradingView('america', usTickers),
@@ -61,18 +61,25 @@ exports.getMarketScreener = async (req, res) => {
     parseStocks(usData, true);
 
     let allCrypto = [];
+    let cryptoKeys = new Set();
+    
     cryptoData.forEach(item => {
-      const ticker = item.s.split(':')[1].replace('USDT', '');
+      const symbolFull = item.s.split(':')[1];
+      const isIDR = symbolFull.endsWith('IDR');
+      const ticker = symbolFull.replace('USDT', '').replace('IDR', '');
+      
+      if (cryptoKeys.has(ticker)) return;
+      cryptoKeys.add(ticker);
+
       allCrypto.push({
         symbol: ticker,
         name: ticker === 'BTC' ? 'Bitcoin' : ticker === 'ETH' ? 'Ethereum' : ticker === 'BNB' ? 'Binance Coin' : item.d[0],
-        price: item.d[1] * 16000, // Konversi standard rupiah dari basis USDT
+        price: isIDR ? item.d[1] : item.d[1] * 16400, 
         changePct: item.d[2],
         currency: 'Rp '
       });
     });
 
-    // Sortir menggunakan filter matematika murni tanpa bergantung pada Yahoo yang labil
     res.status(200).json({
       sukses: true,
       screener: {
@@ -87,57 +94,55 @@ exports.getMarketScreener = async (req, res) => {
   }
 };
 
-// 2. ENDPOINT WATCHLIST DINAMIS
+// ENDPOINT WATCHLIST YANG SUDAH DIPERBAIKI
 exports.getWatchlistPrices = async (req, res) => {
   try {
     const { tickers } = req.query;
     if (!tickers) return res.status(200).json({ sukses: true, data: {} });
 
     const tickerList = tickers.split(',').map(t => t.trim().toUpperCase());
-    const usStocks = ['AAPL', 'MSFT', 'NVDA', 'TSLA', 'AMZN', 'META', 'GOOGL', 'NFLX', 'AMD', 'INTC'];
-    const cryptos = ['BTC', 'ETH', 'BNB', 'SOL', 'XRP', 'ADA', 'DOGE'];
-
-    let idxTvSymbols = [];
-    let usTvSymbols = [];
-    let cryptoTvSymbols = [];
-
-    tickerList.forEach(t => {
-      if (cryptos.includes(t)) cryptoTvSymbols.push(`BINANCE:${t}USDT`);
-      else if (usStocks.includes(t)) usTvSymbols.push(`NASDAQ:${t}`);
-      else if (t !== 'EMAS' && t !== 'GOLD' && t !== 'IHSG') idxTvSymbols.push(`IDX:${t}`);
-    });
+    
+    // Gandakan format ticker untuk semua jenis market, TradingView akan memfilter otomatis mana yang valid
+    const idxTvSymbols = tickerList.map(t => t === 'IHSG' ? 'IDX:COMPOSITE' : `IDX:${t}`);
+    const usTvSymbols = tickerList.flatMap(t => [`NASDAQ:${t}`, `NYSE:${t}`, `AMEX:${t}`]);
+    const cryptoTvSymbols = tickerList.flatMap(t => [`BINANCE:${t}IDR`, `BINANCE:${t}USDT`, `COINBASE:${t}USD`]);
 
     const [idxRes, usRes, cryptoRes] = await Promise.all([
-      idxTvSymbols.length ? fetchFromTradingView('indonesia', idxTvSymbols) : Promise.resolve([]),
-      usTvSymbols.length ? fetchFromTradingView('america', usTvSymbols) : Promise.resolve([]),
-      cryptoTvSymbols.length ? fetchFromTradingView('crypto', cryptoTvSymbols) : Promise.resolve([])
+      fetchFromTradingView('indonesia', idxTvSymbols),
+      fetchFromTradingView('america', usTvSymbols),
+      fetchFromTradingView('crypto', cryptoTvSymbols)
     ]);
 
     let results = {};
-    const mergeData = (items, isCrypto, isUS) => {
-      items.forEach(item => {
-        let key = item.s.split(':')[1];
-        if (isCrypto) key = key.replace('USDT', '');
-        results[key] = {
-          price: isCrypto ? item.d[1] * 16000 : item.d[1],
-          currency: isUS ? 'USD ' : 'Rp ',
-          isCrypto: isCrypto
-        };
-      });
-    };
 
-    mergeData(idxRes, false, false);
-    mergeData(usRes, false, true);
-    mergeData(cryptoRes, true, false);
+    idxRes.forEach(item => {
+       let key = item.s.split(':')[1];
+       if (key === 'COMPOSITE') key = 'IHSG';
+       results[key] = { price: item.d[1], currency: 'Rp ', isCrypto: false };
+    });
 
-    // Fallback spesial Komoditas & Index global jika dimasukkan ke watchlist
+    usRes.forEach(item => {
+       let key = item.s.split(':')[1];
+       if(!results[key]) results[key] = { price: item.d[1], currency: 'USD ', isCrypto: false };
+    });
+
+    cryptoRes.forEach(item => {
+       let symbol = item.s.split(':')[1];
+       let isIDR = symbol.endsWith('IDR');
+       let key = symbol.replace('IDR', '').replace('USDT', '').replace('USD', '');
+       
+       if (results[key] && results[key].foundIDR) return;
+       let finalPrice = isIDR ? item.d[1] : item.d[1] * 16400;
+
+       results[key] = { price: finalPrice, currency: 'Rp ', isCrypto: true, foundIDR: isIDR };
+    });
+
     if (tickerList.includes('EMAS') || tickerList.includes('GOLD')) {
-      const gold = await fetchFromTradingView('commodities', ['TVC:GOLD']);
-      if(gold.length) results['EMAS'] = { price: gold[0].d[1] * 16000, currency: 'Rp ', isCrypto: false };
-    }
-    if (tickerList.includes('IHSG')) {
-      const ihsg = await fetchFromTradingView('indonesia', ['IDX:COMPOSITE']);
-      if(ihsg.length) results['IHSG'] = { price: ihsg[0].d[1], currency: 'Rp ', isCrypto: false };
+      const gold = await fetchFromTradingView('cfd', ['TVC:GOLD']);
+      if(gold.length) {
+        results['EMAS'] = { price: gold[0].d[1] * 16400, currency: 'Rp ', isCrypto: false };
+        results['GOLD'] = { price: gold[0].d[1] * 16400, currency: 'Rp ', isCrypto: false };
+      }
     }
 
     res.status(200).json({ sukses: true, data: results });
@@ -145,7 +150,3 @@ exports.getWatchlistPrices = async (req, res) => {
     res.status(500).json({ sukses: false, error: error.message });
   }
 };
-
-// Fungsi bawaan lama mu tetap aman di bawah jika dibutuhkan route lain
-exports.getCryptoPrices = async (req, res) => { /* ... */ };
-exports.getStockPrice = async (req, res) => { /* ... */ };
