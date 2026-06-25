@@ -497,10 +497,17 @@ Contoh Output yang benar: 7|Sedang|Bagus`;
     async function renderAiDashboard(metrics) {
       const alokasi = metrics.allocation.map(a => `${a.type.toUpperCase()} (${a.percent.toFixed(1)}%)`).join(', ');
 
+      // --- TAMBAHAN BARU: JABARKAN ISI PORTOFOLIO AGAR AI BISA BACA TICKER-NYA ---
+      let portfolioItems = "Belum ada aset di portofolio.";
+      if (metrics.assets && metrics.assets.length > 0) {
+         // Memetakan data array menjadi teks yang bisa dibaca AI
+         portfolioItems = metrics.assets.map(a => `${a.ticker} (Market: ${a.type}, Avg Harga: Rp${a.avgPrice.toLocaleString('id-ID')}, Qty: ${a.qty})`).join(' | ');
+      }
+
       let totalIncome = 0;
       let totalExpense = 0;
       let expenseStr = "Belum ada pengeluaran.";
-      let watchlistItems = "Belum ada aset di watchlist."; // Default jika kosong
+      let watchlistItems = "Belum ada aset di watchlist.";
 
       if (currentUserId) {
         // 1. MENGAMBIL DATA KEUANGAN HARIAN
@@ -524,17 +531,104 @@ Contoh Output yang benar: 7|Sedang|Bagus`;
           }
         }
 
-        // 2. MENGAMBIL DATA WATCHLIST DARI MARKET.HTML (BARU DITAMBAHKAN)
+        // 2. MENGAMBIL DATA WATCHLIST
         const { data: watchData, error: watchErr } = await supabaseClient
           .from('watchlists')
           .select('*')
           .eq('user_id', currentUserId);
           
         if (watchData && !watchErr && watchData.length > 0) {
-           // Mengubah data ke dalam format teks agar mudah dibaca oleh AI
            watchlistItems = watchData.map(w => `${w.ticker} (Market: ${w.market})`).join(', ');
         }
       }
+
+      // 3. UPDATE KONTEKS AI (Sekarang AI sudah tahu persis isi portofolionya!)
+      aiContextString = `Data Portofolio Investasi User: 
+- Total Ekuitas/Net Worth: Rp ${metrics.totalEquity.toLocaleString('id-ID')}
+- Total P/L: Rp ${metrics.floatingPL.toLocaleString('id-ID')} (${metrics.plPercent.toFixed(2)}%)
+- Saldo Kas Investasi: Rp ${metrics.cash.toLocaleString('id-ID')} (${metrics.cashPercent.toFixed(2)}% dari aset)
+- Total Aset Individu (Jumlah emiten/koin): ${metrics.assets.length} aset
+- Rincian Kategori: ${alokasi || 'Kosong'}
+- DAFTAR SPESIFIK ISI PORTOFOLIO: ${portfolioItems}
+
+Data Keuangan & Cashflow Harian User:
+- Total Pemasukan: Rp ${totalIncome.toLocaleString('id-ID')}
+- Total Pengeluaran: Rp ${totalExpense.toLocaleString('id-ID')}
+- Arus Kas Bersih: Rp ${(totalIncome - totalExpense).toLocaleString('id-ID')}
+- Detail Pengeluaran per Kategori: ${expenseStr}.
+
+Data Watchlist Pantauan Pasar User (Aset incaran user saat ini):
+- Daftar Aset di Watchlist: ${watchlistItems}
+
+Tugas AI: Kolaborasikan analisis portofolio di atas dengan kondisi cashflow hariannya saat memberikan saran strategi. Jika user meminta "roasting" atau evaluasi, pastikan kamu menyebutkan nama-nama aset spesifik yang mereka miliki di portofolio atau watchlist, beserta pandangan fundamental/teknikal singkat mengenai aset tersebut.`;
+
+      const insights = EduVesting.generateInsights(metrics);
+      const recomContainer = document.getElementById('recom-container');
+      recomContainer.innerHTML = '';
+
+      const toneMap = {
+        'rose': { bg: 'bg-rose-500/10', border: 'border-rose-500/20', text: 'text-rose-400' },
+        'amber': { bg: 'bg-amber-500/10', border: 'border-amber-500/20', text: 'text-amber-400' },
+        'emerald': { bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', text: 'text-emerald-400' }
+      };
+
+      if(insights.length === 0) {
+          recomContainer.innerHTML = '<p class="text-sm text-slate-500 py-4">Data portofolio aman.</p>';
+      } else {
+          insights.forEach(insight => {
+            const t = toneMap[insight.tone] || toneMap['emerald'];
+            const div = document.createElement('div');
+            div.className = `${t.bg} border ${t.border} rounded-xl p-4 flex items-start gap-3`;
+            div.innerHTML = `
+              <div class="mt-0.5 ${t.text}"><i class="fa-solid ${insight.icon}"></i></div>
+              <div>
+                <h3 class="text-sm font-semibold text-slate-200 mb-1">${insight.title}</h3>
+                <p class="text-xs text-slate-400 leading-relaxed mb-2">${insight.text}</p>
+                <button onclick="askAIAbout('${insight.title}')" class="text-[10px] font-bold uppercase tracking-wider text-violet-400 hover:text-violet-300">Tanya AI Tentang Ini &rarr;</button>
+              </div>
+            `;
+            recomContainer.appendChild(div);
+          });
+      }
+
+      const sectorContainer = document.getElementById('sector-container');
+      sectorContainer.innerHTML = '';
+      const allItems = [...metrics.allocation];
+      if (metrics.cash > 0) allItems.push({ label: 'Kas Tunai', percent: metrics.cashPercent, gradient: ['#94a3b8'], badgeColor: '#94a3b8' });
+
+      if (allItems.length === 0) {
+        sectorContainer.innerHTML = '<p class="text-sm text-slate-500">Tidak ada aset.</p>';
+      } else {
+        allItems.forEach(item => {
+          let statusText = 'Normal'; let statusColor = 'text-emerald-400';
+          if (item.percent > 40 && item.label !== 'Kas Tunai') { statusText = 'Overweight'; statusColor = 'text-rose-400'; }
+          else if (item.percent < 10) { statusText = 'Rendah'; statusColor = 'text-amber-400'; }
+
+          const div = document.createElement('div');
+          div.className = "mb-2";
+          div.innerHTML = `
+            <div class="flex justify-between text-xs mb-1.5">
+              <span class="text-slate-300 font-medium">${item.label}</span>
+              <span class="${statusColor} font-medium">${statusText} (${item.percent.toFixed(1)}%)</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${item.percent}%; background:${item.gradient ? item.gradient[0] : '#3b82f6'};"></div></div>
+          `;
+          sectorContainer.appendChild(div);
+        });
+      }
+
+      if (currentUserId) {
+        const { data, error } = await supabaseClient
+          .from('ai_scores')
+          .select('*')
+          .eq('user_id', currentUserId)
+          .single();
+
+        if (data) {
+          updateScoreUI({ score: data.score, risk: data.risk, div: data.diversification });
+        }
+      }
+    }
 
       // INTEGRASI KETIGA DATA (PORTO + KEUANGAN + WATCHLIST) KE KONTEKS AI
       aiContextString = `Data Portofolio Investasi User: 
