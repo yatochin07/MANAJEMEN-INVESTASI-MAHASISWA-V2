@@ -546,16 +546,13 @@
   }
 
   // =========================================================================
-  // INTEGRASI BACKEND (SMART URL) & ULTIMATE FAIL-SAFE
+  // INTEGRASI BACKEND: Tarik Semua Harga (Saham + Kripto) via Backend Kamu!
   // =========================================================================
 
-  // [FITUR BARU] Deteksi otomatis: apakah jalan di Local (127.0.0.1) atau Deploy (Vercel)
-  let BACKEND_API_URL = '';
-  if (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') {
-      BACKEND_API_URL = 'http://localhost:3000/api/watchlist'; // Sesuaikan port jika beda
-  } else {
-      BACKEND_API_URL = '/api/watchlist'; // Saat deploy, otomatis pakai jalur asli Vercel
-  }
+  // ⚠️ WAJIB GANTI URL INI ⚠️
+  // Ganti dengan URL API Vercel tempat marketController.js kamu berada.
+  // Jika kamu mengetes di lokal, sesuaikan port-nya (misal: http://localhost:3000/api/watchlist)
+  const BACKEND_API_URL = 'https://eduvesting-backend-kamu.vercel.app/api/watchlist';
 
   async function fetchWatchlistFromBackend(stocksArr) {
       if(stocksArr.length === 0) return {};
@@ -568,17 +565,15 @@
           const json = await res.json();
           return json.sukses ? json.data : {};
       } catch(e) {
-          console.warn("⚠️ Backend terdeteksi gagal/mati. Mode Anti-Gagal (Frontend) diaktifkan...", e);
-          // Kalau backend Vercel kamu belum nyala/salah rute, fungsi dewa ini yang maju!
-          return await fetchFallbackAllMarkets(stocksArr);
+          console.warn("⚠️ Gagal konek ke Backend. Memuat fallback Kripto...", e);
+          // Fallback: Jika backend kamu gagal/URL salah, kripto tetap akan jalan via CoinGecko
+          return await fetchFallbackCrypto(stocksArr);
       }
   }
 
-  // [FITUR BARU] Fungsi Darurat Tingkat Dewa: Memaksa narik saham langsung dari Frontend
-  async function fetchFallbackAllMarkets(stocksArr) {
+  // Fungsi darurat: Kripto tetap hidup kalau backend gagal diconnect
+  async function fetchFallbackCrypto(stocksArr) {
       let results = {};
-      
-      // 1. Tarik Kripto (Aman dari Blokir)
       let cryptos = stocksArr.filter(item => item.market === 'crypto');
       if (cryptos.length > 0) {
           try {
@@ -588,45 +583,12 @@
               const data = await res.json();
               cryptos.forEach(c => {
                   const cId = dictCrypto[c.ticker] || c.ticker.toLowerCase();
-                  if(data[cId] && data[cId].idr) results[c.ticker.toUpperCase()] = { price: data[cId].idr, currency: 'Rp ' };
+                  if(data[cId] && data[cId].idr) {
+                      results[c.ticker.toUpperCase()] = { price: data[cId].idr, currency: 'Rp ' };
+                  }
               });
           } catch(err) {}
       }
-
-      // 2. Tarik Saham via Proxy GET Yahoo Finance (Bypass CORS)
-      let stocks = stocksArr.filter(item => item.market !== 'crypto');
-      if (stocks.length > 0) {
-          try {
-              const yfSymbols = stocks.map(s => {
-                  let up = s.ticker.toUpperCase();
-                  if(s.market === 'indo') return `${up}.JK`;
-                  if(up === 'IHSG') return '^JKSE';
-                  if(up === 'EMAS' || up === 'GOLD') return 'GC=F';
-                  return up;
-              });
-              
-              const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${yfSymbols.join(',')}`;
-              const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-              
-              const res = await fetch(proxyUrl);
-              const json = await res.json();
-              const data = JSON.parse(json.contents);
-              
-              if(data && data.quoteResponse && data.quoteResponse.result) {
-                  data.quoteResponse.result.forEach(q => {
-                      let t = q.symbol.split('.')[0];
-                      if(q.symbol === '^JKSE') t = 'IHSG';
-                      if(q.symbol === 'GC=F') t = 'EMAS';
-                      
-                      let finalPrice = q.regularMarketPrice;
-                      if(t === 'EMAS') finalPrice *= 16400; // Est. kurs Rupiah
-                      
-                      results[t] = { price: finalPrice, currency: q.currency === 'USD' ? 'USD ' : 'Rp ' };
-                  });
-              }
-          } catch(err) { console.error("Gagal menarik saham via Fallback", err); }
-      }
-      
       return results;
   }
 
@@ -645,7 +607,7 @@
 
     container.innerHTML = '<div class="flex items-center justify-center py-6"><i class="fa-solid fa-spinner fa-spin text-indigo-500 text-2xl"></i></div>';
 
-    // Proses penarikan data (Akan otomatis lari ke fungsi dewa kalau URL gagal)
+    // Proses penarikan data mutlak diarahkan ke Backend marketController.js 
     const marketData = await fetchWatchlistFromBackend(watchlist);
     let htmlHTML = '';
 
@@ -671,7 +633,7 @@
             badgeCol = 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'; 
         }
 
-        // Tampilkan harga jika data berhasil ditarik (entah dari Backend atau dari fungsi Darurat)
+        // Tampilkan harga jika Backend berhasil merespon Ticker tersebut
         if (marketData[uTicker]) {
             price = marketData[uTicker].price;
             currency = marketData[uTicker].currency;
