@@ -497,6 +497,12 @@ Contoh Output yang benar: 7|Sedang|Bagus`;
     async function renderAiDashboard(metrics) {
       const alokasi = metrics.allocation.map(a => `${a.type.toUpperCase()} (${a.percent.toFixed(1)}%)`).join(', ');
 
+      // [TAMBAHAN BARU]: Ekstrak nama ticker aset di portofolio
+      let portofolioItems = "Belum ada aset di portofolio.";
+      if (metrics.assets && metrics.assets.length > 0) {
+        portofolioItems = metrics.assets.map(a => `${a.ticker} (${a.type.toUpperCase()})`).join(', ');
+      }
+
       let totalIncome = 0;
       let totalExpense = 0;
       let expenseStr = "Belum ada pengeluaran.";
@@ -524,14 +530,13 @@ Contoh Output yang benar: 7|Sedang|Bagus`;
           }
         }
 
-        // 2. MENGAMBIL DATA WATCHLIST DARI MARKET.HTML (BARU DITAMBAHKAN)
+        // 2. MENGAMBIL DATA WATCHLIST
         const { data: watchData, error: watchErr } = await supabaseClient
           .from('watchlists')
           .select('*')
           .eq('user_id', currentUserId);
-          
+
         if (watchData && !watchErr && watchData.length > 0) {
-           // Mengubah data ke dalam format teks agar mudah dibaca oleh AI
            watchlistItems = watchData.map(w => `${w.ticker} (Market: ${w.market})`).join(', ');
         }
       }
@@ -543,6 +548,7 @@ Contoh Output yang benar: 7|Sedang|Bagus`;
 - Saldo Kas Investasi: Rp ${metrics.cash.toLocaleString('id-ID')} (${metrics.cashPercent.toFixed(2)}% dari aset)
 - Total Aset Individu (Jumlah emiten/koin): ${metrics.assets.length} aset
 - Rincian Kategori: ${alokasi || 'Kosong'}
+- Daftar Aset Spesifik di Portofolio: ${portofolioItems}
 
 Data Keuangan & Cashflow Harian User:
 - Total Pemasukan: Rp ${totalIncome.toLocaleString('id-ID')}
