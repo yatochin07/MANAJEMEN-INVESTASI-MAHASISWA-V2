@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EduVesting — Panduan & Edukasi</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: { display: ['Plus Jakarta Sans', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+        colors: {
+          base: { 950:'#07090f',900:'#0f1423',850:'#131928',800:'#1a2235',750:'#1e2840',700:'#253049' },
+          accent: { blue:'#3b82f6', indigo:'#6366f1', violet:'#7c3aed', cyan:'#06b6d4', emerald:'#10b981', amber:'#f59e0b', rose:'#f43f5e' }
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+  * { box-sizing: border-box; }
+  body { font-family:'Inter', sans-serif; background-color:#07090f; color:#e2e8f0; min-height:100vh; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
+  
+  /* Sidebar active glow */
+  .nav-active { background: linear-gradient(90deg, rgba(99,102,241,0.18) 0%, transparent 100%); border-left: 3px solid #6366f1; color: #a5b4fc !important; font-weight: 600; }
+  .nav-item { border-left: 3px solid transparent; transition: background .2s ease, border-color .2s ease, color .2s ease; }
+  .nav-item:hover { background: linear-gradient(90deg, rgba(99,102,241,0.1) 0%, transparent 100%); border-left-color: rgba(99,102,241,0.5); color:#a5b4fc; }
+
+  /* Glass Elements */
+  .glass { background: rgba(19,25,40,0.85); backdrop-filter: blur(12px); border:1px solid rgba(255,255,255,0.06); transition: all 0.3s ease; }
+  .glass-lighter { background: rgba(30,40,64,0.6); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.07); transition: all 0.3s ease; }
+
+  .mesh-bg { position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(ellipse 60% 40% at 15% 10%, rgba(99,102,241,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 50% at 85% 80%, rgba(59,130,246,0.07) 0%, transparent 60%);
+  }
+  
+  ::-webkit-scrollbar { width:5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius:9px; }
+
+  .logo-text { background: linear-gradient(90deg,#a5b4fc,#93c5fd); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+
+  /* Sub-menu Tabs */
+  .guide-tab { transition: all 0.3s ease; border-bottom: 2px solid transparent; }
+  .tab-active { border-bottom-color: #6366f1; background: linear-gradient(0deg, rgba(99,102,241,0.1) 0%, transparent 100%); color: #a5b4fc; }
+  .tab-inactive { color: #64748b; }
+  .tab-inactive:hover { color: #cbd5e1; }
+
+  /* Article Content Styles */
+  .article-content h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.25rem; font-weight: 700; color: #f8fafc; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+  .article-content p { color: #94a3b8; font-size: 0.95rem; line-height: 1.7; margin-bottom: 1rem; }
+  .article-content ul { list-style-type: disc; margin-left: 1.5rem; color: #94a3b8; font-size: 0.95rem; margin-bottom: 1rem; }
+  .article-content li { margin-bottom: 0.5rem; }
+  .article-img { width: 100%; height: 250px; object-fit: cover; border-radius: 1rem; margin-bottom: 1.5rem; border: 1px solid rgba(255,255,255,0.1); }
+  .info-box { background: rgba(59,130,246,0.1); border-left: 4px solid #3b82f6; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; }
+
+  @keyframes fadeUp { from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
+  .fade-up { animation: fadeUp .5s ease both; }
+  .delay-1{animation-delay:.07s;} .delay-2{animation-delay:.14s;} .delay-3{animation-delay:.21s;}
+
+  /* LIGHT MODE STYLES */
+  body.light-mode { background-color: #f8fafc; color: #0f1423; }
+  body.light-mode .glass, body.light-mode .glass-lighter { background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+  body.light-mode .text-slate-200, body.light-mode .text-slate-300, body.light-mode .text-slate-100 { color: #1e293b; }
+  body.light-mode .text-slate-400, body.light-mode .text-slate-500 { color: #475569; }
+  body.light-mode aside { background: rgba(255, 255, 255, 0.95) !important; border-right: 1px solid rgba(0,0,0,0.08); }
+  body.light-mode .tab-active { border-bottom-color: #6366f1; background: rgba(99,102,241,0.1); color: #4f46e5; }
+  body.light-mode .article-content h3 { color: #0f1423; }
+  body.light-mode .article-content p, body.light-mode .article-content ul { color: #475569; }
+</style>
+</head>
+
+<body class="relative">
+<script>
+  if(localStorage.getItem('theme') === 'light') document.body.classList.add('light-mode');
+</script>
+
+<div class="mesh-bg" aria-hidden="true"></div>
+
+<div class="relative z-10 flex min-h-screen">
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
+
+  <aside id="sidebar" class="fixed top-0 left-0 h-screen w-64 flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out"
+         style="background: rgba(10,14,24,0.95); border-right:1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
+    <button onclick="toggleSidebar()" class="md:hidden absolute top-6 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+
+    <div class="px-6 py-6 flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg,#6366f1,#3b82f6);"><i class="fa-solid fa-chart-line text-white text-sm"></i></div>
+        <span class="font-display text-lg logo-text font-bold">EduVesting</span>
+    </div>
+
+    <div class="mx-4 mb-5 p-3 rounded-xl glass-lighter flex items-center gap-3">
+      <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white overflow-hidden" style="background:linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
+      <div class="min-w-0"><p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">Memuat...</p></div>
+    </div>
+
+    <nav class="flex-1 px-2 space-y-0.5 overflow-y-auto pb-20">
+      <p class="px-4 py-1.5 text-xs font-semibold text-slate-600 uppercase tracking-widest">Utama</p>
+      <a href="dashboard.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-gauge-high w-4 text-center"></i> Dashboard</a>
+      <a href="portfolio.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-briefcase w-4 text-center"></i> Portofolio</a>
+      <a href="transactions.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-wallet w-4 text-center"></i> Keuangan</a>
+      
+      <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Analisa</p>
+      <a href="market.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-chart-line w-4 text-center"></i> Market Insights</a>
+      <a href="calculator.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-calculator w-4 text-center"></i> Kalkulator Investasi</a>
+      
+      <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Edukasi</p>
+      <a href="guide.html" class="nav-item nav-active flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-sm"><i class="fa-solid fa-book-open text-indigo-400 w-4 text-center"></i> Panduan Belajar</a>
+
+      <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Akun</p>
+      <a href="settings.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-gear w-4 text-center"></i> Pengaturan</a>
+      <a href="logout.html" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm"><i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout</a>
+    </nav>
+  </aside>
+
+  <main class="flex-1 w-full md:ml-64 px-4 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden">
+    
+    <div class="md:hidden flex items-center justify-between mb-6 fade-up">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#6366f1,#3b82f6);"><i class="fa-solid fa-chart-line text-white text-sm"></i></div>
+        <span class="font-display text-lg logo-text font-bold tracking-wide">EduVesting</span>
+      </div>
+      <button onclick="toggleSidebar()" type="button" class="text-slate-300 hover:text-white transition-colors focus:outline-none z-20"><i class="fa-solid fa-bars text-xl"></i></button>
+    </div>
+
+    <header class="flex flex-row items-center justify-between mb-8 gap-4 fade-up delay-1">
+      <div>
+        <h1 class="font-display text-2xl sm:text-3xl text-slate-100 font-semibold mb-1 flex items-center gap-2">
+          <i class="fa-solid fa-graduation-cap text-indigo-400"></i> Akademi EduVesting
+        </h1>
+        <p class="text-slate-500 text-sm">Pusat ilmu dasar keuangan dan panduan instrumen investasi buat pemula.</p>
+      </div>
+
+      <button onclick="toggleTheme()" class="w-11 h-11 rounded-xl glass flex items-center justify-center text-slate-400 hover:text-amber-400 transition-colors shadow-sm flex-shrink-0" title="Ubah Mode Tampilan">
+        <i id="theme-icon" class="fa-solid fa-moon text-lg"></i>
+      </button>
+    </header>
+
+    <section class="mb-6 fade-up delay-2">
+      <div class="flex overflow-x-auto no-scrollbar gap-2 w-full pb-2 border-b border-white/10">
+        <button onclick="switchGuideTab('tab-dasar', 'content-dasar')" id="tab-dasar" class="guide-tab tab-active px-4 py-2.5 rounded-t-lg text-sm font-semibold whitespace-nowrap">Dasar Keuangan</button>
+        <button onclick="switchGuideTab('tab-saham', 'content-saham')" id="tab-saham" class="guide-tab tab-inactive px-4 py-2.5 rounded-t-lg text-sm font-semibold whitespace-nowrap">Saham IDX</button>
+        <button onclick="switchGuideTab('tab-kripto', 'content-kripto')" id="tab-kripto" class="guide-tab tab-inactive px-4 py-2.5 rounded-t-lg text-sm font-semibold whitespace-nowrap">Kripto Spot</button>
+        <button onclick="switchGuideTab('tab-emas', 'content-emas')" id="tab-emas" class="guide-tab tab-inactive px-4 py-2.5 rounded-t-lg text-sm font-semibold whitespace-nowrap">Emas</button>
+        <button onclick="switchGuideTab('tab-reksa', 'content-reksa')" id="tab-reksa" class="guide-tab tab-inactive px-4 py-2.5 rounded-t-lg text-sm font-semibold whitespace-nowrap">Reksadana</button>
+      </div>
+    </section>
+
+    <section class="glass rounded-2xl p-5 sm:p-8 w-full min-h-[500px] fade-up delay-3 relative">
+      
+      <button onclick="bookmarkMateri()" class="absolute top-6 right-6 text-slate-400 hover:text-rose-400 transition-colors text-lg" title="Simpan Materi">
+        <i class="fa-regular fa-bookmark"></i>
+      </button>
+
+      <div id="content-dasar" class="guide-content block article-content">
+        <img src="https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&w=1200&q=80" alt="Finance Basic" class="article-img">
+        <h2 class="font-display text-2xl font-bold text-slate-100 mb-2">Back to Basics: Mengatur Uang Ala Pro</h2>
+        
+        <h3>Sejarah Singkat Uang</h3>
+        <p>Jauh sebelum ada BCA Mobile atau dompet kripto, nenek moyang kita pakai sistem <strong>Barter</strong> (tukar barang). Terus sadar ribet kalau mau nuker sapi sama beras, akhirnya muncul uang komoditas kayak kerang atau emas. Sekarang, kita pakai uang <strong>Fiat</strong> (kertas/koin yang dijamin negara) dan masuk ke era uang digital murni (Kripto).</p>
+
+        <h3>Mindset Keuangan: Aturan 50/30/20</h3>
+        <p>Banyak pemula salah kaprah, "Gue mau investasi 80% gaji gue biar cepet kaya!". Padahal ujung-ujungnya malah ngutang buat makan. Coba terapin aturan emas ini dari Senator Elizabeth Warren:</p>
+        <ul>
+          <li><strong>50% Kebutuhan (Needs):</strong> Kost, makan sehari-hari, bensin, tagihan listrik.</li>
+          <li><strong>30% Keinginan (Wants):</strong> Nongkrong, langganan Netflix, *skin* game, ngopi lucu.</li>
+          <li><strong>20% Tabungan & Investasi:</strong> Dana darurat, beli saham, atau reksadana buat masa depan.</li>
+        </ul>
+
+        <div class="info-box mt-6">
+          <p class="text-sm text-blue-200 font-semibold mb-1"><i class="fa-solid fa-calculator mr-2"></i> Rumus Sakti Akuntansi Dasar</p>
+          <p class="text-xs text-blue-100/80 mb-2">Biar nggak bingung baca laporan keuangan perusahaan nanti, lu wajib hafal rumus persamaan dasar ini:</p>
+          <div class="text-center bg-blue-900/30 p-3 rounded-lg text-blue-100 font-mono overflow-x-auto my-3">
+             $$ \text{Aset} = \text{Kewajiban} + \text{Ekuitas} $$
+          </div>
+          <p class="text-xs text-blue-100/80">Artinya: Semua kekayaan (Aset) yang dipunya sebuah perusahaan itu asalnya cuma dari dua sumber: Ngutang (Kewajiban) atau Modal Sendiri (Ekuitas).</p>
+        </div>
+      </div>
+
+      <div id="content-saham" class="guide-content hidden article-content">
+        <img src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=1200&q=80" alt="Stock Market" class="article-img">
+        <h2 class="font-display text-2xl font-bold text-slate-100 mb-2">Saham: Membeli "Potongan" Perusahaan</h2>
+        
+        <h3>Apa itu Saham?</h3>
+        <p>Secara gampang, saham itu bukti kepemilikan. Kalau lu beli 1 lot (100 lembar) saham BBCA (BCA), artinya lu resmi jadi salah satu *owner* (pemilik) bank BCA, walaupun porsinya super duper kecil. Jadi kalau BCA untung, lu juga kecipratan.</p>
+
+        <h3>Dari Mana Dapat Untungnya?</h3>
+        <ul>
+          <li><strong>Capital Gain:</strong> Lu beli di harga murah, terus jual di harga mahal. Selisihnya itu cuan lu. Contoh: Beli saham A di harga Rp 1.000, jual pas harganya naik ke Rp 1.500.</li>
+          <li><strong>Dividen:</strong> Pembagian keuntungan tunai langsung ke rekening lu. Perusahaan biasanya bagi-bagi dividen setahun sekali atau dua kali sebagai bentuk terima kasih buat para pemegang saham.</li>
+        </ul>
+
+        <div class="info-box">
+          <p class="text-sm text-blue-200 font-semibold mb-1"><i class="fa-solid fa-clock mr-2"></i> Jam Operasional Bursa Efek Indonesia (IDX)</p>
+          <p class="text-xs text-blue-100/80">Pasar saham nggak buka 24 jam kayak Indomaret ya bos. Bursa cuma buka Senin-Jumat (libur nasional tutup). Sesi 1 buka jam 09:00 - 12:00, terus Sesi 2 lanjut jam 13:30 - 16:00 WIB.</p>
+        </div>
+      </div>
+
+      <div id="content-kripto" class="guide-content hidden article-content">
+        <img src="https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&w=1200&q=80" alt="Cryptocurrency" class="article-img">
+        <h2 class="font-display text-2xl font-bold text-slate-100 mb-2">Kripto (Cryptocurrency): Mata Uang Masa Depan?</h2>
+        
+        <h3>Desentralisasi & Blockchain</h3>
+        <p>Kalau saham lu butuh sekuritas dan bank sentral sebagai penengah, Kripto itu <strong>Desentralisasi</strong> (nggak ada bosnya). Transaksinya dicatat secara permanen di buku besar digital raksasa bernama <strong>Blockchain</strong> yang tersebar di ribuan komputer di seluruh dunia. Jadi sangat sulit buat dipalsukan atau di-*hack*.</p>
+
+        <h3>Bitcoin vs Altcoin</h3>
+        <p><strong>Bitcoin (BTC)</strong> adalah mbahnya kripto, paling terkenal dan paling besar kapitalisasi pasarnya. Sedangkan semua koin lain selain Bitcoin (kayak Ethereum, Solana, Dogecoin) itu disebutnya <strong>Altcoin</strong> (Alternative Coin).</p>
+
+        <div class="info-box border-l-rose-500 bg-rose-500/10">
+          <p class="text-sm text-rose-300 font-semibold mb-1"><i class="fa-solid fa-triangle-exclamation mr-2"></i> Peringatan Volatilitas Ekstrem</p>
+          <p class="text-xs text-rose-200/80">Market Kripto buka 24/7 dan pergerakan harganya super liar. Lu bisa untung 100% dalam semalam, tapi juga bisa rugi separuh modal di malam yang sama. Gunakan "Uang Dingin" (uang yang rela hilang) kalau main di sini!</p>
+        </div>
+      </div>
+
+      <div id="content-emas" class="guide-content hidden article-content">
+        <img src="https://images.unsplash.com/photo-1610375461246-83df859d849d?auto=format&fit=crop&w=1200&q=80" alt="Gold Investment" class="article-img">
+        <h2 class="font-display text-2xl font-bold text-slate-100 mb-2">Emas: Sang Pelindung Nilai (Safe Haven)</h2>
+        
+        <h3>Bukan Buat Cepat Kaya</h3>
+        <p>Kalau lu beli emas hari ini dengan harapan besok bisa beli Rubicon, lu salah besar. Tujuan utama beli emas bukan buat dapet *Capital Gain* yang meledak-ledak, melainkan buat <strong>melindungi kekayaan lu dari inflasi</strong> (kenaikan harga barang).</p>
+
+        <h3>Fisik vs Digital</h3>
+        <ul>
+          <li><strong>Emas Fisik:</strong> Lu pegang barangnya langsung (Antam/UBS). Rasanya lebih aman secara psikologis, tapi repot nyimpennya (rawan hilang/dicuri) dan spread (selisih harga beli/jual) cukup besar.</li>
+          <li><strong>Emas Digital:</strong> Beli lewat aplikasi. Gampang dicicil dari modal 10 ribu perak, nggak takut kemalingan, dan gampang dijual kapan aja. Nanti kalau saldonya udah cukup, bisa dicetak jadi fisik juga.</li>
+        </ul>
+      </div>
+
+      <div id="content-reksa" class="guide-content hidden article-content">
+        <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1200&q=80" alt="Mutual Funds" class="article-img">
+        <h2 class="font-display text-2xl font-bold text-slate-100 mb-2">Reksadana: Investasi "Terima Beres"</h2>
+        
+        <h3>Apa itu Reksadana?</h3>
+        <p>Ibaratnya lu sama temen-temen lu patungan duit, terus duit yang ngumpul itu dikasih ke seorang "Supir Profesional" (namanya Manajer Investasi). Si Supir inilah yang mikirin duit lu mau dibeliin saham apa, obligasi apa, atau deposito di bank mana biar untung. Lu tinggal duduk manis terima beres aja.</p>
+
+        <h3>4 Jenis Utama Reksadana:</h3>
+        <ul>
+          <li><strong>Pasar Uang (RDPU):</strong> Paling aman, anti minus. Uangnya ditaruh di deposito bank. Cocok buat dana darurat atau nyimpen duit kurang dari 1 tahun.</li>
+          <li><strong>Pendapatan Tetap (RDPT):</strong> Risiko menengah. Uangnya dibeliin surat utang (Obligasi) negara/perusahaan. Keuntungannya lebih stabil.</li>
+          <li><strong>Campuran:</strong> Kombinasi saham dan obligasi.</li>
+          <li><strong>Saham (RDS):</strong> Paling berisiko tapi potensi *return*-nya paling tinggi. Uangnya dibeliin saham perusahaan di bursa efek. Cocok buat target investasi jangka panjang (di atas 5 tahun).</li>
+        </ul>
+      </div>
+
+    </section>
+
+   <footer class="text-center pb-8 pt-4 border-t border-white/5 mt-10 fade-up delay-3">
+      <p class="text-xs text-slate-600 mb-1">EduVesting · Akademi Edukasi Pemula</p>
+      <p class="text-xs text-slate-700 mt-2">
+        Dikembangkan dengan <i class="fa-solid fa-heart text-rose-500/50 mx-0.5"></i> oleh Tim Developer EduVesting
+      </p>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+  // ==========================================
+  // SIDEBAR & THEME TOGGLE
+  // ==========================================
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+  }
+
+  function toggleTheme() {
+    const body = document.body;
+    const icon = document.getElementById('theme-icon');
+
+    body.classList.toggle('light-mode');
+
+    if(body.classList.contains('light-mode')) {
+      icon.className = "fa-solid fa-sun text-amber-500 text-lg";
+      localStorage.setItem('theme', 'light');
+    } else {
+      icon.className = "fa-solid fa-moon text-lg";
+      localStorage.setItem('theme', 'dark');
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+    const icon = document.getElementById('theme-icon');
+    if(localStorage.getItem('theme') === 'light') {
+      icon.className = "fa-solid fa-sun text-amber-500 text-lg";
+    } else {
+      icon.className = "fa-solid fa-moon text-lg";
+    }
+  });
+
+  // ==========================================
+  // TAB NAVIGATION MATERI
+  // ==========================================
+  function switchGuideTab(tabId, contentId) {
+    // 1. Reset Semua Tombol Tab
+    document.querySelectorAll('.guide-tab').forEach(el => {
+       el.classList.remove('tab-active');
+       el.classList.add('tab-inactive');
+    });
+    
+    // 2. Set Tab yang Aktif
+    const activeBtn = document.getElementById(tabId);
+    activeBtn.classList.remove('tab-inactive');
+    activeBtn.classList.add('tab-active');
+
+    // 3. Sembunyikan Semua Konten Materi
+    document.querySelectorAll('.guide-content').forEach(el => {
+       el.classList.remove('block');
+       el.classList.add('hidden');
+    });
+    
+    // 4. Tampilkan Konten yang Dipilih
+    document.getElementById(contentId).classList.remove('hidden');
+    document.getElementById(contentId).classList.add('block');
+  }
+
+  // ==========================================
+  // DUMMY BOOKMARK TOAST
+  // ==========================================
+  function bookmarkMateri() {
+    const Toast = Swal.mixin({
+      toast: true, position: 'top-end', showConfirmButton: false, timer: 3000,
+      background: document.body.classList.contains('light-mode') ? '#ffffff' : '#1e293b',
+      color: document.body.classList.contains('light-mode') ? '#0f1423' : '#e2e8f0',
+    });
+    Toast.fire({ icon: 'success', title: 'Materi berhasil disimpan ke koleksi!' });
+  }
+
+  // ==========================================
+  // INISIALISASI SUPABASE CLIENT (User Auth)
+  // ==========================================
+  const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const { data: { session }, error } = await supabaseClient.auth.getSession();
+      
+      // Keamanan standar
+      if (error || !session) { 
+        window.location.href = 'login.html'; 
+        return; 
+      }
+
+      const currentUser = session.user;
+      
+      // Ambil nama dari prioritas custom_full_name
+      const displayName = currentUser.user_metadata?.custom_full_name || currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || currentUser.email.split('@')[0];
+      
+      // Ambil foto profil dari prioritas custom_avatar_url
+      const avatarUrl = currentUser.user_metadata?.custom_avatar_url || currentUser.user_metadata?.avatar_url;
+
+      // Update Tampilan Profil Sidebar
+      document.getElementById('sidebar-user-name').innerText = displayName;
+      const sbAvatar = document.getElementById('sidebar-user-initial');
+      if (avatarUrl) {
+        sbAvatar.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover rounded-full">`;
+      } else {
+        sbAvatar.innerText = displayName.charAt(0).toUpperCase();
+      }
+
+    } catch (err) { 
+      console.error("Gagal menarik data user:", err); 
+    }
+  });
+</script>
+
+</body>
+</html>
