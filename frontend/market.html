@@ -63,7 +63,7 @@
   .tab-active { border-bottom-color: #6366f1; background: linear-gradient(0deg, rgba(99,102,241,0.1) 0%, transparent 100%); color: #a5b4fc; }
   .tab-inactive { color: #64748b; }
   .tab-inactive:hover { color: #cbd5e1; }
-  
+
   /* LIGHT MODE STYLES */
   body.light-mode { background-color: #f8fafc; color: #0f1423; }
   body.light-mode .glass, body.light-mode .glass-lighter { background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
@@ -199,28 +199,41 @@
       </div>
     </section>
 
-    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 fade-up delay-3">
+    <!-- Z-INDEX FIX untuk dropdown form filter agar tidak tertumpuk elemen di bawahnya -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 fade-up delay-3 relative z-30">
 
-      <div class="lg:col-span-2 flex flex-col h-full">
+      <!-- UI FIX: Chart dikunci min-height nya agar proporsional -->
+      <div class="lg:col-span-2 flex flex-col h-full relative z-10">
         <h2 class="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2"><i class="fa-solid fa-chart-area text-indigo-400"></i> Interactive Advanced Chart</h2>
-        <div class="glass p-2 rounded-2xl w-full min-h-[450px] flex-1">
+        <div class="glass p-2 rounded-2xl w-full h-[450px]">
           <div id="tv-advanced-chart" style="height:100%; width:100%;"></div>
         </div>
       </div>
 
-      <div class="flex flex-col h-full">
+      <!-- UI FIX: Watchlist dikunci h-[450px] mutlak agar sejajar ukurannya dan tidak melar -->
+      <div class="flex flex-col h-full relative z-50">
         <h2 class="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2"><i class="fa-solid fa-list-check text-emerald-400"></i> My Live Watchlist</h2>
-        <div class="glass rounded-2xl flex flex-col flex-1 p-4 h-[450px]">
+        <div class="glass rounded-2xl flex flex-col p-4 h-[450px]">
 
-          <form id="watchlist-form" class="flex flex-col gap-2 mb-4">
+          <form id="watchlist-form" class="flex flex-col gap-2 mb-4 relative shrink-0">
             <div class="flex gap-2">
-                <select id="wl-market" class="form-input rounded-xl px-2 py-2 text-xs sm:text-sm font-medium w-[120px] outline-none cursor-pointer">
-                    <option value="indo">Saham Indo</option>
-                    <option value="us">Saham US</option>
-                    <option value="crypto">Kripto Spot</option>
-                    <option value="index">Fund / Index</option>
-                </select>
-                <input type="text" id="wl-ticker" placeholder="Ticker (BBCA/AAPL)" class="form-input flex-1 rounded-xl px-3 py-2 text-sm uppercase" autocomplete="off" required>
+                <div class="relative w-[130px] sm:w-[140px]">
+                  <input type="hidden" id="wl-market" value="indo">
+                  <button type="button" id="custom-market-btn" onclick="toggleMarketSelect()" class="form-input w-full h-full rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-200 flex items-center justify-between text-left focus:ring-2 focus:ring-indigo-500/50">
+                      <span id="custom-market-text" class="whitespace-nowrap overflow-hidden text-ellipsis">Saham Indo</span>
+                      <i id="custom-market-icon" class="fa-solid fa-chevron-down text-slate-500 text-xs transition-transform duration-200 ml-2 flex-shrink-0"></i>
+                  </button>
+                  <div id="custom-market-menu" class="absolute z-[100] w-full mt-2 rounded-xl glass shadow-xl shadow-black/40 opacity-0 invisible transform -translate-y-2 transition-all duration-200 overflow-hidden left-0">
+                      <ul class="py-1">
+                          <li><button type="button" onclick="selectMarketOption('indo', 'Saham Indo')" class="w-full text-left px-3 py-2.5 text-xs sm:text-sm text-slate-200 hover:bg-indigo-500/20 hover:text-indigo-400 transition-colors">Saham Indo</button></li>
+                          <li><button type="button" onclick="selectMarketOption('us', 'Saham US')" class="w-full text-left px-3 py-2.5 text-xs sm:text-sm text-slate-200 hover:bg-indigo-500/20 hover:text-indigo-400 transition-colors">Saham US</button></li>
+                          <li><button type="button" onclick="selectMarketOption('crypto', 'Kripto Spot')" class="w-full text-left px-3 py-2.5 text-xs sm:text-sm text-slate-200 hover:bg-indigo-500/20 hover:text-indigo-400 transition-colors">Kripto Spot</button></li>
+                          <li><button type="button" onclick="selectMarketOption('index', 'Fund / Index')" class="w-full text-left px-3 py-2.5 text-xs sm:text-sm text-slate-200 hover:bg-indigo-500/20 hover:text-indigo-400 transition-colors">Fund / Index</button></li>
+                      </ul>
+                  </div>
+                </div>
+
+                <input type="text" id="wl-ticker" placeholder="Ticker (BBCA)" class="form-input flex-1 rounded-xl px-3 py-2 text-sm uppercase" autocomplete="off" required>
             </div>
             <div class="flex gap-2 w-full mt-1">
                 <button type="button" onclick="searchOnly()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-xl text-sm font-bold transition-colors w-1/2 flex items-center justify-center gap-2" title="Lihat Grafik"><i class="fa-solid fa-search"></i> Cek Grafik</button>
@@ -228,8 +241,10 @@
             </div>
           </form>
 
-          <div class="flex-1 overflow-y-auto pr-1 space-y-2 mt-2" id="watchlist-container">
-             </div>
+          <!-- min-h-0 memastikan list bisa di-scroll -->
+          <div class="flex-1 min-h-0 overflow-y-auto pr-2 space-y-2 mt-2" id="watchlist-container">
+             <!-- Konten Watchlist akan di-render di sini -->
+          </div>
         </div>
       </div>
 
@@ -238,7 +253,7 @@
     <section class="mb-8 fade-up delay-3">
        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-3 gap-4">
           <h2 class="text-sm font-semibold text-slate-300 flex items-center gap-2"><i class="fa-solid fa-fire-flame-curved text-amber-400"></i> Market Screener (Semua Aset Dunia)</h2>
-          
+
           <div class="flex overflow-x-auto no-scrollbar gap-2 w-full lg:w-auto pb-2 lg:pb-0">
              <div class="flex bg-slate-800/50 p-1 rounded-lg border border-slate-700 mr-2">
                  <button onclick="switchScreenerTab('tab-gainer_indo', 'scr-gainer_indo')" id="tab-gainer_indo" class="scr-tab tab-active px-3 py-1.5 rounded-md text-[11px] sm:text-xs font-semibold whitespace-nowrap">Gainers Indo</button>
@@ -358,18 +373,61 @@
     overlay.classList.toggle('hidden');
   }
 
+  // ==========================================
+  // CUSTOM DROPDOWN SCRIPT
+  // ==========================================
+  function toggleMarketSelect() {
+    const menu = document.getElementById('custom-market-menu');
+    const icon = document.getElementById('custom-market-icon');
+    if (menu.classList.contains('invisible')) {
+      menu.classList.remove('invisible', 'opacity-0', '-translate-y-2');
+      menu.classList.add('opacity-100', 'translate-y-0');
+      icon.classList.add('rotate-180');
+    } else {
+      closeMarketSelect();
+    }
+  }
+
+  function closeMarketSelect() {
+    const menu = document.getElementById('custom-market-menu');
+    const icon = document.getElementById('custom-market-icon');
+    if(menu && !menu.classList.contains('invisible')){
+        menu.classList.add('invisible', 'opacity-0', '-translate-y-2');
+        menu.classList.remove('opacity-100', 'translate-y-0');
+        icon.classList.remove('rotate-180');
+    }
+  }
+
+  function selectMarketOption(val, label) {
+    document.getElementById('wl-market').value = val;
+    document.getElementById('custom-market-text').innerText = label;
+    closeMarketSelect();
+  }
+
+  document.addEventListener('click', function(event) {
+    const btn = document.getElementById('custom-market-btn');
+    const menu = document.getElementById('custom-market-menu');
+    if (btn && menu && !btn.contains(event.target) && !menu.contains(event.target)) {
+      closeMarketSelect();
+    }
+  });
+
+
   const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let watchlist = [];
+  let currentUser = null; 
 
   document.addEventListener('DOMContentLoaded', async () => {
     try {
       const { data: { session }, error } = await supabaseClient.auth.getSession();
       if (error || !session) { window.location.href = 'login.html'; return; }
 
-      const user = session.user;
-      const displayName = user.user_metadata?.custom_full_name || user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
-      const avatarUrl = user.user_metadata?.custom_avatar_url || user.user_metadata?.avatar_url;
+      currentUser = session.user;
+      const displayName = currentUser.user_metadata?.custom_full_name || currentUser.user_metadata?.full_name || currentUser.user_metadata?.name || currentUser.email.split('@')[0];
+      const avatarUrl = currentUser.user_metadata?.custom_avatar_url || currentUser.user_metadata?.avatar_url;
 
       document.getElementById('sidebar-user-name').innerText = displayName;
       const sbAvatar = document.getElementById('sidebar-user-initial');
@@ -380,12 +438,29 @@
       }
 
       loadAdvancedChart('IDX:COMPOSITE');
-      renderWatchlist();
+      await fetchSupabaseWatchlist();
 
     } catch (err) { console.error("Gagal auth:", err); }
   });
 
-  // FUNGSI GANTI TAB SCREENER 
+  async function fetchSupabaseWatchlist() {
+    try {
+        const { data, error } = await supabaseClient
+            .from('watchlists')
+            .select('*')
+            .eq('user_id', currentUser.id)
+            .order('created_at', { ascending: true });
+
+        if (error) throw error;
+        
+        watchlist = data || [];
+        renderWatchlist();
+    } catch (err) {
+        console.error("Gagal menarik data watchlist dari Supabase:", err);
+        renderWatchlist(); 
+    }
+  }
+
   function switchScreenerTab(tabId, contentId) {
       document.querySelectorAll('.scr-tab').forEach(el => {
          el.classList.remove('tab-active', 'bg-slate-700', 'text-white');
@@ -403,21 +478,20 @@
       document.getElementById(contentId).classList.add('block');
   }
 
-  // Mengubah Ticker Menjadi Format TradingView yg Tepat Berdasarkan Pilihan Dropdown
   function formatSymbolForTV(ticker, market) {
       const up = ticker.toUpperCase();
       if(market === 'crypto') return `BINANCE:${up}${up.includes('USDT') ? '' : 'USDT'}`;
       if(market === 'indo') return `IDX:${up}`;
-      if(market === 'us') return `NASDAQ:${up}`; // Default bursa teknologi US
-      
+      if(market === 'us') return `NASDAQ:${up}`; 
+
       if (up === 'EMAS' || up === 'GOLD') return 'TVC:GOLD';
       if (up === 'IHSG') return 'IDX:COMPOSITE';
       return up;
   }
 
-  // Format ke API Yahoo
   function formatSymbolForYahoo(ticker, market) {
       const up = ticker.toUpperCase();
+      // YF butuh akhiran .JK untuk saham Indonesia
       if(market === 'indo') return `${up}.JK`;
       if(market === 'us') return up;
       if (up === 'EMAS' || up === 'GOLD') return 'GC=F';
@@ -438,17 +512,6 @@
     });
   }
 
-  // Gunakan versi array object baru agar tidak bentrok dengan localstorage lama
-  let watchlist = [];
-  try {
-      let saved = JSON.parse(localStorage.getItem('eduvesting_wl_v4'));
-      if(Array.isArray(saved) && saved.length > 0 && typeof saved[0] === 'object') {
-          watchlist = saved;
-      } else {
-          localStorage.removeItem('eduvesting_wl_v4'); 
-      }
-  } catch(e) {}
-
   function getSearchInputs() {
       const ticker = document.getElementById('wl-ticker').value.trim().toUpperCase();
       const market = document.getElementById('wl-market').value;
@@ -461,59 +524,76 @@
       loadAdvancedChart(formatSymbolForTV(ticker, market));
   }
 
-  document.getElementById('watchlist-form').addEventListener('submit', (e) => {
+  document.getElementById('watchlist-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const { ticker, market } = getSearchInputs();
-    if(!ticker) return;
+    if(!ticker || !currentUser) return;
 
-    // Cek duplikasi
     const exists = watchlist.find(item => item.ticker === ticker && item.market === market);
     if(!exists) {
-       watchlist.push({ ticker, market });
-       localStorage.setItem('eduvesting_wl_v4', JSON.stringify(watchlist));
+       const newItem = { ticker, market, user_id: currentUser.id };
+       watchlist.push(newItem);
        renderWatchlist();
+
+       const { error } = await supabaseClient.from('watchlists').insert([newItem]);
+       if (error) {
+           console.error("Gagal menyimpan ke Supabase:", error);
+           await fetchSupabaseWatchlist(); 
+       }
     }
 
     document.getElementById('wl-ticker').value = '';
     loadAdvancedChart(formatSymbolForTV(ticker, market));
   });
 
-  function removeWatchlist(ticker, market) {
+  async function removeWatchlist(ticker, market) {
+    if (!currentUser) return;
+
     watchlist = watchlist.filter(t => !(t.ticker === ticker && t.market === market));
-    localStorage.setItem('eduvesting_wl_v4', JSON.stringify(watchlist));
     renderWatchlist();
+
+    const { error } = await supabaseClient
+        .from('watchlists')
+        .delete()
+        .match({ user_id: currentUser.id, ticker: ticker, market: market });
+        
+    if (error) console.error("Gagal menghapus dari Supabase:", error);
   }
 
-  // FUNGSI TARIKAN MASSAL (BULK) YANG DIJAMIN NGEBUT & ANTI-CORS VERCEL
-  async function fetchStockBulk(yfSymbols) {
+  // =========================================================================
+  // FIX FINAL: TARIK DATA SAHAM LANGSUNG DI FRONTEND (TANPA BACKEND SAMA SEKALI)
+  // Menggunakan Yahoo Finance + Proxy AllOrigins (GET) yang paling ampuh nembus CORS
+  // =========================================================================
+  async function fetchStockBulkFrontEnd(yfSymbols) {
       if(yfSymbols.length === 0) return {};
-      const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${yfSymbols.join(',')}`;
       
-      // Menggunakan Proxy AllOrigins dengan DisableCache untuk menghindari Vercel Rate Limit
-      const proxyUrls = [
-          `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&disableCache=true`,
-          `https://corsproxy.io/?${encodeURIComponent(url)}`
-      ];
+      const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${yfSymbols.join(',')}`;
+      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
 
-      for(let proxyUrl of proxyUrls) {
-          try {
-              const res = await fetch(proxyUrl);
-              const json = await res.json();
-              const data = json.contents ? JSON.parse(json.contents) : json;
+      try {
+          const res = await fetch(proxyUrl);
+          const json = await res.json();
+          
+          // AllOrigins mengembalikan respon asli Yahoo di dalam string "contents", jadi harus di-parse lagi
+          const data = JSON.parse(json.contents);
+
+          if(data && data.quoteResponse && data.quoteResponse.result) {
               let results = {};
-              
-              if(data && data.quoteResponse && data.quoteResponse.result) {
-                  data.quoteResponse.result.forEach(quote => {
-                      results[quote.symbol] = {
-                          price: quote.regularMarketPrice,
-                          currency: quote.currency === 'USD' ? 'USD ' : 'Rp '
-                      };
-                  });
-              }
-              return results;
-          } catch(e) { console.warn("Proxy fallback triggered..."); }
+              data.quoteResponse.result.forEach(quote => {
+                  // SANGAT PENTING: Hapus akhiran .JK agar nama ticker cocok dengan yang ada di UI kamu
+                  let cleanSymbol = quote.symbol.replace('.JK', '');
+                  
+                  results[cleanSymbol] = {
+                      price: quote.regularMarketPrice,
+                      currency: quote.currency === 'USD' ? 'USD ' : 'Rp '
+                  };
+              });
+              return results; 
+          }
+      } catch(e) {
+          console.error("Gagal menarik data saham via proxy:", e);
       }
-      return {};
+      return {}; 
   }
 
   async function renderWatchlist() {
@@ -537,45 +617,56 @@
     let cryptoData = {};
     let stockData = {};
 
-    // 1. Tarik Data Kripto (Menggunakan CoinGecko API)
+    // 1. Tarik Data Kripto dari CoinGecko (Frontend)
     if (cryptos.length > 0) {
         try {
-            // Karena coingecko butuh ID spesifik, kita konversi dari Ticker
-            const dictCrypto = {'BTC':'bitcoin','ETH':'ethereum','BNB':'binancecoin','SOL':'solana','XRP':'ripple','ADA':'cardano','DOGE':'dogecoin'};
+            const dictCrypto = {
+                'BTC':'bitcoin', 'ETH':'ethereum', 'BNB':'binancecoin', 'SOL':'solana',
+                'XRP':'ripple', 'ADA':'cardano', 'DOGE':'dogecoin', 'USDT':'tether', 
+                'USDC':'usd-coin', 'TON':'the-open-network', 'TRX':'tron', 'LTC':'litecoin',
+                'DOT':'polkadot', 'MATIC':'matic-network', 'SHIB':'shiba-inu', 
+                'AVAX':'avalanche-2', 'LINK':'chainlink', 'PEPE':'pepe', 'UNI':'uniswap'
+            };
             const ids = cryptos.map(item => dictCrypto[item.ticker] || item.ticker.toLowerCase()).join(',');
             const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=idr`);
             cryptoData = await res.json();
-        } catch(e) {}
+        } catch(e) { console.error("Gagal menarik harga kripto:", e); }
     }
 
-    // 2. Tarik Data Saham (Lewat 1 Link Bulk)
+    // 2. Tarik Data Saham Langsung di Frontend
     if (stocks.length > 0) {
         const querySymbols = stocks.map(s => formatSymbolForYahoo(s.ticker, s.market));
-        stockData = await fetchStockBulk(querySymbols);
+        stockData = await fetchStockBulkFrontEnd(querySymbols);
     }
 
     let htmlHTML = '';
 
-    // 3. Render HTML
     watchlist.forEach(item => {
         let price = null;
         let currency = 'Rp ';
         let typeName = '';
         let badgeCol = '';
         const tvSymbol = formatSymbolForTV(item.ticker, item.market);
-        const yfSym = formatSymbolForYahoo(item.ticker, item.market);
+        const uTicker = item.ticker.toUpperCase();
 
         if (item.market === 'crypto') {
-            const dictCrypto = {'BTC':'bitcoin','ETH':'ethereum','BNB':'binancecoin','SOL':'solana','XRP':'ripple','ADA':'cardano','DOGE':'dogecoin'};
+            const dictCrypto = {
+                'BTC':'bitcoin', 'ETH':'ethereum', 'BNB':'binancecoin', 'SOL':'solana',
+                'XRP':'ripple', 'ADA':'cardano', 'DOGE':'dogecoin', 'USDT':'tether', 
+                'USDC':'usd-coin', 'TON':'the-open-network', 'TRX':'tron', 'LTC':'litecoin',
+                'DOT':'polkadot', 'MATIC':'matic-network', 'SHIB':'shiba-inu', 
+                'AVAX':'avalanche-2', 'LINK':'chainlink', 'PEPE':'pepe', 'UNI':'uniswap'
+            };
             const cId = dictCrypto[item.ticker] || item.ticker.toLowerCase();
             if (cryptoData[cId] && cryptoData[cId].idr) price = cryptoData[cId].idr;
             typeName = 'Kripto Spot';
             badgeCol = 'bg-amber-500/15 text-amber-400 border border-amber-500/30';
         } else {
-            if (stockData[yfSym]) {
-                price = stockData[yfSym].price;
-                currency = stockData[yfSym].currency;
-                if (item.ticker === 'EMAS' || item.ticker === 'GOLD') price = price * 16000;
+            // Cocokkan data saham yang dikembalikan oleh Yahoo Finance
+            if (stockData[uTicker]) {
+                price = stockData[uTicker].price;
+                currency = stockData[uTicker].currency;
+                if (uTicker === 'EMAS' || uTicker === 'GOLD') price = price * 16400; // Asumsi kurs
             }
             if(item.market === 'indo') { typeName = 'Saham Indonesia'; badgeCol = 'bg-rose-500/15 text-rose-400 border border-rose-500/30'; }
             else if(item.market === 'us') { typeName = 'Saham US'; badgeCol = 'bg-blue-500/15 text-blue-400 border border-blue-500/30'; }
@@ -584,9 +675,9 @@
 
         const displayPrice = price !== null 
             ? (currency === 'USD ' ? `USD ${price.toLocaleString('en-US', {maximumFractionDigits: 2})}` : `Rp ${price.toLocaleString('id-ID')}`) 
-            : 'Mencari...';
+            : 'Tidak Tersedia';
 
-        const errorText = price === null ? 'text-slate-400 animate-pulse' : 'text-slate-100';
+        const errorText = price === null ? 'text-slate-500 font-medium' : 'text-slate-100 font-bold';
 
         htmlHTML += `
           <div class="flex items-center justify-between p-3.5 rounded-xl bg-slate-800/40 border border-white/5 hover:bg-slate-800/80 transition-all group cursor-pointer" onclick="loadAdvancedChart('${tvSymbol}')">
@@ -599,8 +690,8 @@
                   <p class="text-[10px] font-medium text-slate-500 mt-0.5">${typeName}</p>
                </div>
             </div>
-            <div class="text-right">
-               <p class="text-[13px] font-bold ${errorText} tabular-nums">${displayPrice}</p>
+            <div class="text-right flex flex-col justify-center items-end">
+               <p class="text-[13px] ${errorText} tabular-nums">${displayPrice}</p>
                <button onclick="event.stopPropagation(); removeWatchlist('${item.ticker}', '${item.market}')" class="text-[10px] font-semibold text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity mt-1 px-2 py-0.5 rounded bg-rose-500/10 hover:bg-rose-500/20"><i class="fa-solid fa-trash-can mr-1"></i>Hapus</button>
             </div>
           </div>
