@@ -20,31 +20,57 @@ app.use(express.json());
 // ========================================================
 app.get('/api/price/saham/:ticker', async (req, res) => {
     try {
-        let ticker = req.params.ticker.toUpperCase();
+        let originalTicker = req.params.ticker.toUpperCase();
+        
+        console.log(`[DEBUG] Murni URL Fetch: ${originalTicker}`);
 
-        if (!ticker.includes('=') && !ticker.includes('.')) {
-            ticker += '.JK';
-        }
+        // Fungsi pembantu untuk fetch meta data Yahoo
+        const fetchYahooMeta = async (t) => {
+            const url = `https://query2.finance.yahoo.com/v8/finance/chart/${t}`;
+            const response = await fetch(url, {
+                headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
+            });
+            if (!response.ok) return null;
+            const data = await response.json();
+            if (!data.chart.result || !data.chart.result[0]) return null;
+            return data.chart.result[0].meta;
+        };
 
-        // BUKTI KODINGAN BARU JALAN: Tulisan ini yang harusnya muncul di Vercel nanti BRO
-        console.log(`[DEBUG] Murni URL Fetch: ${ticker}`);
+        let meta = null;
 
-        const url = `https://query2.finance.yahoo.com/v8/finance/chart/${ticker}`;
-        const response = await fetch(url, {
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' 
+        if (originalTicker.includes('=') || originalTicker.includes('.')) {
+            // Ticker sudah spesifik (contoh: GC=F, XPIN.JK)
+            meta = await fetchYahooMeta(originalTicker);
+        } else {
+            // STEP 1: Coba anggap ini saham Indo dulu (tambah .JK)
+            meta = await fetchYahooMeta(originalTicker + '.JK');
+            
+            // STEP 2: Jika gagal (null), berarti kemungkinan Saham US (coba tanpa .JK)
+            if (!meta) {
+                meta = await fetchYahooMeta(originalTicker);
             }
-        });
-
-        if (!response.ok) {
-            console.error(`[ERROR] Ticker ${ticker} tidak ditemukan.`);
-            return res.status(404).json({ error: `Ticker ${ticker} gagal diambil.` });
         }
 
-        const data = await response.json();
-        const livePrice = data.chart.result[0].meta.regularMarketPrice;
+        if (!meta) {
+            console.error(`[ERROR] Ticker ${originalTicker} tidak ditemukan di Yahoo Finance.`);
+            return res.status(404).json({ error: `Ticker ${originalTicker} gagal diambil.` });
+        }
 
-        res.json({ ticker: ticker, price: livePrice });
+        let livePrice = meta.regularMarketPrice;
+        const currency = meta.currency;
+
+        // STEP 3: Konversi otomatis USD ke IDR secara Real-Time jika saham US
+        if (currency === 'USD') {
+            const idrMeta = await fetchYahooMeta('IDR=X'); // Tarik kurs Rupiah realtime
+            if (idrMeta && idrMeta.regularMarketPrice) {
+                const usdToIdrRate = idrMeta.regularMarketPrice;
+                livePrice = livePrice * usdToIdrRate; // Kalikan harga USD dengan kurs IDR hari ini
+                console.log(`[DEBUG] Konversi Kurs: ${originalTicker} | $1 = Rp${usdToIdrRate}`);
+            }
+        }
+
+        // Return data dalam format IDR
+        res.json({ ticker: originalTicker, price: livePrice });
 
     } catch (error) {
         console.error("ERROR TARIK SAHAM:", error.message);
