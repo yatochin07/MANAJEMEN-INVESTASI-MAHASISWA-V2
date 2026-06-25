@@ -10,6 +10,7 @@ const calculatorRoutes = require('./routes/calculatorRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 const aiRoutes = require('./routes/aiRoutes');
 const marketRoutes = require('./routes/marketRoutes');
+const guideRoutes = require('./routes/guideRoutes');
 
 const app = express();
 app.use(cors({ origin: '*' }));
@@ -86,6 +87,7 @@ app.use('/api/calculator', calculatorRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/market', marketRoutes);
+app.use('/api/guide', guideRoutes);
 
 const PORT = process.env.PORT || 5000;
 
