@@ -212,34 +212,50 @@
         <h2 class="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2"><i class="fa-solid fa-list-check text-emerald-400"></i> My Live Watchlist</h2>
         <div class="glass rounded-2xl flex flex-col flex-1 p-4 h-[450px]">
 
-          <form id="watchlist-form" class="flex gap-2 mb-4">
-            <input type="text" id="wl-ticker" placeholder="Cari Aset (AAPL / BBCA / BTC)" class="form-input flex-1 rounded-xl px-3 py-2 text-sm uppercase" autocomplete="off" required>
-            <button type="button" onclick="searchOnly()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 sm:px-4 rounded-xl text-sm font-bold transition-colors" title="Lihat Grafik"><i class="fa-solid fa-search"></i></button>
-            <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 sm:px-4 rounded-xl text-sm font-bold transition-colors" title="Tambah ke Watchlist"><i class="fa-solid fa-plus"></i></button>
+          <form id="watchlist-form" class="flex flex-col gap-2 mb-4">
+            <div class="flex gap-2">
+                <select id="wl-market" class="form-input rounded-xl px-2 py-2 text-xs sm:text-sm font-medium w-[120px] outline-none cursor-pointer">
+                    <option value="indo">Saham Indo</option>
+                    <option value="us">Saham US</option>
+                    <option value="crypto">Kripto Spot</option>
+                    <option value="index">Fund / Index</option>
+                </select>
+                <input type="text" id="wl-ticker" placeholder="Ticker (BBCA/AAPL)" class="form-input flex-1 rounded-xl px-3 py-2 text-sm uppercase" autocomplete="off" required>
+            </div>
+            <div class="flex gap-2 w-full mt-1">
+                <button type="button" onclick="searchOnly()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded-xl text-sm font-bold transition-colors w-1/2 flex items-center justify-center gap-2" title="Lihat Grafik"><i class="fa-solid fa-search"></i> Cek Grafik</button>
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-xl text-sm font-bold transition-colors w-1/2 flex items-center justify-center gap-2" title="Tambah ke Watchlist"><i class="fa-solid fa-plus"></i> Watchlist</button>
+            </div>
           </form>
 
-          <div class="flex-1 overflow-y-auto pr-1 space-y-2" id="watchlist-container">
+          <div class="flex-1 overflow-y-auto pr-1 space-y-2 mt-2" id="watchlist-container">
              </div>
         </div>
       </div>
 
     </section>
 
-    <!-- FIX: SCREENER SEKARANG DITANAM PERMANEN DI HTML & BISA DI TAB. DIJAMIN TIDAK KOSONG! -->
     <section class="mb-8 fade-up delay-3">
        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-3 gap-4">
           <h2 class="text-sm font-semibold text-slate-300 flex items-center gap-2"><i class="fa-solid fa-fire-flame-curved text-amber-400"></i> Market Screener (Semua Aset Dunia)</h2>
+          
           <div class="flex overflow-x-auto no-scrollbar gap-2 w-full lg:w-auto pb-2 lg:pb-0">
-             <button onclick="switchScreenerTab('tab-gainer_saham', 'scr-gainer_saham')" id="tab-gainer_saham" class="scr-tab tab-active px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800/50 border border-slate-700">Gainers Saham</button>
-             <button onclick="switchScreenerTab('tab-gainer_kripto', 'scr-gainer_kripto')" id="tab-gainer_kripto" class="scr-tab tab-inactive px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800/50 border border-slate-700">Gainers Kripto</button>
-             <button onclick="switchScreenerTab('tab-loser_saham', 'scr-loser_saham')" id="tab-loser_saham" class="scr-tab tab-inactive px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800/50 border border-slate-700">Losers Saham</button>
-             <button onclick="switchScreenerTab('tab-loser_kripto', 'scr-loser_kripto')" id="tab-loser_kripto" class="scr-tab tab-inactive px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-slate-800/50 border border-slate-700">Losers Kripto</button>
+             <div class="flex bg-slate-800/50 p-1 rounded-lg border border-slate-700 mr-2">
+                 <button onclick="switchScreenerTab('tab-gainer_indo', 'scr-gainer_indo')" id="tab-gainer_indo" class="scr-tab tab-active px-3 py-1.5 rounded-md text-[11px] sm:text-xs font-semibold whitespace-nowrap">Gainers Indo</button>
+                 <button onclick="switchScreenerTab('tab-gainer_us', 'scr-gainer_us')" id="tab-gainer_us" class="scr-tab tab-inactive px-3 py-1.5 rounded-md text-[11px] sm:text-xs font-semibold whitespace-nowrap">Gainers US</button>
+                 <button onclick="switchScreenerTab('tab-gainer_crypto', 'scr-gainer_crypto')" id="tab-gainer_crypto" class="scr-tab tab-inactive px-3 py-1.5 rounded-md text-[11px] sm:text-xs font-semibold whitespace-nowrap">Gainers Kripto</button>
+             </div>
+             <div class="flex bg-slate-800/50 p-1 rounded-lg border border-slate-700">
+                 <button onclick="switchScreenerTab('tab-loser_indo', 'scr-loser_indo')" id="tab-loser_indo" class="scr-tab tab-inactive px-3 py-1.5 rounded-md text-[11px] sm:text-xs font-semibold whitespace-nowrap">Losers Indo</button>
+                 <button onclick="switchScreenerTab('tab-loser_us', 'scr-loser_us')" id="tab-loser_us" class="scr-tab tab-inactive px-3 py-1.5 rounded-md text-[11px] sm:text-xs font-semibold whitespace-nowrap">Losers US</button>
+                 <button onclick="switchScreenerTab('tab-loser_crypto', 'scr-loser_crypto')" id="tab-loser_crypto" class="scr-tab tab-inactive px-3 py-1.5 rounded-md text-[11px] sm:text-xs font-semibold whitespace-nowrap">Losers Kripto</button>
+             </div>
           </div>
        </div>
 
        <div class="glass rounded-2xl w-full overflow-hidden p-2 h-[500px]" id="tv-screener-container">
-          
-          <div id="scr-gainer_saham" class="screener-content h-full w-full block">
+
+          <div id="scr-gainer_indo" class="screener-content h-full w-full block">
             <script>
               (function(){
                 var theme = localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
@@ -250,7 +266,18 @@
             </script>
           </div>
 
-          <div id="scr-gainer_kripto" class="screener-content h-full w-full hidden">
+          <div id="scr-gainer_us" class="screener-content h-full w-full hidden">
+            <script>
+              (function(){
+                var theme = localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
+                document.write('<div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-screener.js" async>' + JSON.stringify({
+                  "width": "100%", "height": "100%", "defaultColumn": "overview", "defaultScreen": "top_gainers", "market": "america", "showToolbar": true, "colorTheme": theme, "locale": "id", "isTransparent": true
+                }) + '<\/script></div>');
+              })();
+            </script>
+          </div>
+
+          <div id="scr-gainer_crypto" class="screener-content h-full w-full hidden">
             <script>
               (function(){
                 var theme = localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
@@ -261,7 +288,7 @@
             </script>
           </div>
 
-          <div id="scr-loser_saham" class="screener-content h-full w-full hidden">
+          <div id="scr-loser_indo" class="screener-content h-full w-full hidden">
             <script>
               (function(){
                 var theme = localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
@@ -272,7 +299,18 @@
             </script>
           </div>
 
-          <div id="scr-loser_kripto" class="screener-content h-full w-full hidden">
+          <div id="scr-loser_us" class="screener-content h-full w-full hidden">
+            <script>
+              (function(){
+                var theme = localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
+                document.write('<div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-screener.js" async>' + JSON.stringify({
+                  "width": "100%", "height": "100%", "defaultColumn": "overview", "defaultScreen": "top_losers", "market": "america", "showToolbar": true, "colorTheme": theme, "locale": "id", "isTransparent": true
+                }) + '<\/script></div>');
+              })();
+            </script>
+          </div>
+
+          <div id="scr-loser_crypto" class="screener-content h-full w-full hidden">
             <script>
               (function(){
                 var theme = localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
@@ -324,11 +362,6 @@
   const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // Daftar Saham US Populer (Bisa ditambah)
-  const usStocksList = ['AAPL', 'MSFT', 'NVDA', 'TSLA', 'AMZN', 'META', 'GOOGL', 'NFLX', 'AMD', 'INTC'];
-  const cryptoKeys = ['BTC', 'ETH', 'BNB', 'SOL', 'XRP', 'ADA', 'DOGE', 'USDT'];
-  const dictCrypto = {'BTC':'bitcoin','ETH':'ethereum','BNB':'binancecoin','SOL':'solana','XRP':'ripple','ADA':'cardano','DOGE':'dogecoin','USDT':'tether'};
-
   document.addEventListener('DOMContentLoaded', async () => {
     try {
       const { data: { session }, error } = await supabaseClient.auth.getSession();
@@ -352,14 +385,15 @@
     } catch (err) { console.error("Gagal auth:", err); }
   });
 
-  // FUNGSI GANTI TAB SCREENER MENGGUNAKAN CSS DISPLAY
+  // FUNGSI GANTI TAB SCREENER 
   function switchScreenerTab(tabId, contentId) {
       document.querySelectorAll('.scr-tab').forEach(el => {
-         el.classList.remove('tab-active', 'text-indigo-300');
-         el.classList.add('tab-inactive');
+         el.classList.remove('tab-active', 'bg-slate-700', 'text-white');
+         el.classList.add('tab-inactive', 'text-slate-400');
       });
-      document.getElementById(tabId).classList.remove('tab-inactive');
-      document.getElementById(tabId).classList.add('tab-active', 'text-indigo-300');
+      const activeBtn = document.getElementById(tabId);
+      activeBtn.classList.remove('tab-inactive', 'text-slate-400');
+      activeBtn.classList.add('tab-active', 'bg-slate-700', 'text-white');
 
       document.querySelectorAll('.screener-content').forEach(el => {
          el.classList.remove('block');
@@ -369,19 +403,25 @@
       document.getElementById(contentId).classList.add('block');
   }
 
-  // FIX: MEMAKSA TRADINGVIEW UNTUK FOKUS KE SAHAM INDONESIA JIKA KATA KUNCI = 4 HURUF 
-  function formatSymbolForTV(input) {
-      const up = input.toUpperCase();
-      if(cryptoKeys.includes(up) || up.endsWith('USDT')) {
-         return `BINANCE:${up}${up.includes('USDT') ? '' : 'USDT'}`;
-      }
-      if (up === 'EMAS' || up === 'GOLD' || up === 'XAU') return 'TVC:GOLD';
-      if (up === 'IHSG' || up === 'COMPOSITE') return 'IDX:COMPOSITE';
-      if (usStocksList.includes(up)) return `NASDAQ:${up}`;
+  // Mengubah Ticker Menjadi Format TradingView yg Tepat Berdasarkan Pilihan Dropdown
+  function formatSymbolForTV(ticker, market) {
+      const up = ticker.toUpperCase();
+      if(market === 'crypto') return `BINANCE:${up}${up.includes('USDT') ? '' : 'USDT'}`;
+      if(market === 'indo') return `IDX:${up}`;
+      if(market === 'us') return `NASDAQ:${up}`; // Default bursa teknologi US
       
-      // Jika input persis 4 huruf dan bukan dari list US, otomatis anggap Saham IDX! (Agar tidak lari ke JP Morgan)
-      if (/^[A-Z]{4}$/.test(up)) return `IDX:${up}`;
-      
+      if (up === 'EMAS' || up === 'GOLD') return 'TVC:GOLD';
+      if (up === 'IHSG') return 'IDX:COMPOSITE';
+      return up;
+  }
+
+  // Format ke API Yahoo
+  function formatSymbolForYahoo(ticker, market) {
+      const up = ticker.toUpperCase();
+      if(market === 'indo') return `${up}.JK`;
+      if(market === 'us') return up;
+      if (up === 'EMAS' || up === 'GOLD') return 'GC=F';
+      if (up === 'IHSG') return '^JKSE';
       return up;
   }
 
@@ -398,86 +438,84 @@
     });
   }
 
-  // Helper untuk formatting ke API Yahoo Finance 
-  function formatSymbolForYahoo(input) {
-      const up = input.toUpperCase();
-      if (up === 'EMAS' || up === 'GOLD' || up === 'XAU') return 'GC=F';
-      if (up === 'IHSG' || up === 'COMPOSITE') return '^JKSE';
-      if (usStocksList.includes(up)) return up;
-      
-      // Jika 4 huruf, otomatis tambah .JK (BBCA -> BBCA.JK) agar terbaca API Yahoo
-      if (/^[A-Z]{4}$/.test(up)) return `${up}.JK`;
-      
-      if (up.includes('.')) return up;
-      return `${up}.JK`;
-  }
-
-  function isCryptoTicker(t) {
-      const up = t.toUpperCase();
-      return cryptoKeys.includes(up) || up.includes('USDT');
-  }
-
-  // FIX: TARIK SEMUA HARGA SAHAM DALAM 1X FETCH MASSAL. SUPER CEPAT & TIDAK LEMOT.
-  async function fetchStockBulk(tickers) {
-      if(tickers.length === 0) return {};
-      const yfSymbols = tickers.map(formatSymbolForYahoo);
-      const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${yfSymbols.join(',')}`;
-      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&disableCache=true`;
-
-      try {
-          const res = await fetch(proxyUrl);
-          const json = await res.json();
-          const data = JSON.parse(json.contents);
-          let results = {};
-          if(data && data.quoteResponse && data.quoteResponse.result) {
-              data.quoteResponse.result.forEach(quote => {
-                  // Mencari siapa nama Ticker aslinya sebelum dikirim (Contoh: BBRI.JK kembali jadi BBRI)
-                  const original = tickers.find(t => formatSymbolForYahoo(t) === quote.symbol);
-                  if(original) {
-                      results[original] = {
-                          price: quote.regularMarketPrice,
-                          currency: quote.currency === 'USD' ? 'USD ' : 'Rp '
-                      };
-                  }
-              });
-          }
-          return results;
-      } catch(e) {
-          console.error("Gagal memuat bulk saham:", e);
-          return {};
+  // Gunakan versi array object baru agar tidak bentrok dengan localstorage lama
+  let watchlist = [];
+  try {
+      let saved = JSON.parse(localStorage.getItem('eduvesting_wl_v4'));
+      if(Array.isArray(saved) && saved.length > 0 && typeof saved[0] === 'object') {
+          watchlist = saved;
+      } else {
+          localStorage.removeItem('eduvesting_wl_v4'); 
       }
-  }
+  } catch(e) {}
 
-  let watchlist = JSON.parse(localStorage.getItem('eduvesting_wl_final_v3')) || [];
+  function getSearchInputs() {
+      const ticker = document.getElementById('wl-ticker').value.trim().toUpperCase();
+      const market = document.getElementById('wl-market').value;
+      return { ticker, market };
+  }
 
   function searchOnly() {
-      const input = document.getElementById('wl-ticker').value.trim().toUpperCase();
-      if(!input) { alert("Masukkan nama aset (Ticker) terlebih dahulu."); return; }
-      loadAdvancedChart(formatSymbolForTV(input));
+      const { ticker, market } = getSearchInputs();
+      if(!ticker) { alert("Masukkan nama aset (Ticker) terlebih dahulu."); return; }
+      loadAdvancedChart(formatSymbolForTV(ticker, market));
   }
 
   document.getElementById('watchlist-form').addEventListener('submit', (e) => {
     e.preventDefault();
-    const input = document.getElementById('wl-ticker').value.trim().toUpperCase();
-    if(!input) return;
+    const { ticker, market } = getSearchInputs();
+    if(!ticker) return;
 
-    if(!watchlist.includes(input)) {
-       watchlist.push(input);
-       localStorage.setItem('eduvesting_wl_final_v3', JSON.stringify(watchlist));
+    // Cek duplikasi
+    const exists = watchlist.find(item => item.ticker === ticker && item.market === market);
+    if(!exists) {
+       watchlist.push({ ticker, market });
+       localStorage.setItem('eduvesting_wl_v4', JSON.stringify(watchlist));
        renderWatchlist();
     }
 
     document.getElementById('wl-ticker').value = '';
-    loadAdvancedChart(formatSymbolForTV(input));
+    loadAdvancedChart(formatSymbolForTV(ticker, market));
   });
 
-  function removeWatchlist(ticker) {
-    watchlist = watchlist.filter(t => t !== ticker);
-    localStorage.setItem('eduvesting_wl_final_v3', JSON.stringify(watchlist));
+  function removeWatchlist(ticker, market) {
+    watchlist = watchlist.filter(t => !(t.ticker === ticker && t.market === market));
+    localStorage.setItem('eduvesting_wl_v4', JSON.stringify(watchlist));
     renderWatchlist();
   }
 
-  // FUNGSI RENDER WATCHLIST (CUMA HITUNGAN MILIDETIK)
+  // FUNGSI TARIKAN MASSAL (BULK) YANG DIJAMIN NGEBUT & ANTI-CORS VERCEL
+  async function fetchStockBulk(yfSymbols) {
+      if(yfSymbols.length === 0) return {};
+      const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${yfSymbols.join(',')}`;
+      
+      // Menggunakan Proxy AllOrigins dengan DisableCache untuk menghindari Vercel Rate Limit
+      const proxyUrls = [
+          `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&disableCache=true`,
+          `https://corsproxy.io/?${encodeURIComponent(url)}`
+      ];
+
+      for(let proxyUrl of proxyUrls) {
+          try {
+              const res = await fetch(proxyUrl);
+              const json = await res.json();
+              const data = json.contents ? JSON.parse(json.contents) : json;
+              let results = {};
+              
+              if(data && data.quoteResponse && data.quoteResponse.result) {
+                  data.quoteResponse.result.forEach(quote => {
+                      results[quote.symbol] = {
+                          price: quote.regularMarketPrice,
+                          currency: quote.currency === 'USD' ? 'USD ' : 'Rp '
+                      };
+                  });
+              }
+              return results;
+          } catch(e) { console.warn("Proxy fallback triggered..."); }
+      }
+      return {};
+  }
+
   async function renderWatchlist() {
     const container = document.getElementById('watchlist-container');
 
@@ -486,78 +524,84 @@
          <div class="flex flex-col items-center justify-center py-10 text-center opacity-70">
            <i class="fa-regular fa-folder-open text-3xl text-slate-500 mb-3"></i>
            <p class="text-xs text-slate-400 font-medium">Watchlist Kosong</p>
-           <p class="text-[10px] text-slate-500 mt-1 px-4">Ketik nama aset lalu klik tombol <i class="fa-solid fa-plus mx-1"></i> untuk menyimpan ke sini.</p>
+           <p class="text-[10px] text-slate-500 mt-1 px-4">Pilih kategori, ketik ticker, lalu klik <i class="fa-solid fa-plus mx-1"></i>.</p>
          </div>`;
        return;
     }
 
-    container.innerHTML = '<p class="text-center text-xs text-slate-500 my-4"><i class="fa-solid fa-spinner fa-spin"></i> Memperbarui data seketika...</p>';
+    container.innerHTML = '<div class="flex items-center justify-center py-6"><i class="fa-solid fa-spinner fa-spin text-indigo-500 text-2xl"></i></div>';
 
-    let cryptos = [];
-    let stocks = [];
-    
-    // Pisahkan mana yang Kripto, mana yang Saham
-    watchlist.forEach(t => {
-        if (isCryptoTicker(t)) cryptos.push(t);
-        else stocks.push(t);
-    });
+    let cryptos = watchlist.filter(item => item.market === 'crypto');
+    let stocks = watchlist.filter(item => item.market !== 'crypto');
 
     let cryptoData = {};
     let stockData = {};
 
-    // 1. Tarik Data Kripto
+    // 1. Tarik Data Kripto (Menggunakan CoinGecko API)
     if (cryptos.length > 0) {
         try {
-            const ids = cryptos.map(t => dictCrypto[t] || t.toLowerCase()).join(',');
+            // Karena coingecko butuh ID spesifik, kita konversi dari Ticker
+            const dictCrypto = {'BTC':'bitcoin','ETH':'ethereum','BNB':'binancecoin','SOL':'solana','XRP':'ripple','ADA':'cardano','DOGE':'dogecoin'};
+            const ids = cryptos.map(item => dictCrypto[item.ticker] || item.ticker.toLowerCase()).join(',');
             const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=idr`);
             cryptoData = await res.json();
-        } catch(e) { console.error("Kripto error", e); }
+        } catch(e) {}
     }
 
-    // 2. Tarik Data Saham (Lewat 1 Link Bulk Saja)
+    // 2. Tarik Data Saham (Lewat 1 Link Bulk)
     if (stocks.length > 0) {
-        stockData = await fetchStockBulk(stocks);
+        const querySymbols = stocks.map(s => formatSymbolForYahoo(s.ticker, s.market));
+        stockData = await fetchStockBulk(querySymbols);
     }
 
     let htmlHTML = '';
 
     // 3. Render HTML
-    watchlist.forEach(ticker => {
+    watchlist.forEach(item => {
         let price = null;
         let currency = 'Rp ';
-        let isCrypto = isCryptoTicker(ticker);
+        let typeName = '';
+        let badgeCol = '';
+        const tvSymbol = formatSymbolForTV(item.ticker, item.market);
+        const yfSym = formatSymbolForYahoo(item.ticker, item.market);
 
-        if (isCrypto) {
-            const cId = dictCrypto[ticker] || ticker.toLowerCase();
+        if (item.market === 'crypto') {
+            const dictCrypto = {'BTC':'bitcoin','ETH':'ethereum','BNB':'binancecoin','SOL':'solana','XRP':'ripple','ADA':'cardano','DOGE':'dogecoin'};
+            const cId = dictCrypto[item.ticker] || item.ticker.toLowerCase();
             if (cryptoData[cId] && cryptoData[cId].idr) price = cryptoData[cId].idr;
+            typeName = 'Kripto Spot';
+            badgeCol = 'bg-amber-500/15 text-amber-400 border border-amber-500/30';
         } else {
-            if (stockData[ticker]) {
-                price = stockData[ticker].price;
-                currency = stockData[ticker].currency;
-                if (ticker === 'EMAS' || ticker === 'GOLD') price = price * 16000;
+            if (stockData[yfSym]) {
+                price = stockData[yfSym].price;
+                currency = stockData[yfSym].currency;
+                if (item.ticker === 'EMAS' || item.ticker === 'GOLD') price = price * 16000;
             }
+            if(item.market === 'indo') { typeName = 'Saham Indonesia'; badgeCol = 'bg-rose-500/15 text-rose-400 border border-rose-500/30'; }
+            else if(item.market === 'us') { typeName = 'Saham US'; badgeCol = 'bg-blue-500/15 text-blue-400 border border-blue-500/30'; }
+            else { typeName = 'Index Global'; badgeCol = 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'; }
         }
 
         const displayPrice = price !== null 
             ? (currency === 'USD ' ? `USD ${price.toLocaleString('en-US', {maximumFractionDigits: 2})}` : `Rp ${price.toLocaleString('id-ID')}`) 
-            : 'Tidak Ditemukan';
+            : 'Mencari...';
 
-        const badgeCol = isCrypto ? 'bg-amber-500/10 text-amber-400' : 'bg-blue-500/10 text-blue-400';
-        const errorText = price === null ? 'text-rose-400' : 'text-slate-300';
-        const tvSymbol = formatSymbolForTV(ticker);
+        const errorText = price === null ? 'text-slate-400 animate-pulse' : 'text-slate-100';
 
         htmlHTML += `
-          <div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/40 border border-white/5 hover:bg-slate-700/50 transition-colors group cursor-pointer" onclick="loadAdvancedChart('${tvSymbol}')">
-            <div class="flex items-center gap-3">
-               <div class="w-8 h-8 rounded text-[10px] font-bold flex items-center justify-center ${badgeCol}">${ticker.slice(0,3)}</div>
+          <div class="flex items-center justify-between p-3.5 rounded-xl bg-slate-800/40 border border-white/5 hover:bg-slate-800/80 transition-all group cursor-pointer" onclick="loadAdvancedChart('${tvSymbol}')">
+            <div class="flex items-center gap-3.5">
+               <div class="w-10 h-10 rounded-full text-xs font-black flex items-center justify-center shadow-lg ${badgeCol}">
+                  ${item.ticker.slice(0,3)}
+               </div>
                <div>
-                  <p class="text-sm font-bold text-slate-200">${ticker}</p>
-                  <p class="text-[10px] text-slate-500">${isCrypto ? 'Crypto Spot' : 'Saham / Index'}</p>
+                  <p class="text-sm font-bold text-slate-200 tracking-wide">${item.ticker}</p>
+                  <p class="text-[10px] font-medium text-slate-500 mt-0.5">${typeName}</p>
                </div>
             </div>
             <div class="text-right">
-               <p class="text-sm font-semibold ${errorText} tabular-nums">${displayPrice}</p>
-               <button onclick="event.stopPropagation(); removeWatchlist('${ticker}')" class="text-[10px] text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity mt-0.5"><i class="fa-solid fa-trash-can"></i> Hapus</button>
+               <p class="text-[13px] font-bold ${errorText} tabular-nums">${displayPrice}</p>
+               <button onclick="event.stopPropagation(); removeWatchlist('${item.ticker}', '${item.market}')" class="text-[10px] font-semibold text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity mt-1 px-2 py-0.5 rounded bg-rose-500/10 hover:bg-rose-500/20"><i class="fa-solid fa-trash-can mr-1"></i>Hapus</button>
             </div>
           </div>
         `;
