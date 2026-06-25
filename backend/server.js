@@ -26,7 +26,7 @@ app.get('/api/price/saham/:ticker', async (req, res) => {
             ticker += '.JK';
         }
 
-        // BUKTI KODINGAN BARU JALAN: Tulisan ini yang harusnya muncul di Vercel nanti
+        // BUKTI KODINGAN BARU JALAN: Tulisan ini yang harusnya muncul di Vercel nanti BRO
         console.log(`[DEBUG] Murni URL Fetch: ${ticker}`);
 
         const url = `https://query2.finance.yahoo.com/v8/finance/chart/${ticker}`;
