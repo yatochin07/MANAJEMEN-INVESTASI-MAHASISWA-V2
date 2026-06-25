@@ -179,7 +179,7 @@
     .section-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 2.25rem; font-weight: 700; color: #f8fafc; text-align: center; margin-bottom: 3rem; }
     .landing-glass { background: rgba(15, 20, 35, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); border-radius: 1.5rem; transition: transform 0.3s ease, box-shadow 0.3s ease; }
     .landing-glass:hover { transform: translateY(-5px); box-shadow: 0 10px 40px -10px rgba(99,102,241,0.2); border-color: rgba(99,102,241,0.2); }
-    
+
     /* FAQ Accordion CSS */
     .faq-item { border-bottom: 1px solid rgba(255,255,255,0.05); }
     .faq-item:last-child { border-bottom: none; }
@@ -202,13 +202,13 @@
     body.light-mode .text-slate-100, body.light-mode .text-slate-200 { color: #1e293b; }
     body.light-mode .text-slate-400, body.light-mode .text-slate-500 { color: #475569; }
     body.light-mode .logo-text { background: linear-gradient(90deg, #1e293b, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    
+
     /* Left Panel Light Mode */
     body.light-mode .left-panel { border-right: 1px solid rgba(0,0,0,0.08); }
     body.light-mode .left-panel::after { background: linear-gradient(to bottom, transparent, rgba(99,102,241,0.2), transparent); }
     body.light-mode .stat-row { background: rgba(255,255,255,0.85); border: 1px solid rgba(0,0,0,0.08); }
     body.light-mode .ticker-wrap { border-top: 1px solid rgba(0,0,0,0.08); }
-    
+
     /* Right Panel Light Mode */
     body.light-mode .glass-card { background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1); }
     body.light-mode .tab-bar { background: #f1f5f9; border: 1px solid #e2e8f0; }
@@ -219,11 +219,11 @@
     body.light-mode .btn-social:hover { background: #f8fafc; border-color: #94a3b8; color: #1e293b; }
     body.light-mode .divider-line { background: #e2e8f0; }
     body.light-mode .custom-check { background: #ffffff; border-color: #cbd5e1; }
-    
+
     /* Theme Toggle Button Glass */
     .glass-btn { background: rgba(19, 25, 40, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); transition: all 0.3s ease; }
     body.light-mode .glass-btn { background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); color: #475569; }
-    
+
     /* Landing Section Light Mode */
     body.light-mode .landing-glass { background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
     body.light-mode .faq-item { border-bottom: 1px solid #e2e8f0; }
@@ -375,7 +375,7 @@
           </div>
         </div>
       </div>
-      
+
       <a href="#discover" class="scroll-indicator lg:hidden hidden md:flex">
         <span class="text-xs mb-1 font-medium tracking-widest uppercase">Eksplor</span>
         <i class="fa-solid fa-chevron-down text-lg"></i>
@@ -383,7 +383,7 @@
     </aside>
 
     <section class="right-panel" role="main">
-      
+
       <button onclick="toggleTheme()" class="absolute top-6 right-6 w-11 h-11 rounded-xl glass-btn flex items-center justify-center text-slate-300 hover:text-amber-400 transition-colors z-20" title="Ubah Mode Tampilan">
         <i id="theme-icon" class="fa-solid fa-moon text-lg"></i>
       </button>
@@ -427,7 +427,7 @@
             <div class="mb-5">
               <div class="flex items-center justify-between mb-1.5">
                 <label for="login-password" class="text-xs font-medium text-slate-400">Password</label>
-                <a href="#" class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">Lupa password?</a>
+                <a href="#" onclick="handleForgotPassword(event)" class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors">Lupa password?</a>
               </div>
               <div class="field-wrap">
                 <input type="password" id="login-password" placeholder="Masukkan password"
@@ -536,7 +536,7 @@
           </div>
 
         </div>
-        
+
         <div class="text-center mt-8 lg:hidden animate-bounce">
           <a href="#discover" class="text-slate-500 hover:text-slate-300 transition-colors">
             <span class="block text-xs mb-1">Selengkapnya</span>
@@ -549,7 +549,7 @@
   </div>
 
   <main id="discover" class="relative z-10 w-full max-w-7xl mx-auto px-6 py-20 space-y-32">
-    
+
     <section>
       <h2 class="section-title">Apa yang Bisa Anda Lakukan di Sini?</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -580,7 +580,7 @@
     <section>
       <h2 class="section-title">Di Balik Layar EduVesting</h2>
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+
         <div class="lg:col-span-2 landing-glass p-8">
           <h3 class="text-lg font-semibold text-slate-200 mb-6 flex items-center gap-2">
             <i class="fa-solid fa-users text-indigo-400"></i> Tim Developer Mahasiswa
@@ -629,7 +629,7 @@
     <section class="max-w-3xl mx-auto">
       <h2 class="section-title">Pertanyaan Umum (FAQ)</h2>
       <div class="landing-glass p-2 sm:p-8">
-        
+
         <div class="faq-item">
           <button class="faq-toggle" onclick="toggleFaqLanding(this)">
             <span class="faq-q">Apa itu EduVesting?</span>
@@ -703,7 +703,7 @@
           </div>
           <span class="font-display font-bold text-slate-200">EduVesting</span>
         </div>
-        
+
         <div class="flex flex-wrap justify-center gap-6 text-sm font-medium text-slate-400">
           <a href="about.html" class="hover:text-indigo-400 transition-colors">Tentang Kami</a>
           <a href="#discover" class="hover:text-indigo-400 transition-colors">FAQ</a>
@@ -730,11 +730,11 @@
       </div>
       <p id="overlay-title" class="font-display text-2xl text-slate-100">Berhasil Masuk!</p>
       <p id="overlay-desc" class="text-slate-500 text-sm mt-2 max-w-sm px-4">Mengalihkan ke dashboard Anda…</p>
-      
+
       <div id="overlay-spinner" class="mt-5">
         <div class="w-7 h-7 border-2 border-indigo-400/30 border-t-indigo-400 rounded-full" style="animation: spin 0.7s linear infinite;"></div>
       </div>
-      
+
       <button id="overlay-close-btn" onclick="closeOverlay()" class="mt-6 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-semibold transition-colors hidden">
         Saya Mengerti, Tutup
       </button>
@@ -769,9 +769,9 @@
     function toggleTheme() {
       const body = document.body;
       const icon = document.getElementById('theme-icon');
-      
+
       body.classList.toggle('light-mode');
-      
+
       if(body.classList.contains('light-mode')) {
         icon.className = "fa-solid fa-sun text-amber-500 text-lg";
         localStorage.setItem('theme', 'light');
@@ -974,7 +974,7 @@
       if (error) {
         btn.disabled = false;
         btn.innerHTML = 'Masuk ke Dashboard';
-        
+
         // JIKA USER BELUM VERIFIKASI EMAIL DI GMAIL NYA
         if (error.message.toLowerCase().includes('confirm') || error.message.toLowerCase().includes('verified')) {
           emailInput.classList.add('input-error');
@@ -985,6 +985,64 @@
         }
       } else {
         showSuccess('Masuk', 'Mengalihkan ke dashboard Anda…', true);
+      }
+    }
+
+    // ==========================================
+    // FUNGSI LUPA PASSWORD (SUPABASE)
+    // ==========================================
+    async function handleForgotPassword(e) {
+      e.preventDefault();
+      
+      const emailInputEl = document.getElementById('login-email');
+      const currentEmail = emailInputEl && emailInputEl.value.trim() !== '' ? emailInputEl.value.trim() : '';
+      const isLight = document.body.classList.contains('light-mode');
+
+      // Munculkan pop-up input email menggunakan SweetAlert2
+      const { value: email } = await Swal.fire({
+        title: 'Lupa Password?',
+        text: 'Masukkan email EduVesting Anda. Kami akan mengirimkan tautan untuk mereset password Anda.',
+        input: 'email',
+        inputValue: currentEmail,
+        inputPlaceholder: 'email@mahasiswa.ac.id',
+        showCancelButton: true,
+        confirmButtonText: '<i class="fa-solid fa-paper-plane mr-2"></i>Kirim Link',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#6366f1',
+        cancelButtonColor: '#64748b',
+        background: isLight ? '#ffffff' : '#1e293b',
+        color: isLight ? '#0f1423' : '#e2e8f0',
+        customClass: {
+          popup: 'rounded-2xl border ' + (isLight ? 'border-slate-200 shadow-xl' : 'border-white/10 shadow-2xl'),
+          title: 'font-display font-bold',
+          confirmButton: 'rounded-xl text-sm font-semibold px-5 py-2.5',
+          cancelButton: 'rounded-xl text-sm font-semibold px-5 py-2.5',
+          input: isLight ? 'rounded-xl border-slate-300 text-slate-800' : 'rounded-xl border-slate-600 bg-slate-800 text-slate-200 focus:ring-indigo-500 focus:border-indigo-500'
+        }
+      });
+
+      // Jika user mengisi email dan menekan "Kirim Link"
+      if (email) {
+        Swal.fire({
+          title: 'Mengirim Link...',
+          text: 'Mohon tunggu sebentar ya.',
+          allowOutsideClick: false,
+          background: isLight ? '#ffffff' : '#1e293b',
+          color: isLight ? '#0f1423' : '#e2e8f0',
+          didOpen: () => { Swal.showLoading(); },
+          customClass: { popup: 'rounded-2xl border ' + (isLight ? 'border-slate-200 shadow-xl' : 'border-white/10 shadow-2xl') }
+        });
+
+        // Tembak ke fungsi Supabase: resetPasswordForEmail
+        const { data, error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin + '/settings.html' 
+        });
+
+        if (error) {
+          showCustomAlert('error', 'Gagal Mengirim', 'Pastikan email tersebut benar dan sudah terdaftar ya. (' + error.message + ')');
+        } else {
+          showCustomAlert('success', 'Link Terkirim!', 'Silakan cek kotak masuk (atau folder spam) di email Anda untuk mengubah password.');
+        }
       }
     }
 
@@ -1056,7 +1114,7 @@
         passwordInput.value = '';
         document.getElementById('terms').checked = false;
         btn.disabled = true;
-        
+
         // TAMPILKAN OVERLAY BOX INSTRUKSI VERIFIKASI GMAIL
         showSuccess('Tautan Dikirim!', 'Kami telah mengirimkan tautan verifikasi ke email Anda. Silakan buka Gmail dan konfirmasi akun sebelum login.', false);
         switchTab('login');
