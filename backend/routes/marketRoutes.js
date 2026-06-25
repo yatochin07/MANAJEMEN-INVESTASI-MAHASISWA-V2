@@ -4,8 +4,8 @@ const router = express.Router();
 // Panggil controllernya
 const marketController = require('../controllers/marketController');
 
-// Daftarin rutenya (Harus persis sama namanya dengan yang di controller)
-router.get('/crypto', marketController.getCryptoPrices);
-router.get('/stock/:ticker', marketController.getStockPrice);
+// Daftarin rutenya (Sekarang namanya sudah SAMA PERSIS dengan di controller)
+router.get('/screener', marketController.getMarketScreener);
+router.get('/watchlist', marketController.getWatchlistPrices);
 
 module.exports = router;
