@@ -2,8 +2,7 @@ EduVesting - Manajemen Portofolio Mahasiswa
 
 struktur :
 
-'''
-📂 eduvesting/
+''' 📂 eduvesting/
 ├── 📁 backend/                 # Folder API dan server Node.js
 │   ├── 📁 config/              # Konfigurasi database & eksternal
 │   ├── 📁 controllers/         # Logika utama (MVC Pattern)
@@ -55,6 +54,4 @@ struktur :
 ├── README.md                   # Dokumentasi proyek
 ├── package-lock.json           
 ├── package.json                # Dependencies utama
-└── vercel.json                 # Pengaturan routing deployment Vercel
-
-'''
+└── vercel.json                 # Pengaturan routing deployment Vercel '''
