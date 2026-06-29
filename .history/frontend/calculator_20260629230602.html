@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduVesting — Kalkulator Investasi</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { display: ['Plus Jakarta Sans', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+          colors: {
+            base: { 950: '#07090f', 900: '#0f1423', 850: '#131928', 800: '#1a2235', 750: '#1e2840', 700: '#253049' },
+            accent: { blue: '#3b82f6', indigo: '#6366f1', violet: '#7c3aed', cyan: '#06b6d4', emerald: '#10b981', amber: '#f59e0b', rose: '#f43f5e' }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background-color: #07090f; color: #e2e8f0; min-height: 100vh; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
+
+    /* Sidebar active glow (Tema Indigo) */
+    .nav-active { background: linear-gradient(90deg, rgba(99,102,241,0.18) 0%, transparent 100%); border-left: 3px solid #6366f1; color: #a5b4fc; }
+    .nav-item { border-left: 3px solid transparent; transition: all 0.2s ease; }
+    .nav-item:hover { background: linear-gradient(90deg, rgba(99,102,241,0.1) 0%, transparent 100%); border-left-color: rgba(99,102,241,0.5); color: #c7d2fe; }
+
+    /* Glass Elements */
+    .glass { background: rgba(19, 25, 40, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); transition: all 0.3s ease; }
+    .glass-lighter { background: rgba(30,40,64,0.6); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.07); transition: all 0.3s ease; }
+
+    /* Mesh Background (Tema Indigo) */
+    .mesh-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background: radial-gradient(ellipse 60% 40% at 15% 10%, rgba(99,102,241,0.08) 0%, transparent 70%),
+                  radial-gradient(ellipse 50% 50% at 85% 80%, rgba(59,130,246,0.07) 0%, transparent 60%);
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius: 9px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(99,102,241,0.5); }
+    .hide-scroll::-webkit-scrollbar { display: none; }
+    .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Fade-in */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-up { animation: fadeUp 0.5s ease both; }
+
+    /* Logo Text */
+    .logo-text { background: linear-gradient(90deg,#a5b4fc,#93c5fd); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+
+    /* ==========================================
+       LIGHT MODE STYLES
+    ========================================== */
+    body.light-mode { background-color: #f8fafc; color: #0f1423; }
+    body.light-mode .glass, body.light-mode .glass-lighter { background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    body.light-mode .text-slate-200, body.light-mode .text-slate-300, body.light-mode .text-slate-100 { color: #1e293b; }
+    body.light-mode .text-white { color: #0f1423; }
+    body.light-mode .text-slate-400, body.light-mode .text-slate-500 { color: #475569; }
+    body.light-mode aside { background: rgba(255, 255, 255, 0.95) !important; border-right: 1px solid rgba(0,0,0,0.08); }
+
+    @media (max-width: 767px) { aside { display: none; } .main-pad { padding-left: 1rem; padding-right: 1rem; } }
+  </style>
+</head>
+
+<body class="relative flex flex-col min-h-screen">
+
+  <script>
+    // Cek memori browser, apakah user sedang pakai Light Mode? ?
+    if(localStorage.getItem('theme') === 'light') {
+      document.body.classList.add('light-mode');
+    }
+  </script>
+
+  <div class="mesh-bg" aria-hidden="true"></div>
+
+  <div class="relative z-10 flex flex-1 w-full">
+
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
+
+    <aside id="sidebar" class="fixed top-0 left-0 h-screen w-64 flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out"
+           style="background: rgba(10,14,24,0.95); border-right: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
+
+      <button onclick="toggleSidebar()" class="md:hidden absolute top-6 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-xl"></i>
+      </button>
+
+      <div class="px-6 py-6 flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg,#6366f1,#3b82f6);">
+          <i class="fa-solid fa-chart-line text-white text-sm"></i>
+        </div>
+        <span class="font-display text-lg logo-text font-bold">EduVesting</span>
+      </div>
+
+      <div class="mx-4 mb-5 p-3 rounded-xl glass-lighter flex items-center gap-3">
+        <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white overflow-hidden" style="background: linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
+        <div class="min-w-0">
+          <p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">Memuat...</p>
+        </div>
+      </div>
+
+      <nav class="flex-1 px-2 space-y-0.5 overflow-y-auto">
+        <p class="px-4 py-1.5 text-xs font-semibold text-slate-600 uppercase tracking-widest">Utama</p>
+
+        <a href="dashboard.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+          <i class="fa-solid fa-gauge-high w-4 text-center"></i> Dashboard
+        </a>
+        <a href="portfolio.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+          <i class="fa-solid fa-briefcase w-4 text-center"></i> Portofolio
+        </a>
+        <a href="transactions.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+          <i class="fa-solid fa-wallet w-4 text-center"></i> Keuangan
+        </a>
+        <a href="goals.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+          <i class="fa-solid fa-bullseye w-4 text-center"></i> Target Dana
+        </a>
+        <a href="allocations.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+          <i class="fa-solid fa-chart-pie w-4 text-center"></i> Alokasi Aset
+        </a>
+
+        <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Analisa</p>
+
+        <a href="insights.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+          <i class="fa-solid fa-robot w-4 text-center"></i> EduVesting AI
+        </a>
+        <a href="guide.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+        <i class="fa-solid fa-book-open w-4 text-center"></i> Edukasi
+      </a>
+        <a href="market.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"> 
+        <i class="fa-solid fa-chart-line w-4 text-center"></i> Market Insights 
+      </a>
+        <a href="calculator.html" class="nav-item nav-active flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-indigo-300 text-sm font-semibold">
+          <i class="fa-solid fa-calculator w-4 text-center text-indigo-400"></i> Kalkulator Investasi
+        </a>
+
+        <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Akun</p>
+        <a href="settings.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
+          <i class="fa-solid fa-gear w-4 text-center"></i> Pengaturan
+        </a>
+        <a href="logout.html" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm">
+          <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout
+        </a>
+      </nav>
+    </aside>
+
+    <main class="flex-1 w-full md:ml-64 px-4 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden flex flex-col">
+
+      <div class="md:hidden flex items-center justify-between mb-6 fade-up">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#6366f1,#3b82f6);">
+            <i class="fa-solid fa-chart-line text-white text-sm"></i>
+          </div>
+          <span class="font-display text-lg logo-text font-bold tracking-wide">EduVesting</span>
+        </div>
+        <button onclick="toggleSidebar()" type="button" class="text-slate-300 hover:text-white transition-colors focus:outline-none z-20">
+          <i class="fa-solid fa-bars text-xl"></i>
+        </button>
+      </div>
+
+      <header class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4 fade-up">
+        <div>
+          <h1 class="font-display text-2xl sm:text-3xl text-slate-100 font-semibold mb-1 flex items-center gap-3">
+            <i class="fa-solid fa-calculator text-emerald-400"></i> Kalkulator Investasi (belum tersedia) 
+          </h1>
+        </div>
+      </header>
+
+      <!-- Ruang Kosong Utama (Blank Canvas) -->
+      <div class="flex-1"></div>
+
+      <footer class="text-center pb-8 mt-10">
+        <p class="text-xs text-slate-700">EduVesting · Kalkulator Investasi</p>
+        <p class="text-xs text-slate-700 mt-2">
+        Dikembangkan dengan <i class="fa-solid fa-heart text-rose-500/50 mx-0.5"></i> oleh Tim Developer EduVesting
+        </p>
+      </footer>
+
+    </main>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      sidebar.classList.toggle('-translate-x-full');
+      overlay.classList.toggle('hidden');
+    }
+
+    const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function checkAuth() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) { window.location.href = 'login.html'; return; }
+      const user = session.user;
+      
+      // PRIORITAS DATA (Anti-Overwrite Google)
+      const displayName = user.user_metadata?.custom_full_name || user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
+      const avatarUrl = user.user_metadata?.custom_avatar_url || user.user_metadata?.avatar_url; 
+      
+      document.getElementById('sidebar-user-name').innerText = displayName;
+      const sbAvatar = document.getElementById('sidebar-user-initial');
+      if (avatarUrl) {
+        sbAvatar.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover rounded-full">`;
+      } else {
+        sbAvatar.innerText = displayName.charAt(0).toUpperCase();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      checkAuth();
+    });
+  </script>
+</body>
+</html>
