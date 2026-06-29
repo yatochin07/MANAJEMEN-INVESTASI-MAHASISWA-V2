@@ -35,7 +35,7 @@ struktur :
 │   │   └── style.css           # Desain visual halaman
 │   ├── 📁 js/                  
 │   │   ├── api.js              # Fetch eksternal (Yahoo, Groq, dll)
-│   │   └── charts.js           # Render grafik TradingView
+│   │   └── charts.js           # Render grafik
 │   ├── about.html              
 │   ├── allocations.html        
 │   ├── calculator.html         
