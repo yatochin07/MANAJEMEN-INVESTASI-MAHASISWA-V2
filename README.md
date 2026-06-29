@@ -5,7 +5,7 @@ struktur :
 <pre><code>
 📂 eduvesting/
 ├── 📁 backend/                 # Folder API dan server Node.js
-│   ├── 📁 config/              # Konfigurasi database & eksternal
+│   ├── 📁 config/              # Konfigurasi Passport untuk login Google OAuth di Localhost (sudah tidak terpakai) 
 │   ├── 📁 controllers/         # Logika utama (MVC Pattern)
 │   │   ├── aiController.js     
 │   │   ├── alloController.js   
@@ -13,7 +13,7 @@ struktur :
 │   │   ├── calculatorController.js 
 │   │   ├── marketController.js 
 │   │   └── settingsController.js 
-│   ├── 📁 models/              # Struktur tabel/data Supabase
+│   ├── 📁 models/              # Model Login User di Localhost (sudah tidak terpakai) 
 │   ├── 📁 routes/              # Pengaturan Endpoint API
 │   │   ├── aiRoutes.js         
 │   │   ├── alloRoutes.js       
