@@ -5,7 +5,7 @@ struktur :
 <pre><code>
 📂 eduvesting/
 ├── 📁 backend/                 # Folder API dan server Node.js
-│   ├── 📁 config/              # Konfigurasi Passport untuk login Google OAuth di Localhost (sudah tidak terpakai) 
+│   ├── 📁 config/              # Konfigurasi Passport untuk login Google OAuth di Localhost (sudah tidak dipakai) 
 │   ├── 📁 controllers/         # Logika utama (MVC Pattern)
 │   │   ├── aiController.js     
 │   │   ├── alloController.js   
@@ -13,7 +13,7 @@ struktur :
 │   │   ├── calculatorController.js 
 │   │   ├── marketController.js 
 │   │   └── settingsController.js 
-│   ├── 📁 models/              # Model Login User di Localhost (sudah tidak terpakai) 
+│   ├── 📁 models/              # Model Login User di Localhost (sudah tidak dipakai) 
 │   ├── 📁 routes/              # Pengaturan Endpoint API
 │   │   ├── aiRoutes.js         
 │   │   ├── alloRoutes.js       
@@ -25,7 +25,7 @@ struktur :
 │   │   ├── portfolioRoutes.js  
 │   │   ├── settingsRoutes.js   
 │   │   └── transactionRoutes.js
-│   ├── 📁 utils/               # Fungsi bantuan/helper
+│   ├── 📁 utils/               # Fungsi untuk mengirim notifikasi ke Gmail user di Localhost (sudah tidak dipakai) 
 │   ├── package-lock.json       
 │   ├── package.json            # Dependencies khusus backend
 │   └── server.js               # Entry point untuk server backend
