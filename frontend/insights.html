@@ -152,7 +152,7 @@
         <a href="market.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"> 
            <i class="fa-solid fa-chart-line w-4 text-center"></i> Market Insights 
         </a>
-        
+
         <a href="calculator.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-calculator w-4 text-center"></i> Kalkulator Investasi</a>
 
         <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Akun</p>
@@ -281,7 +281,7 @@
                 <img src="css/eduvestingAI.jpg" alt="AI" class="w-full h-full object-cover">
               </div>
               <div class="chat-bubble-ai rounded-2xl p-4 leading-relaxed shadow-md text-[14px]">
-                Halo <strong id="chat-user-name" class="font-bold">Mahasiswa</strong>! Gue EduVesting AI. Gue udah pegang data investasi portofolio, data arus kas, dan juga <em class="text-violet-400 dark:text-emerald-300">daftar Watchlist incaran</em> lu. Mau minta gue <em class="text-violet-500 dark:text-violet-300">roasting</em> isi portonya, evaluasi cashflow, atau lu mau minta saran soal saham yang ada di Watchlist lu?
+                Halo <strong id="chat-user-name" class="font-bold">Mahasiswa</strong>! Gue EduVesting AI. Gue udah pegang data investasi portofolio, profil alokasi, data arus kas, dan juga <em class="text-violet-400 dark:text-emerald-300">daftar Watchlist incaran</em> lu. Mau minta gue <em class="text-violet-500 dark:text-violet-300">roasting</em> isi portonya, evaluasi cashflow, atau lu mau minta saran soal saham yang ada di Watchlist lu?
               </div>
             </div>
           </div>
@@ -501,7 +501,6 @@ Contoh Output yang benar: 7|Sedang|Bagus`;
     async function renderAiDashboard(metrics) {
       const alokasi = metrics.allocation.map(a => `${a.type.toUpperCase()} (${a.percent.toFixed(1)}%)`).join(', ');
 
-      // [TAMBAHAN BARU]: Ekstrak nama ticker aset di portofolio
       let portofolioItems = "Belum ada aset di portofolio.";
       if (metrics.assets && metrics.assets.length > 0) {
         portofolioItems = metrics.assets.map(a => `${a.ticker} (${a.type.toUpperCase()})`).join(', ');
@@ -510,7 +509,9 @@ Contoh Output yang benar: 7|Sedang|Bagus`;
       let totalIncome = 0;
       let totalExpense = 0;
       let expenseStr = "Belum ada pengeluaran.";
-      let watchlistItems = "Belum ada aset di watchlist."; // Default jika kosong
+      let watchlistItems = "Belum ada aset di watchlist.";
+      
+      let targetProfile = "Moderat (Default)"; 
 
       if (currentUserId) {
         // 1. MENGAMBIL DATA KEUANGAN HARIAN
@@ -543,15 +544,31 @@ Contoh Output yang benar: 7|Sedang|Bagus`;
         if (watchData && !watchErr && watchData.length > 0) {
            watchlistItems = watchData.map(w => `${w.ticker} (Market: ${w.market})`).join(', ');
         }
+
+        // 3. MENGAMBIL TARGET PROFIL ALOKASI
+        const { data: allocData } = await supabaseClient
+          .from('allocation_targets')
+          .select('profile, saham, kripto, emas, reksadana, cash')
+          .eq('user_id', currentUserId)
+          .single();
+          
+        if (allocData) {
+          if (allocData.profile === 'custom') {
+            targetProfile = `Kustom (Saham ${allocData.saham}%, Kripto ${allocData.kripto}%, Emas ${allocData.emas}%, Reksadana ${allocData.reksadana}%, Kas ${allocData.cash}%)`;
+          } else {
+            targetProfile = allocData.profile.toUpperCase();
+          }
+        }
       }
 
-      // INTEGRASI KETIGA DATA (PORTO + KEUANGAN + WATCHLIST) KE KONTEKS AI
+      // INTEGRASI KE KONTEKS AI (Prompt System)
       aiContextString = `Data Portofolio Investasi User: 
 - Total Ekuitas/Net Worth: Rp ${metrics.totalEquity.toLocaleString('id-ID')}
 - Total P/L: Rp ${metrics.floatingPL.toLocaleString('id-ID')} (${metrics.plPercent.toFixed(2)}%)
 - Saldo Kas Investasi: Rp ${metrics.cash.toLocaleString('id-ID')} (${metrics.cashPercent.toFixed(2)}% dari aset)
 - Total Aset Individu (Jumlah emiten/koin): ${metrics.assets.length} aset
-- Rincian Kategori: ${alokasi || 'Kosong'}
+- Rincian Kategori Aktual: ${alokasi || 'Kosong'}
+- Profil Risiko Target yang Dipilih User: ${targetProfile}
 - Daftar Aset Spesifik di Portofolio: ${portofolioItems}
 
 Data Keuangan & Cashflow Harian User:
@@ -563,7 +580,7 @@ Data Keuangan & Cashflow Harian User:
 Data Watchlist Pantauan Pasar User (Aset incaran user saat ini):
 - Daftar Aset di Watchlist: ${watchlistItems}
 
-Tugas AI: Kolaborasikan analisis portofolio di atas dengan kondisi cashflow hariannya saat memberikan saran strategi. Jika user bertanya mengenai watchlist mereka, berikan pandangan, evaluasi dan rekomendasi berdasarkan daftar aset incaran mereka tersebut.`;
+Tugas AI: Kolaborasikan analisis portofolio di atas dengan kondisi cashflow hariannya saat memberikan saran strategi. Jika user bertanya mengenai alokasi dan risiko, evaluasi deviasi portofolio mereka HANYA berdasarkan "Profil Risiko Target" yang mereka pilih. Jika mereka meminta saran watchlist, berikan rekomendasi dari daftar incaran mereka.`;
 
       const insights = EduVesting.generateInsights(metrics);
       const recomContainer = document.getElementById('recom-container');
