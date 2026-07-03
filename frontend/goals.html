@@ -162,7 +162,7 @@
           <h1 class="font-display text-2xl sm:text-3xl text-slate-100 font-semibold mb-1 flex items-center gap-3">
             <i class="fa-solid fa-bullseye text-indigo-400"></i> Perencanaan Target Dana
           </h1>
-          <p class="text-slate-500 text-sm">Tentukan target impian finansialmu, buat target dana, dan pantau progresnya secara berkala.</p>
+          <p class="text-slate-500 text-sm">Tentukan target impian finansialmu, pantau progres, dan ketahui estimasi kapan targetmu akan tercapai.</p>
         </div>
         <button onclick="openGoalModal()" class="btn-primary px-5 py-3 rounded-xl text-sm font-semibold text-white flex items-center gap-2 self-start sm:self-auto shadow-lg shadow-indigo-500/20">
           <i class="fa-solid fa-plus"></i> Tambah Target
@@ -243,8 +243,8 @@
               </div>
 
               <div>
-                <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Tenggat Waktu (Deadline)</label>
-                <input id="g-date" type="date" required class="form-input w-full rounded-xl px-4 py-2.5 text-sm">
+                <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Tanggal Dibuat / Mulai</label>
+                <input id="g-date" type="date" required class="form-input w-full rounded-xl px-4 py-2.5 text-sm" title="Berfungsi murni sebagai catatan pembuatan target">
               </div>
             </div>
 
@@ -253,17 +253,26 @@
                 <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Nominal Target (Rp)</label>
                 <div class="relative">
                   <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-slate-500 font-semibold">Rp</span>
-                  <input id="g-target-amount" type="number" min="1000" required placeholder="0" class="form-input w-full rounded-xl pl-11 pr-4 py-3 text-sm font-semibold tabular-nums">
+                  <input id="g-target-amount" type="number" min="1000" required placeholder="Cth: 15000000" class="form-input w-full rounded-xl pl-11 pr-4 py-3 text-sm font-semibold tabular-nums">
                 </div>
               </div>
 
               <div>
-                <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Dana Terkumpul Awal (Rp)</label>
+                <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Dana Terkumpul (Rp)</label>
                 <div class="relative">
                   <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-slate-500 font-semibold">Rp</span>
                   <input id="g-current-amount" type="number" min="0" required placeholder="0" class="form-input w-full rounded-xl pl-11 pr-4 py-3 text-sm font-semibold tabular-nums">
                 </div>
               </div>
+            </div>
+
+            <div>
+              <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Rencana Tabungan Bulanan (Rp)</label>
+              <div class="relative">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-slate-500 font-semibold">Rp</span>
+                <input id="g-monthly-saving" type="number" min="0" required placeholder="Cth: 1000000" class="form-input w-full rounded-xl pl-11 pr-4 py-3 text-sm font-semibold tabular-nums">
+              </div>
+              <p class="text-[10px] text-slate-500 mt-1.5">*Kalkulasi estimasi sisa hari/bulan akan dihitung otomatis berdasarkan rencana tabungan ini.</p>
             </div>
 
             <div class="flex justify-end gap-3 pt-4 border-t border-white/5">
@@ -287,7 +296,7 @@
 
             <div>
               <p id="deposit-goal-title" class="text-xs text-slate-400 font-medium"></p>
-              <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mt-3 mb-1.5">Nominal Tambah Saldo / Tabungan Bulanan (Rp)</label>
+              <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mt-3 mb-1.5">Nominal Tambah Saldo (Rp)</label>
               <div class="relative">
                 <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-slate-500 font-semibold">Rp</span>
                 <input id="deposit-amount" type="number" min="500" required placeholder="Cth: 50.000" class="form-input w-full rounded-xl pl-11 pr-4 py-3 text-sm font-semibold tabular-nums">
@@ -324,8 +333,8 @@
       document.getElementById('goal-form').reset();
       document.getElementById('goal-id').value = '';
       document.getElementById('modal-title').innerHTML = '<i class="fa-solid fa-bullseye text-indigo-400"></i> Buat Target Dana Baru';
-      // Default initial date remains 180 days for NEW creation, but it will be dynamic once deposit is triggered!
-      document.getElementById('g-date').valueAsDate = new Date(Date.now() + 180 * 24 * 60 * 60 * 1000); 
+      // Mengubah behavior default tanggal menjadi hari ini (bukan +180 hari)
+      document.getElementById('g-date').valueAsDate = new Date(); 
       const modal = document.getElementById('goal-modal');
       const content = document.getElementById('goal-modal-content');
       modal.classList.remove('hidden');
@@ -420,9 +429,10 @@
       const id = document.getElementById('goal-id').value;
       const name = document.getElementById('g-name').value.trim();
       const category = document.getElementById('g-category').value;
-      const target_date = document.getElementById('g-date').value;
+      const target_date = document.getElementById('g-date').value; // Kini murni sbg tanggal mulai/catatan
       const target_amount = parseFloat(document.getElementById('g-target-amount').value) || 0;
       const current_amount = parseFloat(document.getElementById('g-current-amount').value) || 0;
+      const monthly_saving = parseFloat(document.getElementById('g-monthly-saving').value) || 0; // Kolom baru
 
       if (!name || target_amount <= 0 || current_amount < 0) {
         showCustomAlert('warning', 'Data tidak valid', 'Pastikan nama dan nominal target sudah terisi dengan benar.');
@@ -431,16 +441,18 @@
 
       try {
         if (id) {
+          // UPDATE CLOUD
           const { error } = await supabaseClient
             .from('goals')
-            .update({ name, category, target_date, target_amount, current_amount })
+            .update({ name, category, target_date, target_amount, current_amount, monthly_saving })
             .eq('id', id);
           if (error) throw error;
           showToast('success', 'Hore! Target berhasil diubah.');
         } else {
+          // INSERT CLOUD
           const { error } = await supabaseClient
             .from('goals')
-            .insert([{ user_id: currentUserId, name, category, target_date, target_amount, current_amount }]);
+            .insert([{ user_id: currentUserId, name, category, target_date, target_amount, current_amount, monthly_saving }]);
           if (error) throw error;
           showToast('success', 'Target baru berhasil ditambahkan!');
         }
@@ -449,7 +461,7 @@
         await loadGoals();
       } catch (err) {
         console.error("Gagal menyimpan target dana:", err);
-        showCustomAlert('error', 'Gagal menyimpan', 'Ada kesalahan ke database: ' + err.message);
+        showCustomAlert('error', 'Gagal menyimpan', 'Ada kesalahan database (Apakah kamu sudah menambahkan kolom monthly_saving di Supabase?): ' + err.message);
       } finally {
         btn.disabled = false;
         btn.innerText = originalText;
@@ -459,7 +471,7 @@
     async function handleDepositSubmit(e) {
       e.preventDefault();
       const id = document.getElementById('deposit-goal-id').value;
-      const amount = parseFloat(document.getElementById('deposit-amount').value) || 0; // Berfungsi sebagai "Tabungan Bulanan"
+      const amount = parseFloat(document.getElementById('deposit-amount').value) || 0;
 
       if (amount <= 0 || !id) { showToast('error', 'Nominal deposit tidak valid'); return; }
 
@@ -467,35 +479,12 @@
       if (!targetGoal) return;
 
       const newCurrentAmount = (targetGoal.current_amount || 0) + amount;
-      const remainingAmount = Math.max(0, (targetGoal.target_amount || 0) - newCurrentAmount);
-
-      // =========================================================================
-      // DYNAMIC DEADLINE LOGIC
-      // Menghitung estimasi hari yang baru berdasarkan "kecepatan tabungan" user.
-      // Sisa Target / Nominal Deposit = Sisa Bulan (dikali 30.44 untuk dapat hari)
-      // =========================================================================
-      let newTargetDate = targetGoal.target_date;
-
-      if (remainingAmount > 0) {
-        const estimatedMonths = remainingAmount / amount;
-        const estimatedDays = Math.min(36500, Math.round(estimatedMonths * 30.44)); 
-        const futureDate = new Date();
-        futureDate.setDate(futureDate.getDate() + estimatedDays);
-        newTargetDate = futureDate.toISOString().split('T')[0];
-      } else {
-        // Jika target sudah tercapai, hari langsung di-set ke hari ini
-        newTargetDate = new Date().toISOString().split('T')[0];
-      }
 
       try {
         const { error } = await supabaseClient
           .from('goals')
-          .update({ 
-            current_amount: newCurrentAmount,
-            target_date: newTargetDate // Update target_date secara dinamis di DB
-          })
+          .update({ current_amount: newCurrentAmount })
           .eq('id', id);
-          
         if (error) throw error;
 
         showToast('success', `Berhasil menabung Rp ${amount.toLocaleString('id-ID')}!`);
@@ -517,6 +506,7 @@
       document.getElementById('g-date').value = g.target_date ? g.target_date.substring(0, 10) : '';
       document.getElementById('g-target-amount').value = g.target_amount;
       document.getElementById('g-current-amount').value = g.current_amount;
+      document.getElementById('g-monthly-saving').value = g.monthly_saving || '';
 
       document.getElementById('modal-title').innerHTML = '<i class="fa-solid fa-pen-to-square text-indigo-400"></i> Edit Target Dana';
 
@@ -581,33 +571,42 @@
       let totalSaved = 0; let totalTarget = 0; let totalProgressSum = 0;
 
       goals.forEach(g => {
-        totalSaved += (g.current_amount || 0);
-        totalTarget += (g.target_amount || 0);
+        const targetAmount = g.target_amount || 0;
+        const currentAmount = g.current_amount || 0;
+        const monthlySaving = g.monthly_saving || 0;
+        
+        totalSaved += currentAmount;
+        totalTarget += targetAmount;
 
-        const progressPercent = Math.min(100, Math.round(((g.current_amount || 0) / (g.target_amount || 1)) * 100));
+        const progressPercent = targetAmount > 0 ? Math.min(100, Math.round((currentAmount / targetAmount) * 100)) : 0;
         totalProgressSum += progressPercent;
 
-        const targetDate = new Date(g.target_date);
-        const today = new Date(); today.setHours(0, 0, 0, 0);
-        const timeDiff = targetDate.getTime() - today.getTime();
-        const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
+        let timeText = '';
+        let isUrgent = false;
 
-        let monthlyRecommendation = '—';
-        if (progressPercent < 100) {
-          if (daysLeft > 0) {
-            const monthsLeft = Math.max(1, Math.round(daysLeft / 30.4));
-            const neededAmount = (g.target_amount || 0) - (g.current_amount || 0);
-            const monthlySaving = Math.ceil(neededAmount / monthsLeft);
-            monthlyRecommendation = formatRupiah(monthlySaving) + ' / bln';
+        // Kalkulasi dinamis sisa hari/bulan berdasarkan input tabungan bulanan dari si user
+        if (progressPercent >= 100) {
+          timeText = 'Tercapai 🎉';
+        } else if (monthlySaving > 0) {
+          const remainingAmount = Math.max(0, targetAmount - currentAmount);
+          const monthsLeft = remainingAmount / monthlySaving;
+          const daysLeft = Math.ceil(monthsLeft * 30.44); // Rata-rata hari dalam sebulan
+
+          if (daysLeft <= 0) {
+            timeText = 'Selesai Bulan Ini';
+          } else if (daysLeft < 30) {
+            timeText = daysLeft + ' hari lagi';
+            isUrgent = true;
           } else {
-            monthlyRecommendation = 'Segera Penuhi!';
+            const m = Math.floor(monthsLeft);
+            const d = Math.floor((monthsLeft - m) * 30.44);
+            timeText = m + ' bln' + (d > 0 ? ' ' + d + ' hr' : '') + ' lagi';
           }
         } else {
-          monthlyRecommendation = 'Tercapai 🎉';
+          timeText = 'Belum diatur';
         }
 
         const catMeta = CAT_ICONS[g.category] || CAT_ICONS.other;
-        const isUrgent = daysLeft >= 0 && daysLeft <= 30 && progressPercent < 80;
 
         const card = document.createElement('div');
         card.className = 'glass rounded-2xl p-5 flex flex-col justify-between hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300';
@@ -625,9 +624,9 @@
               </div>
               
               <div class="flex flex-col items-end shrink-0">
-                ${isUrgent ? `<span class="bg-rose-500/20 text-rose-400 text-[9px] font-bold px-2 py-0.5 rounded border border-rose-500/20 uppercase tracking-widest mb-1 animate-pulse">URGENT</span>` : ''}
-                <span class="text-xs font-semibold ${daysLeft < 0 ? 'text-rose-400' : daysLeft <= 30 ? 'text-amber-400' : 'text-slate-500'}">
-                  ${daysLeft < 0 ? 'Tenggat Lewat' : daysLeft === 0 ? 'Hari ini' : daysLeft + ' hari lagi'}
+                ${isUrgent ? `<span class="bg-rose-500/20 text-rose-400 text-[9px] font-bold px-2 py-0.5 rounded border border-rose-500/20 uppercase tracking-widest mb-1 animate-pulse">SEBENTAR LAGI</span>` : ''}
+                <span class="text-xs font-semibold ${isUrgent ? 'text-amber-400' : progressPercent >= 100 ? 'text-emerald-400' : 'text-slate-500'}">
+                  ${timeText}
                 </span>
               </div>
             </div>
@@ -641,16 +640,16 @@
                 <div class="h-full rounded-full transition-all duration-1000" style="width: ${progressPercent}%; background: linear-gradient(90deg, ${catMeta.hex}, #a5b4fc);"></div>
               </div>
               <div class="flex justify-between items-center text-xs font-semibold mt-2">
-                <span class="text-slate-200">${formatRupiah(g.current_amount)}</span>
-                <span class="text-slate-500 font-normal">dari ${formatRupiah(g.target_amount)}</span>
+                <span class="text-slate-200">${formatRupiah(currentAmount)}</span>
+                <span class="text-slate-500 font-normal">dari ${formatRupiah(targetAmount)}</span>
               </div>
             </div>
           </div>
 
           <div class="mt-4 pt-4 border-t border-white/5 flex items-center justify-between gap-2">
             <div>
-              <p class="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Tabungan Bulanan</p>
-              <p class="text-xs font-bold text-slate-200 mt-0.5">${monthlyRecommendation}</p>
+              <p class="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Target Tabungan</p>
+              <p class="text-xs font-bold text-slate-200 mt-0.5">${monthlySaving > 0 ? formatRupiah(monthlySaving) + ' / bln' : 'Rp 0 / bln'}</p>
             </div>
             
             <div class="flex items-center gap-1 shrink-0">
