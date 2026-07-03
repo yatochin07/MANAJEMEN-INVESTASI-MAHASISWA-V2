@@ -11,6 +11,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
@@ -62,7 +64,7 @@
     /* Input & Range Styles */
     .form-input { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); transition: border-color 0.2s ease, box-shadow 0.2s ease; color: #e2e8f0; }
     .form-input:focus { outline: none; border-color: rgba(99,102,241,0.6); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
-    
+
     /* Tabs System */
     .tab-btn { border-bottom: 2px solid transparent; transition: all 0.3s ease; }
     .tab-active { border-bottom: 2px solid #6366f1; color: #a5b4fc; background: linear-gradient(0deg, rgba(99,102,241,0.1) 0%, transparent 100%); }
@@ -94,6 +96,17 @@
   <script>
     if(localStorage.getItem('theme') === 'light') {
       document.body.classList.add('light-mode');
+    }
+
+    // Custom Toast
+    function showToast(icon, title) {
+      const isLight = document.body.classList.contains('light-mode');
+      const Toast = Swal.mixin({
+        toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true,
+        background: isLight ? '#ffffff' : '#1e293b', color: isLight ? '#0f1423' : '#e2e8f0',
+        didOpen: (toast) => { toast.addEventListener('mouseenter', Swal.stopTimer); toast.addEventListener('mouseleave', Swal.resumeTimer); }
+      });
+      Toast.fire({ icon: icon, title: title });
     }
   </script>
 
@@ -191,7 +204,6 @@
         </div>
       </header>
 
-      <!-- Tabs Navigation -->
       <div class="flex overflow-x-auto no-scrollbar border-b border-slate-700/50 mb-8 fade-up delay-1">
         <button onclick="switchTab('dca')" id="tab-dca" class="tab-btn tab-active px-5 sm:px-6 py-3 font-semibold text-sm flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-calendar-days"></i> Investasi Rutin (DCA)
@@ -204,16 +216,13 @@
         </button>
       </div>
 
-      <!-- Main Calculator Section -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start fade-up delay-2 flex-1">
-        
-        <!-- Left Side: Inputs -->
+
         <div class="glass rounded-2xl p-5 sm:p-6 lg:col-span-7 space-y-6">
-          
-          <!-- TAB 1: DCA INPUTS -->
+
           <div id="inputs-dca" class="space-y-5">
             <h3 class="font-display font-semibold text-slate-300 text-sm uppercase tracking-wider mb-2"><i class="fa-solid fa-gears text-indigo-400 mr-1.5"></i> Parameter DCA</h3>
-            
+
             <div>
               <div class="flex items-center justify-between mb-2">
                 <label class="text-xs text-slate-400 font-medium">Investasi Awal (Rp)</label>
@@ -249,7 +258,6 @@
             </div>
           </div>
 
-          <!-- TAB 2: LUMP SUM INPUTS -->
           <div id="inputs-lump" class="space-y-5 hidden">
             <h3 class="font-display font-semibold text-slate-300 text-sm uppercase tracking-wider mb-2"><i class="fa-solid fa-gears text-indigo-400 mr-1.5"></i> Parameter Lump-Sum</h3>
 
@@ -289,7 +297,6 @@
             </div>
           </div>
 
-          <!-- TAB 3: GOAL INPUTS -->
           <div id="inputs-goal" class="space-y-5 hidden">
             <h3 class="font-display font-semibold text-slate-300 text-sm uppercase tracking-wider mb-2"><i class="fa-solid fa-gears text-indigo-400 mr-1.5"></i> Parameter Goal Achiever</h3>
 
@@ -322,16 +329,14 @@
 
         </div>
 
-        <!-- Right Side: Results & Chart -->
         <div class="lg:col-span-5 flex flex-col gap-6 h-full">
-          
-          <!-- Future Value Card -->
+
           <div class="glass rounded-2xl p-6 flex flex-col justify-between border-emerald-500/20" style="border-width: 1px;">
             <div>
               <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider" id="result-label">Proyeksi Hasil Masa Depan</p>
               <h2 id="result-fv" class="font-display text-2xl sm:text-3xl text-emerald-400 font-extrabold mt-1 truncate">Rp 0</h2>
             </div>
-            
+
             <div class="space-y-3 mt-6 border-t border-white/5 pt-4 text-xs">
               <div class="flex justify-between items-center text-slate-400">
                 <span id="label-principal">Total Modal Diinvestasikan</span>
@@ -343,7 +348,6 @@
               </div>
             </div>
 
-            <!-- Simple SVG Proportional Bar Chart -->
             <div class="mt-6">
               <div class="flex rounded-full overflow-hidden h-3 bg-slate-800" id="proportion-bar">
                 <div id="bar-principal" class="bg-indigo-500 h-full transition-all duration-500" style="width: 50%"></div>
@@ -354,9 +358,13 @@
                 <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-emerald-400"></span> Keuntungan</span>
               </div>
             </div>
+            
+            <button id="btn-save-sim" onclick="saveSimulation()" class="w-full mt-6 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-xl py-2.5 text-xs font-bold transition-all flex items-center justify-center gap-2">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Simpan Hasil Simulasi ke Riwayat
+            </button>
+            
           </div>
 
-          <!-- Educational Compound Interest Info -->
           <div class="glass rounded-2xl p-5 flex-1 flex flex-col justify-center">
             <h4 class="font-display font-bold text-slate-300 text-sm flex items-center gap-2 mb-2">
               <i class="fa-solid fa-lightbulb text-amber-400"></i> The Power of Compounding
@@ -393,15 +401,19 @@
     const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    let currentUserId = null;
+    let currentSimResult = { main: 0, principal: 0, interest: 0 }; // Menyimpan raw number kalkulasi agar presisi
 
     async function checkAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (!session) { window.location.href = 'login.html'; return; }
       const user = session.user;
-      
+      currentUserId = user.id; // Menyimpan ID user untuk fungsi Save ke Supabase
+
       const displayName = user.user_metadata?.custom_full_name || user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
       const avatarUrl = user.user_metadata?.custom_avatar_url || user.user_metadata?.avatar_url; 
-      
+
       document.getElementById('sidebar-user-name').innerText = displayName;
       const sbAvatar = document.getElementById('sidebar-user-initial');
       if (avatarUrl) {
@@ -415,7 +427,7 @@
     let activeTab = 'dca';
     function switchTab(tab) {
       activeTab = tab;
-      
+
       // Toggle active states
       ['dca', 'lump', 'goal'].forEach(t => {
         const btn = document.getElementById('tab-' + t);
@@ -475,14 +487,14 @@
       if (r === 0) {
         fv = totalPrincipal;
       } else {
-        // PV compound + PMT annuity compound
         const fvPV = pv * Math.pow(1 + r, n);
         const fvPMT = pmt * ((Math.pow(1 + r, n) - 1) / r) * (1 + r); // assuming start of month
         fv = fvPV + fvPMT;
       }
 
       const totalInterest = Math.max(0, fv - totalPrincipal);
-
+      
+      currentSimResult = { main: fv, principal: totalPrincipal, interest: totalInterest };
       updateDisplay(fv, totalPrincipal, totalInterest);
     }
 
@@ -495,11 +507,11 @@
 
       const r = rateVal / 100;
       const n = years * freq;
-      
-      // FV = PV * (1 + r/freq)^n
+
       const fv = pv * Math.pow(1 + (r / freq), n);
       const totalInterest = Math.max(0, fv - pv);
 
+      currentSimResult = { main: fv, principal: pv, interest: totalInterest };
       updateDisplay(fv, pv, totalInterest);
     }
 
@@ -517,22 +529,21 @@
       if (r === 0) {
         monthlySavingNeeded = n > 0 ? fv / n : 0;
       } else {
-        // PMT = FV / [((1 + r)^n - 1) / r * (1 + r)]
         monthlySavingNeeded = fv / (((Math.pow(1 + r, n) - 1) / r) * (1 + r));
       }
 
       const totalPrincipal = monthlySavingNeeded * n;
       const compoundGrowthContribution = Math.max(0, fv - totalPrincipal);
 
-      // In Goal tab, we show the required PMT as the main large output
+      currentSimResult = { main: monthlySavingNeeded, principal: fv, interest: compoundGrowthContribution };
+
       document.getElementById('result-fv').innerText = formatRupiah(monthlySavingNeeded);
       document.getElementById('result-principal').innerText = formatRupiah(fv);
       document.getElementById('result-interest').innerText = formatRupiah(compoundGrowthContribution);
 
-      // Bar proportion of saved principal vs interest growth portion to reach target
       const pctPrincipal = fv > 0 ? Math.min(100, (totalPrincipal / fv) * 100) : 50;
       const pctInterest = 100 - pctPrincipal;
-      
+
       document.getElementById('bar-principal').style.width = pctPrincipal + '%';
       document.getElementById('bar-interest').style.width = pctInterest + '%';
     }
@@ -553,68 +564,84 @@
     // ==========================================
     // SYNC CONTROLS
     // ==========================================
-    // DCA SYNC
-    function syncDcaTextPV() {
-      document.getElementById('dca-pv').value = document.getElementById('dca-pv-range').value;
-      calculateDca();
-    }
-    function syncDcaRangePV() {
-      document.getElementById('dca-pv-range').value = document.getElementById('dca-pv').value;
-      calculateDca();
-    }
-    
-    function syncDcaTextPMT() {
-      document.getElementById('dca-pmt').value = document.getElementById('dca-pmt-range').value;
-      calculateDca();
-    }
-    function syncDcaRangePMT() {
-      document.getElementById('dca-pmt-range').value = document.getElementById('dca-pmt').value;
-      calculateDca();
-    }
+    function syncDcaTextPV() { document.getElementById('dca-pv').value = document.getElementById('dca-pv-range').value; calculateDca(); }
+    function syncDcaRangePV() { document.getElementById('dca-pv-range').value = document.getElementById('dca-pv').value; calculateDca(); }
+    function syncDcaTextPMT() { document.getElementById('dca-pmt').value = document.getElementById('dca-pmt-range').value; calculateDca(); }
+    function syncDcaRangePMT() { document.getElementById('dca-pmt-range').value = document.getElementById('dca-pmt').value; calculateDca(); }
+    function syncDcaRate() { document.getElementById('dca-rate').value = document.getElementById('dca-rate-range').value; calculateDca(); }
+    function syncDcaYears() { document.getElementById('dca-years').value = document.getElementById('dca-years-range').value; calculateDca(); }
 
-    function syncDcaRate() {
-      document.getElementById('dca-rate').value = document.getElementById('dca-rate-range').value;
-      calculateDca();
-    }
-    function syncDcaYears() {
-      document.getElementById('dca-years').value = document.getElementById('dca-years-range').value;
-      calculateDca();
-    }
+    function syncLumpTextPV() { document.getElementById('lump-pv').value = document.getElementById('lump-pv-range').value; calculateLump(); }
+    function syncLumpRangePV() { document.getElementById('lump-pv-range').value = document.getElementById('lump-pv').value; calculateLump(); }
+    function syncLumpRate() { document.getElementById('lump-rate').value = document.getElementById('lump-rate-range').value; calculateLump(); }
+    function syncLumpYears() { document.getElementById('lump-years').value = document.getElementById('lump-years-range').value; calculateLump(); }
 
-    // LUMP SUM SYNC
-    function syncLumpTextPV() {
-      document.getElementById('lump-pv').value = document.getElementById('lump-pv-range').value;
-      calculateLump();
-    }
-    function syncLumpRangePV() {
-      document.getElementById('lump-pv-range').value = document.getElementById('lump-pv').value;
-      calculateLump();
-    }
-    function syncLumpRate() {
-      document.getElementById('lump-rate').value = document.getElementById('lump-rate-range').value;
-      calculateLump();
-    }
-    function syncLumpYears() {
-      document.getElementById('lump-years').value = document.getElementById('lump-years-range').value;
-      calculateLump();
-    }
+    function syncGoalTextFV() { document.getElementById('goal-fv').value = document.getElementById('goal-fv-range').value; calculateGoal(); }
+    function syncGoalRangeFV() { document.getElementById('goal-fv-range').value = document.getElementById('goal-fv').value; calculateGoal(); }
+    function syncGoalRate() { document.getElementById('goal-rate').value = document.getElementById('goal-rate-range').value; calculateGoal(); }
+    function syncGoalYears() { document.getElementById('goal-years').value = document.getElementById('goal-years-range').value; calculateGoal(); }
 
-    // GOAL SYNC
-    function syncGoalTextFV() {
-      document.getElementById('goal-fv').value = document.getElementById('goal-fv-range').value;
-      calculateGoal();
-    }
-    function syncGoalRangeFV() {
-      document.getElementById('goal-fv-range').value = document.getElementById('goal-fv').value;
-      calculateGoal();
-    }
-    function syncGoalRate() {
-      document.getElementById('goal-rate').value = document.getElementById('goal-rate-range').value;
-      calculateGoal();
-    }
-    function syncGoalYears() {
-      document.getElementById('goal-years').value = document.getElementById('goal-years-range').value;
-      calculateGoal();
+    // ==========================================
+    // SIMPAN KE SUPABASE DB
+    // ==========================================
+    async function saveSimulation() {
+      if (!currentUserId) {
+        showToast('error', 'Wah, kamu harus login dulu buat simpan hasil simulasi ini.');
+        return;
+      }
+
+      // Bangun payload berdasarkan jenis tab kalkulator yang aktif
+      let payload = {
+        user_id: currentUserId,
+        calc_type: activeTab,
+        parameters: {},
+        result_main: currentSimResult.main,
+        result_principal: currentSimResult.principal,
+        result_interest: currentSimResult.interest
+      };
+
+      if (activeTab === 'dca') {
+        payload.parameters = {
+          pv: parseFloat(document.getElementById('dca-pv').value) || 0,
+          pmt: parseFloat(document.getElementById('dca-pmt').value) || 0,
+          rate: parseFloat(document.getElementById('dca-rate').value) || 0,
+          years: parseFloat(document.getElementById('dca-years').value) || 0
+        };
+      } else if (activeTab === 'lump') {
+        payload.parameters = {
+          pv: parseFloat(document.getElementById('lump-pv').value) || 0,
+          rate: parseFloat(document.getElementById('lump-rate').value) || 0,
+          years: parseFloat(document.getElementById('lump-years').value) || 0,
+          freq: parseInt(document.getElementById('lump-freq').value) || 12
+        };
+      } else if (activeTab === 'goal') {
+        payload.parameters = {
+          fv: parseFloat(document.getElementById('goal-fv').value) || 0,
+          rate: parseFloat(document.getElementById('goal-rate').value) || 0,
+          years: parseFloat(document.getElementById('goal-years').value) || 0
+        };
+      }
+
+      // Animasi tombol loading
+      const btn = document.getElementById('btn-save-sim');
+      const originalHTML = btn.innerHTML;
+      btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Menyimpan ke Cloud...';
+      btn.disabled = true;
+      btn.classList.add('opacity-70');
+
+      try {
+        const { error } = await supabaseClient.from('calculator_history').insert([payload]);
+        if (error) throw error;
+        
+        showToast('success', 'Berhasil! Hasil simulasi sudah tersimpan di riwayatmu.');
+      } catch (err) {
+        console.error("Gagal menyimpan hasil simulasi:", err);
+        showToast('error', 'Gagal menyimpan: ' + err.message);
+      } finally {
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+        btn.classList.remove('opacity-70');
+      }
     }
 
     // Page initialization
