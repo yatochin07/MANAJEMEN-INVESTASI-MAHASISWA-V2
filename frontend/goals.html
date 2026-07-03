@@ -169,7 +169,6 @@
         </button>
       </header>
 
-      <!-- Dashboard Mini Stats -->
       <section class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8 fade-up delay-1">
         <div class="glass rounded-2xl p-5 flex items-center gap-4">
           <div class="w-12 h-12 rounded-xl flex items-center justify-center text-indigo-400 bg-indigo-500/10"><i class="fa-solid fa-piggy-bank text-xl"></i></div>
@@ -198,11 +197,9 @@
         </div>
       </section>
 
-      <!-- Main Goals Content Area -->
       <section class="flex-1 fade-up delay-2">
         <div id="goals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Dinamis terisi via Javascript -->
-        </div>
+          </div>
 
         <div id="goals-empty-state" class="hidden glass rounded-2xl p-12 text-center max-w-xl mx-auto my-6 flex flex-col items-center justify-center">
           <div class="w-16 h-16 rounded-full bg-indigo-500/10 flex items-center justify-center mb-4 text-indigo-400"><i class="fa-solid fa-bullseye text-3xl"></i></div>
@@ -214,9 +211,6 @@
         </div>
       </section>
 
-      <!-- ==========================================
-         MODAL TAMBAH/EDIT TARGET
-      ========================================== -->
       <div id="goal-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md hidden transition-all duration-300">
         <div class="glass w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl border border-white/10 mx-4 transform scale-95 transition-transform duration-300" id="goal-modal-content">
 
@@ -289,9 +283,6 @@
         </div>
       </div>
 
-      <!-- ==========================================
-         MODAL DEPOSIT
-      ========================================== -->
       <div id="deposit-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md hidden transition-all duration-300">
         <div class="glass w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl border border-white/10 mx-4 transform scale-95 transition-transform duration-300" id="deposit-modal-content">
 
@@ -342,7 +333,7 @@
       document.getElementById('goal-form').reset();
       document.getElementById('goal-id').value = '';
       document.getElementById('modal-title').innerHTML = '<i class="fa-solid fa-bullseye text-indigo-400"></i> Buat Target Dana Baru';
-      // Mengubah behavior default tanggal menjadi hari ini
+      // Mengubah behavior default tanggal menjadi hari ini (bukan +180 hari)
       document.getElementById('g-date').valueAsDate = new Date(); 
       const modal = document.getElementById('goal-modal');
       const content = document.getElementById('goal-modal-content');
@@ -441,7 +432,7 @@
       const target_date = document.getElementById('g-date').value; // Kini murni sbg tanggal mulai/catatan
       const target_amount = parseFloat(document.getElementById('g-target-amount').value) || 0;
       const current_amount = parseFloat(document.getElementById('g-current-amount').value) || 0;
-      const monthly_saving = parseFloat(document.getElementById('g-monthly-saving').value) || 0;
+      const monthly_saving = parseFloat(document.getElementById('g-monthly-saving').value) || 0; // Kolom baru
 
       if (!name || target_amount <= 0 || current_amount < 0) {
         showCustomAlert('warning', 'Data tidak valid', 'Pastikan nama dan nominal target sudah terisi dengan benar.');
@@ -616,11 +607,6 @@
         }
 
         const catMeta = CAT_ICONS[g.category] || CAT_ICONS.other;
-        
-        // Format Tanggal Mulai jadi format yang enak dibaca orang Indonesia (contoh: 12 Jul 2026)
-        const formattedStartDate = g.target_date 
-            ? new Date(g.target_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) 
-            : '-';
 
         const card = document.createElement('div');
         card.className = 'glass rounded-2xl p-5 flex flex-col justify-between hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300';
@@ -633,11 +619,7 @@
                 <div class="w-10 h-10 rounded-xl flex items-center justify-center ${catMeta.color}"><i class="fa-solid ${catMeta.icon} text-lg"></i></div>
                 <div class="min-w-0">
                   <h4 class="font-display font-bold text-slate-200 text-sm md:text-base leading-tight truncate" title="${g.name}">${g.name}</h4>
-                  <div class="flex items-center gap-1.5 mt-0.5">
-                    <span class="text-[10px] text-slate-500 capitalize tracking-wider">${g.category || 'Lainnya'}</span>
-                    <span class="text-[10px] text-slate-600">•</span>
-                    <span class="text-[10px] text-slate-400 tracking-wider font-medium" title="Tanggal Target Dibuat"><i class="fa-regular fa-calendar-plus mr-0.5"></i> ${formattedStartDate}</span>
-                  </div>
+                  <span class="text-[10px] text-slate-500 capitalize tracking-wider">${g.category || 'Lainnya'}</span>
                 </div>
               </div>
               
