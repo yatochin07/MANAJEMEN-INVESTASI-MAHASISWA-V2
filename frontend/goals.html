@@ -34,208 +34,75 @@
   </script>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
-      font-family: 'Inter', sans-serif;
-      background-color: #07090f;
-      color: #e2e8f0;
-      min-height: 100vh;
-      overflow-x: hidden;
-      transition: background-color 0.3s ease, color 0.3s ease;
+      font-family: 'Inter', sans-serif; background-color: #07090f; color: #e2e8f0;
+      min-height: 100vh; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease;
     }
 
-    /* Sidebar active glow */
-    .nav-active {
-      background: linear-gradient(90deg, rgba(99, 102, 241, 0.18) 0%, transparent 100%);
-      border-left: 3px solid #6366f1;
-    }
+    .nav-active { background: linear-gradient(90deg, rgba(99, 102, 241, 0.18) 0%, transparent 100%); border-left: 3px solid #6366f1; }
+    .nav-item { border-left: 3px solid transparent; transition: all 0.2s ease; }
+    .nav-item:hover { background: linear-gradient(90deg, rgba(99, 102, 241, 0.1) 0%, transparent 100%); border-left-color: rgba(99, 102, 241, 0.5); color: #a5b4fc; }
 
-    .nav-item {
-      border-left: 3px solid transparent;
-      transition: all 0.2s ease;
-    }
+    .glass { background: rgba(19, 25, 40, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.06); transition: all 0.3s ease; }
+    .glass-lighter { background: rgba(30, 40, 64, 0.6); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.07); transition: all 0.3s ease; }
 
-    .nav-item:hover {
-      background: linear-gradient(90deg, rgba(99, 102, 241, 0.1) 0%, transparent 100%);
-      border-left-color: rgba(99, 102, 241, 0.5);
-      color: #a5b4fc;
-    }
-
-    /* Glass Elements */
-    .glass {
-      background: rgba(19, 25, 40, 0.85);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      transition: all 0.3s ease;
-    }
-
-    .glass-lighter {
-      background: rgba(30, 40, 64, 0.6);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.07);
-      transition: all 0.3s ease;
-    }
-
-    /* Mesh Background */
     .mesh-bg {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
       background: radial-gradient(ellipse 60% 40% at 15% 10%, rgba(99, 102, 241, 0.08) 0%, transparent 70%),
         radial-gradient(ellipse 50% 50% at 85% 80%, rgba(59, 130, 246, 0.07) 0%, transparent 60%);
     }
 
-    /* Scrollbar */
-    ::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
-    }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.3); border-radius: 9px; }
 
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
+    .logo-text { background: linear-gradient(90deg, #a5b4fc, #93c5fd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-    ::-webkit-scrollbar-thumb {
-      background: rgba(99, 102, 241, 0.3);
-      border-radius: 9px;
-    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-up { animation: fadeUp 0.5s ease both; }
 
-    .logo-text {
-      background: linear-gradient(90deg, #a5b4fc, #93c5fd);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    /* Fade-in */
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(14px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .fade-up {
-      animation: fadeUp 0.5s ease both;
-    }
-
-    /* Custom Input and Form Styling */
     .form-input {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-      color: #e2e8f0;
+      background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease; color: #e2e8f0;
     }
+    .form-input:focus { outline: none; border-color: rgba(99, 102, 241, 0.6); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
 
-    .form-input:focus {
-      outline: none;
-      border-color: rgba(99, 102, 241, 0.6);
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
-    }
+    .btn-primary { background: linear-gradient(135deg, #6366f1, #3b82f6); transition: opacity .2s ease, transform .15s ease, box-shadow .2s ease; }
+    .btn-primary:hover { opacity: .88; transform: translateY(-1px); box-shadow: 0 6px 20px -4px rgba(99, 102, 241, 0.5); }
+    .btn-primary:active { transform: translateY(0); }
 
-    .btn-primary {
-      background: linear-gradient(135deg, #6366f1, #3b82f6);
-      transition: opacity .2s ease, transform .15s ease, box-shadow .2s ease;
-    }
-
-    .btn-primary:hover {
-      opacity: .88;
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px -4px rgba(99, 102, 241, 0.5);
-    }
-
-    .btn-primary:active {
-      transform: translateY(0);
-    }
-
-    /* ==========================================
-       LIGHT MODE STYLES
-    ========================================== */
-    body.light-mode {
-      background-color: #f8fafc;
-      color: #0f1423;
-    }
-
-    body.light-mode .glass,
-    body.light-mode .glass-lighter {
-      background: rgba(255, 255, 255, 0.85);
-      border: 1px solid rgba(0, 0, 0, 0.08);
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    }
-
-    body.light-mode .text-slate-200,
-    body.light-mode .text-slate-300,
-    body.light-mode .text-slate-100 {
-      color: #1e293b;
-    }
-
-    body.light-mode .text-slate-400,
-    body.light-mode .text-slate-500 {
-      color: #475569;
-    }
-
-    body.light-mode aside {
-      background: rgba(255, 255, 255, 0.95) !important;
-      border-right: 1px solid rgba(0, 0, 0, 0.08);
-    }
-
-    body.light-mode .form-input {
-      background: #ffffff !important;
-      border-color: #cbd5e1;
-      color: #0f1423;
-    }
-
-    body.light-mode select.form-input option {
-      background-color: #ffffff;
-      color: #0f1423;
-    }
+    /* LIGHT MODE STYLES */
+    body.light-mode { background-color: #f8fafc; color: #0f1423; }
+    body.light-mode .glass, body.light-mode .glass-lighter { background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0, 0, 0, 0.08); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+    body.light-mode .text-slate-200, body.light-mode .text-slate-300, body.light-mode .text-slate-100 { color: #1e293b; }
+    body.light-mode .text-slate-400, body.light-mode .text-slate-500 { color: #475569; }
+    body.light-mode aside { background: rgba(255, 255, 255, 0.95) !important; border-right: 1px solid rgba(0, 0, 0, 0.08); }
+    body.light-mode .form-input { background: #ffffff !important; border-color: #cbd5e1; color: #0f1423; }
+    body.light-mode select.form-input option { background-color: #ffffff; color: #0f1423; }
   </style>
 </head>
 
 <body class="relative flex flex-col min-h-screen">
 
   <script>
-    if (localStorage.getItem('theme') === 'light') {
-      document.body.classList.add('light-mode');
-    }
+    if (localStorage.getItem('theme') === 'light') { document.body.classList.add('light-mode'); }
 
-    // Swall UI overrides helpers
     function showCustomAlert(type, title, text) {
       const isLight = document.body.classList.contains('light-mode');
       Swal.fire({
-        icon: type,
-        title: title,
-        text: text,
-        confirmButtonText: 'Oke, Mengerti!',
-        confirmButtonColor: '#6366f1',
-        background: isLight ? '#ffffff' : '#1e293b',
-        color: isLight ? '#0f1423' : '#e2e8f0',
-        customClass: {
-          popup: 'rounded-2xl border ' + (isLight ? 'border-slate-200 shadow-xl' : 'border-white/10 shadow-2xl'),
-          title: 'font-display font-bold',
-          confirmButton: 'rounded-xl text-sm font-semibold px-6 py-2.5'
-        }
+        icon: type, title: title, text: text, confirmButtonText: 'Oke, Mengerti!', confirmButtonColor: '#6366f1',
+        background: isLight ? '#ffffff' : '#1e293b', color: isLight ? '#0f1423' : '#e2e8f0',
+        customClass: { popup: 'rounded-2xl border ' + (isLight ? 'border-slate-200 shadow-xl' : 'border-white/10 shadow-2xl'), title: 'font-display font-bold', confirmButton: 'rounded-xl text-sm font-semibold px-6 py-2.5' }
       });
     }
 
     function showToast(icon, title) {
       const isLight = document.body.classList.contains('light-mode');
       const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 2500,
-        timerProgressBar: true,
-        background: isLight ? '#ffffff' : '#1e293b',
-        color: isLight ? '#0f1423' : '#e2e8f0'
+        toast: true, position: 'top-end', showConfirmButton: false, timer: 2500, timerProgressBar: true,
+        background: isLight ? '#ffffff' : '#1e293b', color: isLight ? '#0f1423' : '#e2e8f0'
       });
       Toast.fire({ icon: icon, title: title });
     }
@@ -245,102 +112,49 @@
 
   <div class="relative z-10 flex flex-1 w-full">
 
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden"
-      onclick="toggleSidebar()"></div>
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
 
-    <aside id="sidebar"
-      class="fixed top-0 left-0 h-screen w-64 flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out"
-      style="background: rgba(10,14,24,0.95); border-right: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
-
-      <button onclick="toggleSidebar()" class="md:hidden absolute top-6 right-4 text-slate-400 hover:text-white">
-        <i class="fa-solid fa-xmark text-xl"></i>
-      </button>
+    <aside id="sidebar" class="fixed top-0 left-0 h-screen w-64 flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out" style="background: rgba(10,14,24,0.95); border-right: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
+      <button onclick="toggleSidebar()" class="md:hidden absolute top-6 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
 
       <div class="px-6 py-6 flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg flex items-center justify-center"
-          style="background: linear-gradient(135deg,#6366f1,#3b82f6);">
-          <i class="fa-solid fa-chart-line text-white text-sm"></i>
-        </div>
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg,#6366f1,#3b82f6);"><i class="fa-solid fa-chart-line text-white text-sm"></i></div>
         <span class="font-display text-lg logo-text font-bold">EduVesting</span>
       </div>
 
       <div class="mx-4 mb-5 p-3 rounded-xl glass-lighter flex items-center gap-3">
-        <div id="sidebar-user-initial"
-          class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white overflow-hidden"
-          style="background: linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
-        <div class="min-w-0">
-          <p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">Memuat...</p>
-        </div>
+        <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white overflow-hidden" style="background: linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
+        <div class="min-w-0"><p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">Memuat...</p></div>
       </div>
 
       <nav class="flex-1 px-2 space-y-0.5 overflow-y-auto">
         <p class="px-4 py-1.5 text-xs font-semibold text-slate-600 uppercase tracking-widest">Utama</p>
-
-        <a href="dashboard.html"
-          class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-gauge-high w-4 text-center"></i> Dashboard
-        </a>
-        <a href="portfolio.html"
-          class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-briefcase w-4 text-center"></i> Portofolio
-        </a>
-        <a href="transactions.html"
-          class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-wallet w-4 text-center"></i> Keuangan
-        </a>
-        <a href="goals.html"
-          class="nav-item nav-active flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-indigo-300 text-sm font-medium">
-          <i class="fa-solid fa-bullseye w-4 text-center text-indigo-400"></i> Target Dana
-        </a>
-        <a href="allocations.html"
-          class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-chart-pie w-4 text-center"></i> Alokasi Aset
-        </a>
+        <a href="dashboard.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-gauge-high w-4 text-center"></i> Dashboard</a>
+        <a href="portfolio.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-briefcase w-4 text-center"></i> Portofolio</a>
+        <a href="transactions.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-wallet w-4 text-center"></i> Keuangan</a>
+        <a href="goals.html" class="nav-item nav-active flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-indigo-300 text-sm font-medium"><i class="fa-solid fa-bullseye w-4 text-center text-indigo-400"></i> Target Dana</a>
+        <a href="allocations.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-chart-pie w-4 text-center"></i> Alokasi Aset</a>
 
         <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Analisa</p>
-
-        <a href="insights.html"
-          class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-robot w-4 text-center"></i> EduVesting AI
-        </a>
-        <a href="guide.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-book-open w-4 text-center"></i> Edukasi
-        </a>
-        <a href="market.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-chart-line w-4 text-center"></i> Market Insights
-        </a>
-        <a href="calculator.html"
-          class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-calculator w-4 text-center"></i> Kalkulator Investasi
-        </a>
+        <a href="insights.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-robot w-4 text-center"></i> EduVesting AI</a>
+        <a href="guide.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-book-open w-4 text-center"></i> Edukasi</a>
+        <a href="market.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-chart-line w-4 text-center"></i> Market Insights</a>
+        <a href="calculator.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-calculator w-4 text-center"></i> Kalkulator Investasi</a>
 
         <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Akun</p>
-        <a href="settings.html"
-          class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-gear w-4 text-center"></i> Pengaturan
-        </a>
-        <a href="logout.html"
-          class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm">
-          <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout
-        </a>
+        <a href="settings.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-gear w-4 text-center"></i> Pengaturan</a>
+        <a href="logout.html" class="nav-item w-full flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-rose-400 text-sm"><i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Logout</a>
       </nav>
     </aside>
 
-    <main
-      class="flex flex-col flex-1 w-full md:ml-64 px-4 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden">
+    <main class="flex flex-col flex-1 w-full md:ml-64 px-4 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden">
 
       <div class="md:hidden flex items-center justify-between mb-6 fade-up">
         <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-lg flex items-center justify-center"
-            style="background:linear-gradient(135deg,#6366f1,#3b82f6);">
-            <i class="fa-solid fa-chart-line text-white text-sm"></i>
-          </div>
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#6366f1,#3b82f6);"><i class="fa-solid fa-chart-line text-white text-sm"></i></div>
           <span class="font-display text-lg logo-text font-bold tracking-wide">EduVesting</span>
         </div>
-        <button onclick="toggleSidebar()" type="button"
-          class="text-slate-300 hover:text-white transition-colors focus:outline-none z-20">
-          <i class="fa-solid fa-bars text-xl"></i>
-        </button>
+        <button onclick="toggleSidebar()" type="button" class="text-slate-300 hover:text-white transition-colors focus:outline-none z-20"><i class="fa-solid fa-bars text-xl"></i></button>
       </div>
 
       <header class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 fade-up">
@@ -348,11 +162,9 @@
           <h1 class="font-display text-2xl sm:text-3xl text-slate-100 font-semibold mb-1 flex items-center gap-3">
             <i class="fa-solid fa-bullseye text-indigo-400"></i> Perencanaan Target Dana
           </h1>
-          <p class="text-slate-500 text-sm">Tentukan target impian finansialmu, buat target dana, dan pantau progresnya
-            secara berkala.</p>
+          <p class="text-slate-500 text-sm">Tentukan target impian finansialmu, buat target dana, dan pantau progresnya secara berkala.</p>
         </div>
-        <button onclick="openGoalModal()"
-          class="btn-primary px-5 py-3 rounded-xl text-sm font-semibold text-white flex items-center gap-2 self-start sm:self-auto shadow-lg shadow-indigo-500/20">
+        <button onclick="openGoalModal()" class="btn-primary px-5 py-3 rounded-xl text-sm font-semibold text-white flex items-center gap-2 self-start sm:self-auto shadow-lg shadow-indigo-500/20">
           <i class="fa-solid fa-plus"></i> Tambah Target
         </button>
       </header>
@@ -360,9 +172,7 @@
       <!-- Dashboard Mini Stats -->
       <section class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8 fade-up delay-1">
         <div class="glass rounded-2xl p-5 flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl flex items-center justify-center text-indigo-400 bg-indigo-500/10">
-            <i class="fa-solid fa-piggy-bank text-xl"></i>
-          </div>
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center text-indigo-400 bg-indigo-500/10"><i class="fa-solid fa-piggy-bank text-xl"></i></div>
           <div>
             <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Total Tabungan Target</p>
             <h3 id="stat-total-saved" class="text-xl sm:text-2xl font-bold font-display text-slate-200 mt-0.5">Rp 0</h3>
@@ -370,13 +180,10 @@
         </div>
 
         <div class="glass rounded-2xl p-5 flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl flex items-center justify-center text-emerald-400 bg-emerald-500/10">
-            <i class="fa-solid fa-flag text-xl"></i>
-          </div>
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center text-emerald-400 bg-emerald-500/10"><i class="fa-solid fa-flag text-xl"></i></div>
           <div>
             <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Total Sasaran Dana</p>
-            <h3 id="stat-total-target" class="text-xl sm:text-2xl font-bold font-display text-slate-200 mt-0.5">Rp 0
-            </h3>
+            <h3 id="stat-total-target" class="text-xl sm:text-2xl font-bold font-display text-slate-200 mt-0.5">Rp 0</h3>
           </div>
         </div>
 
@@ -386,9 +193,7 @@
             <span id="stat-overall-pct" class="text-sm font-bold text-indigo-400">0%</span>
           </div>
           <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
-            <div id="stat-overall-bar"
-              class="bg-gradient-to-r from-indigo-500 to-emerald-500 h-full rounded-full transition-all duration-700"
-              style="width: 0%"></div>
+            <div id="stat-overall-bar" class="bg-gradient-to-r from-indigo-500 to-emerald-500 h-full rounded-full transition-all duration-700" style="width: 0%"></div>
           </div>
         </div>
       </section>
@@ -399,55 +204,41 @@
           <!-- Dinamis terisi via Javascript -->
         </div>
 
-        <div id="goals-empty-state"
-          class="hidden glass rounded-2xl p-12 text-center max-w-xl mx-auto my-6 flex flex-col items-center justify-center">
-          <div class="w-16 h-16 rounded-full bg-indigo-500/10 flex items-center justify-center mb-4 text-indigo-400">
-            <i class="fa-solid fa-bullseye text-3xl"></i>
-          </div>
+        <div id="goals-empty-state" class="hidden glass rounded-2xl p-12 text-center max-w-xl mx-auto my-6 flex flex-col items-center justify-center">
+          <div class="w-16 h-16 rounded-full bg-indigo-500/10 flex items-center justify-center mb-4 text-indigo-400"><i class="fa-solid fa-bullseye text-3xl"></i></div>
           <h3 class="font-display font-semibold text-lg text-slate-200 mb-1">Belum Ada Target Dana</h3>
-          <p class="text-slate-500 text-sm mb-6 leading-relaxed">Kamu belum menetapkan target keuangan masa depanmu.
-            Mulai sekarang dengan membuat target tabungan baru!</p>
-          <button onclick="openGoalModal()"
-            class="btn-primary py-2.5 px-6 rounded-xl text-sm font-semibold text-white shadow-lg shadow-indigo-500/15">
+          <p class="text-slate-500 text-sm mb-6 leading-relaxed">Kamu belum menetapkan target keuangan masa depanmu. Mulai sekarang dengan membuat target tabungan baru!</p>
+          <button onclick="openGoalModal()" class="btn-primary py-2.5 px-6 rounded-xl text-sm font-semibold text-white shadow-lg shadow-indigo-500/15">
             <i class="fa-solid fa-plus mr-1"></i> Buat Target Pertamamu
           </button>
         </div>
       </section>
 
       <!-- ==========================================
-         MODAL TAMBAH/EDIT TARGET (GLASSMORPHIC)
+         MODAL TAMBAH/EDIT TARGET
       ========================================== -->
-      <div id="goal-modal"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md hidden transition-all duration-300">
-        <div
-          class="glass w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl border border-white/10 mx-4 transform scale-95 transition-transform duration-300"
-          id="goal-modal-content">
+      <div id="goal-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md hidden transition-all duration-300">
+        <div class="glass w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl border border-white/10 mx-4 transform scale-95 transition-transform duration-300" id="goal-modal-content">
 
           <div class="px-6 py-4 border-b border-white/5 flex items-center justify-between bg-slate-900/60">
             <h3 class="font-display font-semibold text-slate-200 text-lg flex items-center gap-2" id="modal-title">
               <i class="fa-solid fa-bullseye text-indigo-400"></i> Buat Target Dana Baru
             </h3>
-            <button onclick="closeGoalModal()" class="text-slate-400 hover:text-white transition-colors">
-              <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
+            <button onclick="closeGoalModal()" class="text-slate-400 hover:text-white transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
           </div>
 
           <form id="goal-form" class="p-6 space-y-4" onsubmit="handleGoalSubmit(event)">
             <input type="hidden" id="goal-id" value="">
 
             <div>
-              <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Nama Impian
-                / Target</label>
-              <input id="g-name" type="text" required placeholder="Cth: Beli Laptop Baru, Dana Darurat"
-                class="form-input w-full rounded-xl px-4 py-3 text-sm">
+              <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Nama Impian / Target</label>
+              <input id="g-name" type="text" required placeholder="Cth: Beli Laptop Baru, Dana Darurat" class="form-input w-full rounded-xl px-4 py-3 text-sm">
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Kategori /
-                  Ikon</label>
-                <select id="g-category" required
-                  class="form-input w-full rounded-xl px-4 py-3 text-sm appearance-none cursor-pointer">
+                <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Kategori / Ikon</label>
+                <select id="g-category" required class="form-input w-full rounded-xl px-4 py-3 text-sm appearance-none cursor-pointer">
                   <option value="gadget">💻 Gadget / Teknologi</option>
                   <option value="travel">✈️ Liburan / Wisata</option>
                   <option value="education">🎓 Pendidikan / Kuliah</option>
@@ -458,64 +249,46 @@
               </div>
 
               <div>
-                <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Tenggat
-                  Waktu (Deadline)</label>
+                <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Tenggat Waktu (Deadline)</label>
                 <input id="g-date" type="date" required class="form-input w-full rounded-xl px-4 py-2.5 text-sm">
               </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Nominal
-                  Target (Rp)</label>
+                <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Nominal Target (Rp)</label>
                 <div class="relative">
                   <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-slate-500 font-semibold">Rp</span>
-                  <input id="g-target-amount" type="number" min="1000" required placeholder="0"
-                    class="form-input w-full rounded-xl pl-11 pr-4 py-3 text-sm font-semibold tabular-nums">
+                  <input id="g-target-amount" type="number" min="1000" required placeholder="0" class="form-input w-full rounded-xl pl-11 pr-4 py-3 text-sm font-semibold tabular-nums">
                 </div>
               </div>
 
               <div>
-                <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Dana Awal
-                  Terkumpul (Rp)</label>
+                <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Dana Terkumpul Awal (Rp)</label>
                 <div class="relative">
                   <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-slate-500 font-semibold">Rp</span>
-                  <input id="g-current-amount" type="number" min="0" required placeholder="0"
-                    class="form-input w-full rounded-xl pl-11 pr-4 py-3 text-sm font-semibold tabular-nums">
+                  <input id="g-current-amount" type="number" min="0" required placeholder="0" class="form-input w-full rounded-xl pl-11 pr-4 py-3 text-sm font-semibold tabular-nums">
                 </div>
               </div>
             </div>
 
             <div class="flex justify-end gap-3 pt-4 border-t border-white/5">
-              <button type="button" onclick="closeGoalModal()"
-                class="text-sm text-slate-400 hover:text-slate-200 py-2.5 px-4 text-center">
-                Batal
-              </button>
-              <button type="submit" id="btn-goal-submit"
-                class="btn-primary px-6 py-2.5 rounded-xl text-sm font-bold text-white shadow-lg shadow-indigo-500/20">
-                Simpan Target
-              </button>
+              <button type="button" onclick="closeGoalModal()" class="text-sm text-slate-400 hover:text-slate-200 py-2.5 px-4 text-center">Batal</button>
+              <button type="submit" id="btn-goal-submit" class="btn-primary px-6 py-2.5 rounded-xl text-sm font-bold text-white shadow-lg shadow-indigo-500/20">Simpan Target</button>
             </div>
           </form>
         </div>
       </div>
 
       <!-- ==========================================
-         MODAL DEPOSIT / TAMBAH SALDO
+         MODAL DEPOSIT
       ========================================== -->
-      <div id="deposit-modal"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md hidden transition-all duration-300">
-        <div
-          class="glass w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl border border-white/10 mx-4 transform scale-95 transition-transform duration-300"
-          id="deposit-modal-content">
+      <div id="deposit-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md hidden transition-all duration-300">
+        <div class="glass w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl border border-white/10 mx-4 transform scale-95 transition-transform duration-300" id="deposit-modal-content">
 
           <div class="px-5 py-4 border-b border-white/5 flex items-center justify-between bg-slate-900/60">
-            <h3 class="font-display font-semibold text-slate-200 text-sm flex items-center gap-2">
-              <i class="fa-solid fa-plus-circle text-emerald-400"></i> Tambah Saldo Tabungan
-            </h3>
-            <button onclick="closeDepositModal()" class="text-slate-400 hover:text-white transition-colors">
-              <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
+            <h3 class="font-display font-semibold text-slate-200 text-sm flex items-center gap-2"><i class="fa-solid fa-plus-circle text-emerald-400"></i> Tambah Saldo Tabungan</h3>
+            <button onclick="closeDepositModal()" class="text-slate-400 hover:text-white transition-colors"><i class="fa-solid fa-xmark text-lg"></i></button>
           </div>
 
           <form id="deposit-form" class="p-5 space-y-4" onsubmit="handleDepositSubmit(event)">
@@ -523,24 +296,16 @@
 
             <div>
               <p id="deposit-goal-title" class="text-xs text-slate-400 font-medium"></p>
-              <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mt-3 mb-1.5">Nominal
-                Tambah Saldo (Rp)</label>
+              <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mt-3 mb-1.5">Nominal Tambah Saldo (Rp)</label>
               <div class="relative">
                 <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-slate-500 font-semibold">Rp</span>
-                <input id="deposit-amount" type="number" min="500" required placeholder="Cth: 50.000"
-                  class="form-input w-full rounded-xl pl-11 pr-4 py-3 text-sm font-semibold tabular-nums">
+                <input id="deposit-amount" type="number" min="500" required placeholder="Cth: 50.000" class="form-input w-full rounded-xl pl-11 pr-4 py-3 text-sm font-semibold tabular-nums">
               </div>
             </div>
 
             <div class="flex justify-end gap-3 pt-3">
-              <button type="button" onclick="closeDepositModal()"
-                class="text-xs text-slate-400 hover:text-slate-200 py-2 px-3 text-center">
-                Batal
-              </button>
-              <button type="submit"
-                class="btn-primary px-5 py-2 rounded-lg text-xs font-bold text-white shadow-md shadow-indigo-500/10">
-                Deposit
-              </button>
+              <button type="button" onclick="closeDepositModal()" class="text-xs text-slate-400 hover:text-slate-200 py-2 px-3 text-center">Batal</button>
+              <button type="submit" class="btn-primary px-5 py-2 rounded-lg text-xs font-bold text-white shadow-md shadow-indigo-500/10">Deposit</button>
             </div>
           </form>
         </div>
@@ -557,7 +322,6 @@
   </div>
 
   <script>
-    // UI TOGGLE SIDEBAR
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebar-overlay');
@@ -565,58 +329,43 @@
       overlay.classList.toggle('hidden');
     }
 
-    // Modal Control Helpers
     function openGoalModal() {
       document.getElementById('goal-form').reset();
       document.getElementById('goal-id').value = '';
       document.getElementById('modal-title').innerHTML = '<i class="fa-solid fa-bullseye text-indigo-400"></i> Buat Target Dana Baru';
-      document.getElementById('g-date').valueAsDate = new Date(Date.now() + 180 * 24 * 60 * 60 * 1000); // 6 bulan ke depan default
-
+      document.getElementById('g-date').valueAsDate = new Date(Date.now() + 180 * 24 * 60 * 60 * 1000); 
       const modal = document.getElementById('goal-modal');
       const content = document.getElementById('goal-modal-content');
       modal.classList.remove('hidden');
-      setTimeout(() => {
-        content.classList.remove('scale-95');
-        content.classList.add('scale-100');
-      }, 50);
+      setTimeout(() => { content.classList.remove('scale-95'); content.classList.add('scale-100'); }, 50);
     }
 
     function closeGoalModal() {
       const modal = document.getElementById('goal-modal');
       const content = document.getElementById('goal-modal-content');
-      content.classList.remove('scale-100');
-      content.classList.add('scale-95');
-      setTimeout(() => {
-        modal.classList.add('hidden');
-      }, 200);
+      content.classList.remove('scale-100'); content.classList.add('scale-95');
+      setTimeout(() => { modal.classList.add('hidden'); }, 200);
     }
 
     function openDepositModal(goalId, goalName) {
       document.getElementById('deposit-form').reset();
       document.getElementById('deposit-goal-id').value = goalId;
       document.getElementById('deposit-goal-title').innerText = `Target: "${goalName}"`;
-
       const modal = document.getElementById('deposit-modal');
       const content = document.getElementById('deposit-modal-content');
       modal.classList.remove('hidden');
-      setTimeout(() => {
-        content.classList.remove('scale-95');
-        content.classList.add('scale-100');
-      }, 50);
+      setTimeout(() => { content.classList.remove('scale-95'); content.classList.add('scale-100'); }, 50);
     }
 
     function closeDepositModal() {
       const modal = document.getElementById('deposit-modal');
       const content = document.getElementById('deposit-modal-content');
-      content.classList.remove('scale-100');
-      content.classList.add('scale-95');
-      setTimeout(() => {
-        modal.classList.add('hidden');
-      }, 200);
+      content.classList.remove('scale-100'); content.classList.add('scale-95');
+      setTimeout(() => { modal.classList.add('hidden'); }, 200);
     }
 
     // ==========================================
-    // SUPABASE CONFIG & DATA LAYER
+    // SUPABASE MURNI (TANPA LOCALSTORAGE FALLBACK)
     // ==========================================
     const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
@@ -628,11 +377,7 @@
     document.addEventListener('DOMContentLoaded', async () => {
       try {
         const { data: { session }, error } = await supabaseClient.auth.getSession();
-
-        if (error || !session) {
-          window.location.href = 'login.html';
-          return;
-        }
+        if (error || !session) { window.location.href = 'login.html'; return; }
 
         const user = session.user;
         currentUserId = user.id;
@@ -641,7 +386,6 @@
         const avatarUrl = user.user_metadata?.custom_avatar_url || user.user_metadata?.avatar_url;
 
         document.getElementById('sidebar-user-name').innerText = displayName;
-
         const sbAvatar = document.getElementById('sidebar-user-initial');
         if (avatarUrl) {
           sbAvatar.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover">`;
@@ -650,18 +394,14 @@
         }
 
         await loadGoals();
-
-      } catch (err) {
-        console.error("Gagal mendapatkan sesi Auth:", err);
-      }
+      } catch (err) { console.error("Gagal mendapatkan sesi Auth:", err); }
     });
 
-    // CRUD LOGIC & STORAGE FALLBACK
+    // MURNI TARIK DARI CLOUD SUPABASE
     async function loadGoals() {
       if (!currentUserId) return;
 
       try {
-        // Coba ambil dari Supabase
         const { data, error } = await supabaseClient
           .from('goals')
           .select('*')
@@ -670,14 +410,11 @@
 
         if (error) throw error;
         goals = data || [];
-        console.log("Goals loaded from Supabase Cloud");
+        renderGoals();
       } catch (err) {
-        console.warn("Gagal terhubung ke tabel Supabase 'goals', menggunakan localStorage fallback:", err.message);
-        const localData = localStorage.getItem('eduvesting_goals_' + currentUserId);
-        goals = localData ? JSON.parse(localData) : [];
+        console.error("Gagal load goals Supabase:", err.message);
+        showCustomAlert('error', 'Gagal Memuat Target', 'Pastikan pengaturan RLS tabel "goals" di Supabase sudah benar.');
       }
-
-      renderGoals();
     }
 
     async function handleGoalSubmit(e) {
@@ -698,67 +435,32 @@
 
       if (!name || target_amount <= 0 || current_amount < 0) {
         showCustomAlert('warning', 'Data tidak valid', 'Pastikan nama dan nominal target sudah terisi dengan benar.');
-        btn.disabled = false;
-        btn.innerText = originalText;
-        return;
+        btn.disabled = false; btn.innerText = originalText; return;
       }
 
-      const isEdit = !!id;
-      const isLocal = id.startsWith('local_') || !id;
-
       try {
-        if (isEdit) {
-          // UPDATE
-          if (isLocal) {
-            // Update local
-            let localGoals = JSON.parse(localStorage.getItem('eduvesting_goals_' + currentUserId) || '[]');
-            const index = localGoals.findIndex(g => g.id === id);
-            if (index > -1) {
-              localGoals[index] = { ...localGoals[index], name, category, target_date, target_amount, current_amount };
-              localStorage.setItem('eduvesting_goals_' + currentUserId, JSON.stringify(localGoals));
-            }
-          } else {
-            // Update Supabase
-            const { error } = await supabaseClient
-              .from('goals')
-              .update({ name, category, target_date, target_amount, current_amount })
-              .eq('id', id);
-            if (error) throw error;
-          }
+        if (id) {
+          // UPDATE CLOUD
+          const { error } = await supabaseClient
+            .from('goals')
+            .update({ name, category, target_date, target_amount, current_amount })
+            .eq('id', id);
+          if (error) throw error;
           showToast('success', 'Hore! Target berhasil diubah.');
         } else {
-          // INSERT NEW
-          try {
-            // Coba simpan ke Supabase
-            const { error } = await supabaseClient
-              .from('goals')
-              .insert([{ user_id: currentUserId, name, category, target_date, target_amount, current_amount }]);
-            if (error) throw error;
-            showToast('success', 'Target baru berhasil ditambahkan!');
-          } catch (insertErr) {
-            console.warn("Gagal simpan ke Supabase cloud, menyimpan ke local storage...");
-            let localGoals = JSON.parse(localStorage.getItem('eduvesting_goals_' + currentUserId) || '[]');
-            const newGoal = {
-              id: 'local_' + Date.now(),
-              user_id: currentUserId,
-              name,
-              category,
-              target_date,
-              target_amount,
-              current_amount,
-              created_at: new Date().toISOString()
-            };
-            localGoals.push(newGoal);
-            localStorage.setItem('eduvesting_goals_' + currentUserId, JSON.stringify(localGoals));
-            showToast('success', 'Target disimpan secara lokal (Offline mode).');
-          }
+          // INSERT CLOUD
+          const { error } = await supabaseClient
+            .from('goals')
+            .insert([{ user_id: currentUserId, name, category, target_date, target_amount, current_amount }]);
+          if (error) throw error;
+          showToast('success', 'Target baru berhasil ditambahkan!');
         }
 
         closeGoalModal();
         await loadGoals();
       } catch (err) {
         console.error("Gagal menyimpan target dana:", err);
-        showCustomAlert('error', 'Gagal menyimpan', 'Ada kesalahan: ' + err.message);
+        showCustomAlert('error', 'Gagal menyimpan', 'Ada kesalahan ke database: ' + err.message);
       } finally {
         btn.disabled = false;
         btn.innerText = originalText;
@@ -770,32 +472,19 @@
       const id = document.getElementById('deposit-goal-id').value;
       const amount = parseFloat(document.getElementById('deposit-amount').value) || 0;
 
-      if (amount <= 0 || !id) {
-        showToast('error', 'Nominal deposit tidak valid');
-        return;
-      }
+      if (amount <= 0 || !id) { showToast('error', 'Nominal deposit tidak valid'); return; }
 
       const targetGoal = goals.find(g => g.id == id);
       if (!targetGoal) return;
 
       const newCurrentAmount = (targetGoal.current_amount || 0) + amount;
-      const isLocal = String(id).startsWith('local_');
 
       try {
-        if (isLocal) {
-          let localGoals = JSON.parse(localStorage.getItem('eduvesting_goals_' + currentUserId) || '[]');
-          const idx = localGoals.findIndex(g => g.id == id);
-          if (idx > -1) {
-            localGoals[idx].current_amount = newCurrentAmount;
-            localStorage.setItem('eduvesting_goals_' + currentUserId, JSON.stringify(localGoals));
-          }
-        } else {
-          const { error } = await supabaseClient
-            .from('goals')
-            .update({ current_amount: newCurrentAmount })
-            .eq('id', id);
-          if (error) throw error;
-        }
+        const { error } = await supabaseClient
+          .from('goals')
+          .update({ current_amount: newCurrentAmount })
+          .eq('id', id);
+        if (error) throw error;
 
         showToast('success', `Berhasil menabung Rp ${amount.toLocaleString('id-ID')}!`);
         closeDepositModal();
@@ -822,43 +511,22 @@
       const modal = document.getElementById('goal-modal');
       const content = document.getElementById('goal-modal-content');
       modal.classList.remove('hidden');
-      setTimeout(() => {
-        content.classList.remove('scale-95');
-        content.classList.add('scale-100');
-      }, 50);
+      setTimeout(() => { content.classList.remove('scale-95'); content.classList.add('scale-100'); }, 50);
     }
 
     async function deleteGoal(id) {
       const isLight = document.body.classList.contains('light-mode');
       Swal.fire({
-        title: 'Hapus Target?',
-        text: 'Target tabungan ini akan dihapus secara permanen. Apakah kamu yakin?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#f43f5e',
-        cancelButtonColor: '#64748b',
-        confirmButtonText: 'Ya, Hapus!',
-        cancelButtonText: 'Batal',
-        background: isLight ? '#ffffff' : '#1e293b',
-        color: isLight ? '#0f1423' : '#e2e8f0',
-        customClass: {
-          popup: 'rounded-2xl border ' + (isLight ? 'border-slate-200 shadow-xl' : 'border-white/10 shadow-2xl'),
-          title: 'font-display font-bold',
-          confirmButton: 'rounded-xl text-sm font-semibold px-5 py-2.5',
-          cancelButton: 'rounded-xl text-sm font-semibold px-5 py-2.5'
-        }
+        title: 'Hapus Target?', text: 'Target tabungan ini akan dihapus secara permanen. Yakin?', icon: 'warning',
+        showCancelButton: true, confirmButtonColor: '#f43f5e', cancelButtonColor: '#64748b', confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal', background: isLight ? '#ffffff' : '#1e293b', color: isLight ? '#0f1423' : '#e2e8f0',
+        customClass: { popup: 'rounded-2xl border ' + (isLight ? 'border-slate-200 shadow-xl' : 'border-white/10 shadow-2xl'), title: 'font-display font-bold', confirmButton: 'rounded-xl text-sm font-semibold px-5 py-2.5', cancelButton: 'rounded-xl text-sm font-semibold px-5 py-2.5' }
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            const isLocal = String(id).startsWith('local_');
-            if (isLocal) {
-              let localGoals = JSON.parse(localStorage.getItem('eduvesting_goals_' + currentUserId) || '[]');
-              localGoals = localGoals.filter(g => g.id != id);
-              localStorage.setItem('eduvesting_goals_' + currentUserId, JSON.stringify(localGoals));
-            } else {
-              const { error } = await supabaseClient.from('goals').delete().eq('id', id);
-              if (error) throw error;
-            }
+            const { error } = await supabaseClient.from('goals').delete().eq('id', id);
+            if (error) throw error;
+            
             showToast('success', 'Target berhasil dihapus.');
             await loadGoals();
           } catch (err) {
@@ -869,9 +537,6 @@
       });
     }
 
-    // ==========================================
-    // UI RENDERING & CALCULATIONS
-    // ==========================================
     function formatRupiah(num) {
       return 'Rp ' + Math.round(num).toLocaleString('id-ID');
     }
@@ -901,9 +566,7 @@
       grid.classList.remove('hidden');
       emptyState.classList.add('hidden');
 
-      let totalSaved = 0;
-      let totalTarget = 0;
-      let totalProgressSum = 0;
+      let totalSaved = 0; let totalTarget = 0; let totalProgressSum = 0;
 
       goals.forEach(g => {
         totalSaved += (g.current_amount || 0);
@@ -912,10 +575,8 @@
         const progressPercent = Math.min(100, Math.round(((g.current_amount || 0) / (g.target_amount || 1)) * 100));
         totalProgressSum += progressPercent;
 
-        // Hitung sisa hari & cicilan bulanan
         const targetDate = new Date(g.target_date);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const today = new Date(); today.setHours(0, 0, 0, 0);
         const timeDiff = targetDate.getTime() - today.getTime();
         const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
@@ -925,7 +586,7 @@
             const monthsLeft = Math.max(1, Math.round(daysLeft / 30.4));
             const neededAmount = (g.target_amount || 0) - (g.current_amount || 0);
             const monthlySaving = Math.ceil(neededAmount / monthsLeft);
-            monthlyRecommendation = formatRupiah(monthlySaving) + ' / bulan';
+            monthlyRecommendation = formatRupiah(monthlySaving) + ' / bln';
           } else {
             monthlyRecommendation = 'Segera Penuhi!';
           }
@@ -944,16 +605,14 @@
           <div>
             <div class="flex items-start justify-between gap-3 mb-4">
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl flex items-center justify-center ${catMeta.color}">
-                  <i class="fa-solid ${catMeta.icon} text-lg"></i>
-                </div>
-                <div>
-                  <h4 class="font-display font-bold text-slate-200 text-sm md:text-base leading-tight truncate w-40 sm:w-48">${g.name}</h4>
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center ${catMeta.color}"><i class="fa-solid ${catMeta.icon} text-lg"></i></div>
+                <div class="min-w-0">
+                  <h4 class="font-display font-bold text-slate-200 text-sm md:text-base leading-tight truncate" title="${g.name}">${g.name}</h4>
                   <span class="text-[10px] text-slate-500 capitalize tracking-wider">${g.category || 'Lainnya'}</span>
                 </div>
               </div>
               
-              <div class="flex flex-col items-end">
+              <div class="flex flex-col items-end shrink-0">
                 ${isUrgent ? `<span class="bg-rose-500/20 text-rose-400 text-[9px] font-bold px-2 py-0.5 rounded border border-rose-500/20 uppercase tracking-widest mb-1 animate-pulse">URGENT</span>` : ''}
                 <span class="text-xs font-semibold ${daysLeft < 0 ? 'text-rose-400' : daysLeft <= 30 ? 'text-amber-400' : 'text-slate-500'}">
                   ${daysLeft < 0 ? 'Tenggat Lewat' : daysLeft === 0 ? 'Hari ini' : daysLeft + ' hari lagi'}
@@ -961,7 +620,6 @@
               </div>
             </div>
 
-            <!-- Progres Bar -->
             <div class="mb-4">
               <div class="flex items-end justify-between mb-1.5">
                 <span class="text-[11px] text-slate-500">Dana Terkumpul</span>
@@ -983,22 +641,13 @@
               <p class="text-xs font-bold text-slate-200 mt-0.5">${monthlyRecommendation}</p>
             </div>
             
-            <div class="flex items-center gap-1">
-              ${progressPercent < 100 ? `
-                <button onclick="openDepositModal('${g.id}', '${g.name}')" title="Tabung Uang" class="w-9 h-9 rounded-xl flex items-center justify-center bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 transition-colors">
-                  <i class="fa-solid fa-piggy-bank text-sm"></i>
-                </button>
-              ` : ''}
-              <button onclick="editGoal('${g.id}')" title="Edit Target" class="w-9 h-9 rounded-xl flex items-center justify-center bg-slate-800 text-slate-400 hover:text-slate-200 transition-colors">
-                <i class="fa-solid fa-pen-to-square text-sm"></i>
-              </button>
-              <button onclick="deleteGoal('${g.id}')" title="Hapus Target" class="w-9 h-9 rounded-xl flex items-center justify-center bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 transition-colors">
-                <i class="fa-solid fa-trash text-sm"></i>
-              </button>
+            <div class="flex items-center gap-1 shrink-0">
+              ${progressPercent < 100 ? `<button onclick="openDepositModal('${g.id}', '${g.name.replace(/'/g, "\\'")}')" title="Tabung Uang" class="w-9 h-9 rounded-xl flex items-center justify-center bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 transition-colors"><i class="fa-solid fa-piggy-bank text-sm"></i></button>` : ''}
+              <button onclick="editGoal('${g.id}')" title="Edit Target" class="w-9 h-9 rounded-xl flex items-center justify-center bg-slate-800 text-slate-400 hover:text-slate-200 transition-colors"><i class="fa-solid fa-pen-to-square text-sm"></i></button>
+              <button onclick="deleteGoal('${g.id}')" title="Hapus Target" class="w-9 h-9 rounded-xl flex items-center justify-center bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 transition-colors"><i class="fa-solid fa-trash text-sm"></i></button>
             </div>
           </div>
         `;
-
         grid.appendChild(card);
       });
 
@@ -1010,9 +659,7 @@
       document.getElementById('stat-total-saved').innerText = formatRupiah(saved);
       document.getElementById('stat-total-target').innerText = formatRupiah(target);
       document.getElementById('stat-overall-pct').innerText = progress + '%';
-
-      const bar = document.getElementById('stat-overall-bar');
-      bar.style.width = progress + '%';
+      document.getElementById('stat-overall-bar').style.width = progress + '%';
     }
   </script>
 </body>
