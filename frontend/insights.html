@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html lang="id" class="dark">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EduVesting — AI Insights</title>
+  <title>EduVesting — Alokasi Aset</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+    rel="stylesheet" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script>
     tailwind.config = {
@@ -23,9 +27,6 @@
           colors: {
             base: { 950: '#07090f', 900: '#0f1423', 850: '#131928', 800: '#1a2235', 750: '#1e2840', 700: '#253049' },
             accent: { blue: '#3b82f6', indigo: '#6366f1', violet: '#7c3aed', cyan: '#06b6d4', emerald: '#10b981', amber: '#f59e0b', rose: '#f43f5e' }
-          },
-          animation: {
-            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
           }
         }
       }
@@ -34,93 +35,105 @@
 
   <style>
     * { box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; background-color: #07090f; color: #e2e8f0; min-height: 100vh; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
 
-    .nav-active { background: linear-gradient(90deg, rgba(124,58,237,0.18) 0%, transparent 100%); border-left: 3px solid #7c3aed; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #07090f;
+      color: #e2e8f0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .nav-active { background: linear-gradient(90deg, rgba(6, 182, 212, 0.18) 0%, transparent 100%); border-left: 3px solid #06b6d4; }
     .nav-item { border-left: 3px solid transparent; transition: all 0.2s ease; }
-    .nav-item:hover { background: linear-gradient(90deg, rgba(99,102,241,0.1) 0%, transparent 100%); border-left-color: rgba(99,102,241,0.5); color: #a5b4fc; }
+    .nav-item:hover { background: linear-gradient(90deg, rgba(99, 102, 241, 0.1) 0%, transparent 100%); border-left-color: rgba(99, 102, 241, 0.5); color: #a5b4fc; }
 
-    .glass { background: rgba(19, 25, 40, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); transition: all 0.3s ease; }
-    .glass-lighter { background: rgba(30,40,64,0.6); backdrop-filter: blur(8px); border:1px solid rgba(255,255,255,0.07); transition: all 0.3s ease; }
+    .glass { background: rgba(19, 25, 40, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.06); transition: all 0.3s ease; }
+    .glass-lighter { background: rgba(30, 40, 64, 0.6); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.07); transition: all 0.3s ease; }
 
-    .mesh-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0;
-      background: radial-gradient(ellipse 60% 40% at 15% 10%, rgba(124,58,237,0.08) 0%, transparent 70%),
-                  radial-gradient(ellipse 50% 50% at 85% 80%, rgba(6,182,212,0.07) 0%, transparent 60%);
+    .mesh-bg {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background: radial-gradient(ellipse 60% 40% at 15% 10%, rgba(6, 182, 212, 0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 50% at 85% 80%, rgba(59, 130, 246, 0.07) 0%, transparent 60%);
     }
 
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.3); border-radius: 9px; }
-
-    .progress-bar { height: 8px; border-radius: 99px; background: rgba(255,255,255,0.07); overflow: hidden; position: relative; }
-    .progress-fill { height: 100%; border-radius: 99px; transition: width 1s cubic-bezier(0.22,1,0.36,1); position: relative; }
-
-    .ai-border { position: relative; }
-    .ai-border::before {
-      content: ''; position: absolute; inset: -1px; border-radius: inherit; padding: 1px;
-      background: linear-gradient(45deg, transparent, rgba(124,58,237,0.5), rgba(6,182,212,0.5), transparent);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
-    }
-
-    .chat-bubble-ai { background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(99,102,241,0.1)); border: 1px solid rgba(124,58,237,0.2); border-bottom-left-radius: 4px; }
-    .chat-bubble-user { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-bottom-right-radius: 4px; }
-
-    .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
-    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-    @keyframes typing { 0%, 80%, 100% { transform: scale(0); opacity: 0.5; } 40% { transform: scale(1); opacity: 1; } }
+    ::-webkit-scrollbar-thumb { background: rgba(6, 182, 212, 0.3); border-radius: 9px; }
 
     @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
     .fade-up { animation: fadeUp 0.5s ease both; }
-    .delay-1 { animation-delay: 0.07s; }
+    .delay-1 { animation-delay: 0.1s; }
 
-    .logo-text { background: linear-gradient(90deg,#a5b4fc,#93c5fd); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .logo-text { background: linear-gradient(90deg, #a5b4fc, #93c5fd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-    .tab-btn { border-bottom: 2px solid transparent; transition: all 0.3s ease; }
-    .tab-active { border-bottom: 2px solid #7c3aed; color: #a5b4fc; background: linear-gradient(0deg, rgba(124,58,237,0.1) 0%, transparent 100%); }
-    .tab-inactive { color: #64748b; }
-    .tab-inactive:hover { color: #cbd5e1; }
+    .donut-chart {
+      width: 170px; height: 170px; border-radius: 50%;
+      background: conic-gradient(rgba(255, 255, 255, 0.05) 100%);
+      position: relative; transition: background 0.6s ease;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    .donut-hole {
+      position: absolute; width: 110px; height: 110px; background: #0f1423;
+      border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: background-color 0.3s ease;
+    }
+
+    .form-input {
+      background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: border-color 0.2s ease; color: #e2e8f0;
+    }
+    .form-input:focus { outline: none; border-color: rgba(6, 182, 212, 0.6); box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15); }
+
+    .btn-profile { transition: all 0.2s ease; }
+    .btn-profile-active {
+      background: linear-gradient(135deg, #06b6d4, #3b82f6); color: white;
+      box-shadow: 0 4px 12px -2px rgba(6, 182, 212, 0.4); border-color: transparent;
+    }
 
     /* LIGHT MODE STYLES */
     body.light-mode { background-color: #f8fafc; color: #0f1423; }
-    body.light-mode .glass, body.light-mode .glass-lighter { background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    body.light-mode .glass, body.light-mode .glass-lighter {
+      background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0, 0, 0, 0.08); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
     body.light-mode .text-slate-200, body.light-mode .text-slate-300, body.light-mode .text-slate-100 { color: #1e293b; }
-    body.light-mode .text-white { color: #0f1423; } 
     body.light-mode .text-slate-400, body.light-mode .text-slate-500 { color: #475569; }
-    body.light-mode aside { background: rgba(255, 255, 255, 0.95) !important; border-right: 1px solid rgba(0,0,0,0.08); }
-
-    body.light-mode .bg-slate-900\/80, body.light-mode .bg-slate-900\/50, body.light-mode .bg-slate-900 { background-color: #f1f5f9 !important; border-color: #cbd5e1; }
-    body.light-mode .bg-slate-800, body.light-mode .bg-slate-800\/80 { background-color: #e2e8f0 !important; border-color: #cbd5e1; color: #1e293b; }
-    body.light-mode #chat-box { background: rgba(255, 255, 255, 0.6) !important; }
-    body.light-mode .chat-bubble-ai { background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(99,102,241,0.05)); border: 1px solid rgba(124,58,237,0.3); color: #1e293b; }
-    body.light-mode .chat-bubble-user { background: #ffffff; border: 1px solid #cbd5e1; box-shadow: 0 2px 4px rgba(0,0,0,0.05); color: #1e293b; }
-    body.light-mode input#chat-input { background: #ffffff !important; border-color: #cbd5e1; color: #0f1423; }
-    body.light-mode input#chat-input::placeholder { color: #64748b; }
-    body.light-mode .ai-border::before { background: linear-gradient(45deg, transparent, rgba(124,58,237,0.3), rgba(6,182,212,0.3), transparent); }
+    body.light-mode aside { background: rgba(255, 255, 255, 0.95) !important; border-right: 1px solid rgba(0, 0, 0, 0.08); }
+    body.light-mode .donut-hole { background: #ffffff; }
+    body.light-mode .form-input { background: #ffffff !important; border-color: #cbd5e1; color: #0f1423; }
   </style>
 </head>
 
-<body class="relative">
+<body class="relative flex flex-col min-h-screen">
 
   <script>
-    if(localStorage.getItem('theme') === 'light') {
-      document.body.classList.add('light-mode');
+    if (localStorage.getItem('theme') === 'light') { document.body.classList.add('light-mode'); }
+
+    // Fungsi Toast Global untuk Feedback
+    function showToast(icon, title) {
+      const isLight = document.body.classList.contains('light-mode');
+      const Toast = Swal.mixin({
+        toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true,
+        background: isLight ? '#ffffff' : '#1e293b', color: isLight ? '#0f1423' : '#e2e8f0',
+        didOpen: (toast) => { toast.addEventListener('mouseenter', Swal.stopTimer); toast.addEventListener('mouseleave', Swal.resumeTimer); }
+      });
+      Toast.fire({ icon: icon, title: title });
     }
   </script>
 
   <div class="mesh-bg" aria-hidden="true"></div>
 
-  <div class="relative z-10 flex min-h-screen">
+  <div class="relative z-10 flex flex-1 w-full">
 
     <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
 
     <aside id="sidebar" class="fixed top-0 left-0 h-screen w-64 flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out"
-           style="background: rgba(10,14,24,0.95); border-right: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
+      style="background: rgba(10,14,24,0.95); border-right: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(16px);">
 
-      <button onclick="toggleSidebar()" class="md:hidden absolute top-6 right-4 text-slate-400 hover:text-white">
-        <i class="fa-solid fa-xmark text-xl"></i>
-      </button>
+      <button onclick="toggleSidebar()" class="md:hidden absolute top-6 right-4 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
 
       <div class="px-6 py-6 flex items-center gap-3">
         <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg,#6366f1,#3b82f6);">
@@ -130,10 +143,9 @@
       </div>
 
       <div class="mx-4 mb-5 p-3 rounded-xl glass-lighter flex items-center gap-3">
-        <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white overflow-hidden" style="background: linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
-        <div class="min-w-0">
-          <p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">Memuat...</p>
-        </div>
+        <div id="sidebar-user-initial" class="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white overflow-hidden"
+          style="background: linear-gradient(135deg,#7c3aed,#6366f1);">U</div>
+        <div class="min-w-0"><p id="sidebar-user-name" class="text-sm font-medium text-slate-200 truncate">Memuat...</p></div>
       </div>
 
       <nav class="flex-1 px-2 space-y-0.5 overflow-y-auto">
@@ -142,17 +154,12 @@
         <a href="portfolio.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-briefcase w-4 text-center"></i> Portofolio</a>
         <a href="transactions.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-wallet w-4 text-center"></i> Keuangan</a>
         <a href="goals.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-bullseye w-4 text-center"></i> Target Dana</a>
-        <a href="allocations.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-chart-pie w-4 text-center"></i> Alokasi Aset</a>
+        <a href="allocations.html" class="nav-item nav-active flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-indigo-300 text-sm font-medium"><i class="fa-solid fa-chart-pie w-4 text-center text-indigo-400"></i> Alokasi Aset</a>
 
         <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Analisa</p>
-        <a href="insights.html" class="nav-item nav-active flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-violet-300 text-sm font-medium"><i class="fa-solid fa-robot w-4 text-center text-violet-400"></i> EduVesting AI</a>
-        <a href="guide.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm">
-          <i class="fa-solid fa-book-open w-4 text-center"></i> Edukasi
-        </a>
-        <a href="market.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"> 
-           <i class="fa-solid fa-chart-line w-4 text-center"></i> Market Insights 
-        </a>
-
+        <a href="insights.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-robot w-4 text-center"></i> EduVesting AI</a>
+        <a href="guide.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-book-open w-4 text-center"></i> Edukasi</a>
+        <a href="market.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-chart-line w-4 text-center"></i> Market Insights</a>
         <a href="calculator.html" class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-r-lg text-slate-400 text-sm"><i class="fa-solid fa-calculator w-4 text-center"></i> Kalkulator Investasi</a>
 
         <p class="px-4 py-1.5 mt-3 text-xs font-semibold text-slate-600 uppercase tracking-widest">Akun</p>
@@ -161,7 +168,7 @@
       </nav>
     </aside>
 
-    <main class="flex-1 w-full md:max-w-[calc(100%-16rem)] md:ml-64 px-4 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden flex flex-col">
+    <main class="flex flex-col flex-1 w-full md:ml-64 px-4 sm:px-6 md:px-8 py-6 md:py-8 transition-all duration-300 overflow-x-hidden">
 
       <div class="md:hidden flex items-center justify-between mb-6 fade-up">
         <div class="flex items-center gap-3">
@@ -170,147 +177,156 @@
           </div>
           <span class="font-display text-lg logo-text font-bold tracking-wide">EduVesting</span>
         </div>
-        <button onclick="toggleSidebar()" type="button" class="text-slate-300 hover:text-white transition-colors focus:outline-none z-20">
-          <i class="fa-solid fa-bars text-xl"></i>
-        </button>
+        <button onclick="toggleSidebar()" type="button" class="text-slate-300 hover:text-white transition-colors focus:outline-none z-20"><i class="fa-solid fa-bars text-xl"></i></button>
       </div>
 
-      <header class="flex items-center justify-between mb-6 fade-up">
+      <header class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4 fade-up">
         <div>
-          <h1 class="font-display text-2xl text-slate-100 flex items-center gap-3">
-            EduVesting AI <span class="text-xs bg-violet-500/20 text-violet-300 px-2 py-1 rounded-md border border-violet-500/30 uppercase tracking-wider font-semibold">Beta</span>
+          <h1 class="font-display text-2xl sm:text-3xl text-slate-100 font-semibold mb-1 flex items-center gap-3">
+            <i class="fa-solid fa-chart-pie text-cyan-400"></i> Analisis Alokasi Aset & Rebalancing
           </h1>
-          <p class="text-slate-500 text-sm mt-1">Asisten pintar untuk evaluasi finansial kamu.</p>
+          <p class="text-slate-500 text-sm">Pantau deviasi alokasi aset riil kamu dari target ideal dan biarkan AI menyusun ulang keseimbangan portofolio.</p>
         </div>
       </header>
 
-      <div class="flex border-b border-slate-700/50 mb-6 fade-up delay-1">
-        <button onclick="switchTab('analytics')" id="tab-analytics" class="tab-btn tab-active px-6 py-3 font-medium text-sm flex items-center gap-2">
-          <i class="fa-solid fa-chart-pie"></i> Visualisasi Metrik
-        </button>
-        <button onclick="switchTab('chat')" id="tab-chat" class="tab-btn tab-inactive px-6 py-3 font-medium text-sm flex items-center gap-2">
-          <i class="fa-solid fa-robot"></i> Copilot Chat
-        </button>
+      <div id="alloc-empty-state" class="hidden glass rounded-2xl p-10 text-center max-w-xl mx-auto my-6 flex flex-col items-center justify-center fade-up">
+        <div class="w-16 h-16 rounded-full bg-cyan-500/10 flex items-center justify-center mb-4 text-cyan-400"><i class="fa-solid fa-triangle-exclamation text-2xl"></i></div>
+        <h3 class="font-display font-semibold text-lg text-slate-200 mb-1">Portofolio Kamu Masih Kosong!</h3>
+        <p class="text-slate-500 text-sm mb-6 leading-relaxed">Kami tidak dapat menganalisis alokasi aset karena belum ada aset atau saldo kas yang tercatat di portofolio kamu.</p>
+        <a href="portfolio.html" class="btn-primary py-2.5 px-6 rounded-xl text-sm font-semibold text-white shadow-lg shadow-indigo-500/15" style="background: linear-gradient(135deg,#6366f1,#3b82f6);">
+          <i class="fa-solid fa-plus mr-1"></i> Kelola Portofolio Sekarang
+        </a>
       </div>
 
-      <div id="view-analytics" class="fade-up delay-1 space-y-6">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div id="alloc-main-layout" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start fade-up delay-1">
 
-          <div class="glass ai-border rounded-2xl p-6 flex flex-col items-center justify-center text-center relative overflow-hidden">
-            <h2 class="text-sm font-semibold text-slate-300 w-full text-left mb-4 relative z-10">Metrik AI Keseluruhan</h2>
+        <div class="lg:col-span-4 space-y-6">
 
-            <div class="relative w-36 h-36 flex items-center justify-center mb-4 z-10">
-              <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8" />
-                <circle id="score-circle" cx="50" cy="50" r="45" fill="none" stroke="url(#gradient)" stroke-width="8" stroke-dasharray="283 283" stroke-linecap="round" class="transition-all duration-1500 ease-out" />
-                <defs>
-                  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#3b82f6" />
-                    <stop offset="50%" stop-color="#8b5cf6" />
-                    <stop offset="100%" stop-color="#06b6d4" />
-                  </linearGradient>
-                </defs>
-              </svg>
-              <div class="flex flex-col items-center">
-                <span id="health-score-val" class="font-display text-4xl font-bold text-slate-500">?</span>
-                <span class="text-xs text-slate-500 mt-1">/ 10</span>
-              </div>
-            </div>
-
-            <div class="flex gap-4 w-full mb-5 z-10">
-              <div class="flex-1 bg-slate-900/50 rounded-lg p-2 border border-white/5">
-                <p class="text-[10px] text-slate-500 uppercase tracking-wider mb-0.5">Risiko</p>
-                <p id="health-risk-label" class="text-sm font-bold text-slate-400">—</p>
-              </div>
-              <div class="flex-1 bg-slate-900/50 rounded-lg p-2 border border-white/5">
-                <p class="text-[10px] text-slate-500 uppercase tracking-wider mb-0.5">Diversifikasi</p>
-                <p id="health-div-label" class="text-sm font-bold text-slate-400">—</p>
-              </div>
-            </div>
-
-            <button id="btn-generate-score" onclick="generateScoreFromAI()" class="w-full py-2.5 rounded-xl text-sm font-semibold bg-violet-600 hover:bg-violet-500 text-white transition shadow-lg shadow-violet-500/20 z-10">
-              <i class="fa-solid fa-bolt mr-2"></i> Sinkronisasi AI Baru
-            </button>
-            <p id="health-score-desc" class="text-[11px] text-slate-500 mt-3 hidden z-10">Terakhir diperbarui: Data tersimpan di Supabase Cloud.</p>
-          </div>
-
-          <div class="glass rounded-2xl p-6 lg:col-span-2 flex flex-col">
-            <div class="flex items-center justify-between mb-5">
-              <h2 class="text-sm font-semibold text-slate-300 flex items-center gap-2">
-                <i class="fa-solid fa-list-check text-violet-400"></i> Pantauan Aset Otomatis
-              </h2>
-            </div>
-            <div id="recom-container" class="space-y-4 flex-1 overflow-y-auto pr-2">
-              <p class="text-sm text-slate-500 text-center mt-10"><i class="fa-solid fa-circle-notch fa-spin"></i> Menarik data portofolio...</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="glass rounded-2xl p-6">
-          <div class="flex items-center gap-2 mb-6">
-            <i class="fa-solid fa-chart-simple text-cyan-400"></i>
-            <h2 class="text-sm font-semibold text-slate-300">Konsentrasi Kelas Aset (Bahan Analisis AI)</h2>
-          </div>
-          <div id="sector-container" class="space-y-4 grid grid-cols-1 md:grid-cols-2 gap-x-8">
-             <p class="text-sm text-slate-500 col-span-2"><i class="fa-solid fa-circle-notch fa-spin"></i> Menghitung alokasi...</p>
-          </div>
-        </div>
-      </div>
-
-      <div id="view-chat" class="hidden flex-1 flex flex-col mb-4">
-        <div class="glass ai-border rounded-2xl flex flex-col flex-1 min-h-[600px] overflow-hidden">
-
-          <div class="p-4 border-b border-white/10 bg-slate-900/80 flex items-center justify-between backdrop-blur-md">
-            <div class="flex items-center gap-3">
-              <div class="relative">
-                <div class="w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-violet-500/30 overflow-hidden border border-violet-500/40">
-                  <img src="css/eduvestingAI.jpg" alt="EduVesting AI" class="w-full h-full object-cover">
+          <div class="glass rounded-2xl p-6 flex flex-col items-center justify-center">
+            <h3 class="font-display font-bold text-slate-300 text-sm uppercase tracking-wider mb-5">Proporsi Saat Ini</h3>
+            <div class="flex items-center justify-center w-full my-2">
+              <div id="donut-chart" class="donut-chart">
+                <div class="donut-hole">
+                  <span class="text-[9px] text-slate-500 font-semibold uppercase tracking-wider">Total Ekuitas</span>
+                  <span id="center-total-equity" class="text-xs sm:text-sm font-bold text-slate-200 mt-0.5 truncate max-w-[100px] text-center">Rp 0</span>
                 </div>
-                <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-slate-900 rounded-full animate-pulse"></span>
-              </div>
-              <div>
-                <h3 class="text-base font-bold text-slate-100 tracking-wide">EduVesting AI Copilot</h3>
-                <p class="text-xs text-emerald-400 font-medium">Tersambung ke Portofolio, Keuangan & Watchlist-mu</p>
               </div>
             </div>
+            <div id="donut-legend" class="w-full space-y-2 mt-6"></div>
           </div>
 
-          <div id="chat-box" class="flex-1 p-5 overflow-y-auto space-y-5 text-sm flex flex-col" style="background: rgba(15, 20, 35, 0.4);">
-            <div class="flex gap-3 max-w-[85%]">
-              <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 border border-violet-500/30 overflow-hidden">
-                <img src="css/eduvestingAI.jpg" alt="AI" class="w-full h-full object-cover">
-              </div>
-              <div class="chat-bubble-ai rounded-2xl p-4 leading-relaxed shadow-md text-[14px]">
-                Halo <strong id="chat-user-name" class="font-bold">Mahasiswa</strong>! Gue EduVesting AI. Gue udah pegang data investasi portofolio, profil alokasi, data arus kas, dan juga <em class="text-violet-400 dark:text-emerald-300">daftar Watchlist incaran</em> lu. Mau minta gue <em class="text-violet-500 dark:text-violet-300">roasting</em> isi portonya, evaluasi cashflow, atau lu mau minta saran soal saham yang ada di Watchlist lu?
-              </div>
+          <div class="glass rounded-2xl p-5 space-y-4">
+            <h3 class="font-display font-bold text-slate-300 text-sm uppercase tracking-wider"><i class="fa-solid fa-sliders text-cyan-400 mr-1.5"></i> Profil Target Aset</h3>
+            <div class="grid grid-cols-2 gap-2">
+              <button onclick="selectProfile('conservative')" id="prof-conservative" class="btn-profile border border-white/10 rounded-xl py-2 px-3 text-xs font-semibold text-slate-400 hover:text-white hover:border-white/20">Konservatif</button>
+              <button onclick="selectProfile('moderate')" id="prof-moderate" class="btn-profile border border-white/10 rounded-xl py-2 px-3 text-xs font-semibold text-slate-400 hover:text-white hover:border-white/20 btn-profile-active">Moderat</button>
+              <button onclick="selectProfile('aggressive')" id="prof-aggressive" class="btn-profile border border-white/10 rounded-xl py-2 px-3 text-xs font-semibold text-slate-400 hover:text-white hover:border-white/20">Agresif</button>
+              <button onclick="selectProfile('custom')" id="prof-custom" class="btn-profile border border-white/10 rounded-xl py-2 px-3 text-xs font-semibold text-slate-400 hover:text-white hover:border-white/20">Kustom %</button>
             </div>
-          </div>
 
-          <div id="suggested-prompts" class="px-5 py-3 flex gap-2 overflow-x-auto whitespace-nowrap hide-scrollbar border-t border-white/5 bg-slate-900/50">
-            <button onclick="sendPredefinedPrompt('Tolong analisis dan roasting isi portofolio gue secara brutal dari segi manajemen risiko dan alokasi kas.')" class="text-xs font-medium bg-slate-800 border border-slate-700 hover:bg-slate-700 hover:text-white text-slate-300 px-4 py-2 rounded-full transition shadow-sm">🔥 Roasting Portofolio</button>
-            <button onclick="sendPredefinedPrompt('Tolong evaluasi dan berikan pandangan lu soal aset-aset yang ada di daftar Watchlist gue saat ini. Apakah ada yang potensial untuk dibeli?')" class="text-xs font-medium bg-slate-800 border border-slate-700 hover:bg-slate-700 hover:text-white text-slate-300 px-4 py-2 rounded-full transition shadow-sm border-violet-500/30">👀 Evaluasi Watchlist</button>
-            <button onclick="sendPredefinedPrompt('Coba evaluasi pengeluaran dan pemasukan harian gue, apakah cashflow gue bulan ini masih sehat buat nambah investasi?')" class="text-xs font-medium bg-slate-800 border border-slate-700 hover:bg-slate-700 hover:text-white text-slate-300 px-4 py-2 rounded-full transition shadow-sm">💸 Evaluasi Cashflow Harian</button>
-          </div>
-
-          <div class="p-4 bg-slate-900 border-t border-white/10">
-            <form id="chat-form" class="relative" onsubmit="handleChatSubmit(event)">
-              <input id="chat-input" type="text" placeholder="Ketik pertanyaan atau nama saham (cth: Analisis teknikal SMDR)..." 
-                     class="w-full bg-slate-800/80 border border-slate-700 rounded-xl pl-5 pr-14 py-4 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all" autocomplete="off">
-              <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-lg bg-violet-600 hover:bg-violet-500 text-white flex items-center justify-center transition-colors shadow-md">
-                <i class="fa-solid fa-paper-plane text-sm"></i>
+            <div id="custom-inputs" class="space-y-3 pt-3 border-t border-white/5 hidden">
+              <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Atur Target Kustom (Wajib 100%):</p>
+              <div class="grid grid-cols-5 gap-1.5">
+                <div>
+                  <label class="text-[9px] text-slate-500 block mb-1 text-center">Saham</label>
+                  <input id="target-pct-saham" type="number" min="0" max="100" class="form-input w-full text-center px-1 py-1 text-xs rounded-lg tabular-nums" value="40" oninput="runCustomRecalculation()">
+                </div>
+                <div>
+                  <label class="text-[9px] text-slate-500 block mb-1 text-center">Kripto</label>
+                  <input id="target-pct-kripto" type="number" min="0" max="100" class="form-input w-full text-center px-1 py-1 text-xs rounded-lg tabular-nums" value="5" oninput="runCustomRecalculation()">
+                </div>
+                <div>
+                  <label class="text-[9px] text-slate-500 block mb-1 text-center">Emas</label>
+                  <input id="target-pct-emas" type="number" min="0" max="100" class="form-input w-full text-center px-1 py-1 text-xs rounded-lg tabular-nums" value="20" oninput="runCustomRecalculation()">
+                </div>
+                <div>
+                  <label class="text-[9px] text-slate-500 block mb-1 text-center">Reksadana</label>
+                  <input id="target-pct-reksadana" type="number" min="0" max="100" class="form-input w-full text-center px-1 py-1 text-xs rounded-lg tabular-nums" value="25" oninput="runCustomRecalculation()">
+                </div>
+                <div>
+                  <label class="text-[9px] text-slate-500 block mb-1 text-center">Kas</label>
+                  <input id="target-pct-cash" type="number" min="0" max="100" class="form-input w-full text-center px-1 py-1 text-xs rounded-lg tabular-nums" value="10" oninput="runCustomRecalculation()">
+                </div>
+              </div>
+              <div class="flex items-center justify-between mt-2">
+                <span class="text-[10px] text-slate-500" id="custom-sum-text">Jumlah: 100%</span>
+                <span id="custom-sum-status" class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+              </div>
+              <button onclick="saveCustomToDB()" id="btn-save-custom" class="w-full mt-2 py-2.5 rounded-xl text-xs font-bold text-white transition shadow-lg hidden" style="background: linear-gradient(135deg, #06b6d4, #3b82f6);">
+                <i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Target Kustom
               </button>
-            </form>
+            </div>
           </div>
 
         </div>
+
+        <div class="lg:col-span-8 space-y-6">
+
+          <div class="glass rounded-2xl p-5 sm:p-6 space-y-5" style="background: linear-gradient(135deg, rgba(19, 25, 40, 0.85), rgba(30, 40, 64, 0.7)); border-color: rgba(6, 182, 212, 0.2);">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/5">
+              <div>
+                <h4 class="font-display font-bold text-slate-300 text-sm flex items-center gap-2">
+                  <i class="fa-solid fa-gauge-high text-cyan-400"></i> Deviasi Penyimpangan Portofolio
+                </h4>
+                <p class="text-[10px] text-slate-500 mt-0.5">Seberapa jauh portofoliomu bergeser dari rencana awal.</p>
+              </div>
+              <div class="flex items-end gap-1.5 self-start sm:self-auto">
+                <span id="deviation-idx" class="text-2xl sm:text-3xl font-bold font-display text-slate-200 leading-none">0.0%</span>
+                <span id="deviation-badge" class="text-[9px] font-bold px-2 py-0.5 rounded border leading-none uppercase tracking-widest">Menghitung...</span>
+              </div>
+            </div>
+
+            <div class="flex gap-4 items-start">
+              <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center flex-shrink-0 border border-violet-500/30 overflow-hidden shadow-lg shadow-violet-500/20">
+                <img src="css/eduvestingAI.jpg" alt="EduVesting AI" class="w-full h-full object-cover">
+              </div>
+              <div class="space-y-2 w-full">
+                <div class="flex justify-between items-center w-full">
+                   <p class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                     <i class="fa-solid fa-sparkles text-violet-400"></i> Rekomendasi EduVesting AI
+                   </p>
+                </div>
+                <div id="ai-rebalance-tips" class="text-sm text-slate-400 leading-relaxed bg-slate-900/50 p-4 rounded-xl border border-white/5">
+                   <p class="animate-pulse flex items-center gap-2"><i class="fa-solid fa-circle-notch fa-spin text-violet-400"></i> Menghubungkan ke server AI...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass rounded-2xl overflow-hidden">
+            <div class="px-5 py-4 border-b border-white/5 flex items-center justify-between bg-slate-900/40">
+              <h3 class="font-display font-semibold text-slate-200 text-sm uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-scale-balanced text-cyan-400"></i> Detail Perbandingan Aset
+              </h3>
+            </div>
+
+            <div class="overflow-x-auto w-full">
+              <table class="w-full text-sm min-w-[600px]">
+                <thead>
+                  <tr class="border-b border-white/5 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                    <th class="px-5 py-3.5 text-left">Kategori Aset</th>
+                    <th class="px-4 py-3.5 text-right">Nilai Aktual</th>
+                    <th class="px-4 py-3.5 text-right">Porsi Aktual</th>
+                    <th class="px-4 py-3.5 text-right">Porsi Target</th>
+                    <th class="px-5 py-3.5 text-right">Gap (Selisih)</th>
+                  </tr>
+                </thead>
+                <tbody id="realloc-tbody" class="divide-y divide-white/5 text-xs">
+                  </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
       </div>
 
-      <footer class="text-center pb-8 pt-4 border-t border-white/5 mt-10">
-      <p class="text-xs text-slate-600 mb-1">EduVesting · AI Copilot <br></br> Powered by Groq AI (llama-3.3-70b-versatile)</p>
-      <p class="text-xs text-slate-700 mt-2">
-        Dikembangkan dengan <i class="fa-solid fa-heart text-rose-500/50 mx-0.5"></i> oleh Tim Developer EduVesting
-      </p>
-    </footer>
+      <footer class="text-center pb-8 mt-10">
+        <p class="text-xs text-slate-700 font-medium">EduVesting · Analisis Diversifikasi Portofolio</p>
+        <p class="text-xs text-slate-700 mt-2">
+          Dikembangkan dengan <i class="fa-solid fa-heart text-rose-500/50 mx-0.5"></i> oleh Tim Developer EduVesting
+        </p>
+      </footer>
 
     </main>
   </div>
@@ -318,27 +334,6 @@
   <script src="js/api.js"></script>
 
   <script>
-    function switchTab(tabId) {
-      const btnAnalytics = document.getElementById('tab-analytics');
-      const btnChat = document.getElementById('tab-chat');
-      const viewAnalytics = document.getElementById('view-analytics');
-      const viewChat = document.getElementById('view-chat');
-
-      if (tabId === 'analytics') {
-        btnAnalytics.className = "tab-btn tab-active px-6 py-3 font-medium text-sm flex items-center gap-2";
-        btnChat.className = "tab-btn tab-inactive px-6 py-3 font-medium text-sm flex items-center gap-2";
-        viewAnalytics.classList.remove('hidden');
-        viewChat.classList.add('hidden');
-      } else {
-        btnChat.className = "tab-btn tab-active px-6 py-3 font-medium text-sm flex items-center gap-2";
-        btnAnalytics.className = "tab-btn tab-inactive px-6 py-3 font-medium text-sm flex items-center gap-2";
-        viewAnalytics.classList.add('hidden');
-        viewChat.classList.remove('hidden');
-        viewChat.classList.add('flex');
-        setTimeout(() => document.getElementById('chat-input').focus(), 100);
-      }
-    }
-
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
       const overlay = document.getElementById('sidebar-overlay');
@@ -349,428 +344,351 @@
     const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    window.supabaseClient = supabaseClient; 
+    window.supabaseClient = supabaseClient;
 
-    // --- VARIABEL GLOBAL ---
-    let aiContextString = "Belum ada data portofolio.";
-    let currentUserId = null; 
-    let currentUserAvatar = null;
-    let currentUserNameInitial = 'U';
+    let currentUserId = null;
+    let portfolioMetrics = null;
+
+    const TARGET_TEMPLATES = {
+      conservative: { saham: 10, kripto: 5, emas: 40, reksadana: 25, cash: 20 },
+      moderate: { saham: 40, kripto: 5, emas: 20, reksadana: 25, cash: 10 },
+      aggressive: { saham: 65, kripto: 15, emas: 10, reksadana: 5, cash: 5 },
+      custom: null 
+    };
+
+    let selectedRiskProfile = 'moderate';
+    let isInitialLoad = true;
+    let currentDeviationScore = 0;
+    let currentAIContextPayload = "";
 
     document.addEventListener('DOMContentLoaded', async () => {
       try {
         const { data: { session }, error } = await supabaseClient.auth.getSession();
+
         if (error || !session) { window.location.href = 'login.html'; return; }
 
         const user = session.user;
-        currentUserId = user.id; 
+        currentUserId = user.id;
 
         const displayName = user.user_metadata?.custom_full_name || user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
-        const avatarUrl = user.user_metadata?.custom_avatar_url || user.user_metadata?.avatar_url; 
-
-        currentUserAvatar = avatarUrl;
-        currentUserNameInitial = displayName.charAt(0).toUpperCase();
+        const avatarUrl = user.user_metadata?.custom_avatar_url || user.user_metadata?.avatar_url;
 
         document.getElementById('sidebar-user-name').innerText = displayName;
-        document.getElementById('chat-user-name').innerText = displayName;
-
         const sbAvatar = document.getElementById('sidebar-user-initial');
         if (avatarUrl) {
-          sbAvatar.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover rounded-full">`;
+          sbAvatar.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover">`;
         } else {
-          sbAvatar.innerText = currentUserNameInitial;
+          sbAvatar.innerText = displayName.charAt(0).toUpperCase();
         }
 
         if (typeof EduVesting !== 'undefined') {
-           const metrics = await EduVesting.computeMetrics();
-           renderAiDashboard(metrics);
+            portfolioMetrics = await EduVesting.computeMetrics();
         }
+
+        const isEmpty = !portfolioMetrics || (!portfolioMetrics.assets.length && portfolioMetrics.cash === 0);
+
+        if (isEmpty) {
+          document.getElementById('alloc-empty-state').classList.remove('hidden');
+          document.getElementById('alloc-main-layout').classList.add('hidden');
+          return;
+        }
+
+        document.getElementById('alloc-empty-state').classList.add('hidden');
+        document.getElementById('alloc-main-layout').classList.remove('hidden');
+
+        renderActualDonut();
+        await loadAllocationTarget();
+
       } catch (err) {
-        console.error("Init Error:", err);
+        console.error("Gagal inisialisasi alokasi:", err);
       }
     });
 
-    function updateScoreUI(scoreObj) {
-      const valEl = document.getElementById('health-score-val');
-      const riskEl = document.getElementById('health-risk-label');
-      const divEl = document.getElementById('health-div-label');
-      const descEl = document.getElementById('health-score-desc');
-      const circle = document.getElementById('score-circle');
-
-      valEl.innerText = scoreObj.score;
-      valEl.classList.remove('text-slate-500');
-      valEl.classList.add('text-slate-100'); 
-
-      const circumference = 2 * Math.PI * 45; 
-      const dashoffset = circumference - (scoreObj.score / 10) * circumference;
-      circle.style.strokeDasharray = `${circumference - dashoffset} ${circumference}`;
-
-      if (scoreObj.score >= 8) circle.style.stroke = "url(#gradient)"; 
-      else if (scoreObj.score >= 5) circle.style.stroke = "#22d3ee"; 
-      else circle.style.stroke = "#fb7185"; 
-
-      riskEl.innerText = scoreObj.risk;
-      if(scoreObj.risk.toLowerCase().includes('tinggi')) riskEl.className = 'text-sm font-bold text-rose-400';
-      else if(scoreObj.risk.toLowerCase().includes('sedang')) riskEl.className = 'text-sm font-bold text-amber-400';
-      else riskEl.className = 'text-sm font-bold text-emerald-400';
-
-      divEl.innerText = scoreObj.div;
-      if(scoreObj.div.toLowerCase().includes('kurang')) divEl.className = 'text-sm font-bold text-rose-400';
-      else if(scoreObj.div.toLowerCase().includes('sedang')) divEl.className = 'text-sm font-bold text-amber-400';
-      else divEl.className = 'text-sm font-bold text-emerald-400';
-
-      descEl.innerText = "Data berhasil disinkronisasi dengan analisis AI terbaru (Tersimpan di Cloud).";
-      descEl.classList.remove('hidden');
-    }
-
-    async function generateScoreFromAI() {
-      if (!currentUserId) return; 
-
-      const btn = document.getElementById('btn-generate-score');
-      btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Sedang Menganalisis...';
-      btn.disabled = true;
-      btn.classList.add('opacity-70');
-
-      const secretPrompt = `${aiContextString}
-TUGAS RAHASIA SISTEM: Evaluasi kondisi finansial berdasarkan data di atas dengan 3 parameter.
-1. Skor Keseluruhan (skala 0 sampai 10).
-2. Tingkat Risiko Portofolio (Tinggi / Sedang / Rendah).
-3. Tingkat Diversifikasi (Bagus / Sedang / Kurang). Catatan: Diversifikasi dinilai dari TOTAL JUMLAH aset individu di portofolio, bukan kategorinya.
-
-ATURAN MUTLAK: Jawab HANYA dengan format text baris tunggal seperti di bawah ini tanpa basa-basi:
-SKOR_ANGKA|RISIKO|DIVERSIFIKASI
-Contoh Output yang benar: 7|Sedang|Bagus`;
-
+    // AMBIL DARI SUPABASE
+    async function loadAllocationTarget() {
       try {
-        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        const BACKEND_URL = isLocal ? 'http://localhost:5000/api/ai/chat' : '/api/ai/chat';
-
-        const response = await fetch(BACKEND_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: secretPrompt })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-          const match = data.reply.match(/(\d+)\s*\|\s*([a-zA-Z]+)\s*\|\s*([a-zA-Z]+)/);
-
-          let score = 5, risk = 'Sedang', div = 'Sedang';
-          if (match) {
-             score = parseInt(match[1]);
-             risk = match[2];
-             div = match[3];
-          }
-          if (score > 10) score = 10;
-
-          const { error: dbError } = await supabaseClient
-            .from('ai_scores')
-            .upsert({ 
-              user_id: currentUserId, 
-              score: score, 
-              risk: risk, 
-              diversification: div,
-              updated_at: new Date()
-            });
-
-          if (dbError) {
-             console.error("Gagal simpan skor ke cloud:", dbError);
-             throw new Error("Gagal terhubung ke Database Supabase.");
-          }
-
-          updateScoreUI({ score, risk, div });
-
-          setTimeout(() => {
-            switchTab('chat');
-            appendUserMessage(`Kenapa portofolio dan keuangan gue dapet Skor ${score}/10, Risiko ${risk}, dan Diversifikasi ${div}?`);
-            simulateAIResponse(`Jelaskan secara brutal dan analitis kenapa portofolio gue dapet Skor: ${score}/10, Risiko: ${risk}, dan Diversifikasi: ${div}. Bahas dari segi alokasi kas investasi serta cashflow harian gue.`);
-          }, 1500);
-
-        } else { throw new Error("Gagal parsing dari API"); }
-
-      } catch (error) {
-        console.error("Score Gen Error:", error);
-      } finally {
-        btn.innerHTML = '<i class="fa-solid fa-rotate-right mr-2"></i> Update Analisis Ulang';
-        btn.disabled = false;
-        btn.classList.remove('opacity-70');
-      }
-    }
-
-    async function renderAiDashboard(metrics) {
-      const alokasi = metrics.allocation.map(a => `${a.type.toUpperCase()} (${a.percent.toFixed(1)}%)`).join(', ');
-
-      let portofolioItems = "Belum ada aset di portofolio.";
-      if (metrics.assets && metrics.assets.length > 0) {
-        portofolioItems = metrics.assets.map(a => `${a.ticker} (${a.type.toUpperCase()})`).join(', ');
-      }
-
-      let totalIncome = 0;
-      let totalExpense = 0;
-      let expenseStr = "Belum ada pengeluaran.";
-      let watchlistItems = "Belum ada aset di watchlist.";
-      
-      let targetProfile = "Moderat (Default)"; 
-
-      if (currentUserId) {
-        // 1. MENGAMBIL DATA KEUANGAN HARIAN
-        const { data: finances, error: finErr } = await supabaseClient
-          .from('daily_finances')
-          .select('*')
-          .eq('user_id', currentUserId);
-
-        if (finances && !finErr) {
-          let expenseCategories = {};
-          finances.forEach(tx => {
-            if (tx.type === 'income') totalIncome += tx.amount;
-            if (tx.type === 'expense') {
-              totalExpense += tx.amount;
-              expenseCategories[tx.category] = (expenseCategories[tx.category] || 0) + tx.amount;
-            }
-          });
-          const catEntries = Object.entries(expenseCategories);
-          if (catEntries.length > 0) {
-             expenseStr = catEntries.map(([cat, amount]) => `${cat} (Rp ${amount.toLocaleString('id-ID')})`).join(', ');
-          }
-        }
-
-        // 2. MENGAMBIL DATA WATCHLIST
-        const { data: watchData, error: watchErr } = await supabaseClient
-          .from('watchlists')
-          .select('*')
-          .eq('user_id', currentUserId);
-
-        if (watchData && !watchErr && watchData.length > 0) {
-           watchlistItems = watchData.map(w => `${w.ticker} (Market: ${w.market})`).join(', ');
-        }
-
-        // 3. MENGAMBIL TARGET PROFIL ALOKASI
-        const { data: allocData } = await supabaseClient
-          .from('allocation_targets')
-          .select('profile, saham, kripto, emas, reksadana, cash')
-          .eq('user_id', currentUserId)
-          .single();
-          
-        if (allocData) {
-          if (allocData.profile === 'custom') {
-            targetProfile = `Kustom (Saham ${allocData.saham}%, Kripto ${allocData.kripto}%, Emas ${allocData.emas}%, Reksadana ${allocData.reksadana}%, Kas ${allocData.cash}%)`;
-          } else {
-            targetProfile = allocData.profile.toUpperCase();
-          }
-        }
-      }
-
-      // INTEGRASI KE KONTEKS AI (Prompt System)
-      aiContextString = `Data Portofolio Investasi User: 
-- Total Ekuitas/Net Worth: Rp ${metrics.totalEquity.toLocaleString('id-ID')}
-- Total P/L: Rp ${metrics.floatingPL.toLocaleString('id-ID')} (${metrics.plPercent.toFixed(2)}%)
-- Saldo Kas Investasi: Rp ${metrics.cash.toLocaleString('id-ID')} (${metrics.cashPercent.toFixed(2)}% dari aset)
-- Total Aset Individu (Jumlah emiten/koin): ${metrics.assets.length} aset
-- Rincian Kategori Aktual: ${alokasi || 'Kosong'}
-- Profil Risiko Target yang Dipilih User: ${targetProfile}
-- Daftar Aset Spesifik di Portofolio: ${portofolioItems}
-
-Data Keuangan & Cashflow Harian User:
-- Total Pemasukan: Rp ${totalIncome.toLocaleString('id-ID')}
-- Total Pengeluaran: Rp ${totalExpense.toLocaleString('id-ID')}
-- Arus Kas Bersih: Rp ${(totalIncome - totalExpense).toLocaleString('id-ID')}
-- Detail Pengeluaran per Kategori: ${expenseStr}.
-
-Data Watchlist Pantauan Pasar User (Aset incaran user saat ini):
-- Daftar Aset di Watchlist: ${watchlistItems}
-
-Tugas AI: Kolaborasikan analisis portofolio di atas dengan kondisi cashflow hariannya saat memberikan saran strategi. Jika user bertanya mengenai alokasi dan risiko, evaluasi deviasi portofolio mereka HANYA berdasarkan "Profil Risiko Target" yang mereka pilih. Jika mereka meminta saran watchlist, berikan rekomendasi dari daftar incaran mereka.`;
-
-      const insights = EduVesting.generateInsights(metrics);
-      const recomContainer = document.getElementById('recom-container');
-      recomContainer.innerHTML = '';
-
-      const toneMap = {
-        'rose': { bg: 'bg-rose-500/10', border: 'border-rose-500/20', text: 'text-rose-400' },
-        'amber': { bg: 'bg-amber-500/10', border: 'border-amber-500/20', text: 'text-amber-400' },
-        'emerald': { bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', text: 'text-emerald-400' }
-      };
-
-      if(insights.length === 0) {
-          recomContainer.innerHTML = '<p class="text-sm text-slate-500 py-4">Data portofolio aman.</p>';
-      } else {
-          insights.forEach(insight => {
-            const t = toneMap[insight.tone] || toneMap['emerald'];
-            const div = document.createElement('div');
-            div.className = `${t.bg} border ${t.border} rounded-xl p-4 flex items-start gap-3`;
-            div.innerHTML = `
-              <div class="mt-0.5 ${t.text}"><i class="fa-solid ${insight.icon}"></i></div>
-              <div>
-                <h3 class="text-sm font-semibold text-slate-200 mb-1">${insight.title}</h3>
-                <p class="text-xs text-slate-400 leading-relaxed mb-2">${insight.text}</p>
-                <button onclick="askAIAbout('${insight.title}')" class="text-[10px] font-bold uppercase tracking-wider text-violet-400 hover:text-violet-300">Tanya AI Tentang Ini &rarr;</button>
-              </div>
-            `;
-            recomContainer.appendChild(div);
-          });
-      }
-
-      const sectorContainer = document.getElementById('sector-container');
-      sectorContainer.innerHTML = '';
-      const allItems = [...metrics.allocation];
-      if (metrics.cash > 0) allItems.push({ label: 'Kas Tunai', percent: metrics.cashPercent, gradient: ['#94a3b8'], badgeColor: '#94a3b8' });
-
-      if (allItems.length === 0) {
-        sectorContainer.innerHTML = '<p class="text-sm text-slate-500">Tidak ada aset.</p>';
-      } else {
-        allItems.forEach(item => {
-          let statusText = 'Normal'; let statusColor = 'text-emerald-400';
-          if (item.percent > 40 && item.label !== 'Kas Tunai') { statusText = 'Overweight'; statusColor = 'text-rose-400'; }
-          else if (item.percent < 10) { statusText = 'Rendah'; statusColor = 'text-amber-400'; }
-
-          const div = document.createElement('div');
-          div.className = "mb-2";
-          div.innerHTML = `
-            <div class="flex justify-between text-xs mb-1.5">
-              <span class="text-slate-300 font-medium">${item.label}</span>
-              <span class="${statusColor} font-medium">${statusText} (${item.percent.toFixed(1)}%)</span>
-            </div>
-            <div class="progress-bar"><div class="progress-fill" style="width:${item.percent}%; background:${item.gradient ? item.gradient[0] : '#3b82f6'};"></div></div>
-          `;
-          sectorContainer.appendChild(div);
-        });
-      }
-
-      if (currentUserId) {
         const { data, error } = await supabaseClient
-          .from('ai_scores')
+          .from('allocation_targets')
           .select('*')
           .eq('user_id', currentUserId)
           .single();
 
-        if (data) {
-          updateScoreUI({ score: data.score, risk: data.risk, div: data.diversification });
+        if (data && !error) {
+          selectedRiskProfile = data.profile;
+          
+          if (data.profile === 'custom') {
+            document.getElementById('target-pct-saham').value = data.saham;
+            document.getElementById('target-pct-kripto').value = data.kripto;
+            document.getElementById('target-pct-emas').value = data.emas;
+            document.getElementById('target-pct-reksadana').value = data.reksadana;
+            document.getElementById('target-pct-cash').value = data.cash;
+            TARGET_TEMPLATES.custom = { saham: data.saham, kripto: data.kripto, emas: data.emas, reksadana: data.reksadana, cash: data.cash };
+          }
         }
+        
+        updateProfileUI(selectedRiskProfile);
+        isInitialLoad = false;
+        
+      } catch (err) {
+        console.error("Gagal load target (Mungkin RLS Supabase belum dimatikan)", err);
+        updateProfileUI('moderate');
+        isInitialLoad = false;
       }
     }
 
-    const chatBox = document.getElementById('chat-box');
-    const chatInput = document.getElementById('chat-input');
-    const suggestedPrompts = document.getElementById('suggested-prompts');
-
-    function appendUserMessage(text) {
-      let avatarHTML = '';
-      let styleContainer = '';
-
-      if (currentUserAvatar) {
-        avatarHTML = `<img src="${currentUserAvatar}" alt="User" class="w-full h-full object-cover">`;
-        styleContainer = 'background: rgba(99,102,241,0.2);'; 
-      } else {
-        avatarHTML = `<span class="text-xs font-bold text-white">${currentUserNameInitial}</span>`;
-        styleContainer = 'background: linear-gradient(135deg,#7c3aed,#6366f1);';
-      }
-
-      const msgDiv = document.createElement('div');
-      msgDiv.className = 'flex gap-3 max-w-[85%] self-end flex-row-reverse fade-up';
-      msgDiv.innerHTML = `
-        <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 border border-indigo-500/30 overflow-hidden" style="${styleContainer}">
-          ${avatarHTML}
-        </div>
-        <div class="chat-bubble-user rounded-2xl p-4 leading-relaxed shadow-sm text-[14px]">
-          ${text}
-        </div>
-      `;
-      chatBox.appendChild(msgDiv);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    function appendAITyping() {
-      const msgDiv = document.createElement('div');
-      msgDiv.id = 'ai-typing';
-      msgDiv.className = 'flex gap-3 max-w-[85%] fade-up';
-      msgDiv.innerHTML = `
-        <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 border border-violet-500/30 overflow-hidden">
-          <img src="css/eduvestingAI.jpg" alt="AI" class="w-full h-full object-cover">
-        </div>
-        <div class="chat-bubble-ai rounded-2xl px-5 py-4 shadow-sm flex items-center gap-1.5">
-          <div class="w-2 h-2 bg-violet-400 rounded-full typing-dot"></div>
-          <div class="w-2 h-2 bg-violet-400 rounded-full typing-dot"></div>
-          <div class="w-2 h-2 bg-violet-400 rounded-full typing-dot"></div>
-        </div>
-      `;
-      chatBox.appendChild(msgDiv);
-      chatBox.scrollTop = chatBox.scrollHeight;
-      return msgDiv;
-    }
-
-    function appendAIResponse(text) {
-      const typingEl = document.getElementById('ai-typing');
-      if (typingEl) typingEl.remove();
-
-      const msgDiv = document.createElement('div');
-      msgDiv.className = 'flex gap-3 max-w-[90%] fade-up';
-      msgDiv.innerHTML = `
-        <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 border border-violet-500/30 overflow-hidden">
-          <img src="css/eduvestingAI.jpg" alt="AI" class="w-full h-full object-cover">
-        </div>
-        <div class="chat-bubble-ai rounded-2xl p-4 leading-relaxed shadow-md text-[14px]">
-          ${text}
-        </div>
-      `;
-      chatBox.appendChild(msgDiv);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    async function simulateAIResponse(promptContext) {
-      appendAITyping();
-      suggestedPrompts.style.display = 'none';
+    // SIMPAN KE SUPABASE & REQUEST AI
+    async function saveTargetToDB(profileName) {
+      if(isInitialLoad) return; 
 
       try {
-        const payloadMessage = `${aiContextString}\n\nPermintaan/Pertanyaan: ${promptContext}`;
+        const payload = { 
+          user_id: currentUserId, 
+          profile: profileName,
+          updated_at: new Date()
+        };
+
+        if (profileName === 'custom' && TARGET_TEMPLATES.custom) {
+          payload.saham = TARGET_TEMPLATES.custom.saham;
+          payload.kripto = TARGET_TEMPLATES.custom.kripto;
+          payload.emas = TARGET_TEMPLATES.custom.emas;
+          payload.reksadana = TARGET_TEMPLATES.custom.reksadana;
+          payload.cash = TARGET_TEMPLATES.custom.cash;
+        }
+
+        const { error } = await supabaseClient.from('allocation_targets').upsert(payload);
+        
+        if(error) throw error;
+        showToast('success', 'Preferensi target alokasi berhasil disimpan!');
+        
+        // Panggil AI langsung setelah sukses simpan
+        fetchAITipsRealtime();
+
+      } catch(err) {
+        console.error("Gagal simpan target ke DB", err);
+        showToast('error', 'Gagal menyimpan preferensi. Cek settingan RLS Supabase!');
+      }
+    }
+
+    function selectProfile(profile) {
+      selectedRiskProfile = profile;
+      updateProfileUI(profile);
+      if(profile !== 'custom' && !isInitialLoad) {
+         saveTargetToDB(profile);
+      }
+    }
+
+    function updateProfileUI(profile) {
+      ['conservative', 'moderate', 'aggressive', 'custom'].forEach(p => {
+        const btn = document.getElementById('prof-' + p);
+        if (p === profile) {
+          btn.className = "btn-profile border border-transparent rounded-xl py-2 px-3 text-xs font-semibold btn-profile-active";
+        } else {
+          btn.className = "btn-profile border border-white/10 rounded-xl py-2 px-3 text-xs font-semibold text-slate-400 hover:text-white hover:border-white/20";
+        }
+      });
+
+      const customInputs = document.getElementById('custom-inputs');
+      const btnSaveCustom = document.getElementById('btn-save-custom');
+      
+      if (profile === 'custom') {
+        customInputs.classList.remove('hidden');
+        btnSaveCustom.classList.remove('hidden');
+        runCustomRecalculation(); // Kalkulasi UI tapi JANGAN langsung fetch AI
+      } else {
+        customInputs.classList.add('hidden');
+        calculateRebalancing(); 
+        if(isInitialLoad) fetchAITipsRealtime(); // Auto fetch pas pertama kali halaman dimuat
+      }
+    }
+
+    // PENCEGAH SIMPAN JIKA BUKAN 100%
+    function saveCustomToDB() {
+       const sumText = document.getElementById('custom-sum-text').innerText;
+       if (!sumText.includes('100%')) {
+           showToast('warning', 'Total alokasi kustom Anda masih salah. Wajib tepat 100%!');
+           return; // Hentikan eksekusi
+       }
+       if (selectedRiskProfile === 'custom' && TARGET_TEMPLATES.custom) {
+           saveTargetToDB('custom');
+       }
+    }
+
+    function runCustomRecalculation() {
+      const s = parseInt(document.getElementById('target-pct-saham').value) || 0;
+      const k = parseInt(document.getElementById('target-pct-kripto').value) || 0;
+      const e = parseInt(document.getElementById('target-pct-emas').value) || 0;
+      const r = parseInt(document.getElementById('target-pct-reksadana').value) || 0;
+      const c = parseInt(document.getElementById('target-pct-cash').value) || 0;
+
+      const sum = s + k + e + r + c;
+      const sumText = document.getElementById('custom-sum-text');
+      const sumStatus = document.getElementById('custom-sum-status');
+      const btnSave = document.getElementById('btn-save-custom');
+
+      sumText.innerText = `Jumlah: ${sum}%`;
+
+      if (sum === 100) {
+        sumStatus.className = "w-2.5 h-2.5 rounded-full bg-emerald-400";
+        btnSave.classList.remove('opacity-50', 'cursor-not-allowed');
+        
+        TARGET_TEMPLATES.custom = { saham: s, kripto: k, emas: e, reksadana: r, cash: c };
+        calculateRebalancing();
+        
+        // Panggil AI otomatis jika ini adalah loading halaman awal (agar tidak kosong)
+        if(isInitialLoad) fetchAITipsRealtime();
+      } else {
+        sumStatus.className = "w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse";
+        btnSave.classList.add('opacity-50', 'cursor-not-allowed');
+        document.getElementById('realloc-tbody').innerHTML = '<tr><td colspan="5" class="text-center py-6 text-slate-500">Sesuaikan target hingga tepat 100% untuk melihat simulasi deviasi.</td></tr>';
+      }
+    }
+
+    function renderActualDonut() {
+      const donut = document.getElementById('donut-chart');
+      const legend = document.getElementById('donut-legend');
+      const centerTotal = document.getElementById('center-total-equity');
+
+      centerTotal.innerText = EduVesting.formatRupiah(portfolioMetrics.totalEquity);
+      legend.innerHTML = '';
+
+      const items = [];
+      const m = portfolioMetrics;
+      const ASSET_TYPES = EduVesting.ASSET_TYPES;
+
+      Object.entries(m.byType).forEach(([type, value]) => {
+        if (value > 0) items.push({ type, label: ASSET_TYPES[type].label, value, percent: m.totalEquity > 0 ? (value / m.totalEquity) * 100 : 0 });
+      });
+
+      if (m.cash > 0) items.push({ type: 'cash', label: 'Kas Tunai', value: m.cash, percent: m.cashPercent });
+
+      if (items.length === 0) {
+        donut.style.background = 'conic-gradient(rgba(255,255,255,0.05) 100%)';
+        legend.innerHTML = '<p class="text-xs text-slate-500 text-center">Belum ada alokasi.</p>';
+        return;
+      }
+
+      items.sort((a, b) => b.value - a.value);
+
+      const colorMap = { 'saham': ['#6366f1', '#818cf8', '#a5b4fc'], 'kripto': ['#f97316', '#fb923c', '#fdba74'], 'emas': ['#eab308', '#fde047', '#fef08a'], 'reksadana': ['#06b6d4', '#22d3ee', '#67e8f9'], 'cash': ['#64748b', '#94a3b8', '#cbd5e1'] };
+
+      let gradientString = '';
+      let currentDegree = 0;
+
+      items.forEach((it, idx) => {
+        const colors = colorMap[it.type] || ['#3b82f6', '#60a5fa', '#93c5fd'];
+        const degree = (it.percent / 100) * 360;
+        gradientString += `${colors[0]} ${currentDegree}deg ${currentDegree + degree}deg${idx < items.length - 1 ? ', ' : ''}`;
+        currentDegree += degree;
+
+        legend.innerHTML += `
+          <div class="flex items-center justify-between text-xs p-2 rounded-xl glass-lighter border border-white/5 shadow-sm">
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="w-2.5 h-2.5 rounded-sm flex-shrink-0" style="background: ${colors[0]}"></span>
+              <span class="text-slate-300 font-medium truncate">${it.label}</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-[10px] text-slate-500 tabular-nums">${EduVesting.formatRupiah(it.value)}</span>
+              <span class="text-slate-200 font-bold w-8 text-right tabular-nums">${Math.round(it.percent)}%</span>
+            </div>
+          </div>
+        `;
+      });
+      donut.style.background = `conic-gradient(${gradientString})`;
+    }
+
+    // HITUNG DEVIASI (UI MATEMATIKA) - TIDAK ADA LAGI DUMMY AI DI SINI
+    function calculateRebalancing() {
+      const tbody = document.getElementById('realloc-tbody');
+      tbody.innerHTML = '';
+      currentAIContextPayload = ""; // Reset konteks
+
+      const targetModel = TARGET_TEMPLATES[selectedRiskProfile];
+      if (!targetModel) return; 
+
+      const m = portfolioMetrics;
+      const totalEquity = m.totalEquity;
+      const keys = ['saham', 'kripto', 'emas', 'reksadana', 'cash'];
+      const keyLabels = { saham: { name: 'Saham', icon: 'fa-chart-line', color: 'text-indigo-400' }, kripto: { name: 'Kripto', icon: 'fa-bitcoin-sign', color: 'text-orange-400' }, emas: { name: 'Emas', icon: 'fa-coins', color: 'text-yellow-400' }, reksadana: { name: 'Reksadana', icon: 'fa-chart-pie', color: 'text-cyan-400' }, cash: { name: 'Kas Tunai', icon: 'fa-wallet', color: 'text-slate-400' } };
+
+      let devTotal = 0;
+
+      keys.forEach(key => {
+        let actualVal = (key === 'cash') ? m.cash : (m.byType[key] || 0);
+        const actualPct = totalEquity > 0 ? (actualVal / totalEquity) * 100 : 0;
+        const targetPct = targetModel[key] || 0;
+        
+        const diffPct = actualPct - targetPct;
+        devTotal += Math.abs(diffPct);
+        
+        // Simpan data untuk dikirim ke Groq AI nanti
+        currentAIContextPayload += `- ${keyLabels[key].name}: Aktual ${actualPct.toFixed(1)}% | Target ${targetPct}% | Selisih ${diffPct > 0 ? '+'+diffPct.toFixed(1) : diffPct.toFixed(1)}%\n`;
+
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-white/[0.02] transition-colors';
+        row.innerHTML = `
+          <td class="px-5 py-4 font-medium text-slate-200 flex items-center gap-2">
+            <i class="fa-solid ${keyLabels[key].icon} ${keyLabels[key].color} w-4 text-center"></i> ${keyLabels[key].name}
+          </td>
+          <td class="px-4 py-4 text-right tabular-nums text-slate-300 font-semibold">${EduVesting.formatRupiah(actualVal)}</td>
+          <td class="px-4 py-4 text-right tabular-nums text-slate-400 font-medium">${actualPct.toFixed(1)}%</td>
+          <td class="px-4 py-4 text-right tabular-nums text-slate-400 font-medium">${targetPct}%</td>
+          <td class="px-5 py-4 text-right tabular-nums font-bold ${diffPct >= 0 ? 'text-rose-400' : 'text-emerald-400'}">
+            ${diffPct >= 0 ? '+' : ''}${diffPct.toFixed(1)}%
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      const devIndex = devTotal / 2;
+      currentDeviationScore = devIndex;
+      
+      const indexEl = document.getElementById('deviation-idx');
+      const badgeEl = document.getElementById('deviation-badge');
+
+      indexEl.innerText = devIndex.toFixed(1) + '%';
+
+      if (devIndex <= 2) {
+        badgeEl.innerText = "Sempurna";
+        badgeEl.className = "text-[9px] font-bold px-2 py-0.5 rounded border leading-none uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+      } else if (devIndex <= 8) {
+        badgeEl.innerText = "Wajar";
+        badgeEl.className = "text-[9px] font-bold px-2 py-0.5 rounded border leading-none uppercase tracking-widest bg-amber-500/10 text-amber-400 border-amber-500/20";
+      } else {
+        badgeEl.innerText = "Perlu Rebalancing";
+        badgeEl.className = "text-[9px] font-bold px-2 py-0.5 rounded border leading-none uppercase tracking-widest bg-rose-500/10 text-rose-400 border-rose-500/20 animate-pulse";
+      }
+    }
+    
+    // FETCH REAL-TIME KE GROQ AI BACKEND
+    async function fetchAITipsRealtime() {
+      const tipsContainer = document.getElementById('ai-rebalance-tips');
+      tipsContainer.innerHTML = '<p class="text-violet-400 animate-pulse flex items-center gap-2"><i class="fa-solid fa-circle-notch fa-spin"></i> Meracik rekomendasi spesifik untuk Anda...</p>';
+
+      const prompt = `Sebagai asisten portofolio EduVesting, evaluasi deviasi alokasi aset berikut (Tingkat Deviasi Total: ${currentDeviationScore.toFixed(1)}%):\n\n${currentAIContextPayload}\nTolong berikan 2 hingga 3 poin rekomendasi Jual/Beli yang tajam, sangat ringkas, to the point, langsung pada intinya (gunakan tag <li> untuk setiap list). Jangan berikan sapaan atau penutup.`;
+
+      try {
         const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         const BACKEND_URL = isLocal ? 'http://localhost:5000/api/ai/chat' : '/api/ai/chat';
 
         const response = await fetch(BACKEND_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: payloadMessage })
+          body: JSON.stringify({ message: prompt })
         });
 
         const data = await response.json();
-
-        if (document.getElementById('ai-typing')) document.getElementById('ai-typing').remove();
-
-        if (data.success) {
-          let formattedReply = data.reply
-            .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold">$1</strong>')
-            .replace(/\*(.*?)\*/g, '<em class="text-violet-500 dark:text-violet-300">$1</em>')
-            .replace(/\n/g, '<br><div class="h-1"></div>'); 
-          appendAIResponse(formattedReply);
+        
+        if(data.success) {
+           let reply = data.reply.replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-200">$1</strong>');
+           tipsContainer.innerHTML = `<ul class="list-disc pl-4 space-y-2 marker:text-violet-500">${reply}</ul>`;
         } else {
-          appendAIResponse("🚨 Koneksi ke server terputus. Coba ulangi lagi.");
+           tipsContainer.innerHTML = '<p class="text-rose-400">Gagal memuat rekomendasi AI.</p>';
         }
-      } catch (error) {
-        if (document.getElementById('ai-typing')) document.getElementById('ai-typing').remove();
-        appendAIResponse("🚨 Waduh, server lagi gangguan atau overload nih bro. Coba beberapa saat lagi.");
+      } catch (e) {
+         tipsContainer.innerHTML = '<p class="text-rose-400">Server EduVesting AI sedang sibuk. Silakan coba lagi nanti.</p>';
       }
-    }
-
-    function handleChatSubmit(e) {
-      e.preventDefault();
-      const text = chatInput.value.trim();
-      if (!text) return;
-      appendUserMessage(text);
-      chatInput.value = '';
-      simulateAIResponse(text); 
-    }
-
-    function sendPredefinedPrompt(text) {
-      appendUserMessage(text);
-      simulateAIResponse(text);
-    }
-
-    function askAIAbout(topic) {
-      switchTab('chat');
-      const prompt = `Tolong jelaskan lebih lanjut mengenai peringatan sistem ini: "${topic}" di portofolio gue. Apa yang harus gue lakukan?`;
-      appendUserMessage(prompt);
-      simulateAIResponse(prompt);
     }
   </script>
 </body>
+
 </html>
