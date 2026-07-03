@@ -575,6 +575,10 @@
         const currentAmount = g.current_amount || 0;
         const monthlySaving = g.monthly_saving || 0;
         
+        // Format Tanggal Mulai
+        const startDate = new Date(g.target_date);
+        const formattedStartDate = startDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+        
         totalSaved += currentAmount;
         totalTarget += targetAmount;
 
@@ -617,9 +621,13 @@
             <div class="flex items-start justify-between gap-3 mb-4">
               <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl flex items-center justify-center ${catMeta.color}"><i class="fa-solid ${catMeta.icon} text-lg"></i></div>
-                <div class="min-w-0">
+                <div class="min-w-0 flex flex-col justify-center">
                   <h4 class="font-display font-bold text-slate-200 text-sm md:text-base leading-tight truncate" title="${g.name}">${g.name}</h4>
-                  <span class="text-[10px] text-slate-500 capitalize tracking-wider">${g.category || 'Lainnya'}</span>
+                  <div class="flex items-center gap-1.5 mt-0.5">
+                    <span class="text-[10px] text-slate-500 capitalize tracking-wider">${g.category || 'Lainnya'}</span>
+                    <span class="w-1 h-1 rounded-full bg-slate-700"></span>
+                    <span class="text-[10px] text-slate-500 tracking-wider">Mulai: ${formattedStartDate}</span>
+                  </div>
                 </div>
               </div>
               
