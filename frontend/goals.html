@@ -169,7 +169,6 @@
         </button>
       </header>
 
-      <!-- Dashboard Mini Stats -->
       <section class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8 fade-up delay-1">
         <div class="glass rounded-2xl p-5 flex items-center gap-4">
           <div class="w-12 h-12 rounded-xl flex items-center justify-center text-indigo-400 bg-indigo-500/10"><i class="fa-solid fa-piggy-bank text-xl"></i></div>
@@ -198,11 +197,9 @@
         </div>
       </section>
 
-      <!-- Main Goals Content Area -->
       <section class="flex-1 fade-up delay-2">
         <div id="goals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Dinamis terisi via Javascript -->
-        </div>
+          </div>
 
         <div id="goals-empty-state" class="hidden glass rounded-2xl p-12 text-center max-w-xl mx-auto my-6 flex flex-col items-center justify-center">
           <div class="w-16 h-16 rounded-full bg-indigo-500/10 flex items-center justify-center mb-4 text-indigo-400"><i class="fa-solid fa-bullseye text-3xl"></i></div>
@@ -214,9 +211,6 @@
         </div>
       </section>
 
-      <!-- ==========================================
-         MODAL TAMBAH/EDIT TARGET
-      ========================================== -->
       <div id="goal-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md hidden transition-all duration-300">
         <div class="glass w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl border border-white/10 mx-4 transform scale-95 transition-transform duration-300" id="goal-modal-content">
 
@@ -280,9 +274,6 @@
         </div>
       </div>
 
-      <!-- ==========================================
-         MODAL DEPOSIT
-      ========================================== -->
       <div id="deposit-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md hidden transition-all duration-300">
         <div class="glass w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl border border-white/10 mx-4 transform scale-95 transition-transform duration-300" id="deposit-modal-content">
 
@@ -333,7 +324,12 @@
       document.getElementById('goal-form').reset();
       document.getElementById('goal-id').value = '';
       document.getElementById('modal-title').innerHTML = '<i class="fa-solid fa-bullseye text-indigo-400"></i> Buat Target Dana Baru';
-      document.getElementById('g-date').valueAsDate = new Date(Date.now() + 180 * 24 * 60 * 60 * 1000); 
+      
+      // FIX: Men-set default tenggat waktu lebih presisi (mutlak 180 hari dari kalender lokal user)
+      const today = new Date();
+      today.setDate(today.getDate() + 180);
+      document.getElementById('g-date').valueAsDate = today; 
+      
       const modal = document.getElementById('goal-modal');
       const content = document.getElementById('goal-modal-content');
       modal.classList.remove('hidden');
@@ -526,7 +522,7 @@
           try {
             const { error } = await supabaseClient.from('goals').delete().eq('id', id);
             if (error) throw error;
-            
+
             showToast('success', 'Target berhasil dihapus.');
             await loadGoals();
           } catch (err) {
@@ -575,15 +571,21 @@
         const progressPercent = Math.min(100, Math.round(((g.current_amount || 0) / (g.target_amount || 1)) * 100));
         totalProgressSum += progressPercent;
 
-        const targetDate = new Date(g.target_date);
-        const today = new Date(); today.setHours(0, 0, 0, 0);
+        // FIX: Parsing tanggal aman menghindari bug 'timezone offset' (membulat jadi 181 hari)
+        const tParts = g.target_date.split('-');
+        const targetDate = new Date(parseInt(tParts[0]), parseInt(tParts[1]) - 1, parseInt(tParts[2]));
+        
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
         const timeDiff = targetDate.getTime() - today.getTime();
         const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
         let monthlyRecommendation = '—';
         if (progressPercent < 100) {
           if (daysLeft > 0) {
-            const monthsLeft = Math.max(1, Math.round(daysLeft / 30.4));
+            // FIX: Presisi penghitungan bulan agar saran tabungan lebih jitu
+            const monthsLeft = Math.max(1, Math.round(daysLeft / 30.436875));
             const neededAmount = (g.target_amount || 0) - (g.current_amount || 0);
             const monthlySaving = Math.ceil(neededAmount / monthsLeft);
             monthlyRecommendation = formatRupiah(monthlySaving) + ' / bln';
