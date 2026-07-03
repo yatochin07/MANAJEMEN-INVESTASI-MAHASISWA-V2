@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  
+
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -408,7 +408,7 @@
       overlay.classList.toggle('hidden');
     }
 
-    // AUTH CHECK & INIT
+    // AUTH CHECK & DATA INIT FOR SUPABASE
     const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -416,10 +416,49 @@
     let currentUserId = null;
     let currentSimResult = { main: 0, principal: 0, interest: 0 }; 
 
+    // MENGAMBIL DATA HISTORY SAAT HALAMAN DIMUAT
+    async function loadLatestSimulation() {
+      if (!currentUserId) return;
+      try {
+        const { data, error } = await supabaseClient
+          .from('calculator_history')
+          .select('*')
+          .eq('user_id', currentUserId)
+          .single(); // Gunakan single() karena kita jamin hanya ada 1 data per user nantinya
+
+        if (data) {
+          const type = data.calc_type;
+          const p = data.parameters;
+
+          if (type === 'dca') {
+            if(p.pv !== undefined) { document.getElementById('dca-pv').value = p.pv; document.getElementById('dca-pv-range').value = p.pv; }
+            if(p.pmt !== undefined) { document.getElementById('dca-pmt').value = p.pmt; document.getElementById('dca-pmt-range').value = p.pmt; }
+            if(p.rate !== undefined) { document.getElementById('dca-rate').value = p.rate; document.getElementById('dca-rate-range').value = p.rate; }
+            if(p.years !== undefined) { document.getElementById('dca-years').value = p.years; document.getElementById('dca-years-range').value = p.years; }
+          } else if (type === 'lump') {
+            if(p.pv !== undefined) { document.getElementById('lump-pv').value = p.pv; document.getElementById('lump-pv-range').value = p.pv; }
+            if(p.rate !== undefined) { document.getElementById('lump-rate').value = p.rate; document.getElementById('lump-rate-range').value = p.rate; }
+            if(p.years !== undefined) { document.getElementById('lump-years').value = p.years; document.getElementById('lump-years-range').value = p.years; }
+            if(p.freq !== undefined) { document.getElementById('lump-freq').value = p.freq; }
+          } else if (type === 'goal') {
+            if(p.fv !== undefined) { document.getElementById('goal-fv').value = p.fv; document.getElementById('goal-fv-range').value = p.fv; }
+            if(p.rate !== undefined) { document.getElementById('goal-rate').value = p.rate; document.getElementById('goal-rate-range').value = p.rate; }
+            if(p.years !== undefined) { document.getElementById('goal-years').value = p.years; document.getElementById('goal-years-range').value = p.years; }
+          }
+          
+          switchTab(type);
+        } else {
+          switchTab('dca'); 
+        }
+      } catch (err) {
+        console.error("Riwayat kalkulator belum ada / gagal ditarik:", err.message);
+        switchTab('dca');
+      }
+    }
+
     async function checkAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
-      if (!session) { window.location.href = 'login.html'; return false; }
-      
+      if (!session) { window.location.href = 'login.html'; return; }
       const user = session.user;
       currentUserId = user.id; 
 
@@ -433,62 +472,6 @@
       } else {
         sbAvatar.innerText = displayName.charAt(0).toUpperCase();
       }
-      return true;
-    }
-
-    // ==========================================
-    // FUNGSI MUAT HISTORY DARI SUPABASE
-    // ==========================================
-    async function loadLastSimulation() {
-      if (!currentUserId) return;
-
-      try {
-        const { data, error } = await supabaseClient
-          .from('calculator_history')
-          .select('*')
-          .eq('user_id', currentUserId)
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .single();
-
-        // Jika tidak ada data yang ditemukan (user baru pertama kali pakai kalkulator)
-        if (error && error.code !== 'PGRST116') {
-          console.error("Error mengambil history:", error);
-          return;
-        }
-
-        if (data && data.parameters) {
-          const tab = data.calc_type;
-          const p = data.parameters;
-
-          // Pindah ke tab yang terakhir disimpan
-          switchTab(tab);
-
-          // Masukkan angka dari history ke dalam input form & slider
-          if (tab === 'dca') {
-            if(p.pv !== undefined) { document.getElementById('dca-pv').value = p.pv; document.getElementById('dca-pv-range').value = p.pv; }
-            if(p.pmt !== undefined) { document.getElementById('dca-pmt').value = p.pmt; document.getElementById('dca-pmt-range').value = p.pmt; }
-            if(p.rate !== undefined) { document.getElementById('dca-rate').value = p.rate; document.getElementById('dca-rate-range').value = p.rate; }
-            if(p.years !== undefined) { document.getElementById('dca-years').value = p.years; document.getElementById('dca-years-range').value = p.years; }
-            calculateDca();
-          } 
-          else if (tab === 'lump') {
-            if(p.pv !== undefined) { document.getElementById('lump-pv').value = p.pv; document.getElementById('lump-pv-range').value = p.pv; }
-            if(p.rate !== undefined) { document.getElementById('lump-rate').value = p.rate; document.getElementById('lump-rate-range').value = p.rate; }
-            if(p.years !== undefined) { document.getElementById('lump-years').value = p.years; document.getElementById('lump-years-range').value = p.years; }
-            if(p.freq !== undefined) { document.getElementById('lump-freq').value = p.freq; }
-            calculateLump();
-          } 
-          else if (tab === 'goal') {
-            if(p.fv !== undefined) { document.getElementById('goal-fv').value = p.fv; document.getElementById('goal-fv-range').value = p.fv; }
-            if(p.rate !== undefined) { document.getElementById('goal-rate').value = p.rate; document.getElementById('goal-rate-range').value = p.rate; }
-            if(p.years !== undefined) { document.getElementById('goal-years').value = p.years; document.getElementById('goal-years-range').value = p.years; }
-            calculateGoal();
-          }
-        }
-      } catch (err) {
-        console.error("Gagal load history kalkulator:", err);
-      }
     }
 
     // TABS SYSTEM
@@ -496,7 +479,6 @@
     function switchTab(tab) {
       activeTab = tab;
 
-      // Toggle active states
       ['dca', 'lump', 'goal'].forEach(t => {
         const btn = document.getElementById('tab-' + t);
         const inputs = document.getElementById('inputs-' + t);
@@ -509,7 +491,6 @@
         }
       });
 
-      // Update labels & run calculation
       const rLabel = document.getElementById('result-label');
       const rPrincipalLabel = document.getElementById('label-principal');
       const eduText = document.getElementById('edu-text');
@@ -561,7 +542,7 @@
       }
 
       const totalInterest = Math.max(0, fv - totalPrincipal);
-
+      
       currentSimResult = { main: fv, principal: totalPrincipal, interest: totalInterest };
       updateDisplay(fv, totalPrincipal, totalInterest);
     }
@@ -589,8 +570,8 @@
       const rateVal = parseFloat(document.getElementById('goal-rate').value) || 0;
       const years = parseFloat(document.getElementById('goal-years').value) || 0;
 
-      const n = years * 12; // total months
-      const r = (rateVal / 100) / 12; // monthly rate
+      const n = years * 12; 
+      const r = (rateVal / 100) / 12; 
 
       let monthlySavingNeeded = 0;
 
@@ -650,7 +631,7 @@
     function syncGoalYears() { document.getElementById('goal-years').value = document.getElementById('goal-years-range').value; calculateGoal(); }
 
     // ==========================================
-    // SIMPAN KE SUPABASE DB
+    // SIMPAN KE SUPABASE DB (ANTI NUMPUK)
     // ==========================================
     async function saveSimulation() {
       if (!currentUserId) {
@@ -658,7 +639,6 @@
         return;
       }
 
-      // Bangun payload berdasarkan jenis tab kalkulator yang aktif
       let payload = {
         user_id: currentUserId,
         calc_type: activeTab,
@@ -690,7 +670,6 @@
         };
       }
 
-      // Animasi tombol loading
       const btn = document.getElementById('btn-save-sim');
       const originalHTML = btn.innerHTML;
       btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Menyimpan ke Cloud...';
@@ -698,6 +677,10 @@
       btn.classList.add('opacity-70');
 
       try {
+        // HAPUS DULU DATA LAMA MILIK USER INI BIAR GAK NUMPUK
+        await supabaseClient.from('calculator_history').delete().eq('user_id', currentUserId);
+        
+        // MASUKKAN DATA BARU (Selalu 1 data terbaru per User)
         const { error } = await supabaseClient.from('calculator_history').insert([payload]);
         if (error) throw error;
 
@@ -712,16 +695,14 @@
       }
     }
 
-    // Page initialization
+    // ==========================================
+    // INITIALIZATION (BERURUTAN)
+    // ==========================================
     document.addEventListener('DOMContentLoaded', async () => {
-      const isAuth = await checkAuth();
-      if (isAuth) {
-        // Jika sudah login, tarik dari history (Supabase)
-        await loadLastSimulation();
-      } else {
-        // Jika belum (meski harusnya diredirect), set default
-        calculateDca();
-      }
+      // 1. Cek User Auth dulu
+      await checkAuth();
+      // 2. Tarik History (Otomatis atur posisi Tab dan Kalkulasi ulang)
+      await loadLatestSimulation();
     });
   </script>
 </body>
