@@ -116,7 +116,6 @@
 
 <body class="relative">
 <script>
-  // Cek dan sesuaikan tema sedini mungkin
   if(localStorage.getItem('theme') === 'light') {
     document.body.classList.add('light-mode');
   }
@@ -248,11 +247,21 @@
     <div class="flex-1 w-full fade-up delay-3">
 
       <div id="view-list" class="glass rounded-2xl overflow-hidden flex flex-col min-h-[500px]">
+        
         <div class="px-5 py-4 border-b border-white/5 flex items-center justify-between bg-slate-800/50">
           <h2 class="font-display text-sm font-semibold text-slate-200 uppercase tracking-wider">Riwayat Transaksi</h2>
-          <button onclick="resetFinances()" class="text-[10px] text-slate-500 hover:text-rose-400 font-semibold uppercase tracking-wider transition-colors">
-            <i class="fa-solid fa-trash-can mr-1"></i> Reset Semua
-          </button>
+          
+          <div class="flex items-center gap-3 sm:gap-4">
+            <button onclick="switchTab('form')" class="md:hidden text-[10px] bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30 border border-indigo-500/30 px-2 py-1.5 rounded font-semibold uppercase tracking-wider transition-colors flex items-center">
+              <i class="fa-solid fa-plus mr-1"></i> Tambah
+            </button>
+            
+            <button onclick="resetFinances()" class="text-[10px] text-slate-500 hover:text-rose-400 font-semibold uppercase tracking-wider transition-colors flex items-center">
+              <i class="fa-solid fa-trash-can md:mr-1"></i> 
+              <span class="hidden md:inline">Reset Semua</span>
+              <span class="md:hidden">Reset</span>
+            </button>
+          </div>
         </div>
 
         <div id="finance-list" class="flex-1 overflow-y-auto"></div>
