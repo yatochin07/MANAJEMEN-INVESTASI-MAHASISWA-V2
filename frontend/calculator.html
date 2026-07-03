@@ -204,6 +204,7 @@
         </div>
       </header>
 
+      <!-- Tabs Navigation -->
       <div class="flex overflow-x-auto no-scrollbar border-b border-slate-700/50 mb-8 fade-up delay-1">
         <button onclick="switchTab('dca')" id="tab-dca" class="tab-btn tab-active px-5 sm:px-6 py-3 font-semibold text-sm flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-calendar-days"></i> Investasi Rutin (DCA)
@@ -216,10 +217,13 @@
         </button>
       </div>
 
+      <!-- Main Calculator Section -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start fade-up delay-2 flex-1">
 
+        <!-- Left Side: Inputs -->
         <div class="glass rounded-2xl p-5 sm:p-6 lg:col-span-7 space-y-6">
 
+          <!-- TAB 1: DCA INPUTS -->
           <div id="inputs-dca" class="space-y-5">
             <h3 class="font-display font-semibold text-slate-300 text-sm uppercase tracking-wider mb-2"><i class="fa-solid fa-gears text-indigo-400 mr-1.5"></i> Parameter DCA</h3>
 
@@ -258,6 +262,7 @@
             </div>
           </div>
 
+          <!-- TAB 2: LUMP SUM INPUTS -->
           <div id="inputs-lump" class="space-y-5 hidden">
             <h3 class="font-display font-semibold text-slate-300 text-sm uppercase tracking-wider mb-2"><i class="fa-solid fa-gears text-indigo-400 mr-1.5"></i> Parameter Lump-Sum</h3>
 
@@ -297,6 +302,7 @@
             </div>
           </div>
 
+          <!-- TAB 3: GOAL INPUTS -->
           <div id="inputs-goal" class="space-y-5 hidden">
             <h3 class="font-display font-semibold text-slate-300 text-sm uppercase tracking-wider mb-2"><i class="fa-solid fa-gears text-indigo-400 mr-1.5"></i> Parameter Goal Achiever</h3>
 
@@ -329,8 +335,10 @@
 
         </div>
 
+        <!-- Right Side: Results & Chart -->
         <div class="lg:col-span-5 flex flex-col gap-6 h-full">
 
+          <!-- Future Value Card -->
           <div class="glass rounded-2xl p-6 flex flex-col justify-between border-emerald-500/20" style="border-width: 1px;">
             <div>
               <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider" id="result-label">Proyeksi Hasil Masa Depan</p>
@@ -348,6 +356,7 @@
               </div>
             </div>
 
+            <!-- Simple SVG Proportional Bar Chart -->
             <div class="mt-6">
               <div class="flex rounded-full overflow-hidden h-3 bg-slate-800" id="proportion-bar">
                 <div id="bar-principal" class="bg-indigo-500 h-full transition-all duration-500" style="width: 50%"></div>
@@ -359,12 +368,14 @@
               </div>
             </div>
             
+            <!-- TOMBOL SIMPAN HASIL SIMULASI -->
             <button id="btn-save-sim" onclick="saveSimulation()" class="w-full mt-6 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-xl py-2.5 text-xs font-bold transition-all flex items-center justify-center gap-2">
               <i class="fa-solid fa-cloud-arrow-up"></i> Simpan Hasil Simulasi ke Riwayat
             </button>
             
           </div>
 
+          <!-- Educational Compound Interest Info -->
           <div class="glass rounded-2xl p-5 flex-1 flex flex-col justify-center">
             <h4 class="font-display font-bold text-slate-300 text-sm flex items-center gap-2 mb-2">
               <i class="fa-solid fa-lightbulb text-amber-400"></i> The Power of Compounding
@@ -397,19 +408,20 @@
       overlay.classList.toggle('hidden');
     }
 
-    // AUTH CHECK FOR SIDEBAR
+    // AUTH CHECK & INIT
     const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     
     let currentUserId = null;
-    let currentSimResult = { main: 0, principal: 0, interest: 0 }; // Menyimpan raw number kalkulasi agar presisi
+    let currentSimResult = { main: 0, principal: 0, interest: 0 }; 
 
     async function checkAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
-      if (!session) { window.location.href = 'login.html'; return; }
+      if (!session) { window.location.href = 'login.html'; return false; }
+      
       const user = session.user;
-      currentUserId = user.id; // Menyimpan ID user untuk fungsi Save ke Supabase
+      currentUserId = user.id; 
 
       const displayName = user.user_metadata?.custom_full_name || user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
       const avatarUrl = user.user_metadata?.custom_avatar_url || user.user_metadata?.avatar_url; 
@@ -420,6 +432,62 @@
         sbAvatar.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover rounded-full">`;
       } else {
         sbAvatar.innerText = displayName.charAt(0).toUpperCase();
+      }
+      return true;
+    }
+
+    // ==========================================
+    // FUNGSI MUAT HISTORY DARI SUPABASE
+    // ==========================================
+    async function loadLastSimulation() {
+      if (!currentUserId) return;
+
+      try {
+        const { data, error } = await supabaseClient
+          .from('calculator_history')
+          .select('*')
+          .eq('user_id', currentUserId)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
+
+        // Jika tidak ada data yang ditemukan (user baru pertama kali pakai kalkulator)
+        if (error && error.code !== 'PGRST116') {
+          console.error("Error mengambil history:", error);
+          return;
+        }
+
+        if (data && data.parameters) {
+          const tab = data.calc_type;
+          const p = data.parameters;
+
+          // Pindah ke tab yang terakhir disimpan
+          switchTab(tab);
+
+          // Masukkan angka dari history ke dalam input form & slider
+          if (tab === 'dca') {
+            if(p.pv !== undefined) { document.getElementById('dca-pv').value = p.pv; document.getElementById('dca-pv-range').value = p.pv; }
+            if(p.pmt !== undefined) { document.getElementById('dca-pmt').value = p.pmt; document.getElementById('dca-pmt-range').value = p.pmt; }
+            if(p.rate !== undefined) { document.getElementById('dca-rate').value = p.rate; document.getElementById('dca-rate-range').value = p.rate; }
+            if(p.years !== undefined) { document.getElementById('dca-years').value = p.years; document.getElementById('dca-years-range').value = p.years; }
+            calculateDca();
+          } 
+          else if (tab === 'lump') {
+            if(p.pv !== undefined) { document.getElementById('lump-pv').value = p.pv; document.getElementById('lump-pv-range').value = p.pv; }
+            if(p.rate !== undefined) { document.getElementById('lump-rate').value = p.rate; document.getElementById('lump-rate-range').value = p.rate; }
+            if(p.years !== undefined) { document.getElementById('lump-years').value = p.years; document.getElementById('lump-years-range').value = p.years; }
+            if(p.freq !== undefined) { document.getElementById('lump-freq').value = p.freq; }
+            calculateLump();
+          } 
+          else if (tab === 'goal') {
+            if(p.fv !== undefined) { document.getElementById('goal-fv').value = p.fv; document.getElementById('goal-fv-range').value = p.fv; }
+            if(p.rate !== undefined) { document.getElementById('goal-rate').value = p.rate; document.getElementById('goal-rate-range').value = p.rate; }
+            if(p.years !== undefined) { document.getElementById('goal-years').value = p.years; document.getElementById('goal-years-range').value = p.years; }
+            calculateGoal();
+          }
+        }
+      } catch (err) {
+        console.error("Gagal load history kalkulator:", err);
       }
     }
 
@@ -493,7 +561,7 @@
       }
 
       const totalInterest = Math.max(0, fv - totalPrincipal);
-      
+
       currentSimResult = { main: fv, principal: totalPrincipal, interest: totalInterest };
       updateDisplay(fv, totalPrincipal, totalInterest);
     }
@@ -632,7 +700,7 @@
       try {
         const { error } = await supabaseClient.from('calculator_history').insert([payload]);
         if (error) throw error;
-        
+
         showToast('success', 'Berhasil! Hasil simulasi sudah tersimpan di riwayatmu.');
       } catch (err) {
         console.error("Gagal menyimpan hasil simulasi:", err);
@@ -645,9 +713,15 @@
     }
 
     // Page initialization
-    document.addEventListener('DOMContentLoaded', () => {
-      checkAuth();
-      calculateDca();
+    document.addEventListener('DOMContentLoaded', async () => {
+      const isAuth = await checkAuth();
+      if (isAuth) {
+        // Jika sudah login, tarik dari history (Supabase)
+        await loadLastSimulation();
+      } else {
+        // Jika belum (meski harusnya diredirect), set default
+        calculateDca();
+      }
     });
   </script>
 </body>
