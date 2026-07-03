@@ -47,7 +47,6 @@
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
-    /* Sidebar active glow */
     .nav-active {
       background: linear-gradient(90deg, rgba(6, 182, 212, 0.18) 0%, transparent 100%);
       border-left: 3px solid #06b6d4;
@@ -64,7 +63,6 @@
       color: #a5b4fc;
     }
 
-    /* Glass Elements */
     .glass {
       background: rgba(19, 25, 40, 0.85);
       backdrop-filter: blur(12px);
@@ -79,7 +77,6 @@
       transition: all 0.3s ease;
     }
 
-    /* Mesh Background */
     .mesh-bg {
       position: fixed;
       inset: 0;
@@ -89,7 +86,6 @@
         radial-gradient(ellipse 50% 50% at 85% 80%, rgba(59, 130, 246, 0.07) 0%, transparent 60%);
     }
 
-    /* Scrollbar */
     ::-webkit-scrollbar {
       width: 5px;
       height: 5px;
@@ -104,13 +100,11 @@
       border-radius: 9px;
     }
 
-    /* Fade-in */
     @keyframes fadeUp {
       from {
         opacity: 0;
         transform: translateY(14px);
       }
-
       to {
         opacity: 1;
         transform: translateY(0);
@@ -120,6 +114,8 @@
     .fade-up {
       animation: fadeUp 0.5s ease both;
     }
+    
+    .delay-1 { animation-delay: 0.1s; }
 
     .logo-text {
       background: linear-gradient(90deg, #a5b4fc, #93c5fd);
@@ -127,7 +123,6 @@
       -webkit-text-fill-color: transparent;
     }
 
-    /* Donut Chart styles */
     .donut-chart {
       width: 170px;
       height: 170px;
@@ -154,7 +149,6 @@
       transition: background-color 0.3s ease;
     }
 
-    /* Form input styling */
     .form-input {
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -179,9 +173,7 @@
       border-color: transparent;
     }
 
-    /* ==========================================
-       LIGHT MODE STYLES
-    ========================================== */
+    /* LIGHT MODE STYLES */
     body.light-mode {
       background-color: #f8fafc;
       color: #0f1423;
@@ -227,6 +219,25 @@
   <script>
     if (localStorage.getItem('theme') === 'light') {
       document.body.classList.add('light-mode');
+    }
+
+    // Fungsi Toast Global untuk Feedback
+    function showToast(icon, title) {
+      const isLight = document.body.classList.contains('light-mode');
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        background: isLight ? '#ffffff' : '#1e293b',
+        color: isLight ? '#0f1423' : '#e2e8f0',
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      });
+      Toast.fire({ icon: icon, title: title });
     }
   </script>
 
@@ -341,7 +352,6 @@
         </div>
       </header>
 
-      <!-- Portofolio Kosong Alert -->
       <div id="alloc-empty-state"
         class="hidden glass rounded-2xl p-10 text-center max-w-xl mx-auto my-6 flex flex-col items-center justify-center fade-up">
         <div class="w-16 h-16 rounded-full bg-cyan-500/10 flex items-center justify-center mb-4 text-cyan-400">
@@ -351,18 +361,15 @@
         <p class="text-slate-500 text-sm mb-6 leading-relaxed">Kami tidak dapat menganalisis alokasi aset karena belum
           ada aset atau saldo kas yang tercatat di portofolio kamu.</p>
         <a href="portfolio.html"
-          class="btn-primary py-2.5 px-6 rounded-xl text-sm font-semibold text-white shadow-lg shadow-indigo-500/15">
+          class="btn-primary py-2.5 px-6 rounded-xl text-sm font-semibold text-white shadow-lg shadow-indigo-500/15" style="background: linear-gradient(135deg,#6366f1,#3b82f6);">
           <i class="fa-solid fa-plus mr-1"></i> Kelola Portofolio Sekarang
         </a>
       </div>
 
-      <!-- Main Layout -->
       <div id="alloc-main-layout" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start fade-up delay-1">
 
-        <!-- Left Side: Profile & Chart -->
         <div class="lg:col-span-4 space-y-6">
 
-          <!-- Donut Chart Card -->
           <div class="glass rounded-2xl p-6 flex flex-col items-center justify-center">
             <h3 class="font-display font-bold text-slate-300 text-sm uppercase tracking-wider mb-5">Proporsi Saat Ini
             </h3>
@@ -377,11 +384,9 @@
               </div>
             </div>
             <div id="donut-legend" class="w-full space-y-2 mt-6">
-              <!-- Dynamically populated legend -->
-            </div>
+              </div>
           </div>
 
-          <!-- Risk Profile Selector Card -->
           <div class="glass rounded-2xl p-5 space-y-4">
             <h3 class="font-display font-bold text-slate-300 text-sm uppercase tracking-wider"><i
                 class="fa-solid fa-sliders text-cyan-400 mr-1.5"></i> Profil Target Aset</h3>
@@ -393,41 +398,38 @@
               <button onclick="selectProfile('aggressive')" id="prof-aggressive"
                 class="btn-profile border border-white/10 rounded-xl py-2 px-3 text-xs font-semibold text-slate-400 hover:text-white hover:border-white/20">Agresif</button>
               <button onclick="selectProfile('custom')" id="prof-custom"
-                class="btn-profile border border-white/10 rounded-xl py-2 px-3 text-xs font-semibold text-slate-400 hover:text-white hover:border-white/20">Kustom
-                %</button>
+                class="btn-profile border border-white/10 rounded-xl py-2 px-3 text-xs font-semibold text-slate-400 hover:text-white hover:border-white/20">Kustom %</button>
             </div>
 
-            <!-- Custom Percentage Inputs (Hidden unless custom is active) -->
             <div id="custom-inputs" class="space-y-3 pt-3 border-t border-white/5 hidden">
-              <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Atur Target Kustom (Total wajib
-                100%):</p>
+              <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Atur Target Kustom (Total wajib 100%):</p>
               <div class="grid grid-cols-5 gap-1.5">
                 <div>
-                  <label class="text-[9px] text-slate-500 block mb-1">Saham</label>
+                  <label class="text-[9px] text-slate-500 block mb-1 text-center">Saham</label>
                   <input id="target-pct-saham" type="number" min="0" max="100"
                     class="form-input w-full text-center px-1 py-1 text-xs rounded-lg tabular-nums" value="40"
                     oninput="runCustomRecalculation()">
                 </div>
                 <div>
-                  <label class="text-[9px] text-slate-500 block mb-1">Kripto</label>
+                  <label class="text-[9px] text-slate-500 block mb-1 text-center">Kripto</label>
                   <input id="target-pct-kripto" type="number" min="0" max="100"
                     class="form-input w-full text-center px-1 py-1 text-xs rounded-lg tabular-nums" value="5"
                     oninput="runCustomRecalculation()">
                 </div>
                 <div>
-                  <label class="text-[9px] text-slate-500 block mb-1">Emas</label>
+                  <label class="text-[9px] text-slate-500 block mb-1 text-center">Emas</label>
                   <input id="target-pct-emas" type="number" min="0" max="100"
                     class="form-input w-full text-center px-1 py-1 text-xs rounded-lg tabular-nums" value="20"
                     oninput="runCustomRecalculation()">
                 </div>
                 <div>
-                  <label class="text-[9px] text-slate-500 block mb-1">Reksadana</label>
+                  <label class="text-[9px] text-slate-500 block mb-1 text-center">Reksadana</label>
                   <input id="target-pct-reksadana" type="number" min="0" max="100"
                     class="form-input w-full text-center px-1 py-1 text-xs rounded-lg tabular-nums" value="25"
                     oninput="runCustomRecalculation()">
                 </div>
                 <div>
-                  <label class="text-[9px] text-slate-500 block mb-1">Kas</label>
+                  <label class="text-[9px] text-slate-500 block mb-1 text-center">Kas</label>
                   <input id="target-pct-cash" type="number" min="0" max="100"
                     class="form-input w-full text-center px-1 py-1 text-xs rounded-lg tabular-nums" value="10"
                     oninput="runCustomRecalculation()">
@@ -437,15 +439,16 @@
                 <span class="text-[10px] text-slate-500" id="custom-sum-text">Jumlah: 100%</span>
                 <span id="custom-sum-status" class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
               </div>
+              <button onclick="saveCustomToDB()" id="btn-save-custom" class="w-full mt-2 py-2 rounded-xl text-xs font-bold text-white transition shadow-lg hidden" style="background: linear-gradient(135deg, #06b6d4, #3b82f6);">
+                <i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Alokasi Kustom
+              </button>
             </div>
           </div>
 
         </div>
 
-        <!-- Right Side: Rebalancing Analysis & Recomms -->
         <div class="lg:col-span-8 space-y-6">
 
-          <!-- Rebalancing Table Card -->
           <div class="glass rounded-2xl overflow-hidden">
             <div class="px-5 py-4 border-b border-white/5 flex items-center justify-between bg-slate-900/40">
               <h3
@@ -467,21 +470,18 @@
                   </tr>
                 </thead>
                 <tbody id="realloc-tbody" class="divide-y divide-white/5 text-xs">
-                  <!-- Dynamically populated table rows -->
-                </tbody>
+                  </tbody>
               </table>
             </div>
           </div>
 
-          <!-- Deviation Meter and AI Actionable Advice -->
           <div class="glass rounded-2xl p-5 sm:p-6 space-y-5">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/5">
               <div>
                 <h4 class="font-display font-bold text-slate-300 text-sm flex items-center gap-2">
                   <i class="fa-solid fa-gauge-high text-cyan-400"></i> Deviasi Penyimpangan Portofolio
                 </h4>
-                <p class="text-[10px] text-slate-500 mt-0.5">Seberapa jauh alokasi asetmu bergeser dari rencana awal.
-                </p>
+                <p class="text-[10px] text-slate-500 mt-0.5">Seberapa jauh alokasi asetmu bergeser dari rencana awal.</p>
               </div>
               <div class="flex items-end gap-1.5 self-start sm:self-auto">
                 <span id="deviation-idx"
@@ -491,7 +491,6 @@
               </div>
             </div>
 
-            <!-- AI Financial Advice -->
             <div class="flex gap-4">
               <div
                 class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center flex-shrink-0 bg-cyan-500/10 text-cyan-400">
@@ -500,8 +499,7 @@
               <div class="space-y-2">
                 <p class="text-xs font-bold text-slate-300 uppercase tracking-wider">Tips Rebalancing EduVesting</p>
                 <div id="ai-rebalance-tips" class="text-xs text-slate-400 leading-relaxed space-y-2">
-                  <!-- Dynamically populated bullet tips -->
-                </div>
+                  </div>
               </div>
             </div>
           </div>
@@ -531,7 +529,7 @@
       overlay.classList.toggle('hidden');
     }
 
-    // SUPABASE CONFIG & AUTH CHECK
+    // SUPABASE CONFIG
     const SUPABASE_URL = 'https://eirhdjllijilxjhigiwr.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_QAJBUP9oMSsWyc3kN0wznQ_GHBxxbhD';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -545,10 +543,11 @@
       conservative: { saham: 10, kripto: 5, emas: 40, reksadana: 25, cash: 20 },
       moderate: { saham: 40, kripto: 5, emas: 20, reksadana: 25, cash: 10 },
       aggressive: { saham: 65, kripto: 15, emas: 10, reksadana: 5, cash: 5 },
-      custom: null // defined by inputs
+      custom: null 
     };
 
     let selectedRiskProfile = 'moderate';
+    let isInitialLoad = true;
 
     document.addEventListener('DOMContentLoaded', async () => {
       try {
@@ -574,37 +573,110 @@
           sbAvatar.innerText = displayName.charAt(0).toUpperCase();
         }
 
-        await runAnalysis();
+        // 1. Hitung Portofolio
+        if (typeof EduVesting !== 'undefined') {
+            portfolioMetrics = await EduVesting.computeMetrics();
+        }
+
+        const isEmpty = !portfolioMetrics || (!portfolioMetrics.assets.length && portfolioMetrics.cash === 0);
+
+        if (isEmpty) {
+          document.getElementById('alloc-empty-state').classList.remove('hidden');
+          document.getElementById('alloc-main-layout').classList.add('hidden');
+          return;
+        }
+
+        document.getElementById('alloc-empty-state').classList.add('hidden');
+        document.getElementById('alloc-main-layout').classList.remove('hidden');
+
+        renderActualDonut();
+
+        // 2. Ambil preferensi alokasi dari Database Supabase
+        await loadAllocationTarget();
 
       } catch (err) {
         console.error("Gagal inisialisasi alokasi:", err);
       }
     });
 
-    async function runAnalysis() {
-      if (typeof EduVesting === 'undefined') return;
+    // FUNGSI TARIK DATA DARI SUPABASE
+    async function loadAllocationTarget() {
+      try {
+        const { data, error } = await supabaseClient
+          .from('allocation_targets')
+          .select('*')
+          .eq('user_id', currentUserId)
+          .single();
 
-      portfolioMetrics = await EduVesting.computeMetrics();
-
-      const isEmpty = !portfolioMetrics.assets.length && portfolioMetrics.cash === 0;
-
-      if (isEmpty) {
-        document.getElementById('alloc-empty-state').classList.remove('hidden');
-        document.getElementById('alloc-main-layout').classList.add('hidden');
-        return;
+        if (data && !error) {
+          selectedRiskProfile = data.profile;
+          
+          if (data.profile === 'custom') {
+            document.getElementById('target-pct-saham').value = data.saham;
+            document.getElementById('target-pct-kripto').value = data.kripto;
+            document.getElementById('target-pct-emas').value = data.emas;
+            document.getElementById('target-pct-reksadana').value = data.reksadana;
+            document.getElementById('target-pct-cash').value = data.cash;
+            
+            TARGET_TEMPLATES.custom = { 
+              saham: data.saham, kripto: data.kripto, emas: data.emas, reksadana: data.reksadana, cash: data.cash 
+            };
+          }
+        }
+        
+        // Panggil update UI (jangan simpan ke DB lagi karena ini inisialisasi awal)
+        updateProfileUI(selectedRiskProfile);
+        isInitialLoad = false;
+        
+      } catch (err) {
+        console.error("Gagal load target", err);
+        updateProfileUI('moderate');
+        isInitialLoad = false;
       }
-
-      document.getElementById('alloc-empty-state').classList.add('hidden');
-      document.getElementById('alloc-main-layout').classList.remove('hidden');
-
-      renderActualDonut();
-      calculateRebalancing();
     }
 
+    // FUNGSI SIMPAN PROFIL KE SUPABASE
+    async function saveTargetToDB(profileName) {
+      if(isInitialLoad) return; 
+
+      try {
+        const payload = { 
+          user_id: currentUserId, 
+          profile: profileName,
+          updated_at: new Date()
+        };
+
+        if (profileName === 'custom' && TARGET_TEMPLATES.custom) {
+          payload.saham = TARGET_TEMPLATES.custom.saham;
+          payload.kripto = TARGET_TEMPLATES.custom.kripto;
+          payload.emas = TARGET_TEMPLATES.custom.emas;
+          payload.reksadana = TARGET_TEMPLATES.custom.reksadana;
+          payload.cash = TARGET_TEMPLATES.custom.cash;
+        }
+
+        const { error } = await supabaseClient.from('allocation_targets').upsert(payload);
+        
+        if(error) throw error;
+        showToast('success', 'Preferensi target alokasi berhasil disimpan!');
+
+      } catch(err) {
+        console.error("Gagal simpan target ke DB", err);
+        showToast('error', 'Gagal menyimpan preferensi.');
+      }
+    }
+
+    // LOGIKA UI SAAT TOMBOL DIKLIK
     function selectProfile(profile) {
       selectedRiskProfile = profile;
+      updateProfileUI(profile);
+      
+      // Auto-save jika milih preset bawaan
+      if(profile !== 'custom' && !isInitialLoad) {
+         saveTargetToDB(profile);
+      }
+    }
 
-      // Update button visual active state
+    function updateProfileUI(profile) {
       ['conservative', 'moderate', 'aggressive', 'custom'].forEach(p => {
         const btn = document.getElementById('prof-' + p);
         if (p === profile) {
@@ -615,13 +687,23 @@
       });
 
       const customInputs = document.getElementById('custom-inputs');
+      const btnSaveCustom = document.getElementById('btn-save-custom');
+      
       if (profile === 'custom') {
         customInputs.classList.remove('hidden');
+        btnSaveCustom.classList.remove('hidden');
         runCustomRecalculation();
       } else {
         customInputs.classList.add('hidden');
         calculateRebalancing();
       }
+    }
+
+    // TOMBOL SIMPAN KUSTOM MANUAL
+    function saveCustomToDB() {
+       if (selectedRiskProfile === 'custom' && TARGET_TEMPLATES.custom) {
+           saveTargetToDB('custom');
+       }
     }
 
     function runCustomRecalculation() {
@@ -634,31 +716,34 @@
       const sum = s + k + e + r + c;
       const sumText = document.getElementById('custom-sum-text');
       const sumStatus = document.getElementById('custom-sum-status');
+      const btnSave = document.getElementById('btn-save-custom');
 
       sumText.innerText = `Jumlah: ${sum}%`;
 
       if (sum === 100) {
         sumStatus.className = "w-2.5 h-2.5 rounded-full bg-emerald-400";
+        btnSave.disabled = false;
+        btnSave.classList.remove('opacity-50', 'cursor-not-allowed');
+        
         TARGET_TEMPLATES.custom = { saham: s, kripto: k, emas: e, reksadana: r, cash: c };
         calculateRebalancing();
       } else {
         sumStatus.className = "w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse";
+        btnSave.disabled = true;
+        btnSave.classList.add('opacity-50', 'cursor-not-allowed');
       }
     }
 
-    // RENDER ACTUAL DONUT CHART (Pure CSS conic-gradient)
     function renderActualDonut() {
       const donut = document.getElementById('donut-chart');
       const legend = document.getElementById('donut-legend');
       const centerTotal = document.getElementById('center-total-equity');
 
       centerTotal.innerText = EduVesting.formatRupiah(portfolioMetrics.totalEquity);
-
       legend.innerHTML = '';
 
       const items = [];
       const m = portfolioMetrics;
-
       const ASSET_TYPES = EduVesting.ASSET_TYPES;
 
       Object.entries(m.byType).forEach(([type, value]) => {
@@ -673,12 +758,7 @@
       });
 
       if (m.cash > 0) {
-        items.push({
-          type: 'cash',
-          label: 'Kas Tunai',
-          value: m.cash,
-          percent: m.cashPercent
-        });
+        items.push({ type: 'cash', label: 'Kas Tunai', value: m.cash, percent: m.cashPercent });
       }
 
       if (items.length === 0) {
@@ -687,7 +767,6 @@
         return;
       }
 
-      // Sort largest first
       items.sort((a, b) => b.value - a.value);
 
       const colorMap = {
@@ -725,16 +804,12 @@
       donut.style.background = `conic-gradient(${gradientString})`;
     }
 
-    // CALCULATE REBALANCING ACTIONS
     function calculateRebalancing() {
       const tbody = document.getElementById('realloc-tbody');
       tbody.innerHTML = '';
 
       const targetModel = TARGET_TEMPLATES[selectedRiskProfile];
-      if (!targetModel) {
-        // If Custom profile isn't ready
-        return;
-      }
+      if (!targetModel) return; 
 
       const m = portfolioMetrics;
       const totalEquity = m.totalEquity;
@@ -752,26 +827,16 @@
       const deviationTips = [];
 
       keys.forEach(key => {
-        // Actual
-        let actualVal = 0;
-        if (key === 'cash') {
-          actualVal = m.cash;
-        } else {
-          actualVal = m.byType[key] || 0;
-        }
+        let actualVal = (key === 'cash') ? m.cash : (m.byType[key] || 0);
         const actualPct = totalEquity > 0 ? (actualVal / totalEquity) * 100 : 0;
-
-        // Target
         const targetPct = targetModel[key] || 0;
         const targetVal = (targetPct / 100) * totalEquity;
 
-        // Diff
         const diffPct = actualPct - targetPct;
         const diffVal = actualVal - targetVal;
 
         devTotal += Math.abs(diffPct);
 
-        // Recommendation Action
         let actionBadge = '';
         if (diffPct > 1.5) {
           actionBadge = `<span class="bg-rose-500/10 text-rose-400 border border-rose-500/25 px-2.5 py-1 rounded-lg font-bold text-[10px] tracking-wide uppercase">Jual ${EduVesting.formatRupiah(Math.abs(diffVal))}</span>`;
@@ -804,11 +869,9 @@
           </td>
           <td class="px-5 py-4 text-right">${actionBadge}</td>
         `;
-
         tbody.appendChild(row);
       });
 
-      // Show Deviation Index (Sum of absolute differences / 2)
       const devIndex = devTotal / 2;
       const indexEl = document.getElementById('deviation-idx');
       const badgeEl = document.getElementById('deviation-badge');
@@ -826,7 +889,6 @@
         badgeEl.className = "text-[9px] font-bold px-2 py-0.5 rounded border leading-none uppercase tracking-widest bg-rose-500/10 text-rose-400 border-rose-500/20 animate-pulse";
       }
 
-      // Render tips
       const tipsContainer = document.getElementById('ai-rebalance-tips');
       tipsContainer.innerHTML = '';
 
