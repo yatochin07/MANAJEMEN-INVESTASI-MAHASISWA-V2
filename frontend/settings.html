@@ -12,7 +12,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
@@ -59,7 +58,6 @@
     .form-input { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); transition: all 0.2s ease; color: #e2e8f0; }
     .form-input:focus { outline: none; border-color: rgba(99,102,241,0.6); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); background: rgba(99,102,241,0.04); }
     .form-input:disabled { opacity: 0.6; cursor: not-allowed; }
-    select option { background-color: #0f1423; color: #e2e8f0; padding: 12px; }
 
     /* SweetAlert2 Overrides biar nyesuain UI modern */
     div:where(.swal2-container) div:where(.swal2-popup) { font-family: 'Inter', sans-serif !important; }
@@ -73,7 +71,6 @@
     body.light-mode .text-slate-400, body.light-mode .text-slate-500 { color: #475569; }
     body.light-mode .form-input { background: #ffffff !important; border-color: #cbd5e1; color: #0f1423; }
     body.light-mode aside { background: rgba(255, 255, 255, 0.95) !important; border-right: 1px solid rgba(0,0,0,0.08); }
-    body.light-mode select option { background-color: #ffffff; color: #0f1423; }
     body.light-mode .bg-slate-800, body.light-mode .bg-slate-800\/50, body.light-mode .bg-slate-800\/30 { background-color: #f1f5f9 !important; border-color: #cbd5e1; color: #1e293b; }
 
     /* Fade-in */
@@ -211,7 +208,7 @@
       <header class="flex flex-row items-center justify-between mb-8 gap-4 fade-up">
         <div>
           <h1 class="font-display text-2xl sm:text-3xl text-slate-100 font-semibold mb-1">Pengaturan Akun</h1>
-          <p class="text-slate-500 text-sm mt-0.5">Kelola informasi pribadi, keamanan, dan preferensi Anda.</p>
+          <p class="text-slate-500 text-sm mt-0.5">Kelola informasi pribadi dan pengaturan keamanan Anda.</p>
         </div>
 
         <button onclick="toggleTheme()" class="w-11 h-11 rounded-xl glass flex items-center justify-center text-slate-400 hover:text-amber-400 transition-colors shadow-sm flex-shrink-0" title="Ubah Mode Tampilan">
@@ -300,48 +297,6 @@
           </div>
         </section>
 
-        <section class="glass rounded-2xl p-4 sm:p-6 md:p-8 fade-up delay-3">
-          <h2 class="text-base sm:text-lg font-display text-slate-200 mb-6 flex items-center gap-2 border-b border-white/5 pb-4">
-            <i class="fa-solid fa-sliders text-emerald-400"></i> Preferensi Investasi (Simulasi)
-          </h2>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-            <div>
-              <h3 class="text-sm font-semibold text-slate-300 mb-3">Profil Risiko EduVesting</h3>
-              <div class="space-y-3">
-                <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-700 bg-slate-800/50 cursor-pointer hover:border-slate-500 transition-colors">
-                  <input type="radio" name="risk" class="w-4 h-4 text-emerald-500 bg-slate-900 border-slate-600 focus:ring-emerald-500 focus:ring-2">
-                  <div>
-                    <p class="text-sm font-medium text-slate-200">Konservatif</p>
-                    <p class="text-xs text-slate-500">Fokus pada reksa dana pasar uang dan emas.</p>
-                  </div>
-                </label>
-
-                <label class="flex items-center gap-3 p-3 rounded-xl border border-emerald-500/50 bg-emerald-500/10 cursor-pointer">
-                  <input type="radio" name="risk" checked class="w-4 h-4 text-emerald-500 bg-slate-900 border-slate-600 focus:ring-emerald-500 focus:ring-2 accent-emerald-500">
-                  <div>
-                    <p class="text-sm font-medium text-emerald-400">Moderat - Agresif</p>
-                    <p class="text-xs text-slate-400">Kombinasi saham bluechip dan sedikit kripto.</p>
-                  </div>
-                </label>
-              </div>
-            </div>
-
-            <div>
-              <h3 class="text-sm font-semibold text-slate-300 mb-3">Preferensi Tampilan</h3>
-              <div class="space-y-4">
-                <div>
-                  <label class="block text-xs font-medium text-slate-400 mb-1.5">Mata Uang Dasar</label>
-                  <select class="form-input w-full rounded-xl px-4 py-2.5 text-sm appearance-none bg-[#0f1423]">
-                    <option>IDR - Rupiah Indonesia</option>
-                    <option>USD - US Dollar</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
       </div>
 
       <footer class="text-center pb-8 mt-10">
@@ -379,24 +334,6 @@
         localStorage.setItem('theme', 'dark');
       }
     }
-
-    // Mengubah warna saat memilih card (Pengaturan)
-    document.querySelectorAll('input[name="risk"]').forEach(function(input) {
-      input.addEventListener('change', function() {
-        document.querySelectorAll('label:has(input[name="risk"])').forEach(function(label) {
-          var radio = label.querySelector('input[name="risk"]');
-          var teks  = label.querySelector('p:first-child');
-
-          if (radio.checked) {
-            label.className = 'flex items-center gap-3 p-3 rounded-xl border border-emerald-500/50 bg-emerald-500/10 cursor-pointer';
-            teks.className  = 'text-sm font-medium text-emerald-400';
-          } else {
-            label.className = 'flex items-center gap-3 p-3 rounded-xl border border-slate-700 bg-slate-800/50 cursor-pointer hover:border-slate-500 transition-colors';
-            teks.className  = 'text-sm font-medium text-slate-200';
-          }
-        });
-      });
-    });
 
     // Inisialisasi Ikon Tema (Hanya mengubah ikon, tidak memanggil ulang fungsi toggle)
     document.addEventListener("DOMContentLoaded", function() {
