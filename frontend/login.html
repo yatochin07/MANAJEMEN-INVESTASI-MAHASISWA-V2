@@ -199,8 +199,15 @@
        LIGHT MODE STYLES
        ========================================== */
     body.light-mode { background-color: #f8fafc; color: #0f1423; }
-    body.light-mode .text-slate-100, body.light-mode .text-slate-200 { color: #1e293b; }
-    body.light-mode .text-slate-400, body.light-mode .text-slate-500 { color: #475569; }
+    
+    body.light-mode .text-slate-100, 
+    body.light-mode .text-slate-200,
+    body.light-mode .text-slate-300 { color: #1e293b !important; } /* Fix: Tambah override untuk text-slate-300 (Tim Developer) */
+    
+    body.light-mode .text-slate-400, 
+    body.light-mode .text-slate-500,
+    body.light-mode .text-slate-600 { color: #475569 !important; }
+    
     body.light-mode .logo-text { background: linear-gradient(90deg, #1e293b, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
     /* Left Panel Light Mode */
@@ -224,9 +231,21 @@
     .glass-btn { background: rgba(19, 25, 40, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.06); transition: all 0.3s ease; }
     body.light-mode .glass-btn { background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); color: #475569; }
 
-    /* Landing Section Light Mode */
+    /* Landing Section Light Mode Fixes */
     body.light-mode .landing-glass { background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+    
+    body.light-mode .section-title { color: #1e293b; } /* Fix: Tambah override judul utama (Apa yang bisa Anda lakukan, dll) */
+    
+    body.light-mode .faq-q { color: #1e293b; } /* Fix: Tambah override font pertanyaan FAQ */
+    body.light-mode .faq-toggle:hover .faq-q { color: #6366f1; } /* Fix: Saat di-hover, beri warna indigo di mode light */
     body.light-mode .faq-item { border-bottom: 1px solid #e2e8f0; }
+    
+    /* Fix: Penyesuaian box background Tim Developer dan button DM Instagram agar tidak putih transparan di layar putih */
+    body.light-mode .landing-glass .bg-white\/5 { background-color: #f8fafc; border-color: #e2e8f0; }
+    body.light-mode .landing-glass .hover\:bg-white\/10:hover { background-color: #f1f5f9; }
+    body.light-mode .landing-glass .bg-white\/10 { background-color: #f1f5f9; border-color: #cbd5e1; }
+    body.light-mode .landing-glass .hover\:bg-white\/20:hover { background-color: #e2e8f0; }
+
     body.light-mode footer { background: rgba(248, 250, 252, 0.9); border-top: 1px solid #e2e8f0; }
     body.light-mode footer .border-t { border-color: #e2e8f0; }
 
