@@ -2,7 +2,7 @@
 
 ![Status](https://img.shields.io/badge/status-active--development-brightgreen)
 ![Node](https://img.shields.io/badge/node-%3E%3D18-green)
-![License](https://img.shields.io/badge/license-MIT-blue)
+![License](https://img.shields.io/badge/license-Academic%20Project-blue)
 ![Deployment](https://img.shields.io/badge/deploy-Vercel-black)
 
 **EduVesting** adalah platform simulasi manajemen portofolio investasi multi-aset (Saham, Kripto, Emas, dan Reksa Dana) yang dirancang khusus untuk mahasiswa dan investor pemula. Aplikasi ini mengombinasikan pencatatan keuangan harian, pelacakan target dana (*goals*), simulasi kalkulator finansial, dan asisten kecerdasan buatan (AI Copilot) dalam satu *dashboard* terpusat.
@@ -25,7 +25,7 @@ Tujuan utama proyek ini adalah mendobrak batasan literasi finansial dengan menye
 10. [Deployment](#4-deployment)
 11. [Roadmap](#-roadmap-pengembangan)
 12. [Kontribusi](#-kontribusi)
-13. [Lisensi](#-lisensi)
+13. [Informasi Akademik](#-informasi-akademik)
 
 ---
 
@@ -297,6 +297,13 @@ Kontribusi terbuka untuk perbaikan bug, penambahan fitur, atau perbaikan dokumen
 
 ---
 
-## 📄 Lisensi
+## 🎓 Informasi Akademik
 
-Proyek ini dilisensikan di bawah **MIT License** — bebas digunakan untuk keperluan edukasi maupun pengembangan lanjutan, dengan tetap mencantumkan atribusi.
+Proyek ini dikembangkan sebagai **tugas/proyek pribadi mahasiswa** dalam rangka pembelajaran dan/atau pemenuhan tugas kuliah, bukan merupakan produk komersial maupun perangkat lunak *open-source* publik.
+
+- **Status**: Proyek akademik / portofolio pribadi
+- **Penggunaan**: Kode dan dokumentasi ini disusun untuk keperluan pembelajaran, demonstrasi, dan penilaian tugas. Tidak diperuntukkan untuk transaksi finansial sungguhan.
+- **Hak Cipta**: © 2026 — seluruh hak atas kode dan konten proyek ini dipegang oleh penulis/pengembang, kecuali dinyatakan lain.
+- **Disclaimer**: Data harga aset (saham, kripto, emas) bersifat simulasi berbasis data pasar riil untuk tujuan edukasi. EduVesting **bukan** platform investasi resmi dan tidak memfasilitasi transaksi keuangan nyata.
+
+> Jika suatu saat proyek ini ingin dibuka untuk kontribusi publik atau dipublikasikan sebagai *open-source*, bagian ini dapat diganti dengan lisensi yang sesuai (mis. MIT, Apache 2.0, atau GPL) sesuai keputusan penulis.
