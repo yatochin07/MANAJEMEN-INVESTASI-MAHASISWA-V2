@@ -200,7 +200,7 @@
       <p class="text-slate-500 text-sm">Catat arus kas masuk (pemasukan) dan keluar (pengeluaran) kamu disini.</p>
     </header>
 
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6 fade-up delay-2">
+    <section class="grid grid-cols-1 gap-4 sm:gap-6 mb-6 fade-up delay-2">
       <div class="glass rounded-2xl p-5 sm:p-6 metric-card flex flex-col justify-center">
         <div class="flex items-start justify-between mb-2">
           <p class="text-xs text-slate-500 font-semibold uppercase tracking-widest">Pemasukan</p>
@@ -208,7 +208,7 @@
             <i class="fa-solid fa-arrow-down text-sm"></i>
           </div>
         </div>
-        <p id="sum-income" class="font-display text-2xl sm:text-3xl text-blue-400 font-bold truncate">Rp 0</p>
+        <p id="sum-income" class="font-display text-2xl sm:text-3xl text-blue-400 font-bold break-words">Rp 0</p>
       </div>
 
       <div class="glass rounded-2xl p-5 sm:p-6 metric-card flex flex-col justify-center">
@@ -218,7 +218,7 @@
             <i class="fa-solid fa-arrow-up text-sm"></i>
           </div>
         </div>
-        <p id="sum-expense" class="font-display text-2xl sm:text-3xl text-rose-400 font-bold truncate">Rp 0</p>
+        <p id="sum-expense" class="font-display text-2xl sm:text-3xl text-rose-400 font-bold break-words">Rp 0</p>
       </div>
 
       <div class="glass rounded-2xl p-5 sm:p-6 metric-card flex flex-col justify-center" style="border-color: rgba(99,102,241,0.2);">
@@ -228,7 +228,7 @@
             <i class="fa-solid fa-scale-balanced text-sm"></i>
           </div>
         </div>
-        <p id="sum-total" class="font-display text-2xl sm:text-3xl text-slate-100 font-bold truncate">Rp 0</p>
+        <p id="sum-total" class="font-display text-2xl sm:text-3xl text-slate-100 font-bold break-words">Rp 0</p>
       </div>
     </section>
 
@@ -571,7 +571,8 @@
     document.getElementById('sum-expense').innerText = formatRupiahClean(totalExpense);
     document.getElementById('sum-total').innerText = formatRupiahClean(totalDiff);
 
-    document.getElementById('sum-total').className = `font-display text-2xl sm:text-3xl font-bold truncate ${totalDiff < 0 ? 'text-rose-400' : 'text-slate-100'}`;
+    // Di sini truncate juga diganti menjadi break-words agar total tetap aman jika berubah nominalnya
+    document.getElementById('sum-total').className = `font-display text-2xl sm:text-3xl font-bold break-words ${totalDiff < 0 ? 'text-rose-400' : 'text-slate-100'}`;
 
     const sortedDates = Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a));
     listContainer.innerHTML = '';
