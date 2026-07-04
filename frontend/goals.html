@@ -574,11 +574,11 @@
         const targetAmount = g.target_amount || 0;
         const currentAmount = g.current_amount || 0;
         const monthlySaving = g.monthly_saving || 0;
-        
+
         // Format Tanggal Mulai
         const startDate = new Date(g.target_date);
         const formattedStartDate = startDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-        
+
         totalSaved += currentAmount;
         totalTarget += targetAmount;
 
@@ -616,6 +616,9 @@
         card.className = 'glass rounded-2xl p-5 flex flex-col justify-between hover:scale-[1.02] hover:-translate-y-1 transition-all duration-300';
         card.style.borderColor = isUrgent ? 'rgba(244, 63, 94, 0.4)' : '';
 
+        // DI SINI BAGIAN YANG DIUBAH
+        // 1. Tambah whitespace-nowrap di berbagai tempat teks nominal
+        // 2. Kontainer bawah menggunakan flex-wrap agar kalau sempit otomatis turun ke bawah secara aman
         card.innerHTML = `
           <div>
             <div class="flex items-start justify-between gap-3 mb-4">
@@ -626,14 +629,14 @@
                   <div class="flex items-center gap-1.5 mt-0.5">
                     <span class="text-[10px] text-slate-500 capitalize tracking-wider">${g.category || 'Lainnya'}</span>
                     <span class="w-1 h-1 rounded-full bg-slate-700"></span>
-                    <span class="text-[10px] text-slate-500 tracking-wider">Mulai: ${formattedStartDate}</span>
+                    <span class="text-[10px] text-slate-500 tracking-wider whitespace-nowrap">Mulai: ${formattedStartDate}</span>
                   </div>
                 </div>
               </div>
               
               <div class="flex flex-col items-end shrink-0">
                 ${isUrgent ? `<span class="bg-rose-500/20 text-rose-400 text-[9px] font-bold px-2 py-0.5 rounded border border-rose-500/20 uppercase tracking-widest mb-1 animate-pulse">SEBENTAR LAGI</span>` : ''}
-                <span class="text-xs font-semibold ${isUrgent ? 'text-amber-400' : progressPercent >= 100 ? 'text-emerald-400' : 'text-slate-500'}">
+                <span class="text-xs font-semibold whitespace-nowrap ${isUrgent ? 'text-amber-400' : progressPercent >= 100 ? 'text-emerald-400' : 'text-slate-500'}">
                   ${timeText}
                 </span>
               </div>
@@ -648,19 +651,19 @@
                 <div class="h-full rounded-full transition-all duration-1000" style="width: ${progressPercent}%; background: linear-gradient(90deg, ${catMeta.hex}, #a5b4fc);"></div>
               </div>
               <div class="flex justify-between items-center text-xs font-semibold mt-2">
-                <span class="text-slate-200">${formatRupiah(currentAmount)}</span>
-                <span class="text-slate-500 font-normal">dari ${formatRupiah(targetAmount)}</span>
+                <span class="text-slate-200 whitespace-nowrap">${formatRupiah(currentAmount)}</span>
+                <span class="text-slate-500 font-normal whitespace-nowrap">dari ${formatRupiah(targetAmount)}</span>
               </div>
             </div>
           </div>
 
-          <div class="mt-4 pt-4 border-t border-white/5 flex items-center justify-between gap-2">
+          <div class="mt-4 pt-4 border-t border-white/5 flex flex-wrap items-center justify-between gap-3">
             <div>
               <p class="text-[10px] text-slate-500 font-medium uppercase tracking-wider">Target Tabungan</p>
-              <p class="text-xs font-bold text-slate-200 mt-0.5">${monthlySaving > 0 ? formatRupiah(monthlySaving) + ' / bln' : 'Rp 0 / bln'}</p>
+              <p class="text-xs font-bold text-slate-200 mt-0.5 whitespace-nowrap">${monthlySaving > 0 ? formatRupiah(monthlySaving) + ' / bln' : 'Rp 0 / bln'}</p>
             </div>
             
-            <div class="flex items-center gap-1 shrink-0">
+            <div class="flex items-center gap-1.5 shrink-0">
               ${progressPercent < 100 ? `<button onclick="openDepositModal('${g.id}', '${g.name.replace(/'/g, "\\'")}')" title="Tabung Uang" class="w-9 h-9 rounded-xl flex items-center justify-center bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 transition-colors"><i class="fa-solid fa-piggy-bank text-sm"></i></button>` : ''}
               <button onclick="editGoal('${g.id}')" title="Edit Target" class="w-9 h-9 rounded-xl flex items-center justify-center bg-slate-800 text-slate-400 hover:text-slate-200 transition-colors"><i class="fa-solid fa-pen-to-square text-sm"></i></button>
               <button onclick="deleteGoal('${g.id}')" title="Hapus Target" class="w-9 h-9 rounded-xl flex items-center justify-center bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 transition-colors"><i class="fa-solid fa-trash text-sm"></i></button>
